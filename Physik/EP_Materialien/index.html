@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EP Physik · Materialien</title>
+<style>
+:root{
+  --teal:#0f6e56; --teal-dark:#085041;
+  --blue:#2c5f8a; --green:#1a9e5c; --purple:#7b3fb5;
+  --border:#dde1e7; --bg:#f4f5f7; --text:#1c1f26; --muted:#5c6472;
+}
+*{box-sizing:border-box}
+body{
+  margin:0; background:var(--bg); color:var(--text);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  line-height:1.55; font-size:16px;
+}
+.wrap{max-width:1000px; margin:0 auto; padding:0 16px 56px}
+
+header.top{background:var(--teal); border-bottom:4px solid var(--teal-dark); color:#fff}
+header.top .inner{max-width:1000px; margin:0 auto; padding:26px 16px 28px}
+header.top .school{font-size:.78rem; font-weight:700; letter-spacing:.06em; text-transform:uppercase; opacity:.92}
+header.top h1{margin:8px 0 5px; font-size:1.85rem; line-height:1.2}
+header.top .sub{font-size:.94rem; opacity:.95}
+
+.kurs{margin-top:34px}
+.kurs-head{display:flex; align-items:center; gap:11px; flex-wrap:wrap; margin-bottom:14px}
+.kurs-badge{
+  color:#fff; border-radius:6px; padding:5px 13px;
+  font-weight:700; font-size:.88rem; letter-spacing:.02em;
+}
+.kurs-ep .kurs-badge{background:var(--teal)}
+.kurs-head .fach{color:var(--muted); font-size:.9rem; font-weight:600}
+
+.grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(290px,1fr)); gap:14px}
+.card{
+  display:flex; flex-direction:column;
+  background:#fff; border:1px solid var(--border); border-radius:10px;
+  padding:16px 17px 14px; text-decoration:none; color:inherit;
+  transition:transform .13s, box-shadow .13s, border-color .13s;
+  position:relative; overflow:hidden;
+}
+.card::before{content:""; position:absolute; top:0; left:0; right:0; height:4px}
+.stripe-ep::before{background:var(--teal)}
+a.card:hover{transform:translateY(-2px); box-shadow:0 5px 16px rgba(28,31,38,.11); border-color:var(--muted)}
+.card .kapitel{
+  font-size:.72rem; font-weight:700; letter-spacing:.05em; text-transform:uppercase;
+  color:var(--muted); margin:5px 0 6px;
+}
+.card h2{margin:0 0 7px; font-size:1.08rem; line-height:1.3}
+.card p{margin:0 0 13px; font-size:.89rem; color:var(--muted); flex:1}
+.card .foot{display:flex; align-items:center; justify-content:space-between; gap:8px}
+.status{font-size:.8rem; font-weight:700; color:var(--green)}
+.arrow{color:var(--muted); font-size:1.05rem}
+a.card:hover .arrow{color:var(--blue)}
+
+.card.soon{background:#fafbfc; border-style:dashed; cursor:default}
+.card.soon::before{background:var(--border)}
+.card.soon h2{color:var(--muted)}
+.card.soon .status{color:var(--muted); font-weight:600}
+
+.soon-label{
+  font-size:.74rem; font-weight:700; letter-spacing:.06em; text-transform:uppercase;
+  color:var(--muted); margin:22px 0 10px;
+}
+
+.backnav{margin:18px 0 4px}
+.backnav a{
+  display:inline-flex; align-items:center; gap:6px;
+  font-size:.86rem; font-weight:600; color:var(--muted);
+  text-decoration:none; border:1px solid var(--border); border-radius:20px;
+  padding:5px 13px; background:#fff;
+}
+.backnav a:hover{border-color:var(--muted); color:var(--text)}
+
+footer.bot{
+  text-align:center; color:var(--muted); font-size:.82rem;
+  padding:26px 16px; border-top:1px solid var(--border); margin-top:40px;
+}
+footer.bot a{color:var(--blue)}
+@media(max-width:600px){
+  header.top h1{font-size:1.4rem}
+  .grid{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="inner">
+    <div class="school">Fach Physik</div>
+    <h1>EP Unterrichtsmaterialien</h1>
+    <div class="sub">Interaktive Übungsaufgaben · Hilfestellungen · Musterlösungen nach Lehrerfreigabe</div>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <div class="backnav"><a href="../">← Zurück zu Physik</a></div>
+
+  <!-- ============ EP · UV1 Bewegungen beschreiben ============ -->
+  <section class="kurs kurs-ep">
+    <div class="kurs-head">
+      <span class="kurs-badge">EP Physik</span>
+      <span class="fach">UV1 · Bewegungen beschreiben</span>
+    </div>
+
+    <div class="grid">
+
+      <a class="card stripe-ep" href="ep-1-2-uebungsphase/">
+        <div class="kapitel">Kapitel 1.2</div>
+        <h2>Geradlinige Bewegungen mit konstanter Geschwindigkeit</h2>
+        <p>Geschwindigkeit, Zeit-Ort-Gesetz, Bezugssysteme und Koordinatentransformation — drei Kompetenzstufen.</p>
+        <div class="foot"><span class="status">✓ Verfügbar</span><span class="arrow">→</span></div>
+      </a>
+
+    </div>
+
+    <div class="soon-label">Demnächst</div>
+    <div class="grid">
+      <div class="card soon">
+        <div class="kapitel">Kapitel 1.1</div>
+        <h2>Beschreiben von Bewegungen</h2>
+        <p>Ort, Zeitpunkt, Bezugssysteme, Messunsicherheiten.</p>
+        <div class="foot"><span class="status">In Vorbereitung</span></div>
+      </div>
+      <div class="card soon">
+        <div class="kapitel">Kapitel 1.3</div>
+        <h2>Geradlinige Bewegungen mit veränderlicher Geschwindigkeit</h2>
+        <p>Beschleunigung, t-v- und t-a-Diagramme.</p>
+        <div class="foot"><span class="status">In Vorbereitung</span></div>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<footer class="bot">
+  Materialien für den Physikunterricht · Einführungsphase<br>
+  <a href="../">← Zurück zu Physik</a>
+</footer>
+
+</body>
+</html>
