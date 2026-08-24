@@ -3,84 +3,82 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>EP Materialien</title>
+<title>Physik · EP Unterrichtsmaterialien</title>
 <style>
-:root{
-  --teal:#0f6e56; --teal-dark:#085041;
-  --border:#dde1e7; --bg:#f4f5f7; --text:#1c1f26; --muted:#5c6472;
-}
-*{box-sizing:border-box}
-body{
-  margin:0; background:var(--bg); color:var(--text);
-  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
-  line-height:1.55; font-size:16px;
-}
-.wrap{max-width:1000px; margin:0 auto; padding:0 16px 56px}
+  :root {
+    --teal: #0f6e56; --teal-dark: #085041;
+    --border: #dde1e7; --bg: #f4f5f7;
+    --text: #1c1f26; --muted: #5c6472;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body { margin: 0; background: var(--bg); color: var(--text);
+         font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+         line-height: 1.55; font-size: 16px; }
+  .wrap { max-width: 960px; margin: 0 auto; padding: 0 16px 64px; }
 
-header.top{background:var(--teal); border-bottom:4px solid var(--teal-dark); color:#fff}
-header.top .inner{max-width:1000px; margin:0 auto; padding:26px 16px 28px}
-header.top h1{margin:0 0 5px; font-size:1.85rem; line-height:1.2}
-header.top .sub{font-size:.94rem; opacity:.95}
+  /* HEADER */
+  header.top { background: var(--teal); border-bottom: 4px solid var(--teal-dark); color: #fff; }
+  header.top .inner { max-width: 960px; margin: 0 auto; padding: 32px 16px; }
+  header.top .breadcrumb { font-size: 0.82rem; opacity: 0.75; margin-bottom: 8px; }
+  header.top .breadcrumb a { color: #fff; text-decoration: none; }
+  header.top .breadcrumb a:hover { text-decoration: underline; }
+  header.top h1 { font-size: 2rem; font-weight: 700; margin-bottom: 6px; }
+  header.top p  { font-size: 1rem; opacity: 0.85; }
 
-.grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:14px; margin-top:30px}
-.card{
-  display:flex; flex-direction:column;
-  background:#fff; border:1px solid var(--border); border-radius:10px;
-  padding:18px 19px 16px; text-decoration:none; color:inherit;
-  transition:transform .13s, box-shadow .13s, border-color .13s;
-  position:relative; overflow:hidden;
-}
-.card::before{content:""; position:absolute; top:0; left:0; right:0; height:4px; background:var(--teal)}
-a.card:hover{transform:translateY(-2px); box-shadow:0 5px 16px rgba(28,31,38,.11); border-color:var(--muted)}
-.card h2{margin:0 0 7px; font-size:1.15rem}
-.card p{margin:0 0 13px; font-size:.89rem; color:var(--muted); flex:1}
-.card .foot{display:flex; align-items:center; justify-content:space-between; gap:8px}
-.status{font-size:.8rem; font-weight:700; color:#1a9e5c}
-.arrow{color:var(--muted); font-size:1.05rem}
-a.card:hover .arrow{color:var(--teal)}
+  /* SECTION */
+  .section-title { font-size: 1.1rem; font-weight: 600; color: var(--muted);
+                   letter-spacing: 0.04em; text-transform: uppercase;
+                   margin: 40px 0 16px; border-bottom: 1px solid var(--border); padding-bottom: 8px; }
 
-.card.soon{background:#fafbfc; border-style:dashed; cursor:default}
-.card.soon::before{background:var(--border)}
-.card.soon h2{color:var(--muted)}
-.card.soon .status{color:var(--muted); font-weight:600}
+  /* CARDS */
+  .cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px; }
+  .card  { background: #fff; border: 1px solid var(--border); border-top: 3px solid var(--teal);
+           border-radius: 4px; padding: 20px 22px; text-decoration: none; color: var(--text);
+           display: flex; flex-direction: column; transition: box-shadow .15s; }
+  .card:hover { box-shadow: 0 4px 14px rgba(0,0,0,.08); }
+  .card h2   { font-size: 1.15rem; font-weight: 700; margin-bottom: 8px; }
+  .card p    { font-size: 0.9rem; color: var(--muted); flex: 1; }
+  .card .tag { margin-top: 14px; font-size: 0.82rem; color: var(--teal); font-weight: 600; }
+  .card .arr { float: right; }
 
-footer.bot{
-  text-align:center; color:var(--muted); font-size:.82rem;
-  padding:26px 16px; border-top:1px solid var(--border); margin-top:40px;
-}
-@media(max-width:600px){ header.top h1{font-size:1.4rem} .grid{grid-template-columns:1fr} }
+  footer { text-align: center; color: var(--muted); font-size: 0.85rem; margin-top: 60px; }
 </style>
 </head>
 <body>
 
 <header class="top">
   <div class="inner">
-    <h1>EP Unterrichtsmaterialien</h1>
-    <div class="sub">Interaktive Übungsaufgaben nach Fach sortiert</div>
+    <div class="breadcrumb"><a href="../">← Startseite</a></div>
+    <h1>Physik</h1>
+    <p>Übungsaufgaben nach Kurstyp</p>
   </div>
 </header>
 
 <div class="wrap">
-  <div class="grid">
+  <div class="section-title">Kurstypen</div>
+  <div class="cards">
 
+    <!-- WICHTIG: href="EP_Materialien/" — relativer Link zum Unterordner -->
     <a class="card" href="EP_Materialien/">
-      <h2>Physik</h2>
-      <p>Bewegungen, Kräfte, Erhaltungsgrößen, Kreisbewegung und Weltbilder — Kapitelübersicht mit Übungsphasen.</p>
-      <div class="foot"><span class="status">✓ Verfügbar</span><span class="arrow">→</span></div>
+      <h2>Erhöhtes Prüfungsniveau (EP)</h2>
+      <p>Kapitelübersicht mit interaktiven Übungsphasen für das erhöhte Prüfungsniveau.</p>
+      <div class="tag">✓ Verfügbar <span class="arr">→</span></div>
     </a>
 
-    <a class="card" href="Mathematik/">
-      <h2>Mathematik</h2>
-      <p>Materialien nach Niveaustufe (EP, GK, LK).</p>
-      <div class="foot"><span class="status">✓ Verfügbar</span><span class="arrow">→</span></div>
+    <!-- Weitere Kurstypen können hier ergänzt werden -->
+    <!-- Beispiel:
+    <a class="card" href="GK_Materialien/">
+      <h2>Grundkurs (GK)</h2>
+      <p>Materialien für den Grundkurs Physik.</p>
+      <div class="tag">In Vorbereitung</div>
     </a>
+    -->
 
   </div>
 </div>
 
-<footer class="bot">
-  EP Unterrichtsmaterialien · Friedrich-Bährens-Gymnasium Schwerte
-</footer>
+<footer>EP Unterrichtsmaterialien · Friedrich-Bährens-Gymnasium Schwerte</footer>
 
 </body>
 </html>
