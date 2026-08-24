@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mathematik · FBG Schwerte</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,400;0,600;1,400&display=swap">
+<style>
+  /* ── Token layer ── */
+  :root {
+    --gold:        #b87500;
+    --gold-mid:    #d48c00;
+    --gold-pale:   #fdf3dc;
+    --ep:          #3d6898;
+    --ep-pale:     #e8eff7;
+    --gk:          #1a7a4a;
+    --gk-pale:     #e4f2eb;
+    --lk:          #b87500;
+    --lk-pale:     #fdf3dc;
+    --bg:          #f5f4f0;
+    --surface:     #ffffff;
+    --border:      #ddd8cc;
+    --text:        #1c1a16;
+    --muted:       #6b6456;
+    --link:        #3d6898;
+    --stripe-w:    5px;
+    --r:           6px;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --gold:        #d4a030;
+      --gold-mid:    #e0b048;
+      --gold-pale:   #2a2010;
+      --ep:          #6a9fd8;
+      --ep-pale:     #0f1e30;
+      --gk:          #3db870;
+      --gk-pale:     #0a2018;
+      --lk:          #d4a030;
+      --lk-pale:     #2a2010;
+      --bg:          #1a1814;
+      --surface:     #242018;
+      --border:      #38332a;
+      --text:        #ede8de;
+      --muted:       #9e9482;
+      --link:        #6a9fd8;
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --gold:        #d4a030;
+    --gold-mid:    #e0b048;
+    --gold-pale:   #2a2010;
+    --ep:          #6a9fd8;
+    --ep-pale:     #0f1e30;
+    --gk:          #3db870;
+    --gk-pale:     #0a2018;
+    --lk:          #d4a030;
+    --lk-pale:     #2a2010;
+    --bg:          #1a1814;
+    --surface:     #242018;
+    --border:      #38332a;
+    --text:        #ede8de;
+    --muted:       #9e9482;
+    --link:        #6a9fd8;
+  }
+
+  /* ── Reset ── */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    font-size: 16px;
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+
+  /* ── Layout ── */
+  .wrap {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 0 20px 80px;
+  }
+
+  /* ── Topbar ── */
+  .topbar {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 0 20px;
+  }
+  .topbar-inner {
+    max-width: 900px;
+    margin: 0 auto;
+    height: 46px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.82rem;
+    color: var(--muted);
+  }
+  .topbar-inner a {
+    color: var(--link);
+    text-decoration: none;
+  }
+  .topbar-inner a:hover { text-decoration: underline; }
+  .sep { opacity: 0.45; }
+
+  /* ── Header ── */
+  header.page-head {
+    background: var(--surface);
+    border-bottom: 3px solid var(--gold);
+    padding: 36px 20px 32px;
+    margin-bottom: 40px;
+  }
+  header.page-head .inner {
+    max-width: 900px;
+    margin: 0 auto;
+    display: flex;
+    align-items: flex-end;
+    gap: 28px;
+  }
+  .head-text { flex: 1; }
+  .head-eyebrow {
+    font-size: 0.78rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 8px;
+  }
+  header.page-head h1 {
+    font-family: "Crimson Pro", Georgia, "Times New Roman", serif;
+    font-size: 2.5rem;
+    font-weight: 600;
+    line-height: 1.15;
+    color: var(--text);
+    text-wrap: balance;
+  }
+  header.page-head p {
+    font-size: 0.95rem;
+    color: var(--muted);
+    margin-top: 8px;
+    max-width: 55ch;
+  }
+  .head-badge {
+    flex-shrink: 0;
+    background: var(--gold-pale);
+    border: 1px solid var(--gold);
+    border-radius: var(--r);
+    padding: 10px 18px;
+    text-align: center;
+  }
+  .head-badge .badge-num {
+    font-family: "Crimson Pro", Georgia, serif;
+    font-size: 2rem;
+    font-weight: 600;
+    color: var(--gold);
+    line-height: 1;
+  }
+  .head-badge .badge-label {
+    font-size: 0.72rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-top: 3px;
+  }
+
+  /* ── Section label ── */
+  .section-label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  /* ── Cards ── */
+  .cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 18px;
+    margin-top: 16px;
+  }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r);
+    overflow: hidden;
+    text-decoration: none;
+    color: var(--text);
+    display: flex;
+    transition: box-shadow 0.15s, transform 0.12s;
+  }
+  .card:hover {
+    box-shadow: 0 6px 20px rgba(0,0,0,0.10);
+    transform: translateY(-2px);
+  }
+  .card:focus-visible {
+    outline: 2px solid var(--gold);
+    outline-offset: 2px;
+  }
+
+  /* Vertical stripe */
+  .card-stripe {
+    width: var(--stripe-w);
+    flex-shrink: 0;
+    background: currentColor;
+  }
+  .card-ep   .card-stripe { color: var(--ep); }
+  .card-gk   .card-stripe { color: var(--gk); }
+  .card-lk   .card-stripe { color: var(--lk); }
+
+  .card-body {
+    padding: 22px 22px 20px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .card-tag {
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+  .card-ep .card-tag { color: var(--ep); }
+  .card-gk .card-tag { color: var(--gk); }
+  .card-lk .card-tag { color: var(--lk); }
+
+  .card h2 {
+    font-family: "Crimson Pro", Georgia, serif;
+    font-size: 1.4rem;
+    font-weight: 600;
+    line-height: 1.2;
+    margin-bottom: 10px;
+    text-wrap: balance;
+  }
+
+  .card p {
+    font-size: 0.88rem;
+    color: var(--muted);
+    flex: 1;
+    line-height: 1.5;
+  }
+
+  .card-footer {
+    margin-top: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .card-status {
+    font-size: 0.78rem;
+    font-weight: 600;
+    padding: 3px 10px;
+    border-radius: 20px;
+    background: var(--ep-pale);
+    color: var(--ep);
+  }
+  .card-ep .card-status { background: var(--ep-pale); color: var(--ep); }
+  .card-gk .card-status { background: var(--gk-pale); color: var(--gk); }
+  .card-lk .card-status { background: var(--lk-pale); color: var(--lk); }
+  .card-arr {
+    font-size: 1rem;
+    color: var(--muted);
+    transition: transform 0.12s;
+  }
+  .card:hover .card-arr { transform: translateX(3px); }
+
+  /* ── Info box ── */
+  .info-box {
+    margin-top: 40px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--gold);
+    border-radius: var(--r);
+    padding: 16px 20px;
+    font-size: 0.875rem;
+    color: var(--muted);
+    line-height: 1.55;
+  }
+  .info-box strong { color: var(--text); }
+
+  /* ── Footer ── */
+  footer {
+    text-align: center;
+    color: var(--muted);
+    font-size: 0.82rem;
+    margin-top: 72px;
+    padding-top: 24px;
+    border-top: 1px solid var(--border);
+  }
+
+  /* ── Responsive ── */
+  @media (max-width: 600px) {
+    header.page-head h1 { font-size: 2rem; }
+    .head-badge { display: none; }
+    .cards { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Breadcrumb -->
+<nav class="topbar" aria-label="Breadcrumb">
+  <div class="topbar-inner">
+    <a href="../index.html">Unterrichtsmaterialien</a>
+    <span class="sep">›</span>
+    <span>Mathematik</span>
+  </div>
+</nav>
+
+<!-- Header -->
+<header class="page-head">
+  <div class="inner">
+    <div class="head-text">
+      <div class="head-eyebrow">Friedrich-Bährens-Gymnasium Schwerte</div>
+      <h1>Mathematik</h1>
+      <p>Interaktive Übungsaufgaben und Unterrichtsmaterialien – gegliedert nach Niveaustufe.</p>
+    </div>
+    <div class="head-badge" aria-hidden="true">
+      <div class="badge-num">3</div>
+      <div class="badge-label">Niveaustufen</div>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+  <div class="section-label">Materialsammlungen</div>
+
+  <div class="cards">
+
+    <!-- EP -->
+    <a class="card card-ep" href="EP_Materialien/">
+      <div class="card-stripe" aria-hidden="true"></div>
+      <div class="card-body">
+        <div class="card-tag">Einführungsphase</div>
+        <h2>EP-Materialien</h2>
+        <p>Aufgaben und Übungen für die Einführungsphase – Grundlagen der Oberstufe.</p>
+        <div class="card-footer">
+          <span class="card-status">Verfügbar</span>
+          <span class="card-arr" aria-hidden="true">→</span>
+        </div>
+      </div>
+    </a>
+
+    <!-- GK -->
+    <a class="card card-gk" href="GK_Materialien/">
+      <div class="card-stripe" aria-hidden="true"></div>
+      <div class="card-body">
+        <div class="card-tag">Grundkurs</div>
+        <h2>GK-Materialien</h2>
+        <p>Materialien für den Grundkurs in Q1 und Q2 – Analysis, Stochastik und mehr.</p>
+        <div class="card-footer">
+          <span class="card-status">Verfügbar</span>
+          <span class="card-arr" aria-hidden="true">→</span>
+        </div>
+      </div>
+    </a>
+
+    <!-- LK -->
+    <a class="card card-lk" href="LK_Materialien/">
+      <div class="card-stripe" aria-hidden="true"></div>
+      <div class="card-body">
+        <div class="card-tag">Leistungskurs</div>
+        <h2>LK-Materialien</h2>
+        <p>Interaktive Aufgaben für den LK – Analytische Geometrie, Analysis und Lagebeziehungen.</p>
+        <div class="card-footer">
+          <span class="card-status">Verfügbar</span>
+          <span class="card-arr" aria-hidden="true">→</span>
+        </div>
+      </div>
+    </a>
+
+  </div>
+
+  <div class="info-box">
+    <strong>Hinweis:</strong> Die Materialien sind als interaktive HTML-Seiten auf GitHub Pages gehostet.
+    JavaScript-basierte Aufgaben mit Musterlösungen und Kompetenzstufen – optimiert für den Einsatz
+    im Unterricht und zur selbständigen Vorbereitung.
+  </div>
+</div>
+
+<footer>
+  Unterrichtsmaterialien · Friedrich-Bährens-Gymnasium Schwerte
+</footer>
+
+</body>
+</html>
