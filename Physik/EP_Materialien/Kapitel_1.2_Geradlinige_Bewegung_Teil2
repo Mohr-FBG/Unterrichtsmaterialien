@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Übungsphase · Geradlinige Bewegungen mit konstanter Geschwindigkeit</title>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css">
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/contrib/auto-render.min.js"></script>
+
+<style>
+:root{
+  --teal:#0f6e56; --teal-dark:#085041;
+  --blue:#2c5f8a; --blue-dark:#1a3d5c;
+  --green:#1a9e5c; --orange:#d4760a; --purple:#7b3fb5;
+  --border:#dde1e7; --bg:#f4f5f7; --text:#1c1f26;
+  --muted:#5c6472;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0; background:var(--bg); color:var(--text);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  line-height:1.55; font-size:16px;
+}
+.wrap{max-width:960px; margin:0 auto; padding:0 16px 64px}
+
+/* ---------- Kopf ---------- */
+header.top{background:var(--teal); border-bottom:4px solid var(--teal-dark); color:#fff}
+header.top .inner{max-width:960px; margin:0 auto; padding:22px 16px 24px}
+header.top .kap{font-size:.78rem; font-weight:700; letter-spacing:.06em; text-transform:uppercase; opacity:.92}
+header.top h1{margin:6px 0 4px; font-size:1.7rem; line-height:1.2}
+header.top .sub{font-size:.92rem; opacity:.95}
+
+/* ---------- Steuerleiste ---------- */
+.controls{
+  background:#fff; border:1px solid var(--border); border-radius:10px;
+  padding:14px 16px; margin:18px 0 22px;
+  display:flex; flex-wrap:wrap; gap:16px; align-items:center; justify-content:space-between;
+}
+.unlock{display:flex; align-items:center; gap:8px; flex-wrap:wrap}
+.unlock label{font-size:.9rem; color:var(--muted)}
+.unlock input{
+  border:1px solid var(--border); border-radius:6px; padding:6px 10px;
+  font-size:.95rem; width:130px; font-family:inherit;
+}
+.unlock button{
+  background:var(--blue); color:#fff; border:0; border-radius:6px;
+  padding:7px 14px; font-size:.9rem; font-weight:600; cursor:pointer; font-family:inherit;
+}
+.unlock button:hover{background:var(--blue-dark)}
+.unlock .msg{font-size:.85rem; font-weight:600}
+.unlock .msg.ok{color:var(--green)}
+.unlock .msg.bad{color:#c0392b}
+
+.filters{display:flex; gap:6px; flex-wrap:wrap}
+.filters button{
+  background:#fff; border:1px solid var(--border); border-radius:20px;
+  padding:6px 14px; font-size:.85rem; cursor:pointer; color:var(--muted);
+  font-family:inherit; font-weight:600;
+}
+.filters button:hover{border-color:var(--muted)}
+.filters button.on{background:var(--text); border-color:var(--text); color:#fff}
+
+/* ---------- Stufenabschnitte ---------- */
+.stufe-head{
+  display:flex; align-items:baseline; gap:12px; flex-wrap:wrap;
+  margin:30px 0 12px; padding-bottom:8px; border-bottom:2px solid var(--border);
+}
+.stufe-badge{
+  color:#fff; border-radius:6px; padding:4px 12px;
+  font-weight:700; font-size:.9rem; letter-spacing:.02em;
+}
+.s1 .stufe-badge{background:var(--green)}
+.s2 .stufe-badge{background:var(--orange)}
+.s3 .stufe-badge{background:var(--purple)}
+.stufe-head .desc{color:var(--muted); font-size:.9rem}
+
+/* ---------- Aufgabenkarte ---------- */
+.card{
+  background:#fff; border:1px solid var(--border); border-radius:10px;
+  margin-bottom:14px; overflow:hidden;
+}
+.card.s1{border-top:4px solid var(--green)}
+.card.s2{border-top:4px solid var(--orange)}
+.card.s3{border-top:4px solid var(--purple)}
+.card-head{
+  display:flex; align-items:center; justify-content:space-between; gap:12px;
+  padding:13px 18px; cursor:pointer; user-select:none;
+}
+.card-head:hover{background:#fafbfc}
+.card-head h3{margin:0; font-size:1.03rem; font-weight:700}
+.chev{color:var(--muted); font-size:1.1rem; transition:transform .18s}
+.card.open .chev{transform:rotate(180deg)}
+.card-body{display:none; padding:0 18px 18px}
+.card.open .card-body{display:block}
+
+.task{
+  background:#fbfcfd; border:1px solid var(--border); border-left:3px solid var(--blue);
+  border-radius:6px; padding:12px 15px; margin-bottom:14px;
+}
+.task p{margin:.5em 0}
+.task p:first-child{margin-top:0}
+.task p:last-child{margin-bottom:0}
+.task svg{display:block; margin:10px auto; max-width:100%; height:auto}
+
+/* ---------- Selbsteinschätzung ---------- */
+.assess{display:flex; align-items:center; gap:7px; flex-wrap:wrap; margin-bottom:14px}
+.assess .lab{font-size:.83rem; color:var(--muted); margin-right:2px}
+.assess button{
+  border:1px solid var(--border); background:#fff; border-radius:16px;
+  padding:4px 12px; font-size:.8rem; cursor:pointer; color:var(--muted); font-family:inherit;
+}
+.assess button.on[data-v="ok"]{background:var(--green); border-color:var(--green); color:#fff}
+.assess button.on[data-v="mid"]{background:var(--orange); border-color:var(--orange); color:#fff}
+.assess button.on[data-v="ask"]{background:var(--blue); border-color:var(--blue); color:#fff}
+
+/* ---------- Hilfen ---------- */
+.hints{border:1px solid var(--border); border-radius:8px; overflow:hidden; margin-bottom:14px}
+.hints .htitle{
+  background:#f7f8fa; padding:7px 14px; font-size:.8rem; font-weight:700;
+  color:var(--muted); text-transform:uppercase; letter-spacing:.05em;
+  border-bottom:1px solid var(--border);
+}
+.htabs{display:flex; flex-wrap:wrap; gap:6px; padding:10px 14px; background:#fdfdfe}
+.htabs button{
+  border:1px solid var(--border); background:#fff; border-radius:6px;
+  padding:5px 11px; font-size:.82rem; cursor:pointer; color:var(--text); font-family:inherit;
+}
+.htabs button:hover{border-color:var(--teal)}
+.htabs button.on{background:var(--teal); border-color:var(--teal); color:#fff; font-weight:600}
+.hpanel{display:none; padding:12px 15px; border-top:1px solid var(--border); font-size:.95rem}
+.hpanel.on{display:block}
+.hpanel h4{margin:0 0 8px; font-size:.92rem; color:var(--teal-dark)}
+.hpanel p{margin:.5em 0}
+
+/* ---------- Musterlösung ---------- */
+.sol-lock{
+  background:#f7f8fa; border:1px dashed var(--border); border-radius:8px;
+  padding:12px 15px; font-size:.9rem; color:var(--muted); text-align:center;
+}
+.sol{
+  display:none; border:1px solid var(--green); border-radius:8px; overflow:hidden;
+}
+.sol .sh{
+  background:var(--green); color:#fff; padding:7px 15px;
+  font-weight:700; font-size:.88rem;
+}
+.sol .sb{padding:13px 15px; font-size:.95rem}
+.sol .sb p{margin:.55em 0}
+.sol .sb p:first-child{margin-top:0}
+body.unlocked .sol{display:block}
+body.unlocked .sol-lock{display:none}
+
+.note{
+  background:#eaf4f0; border-left:3px solid var(--teal); border-radius:6px;
+  padding:10px 14px; font-size:.9rem; margin:12px 0;
+}
+.katex{font-size:1.04em}
+.katex-display{margin:.6em 0; overflow-x:auto; overflow-y:hidden}
+.backnav{margin:18px 0 4px}
+.backnav a{
+  display:inline-flex; align-items:center; gap:6px;
+  font-size:.86rem; font-weight:600; color:var(--muted);
+  text-decoration:none; border:1px solid var(--border); border-radius:20px;
+  padding:5px 13px; background:#fff;
+}
+.backnav a:hover{border-color:var(--muted); color:var(--text)}
+
+footer.bot{
+  text-align:center; color:var(--muted); font-size:.82rem;
+  padding:26px 16px; border-top:1px solid var(--border); margin-top:34px;
+}
+footer.bot a{color:var(--blue)}
+@media(max-width:600px){
+  header.top h1{font-size:1.32rem}
+  .controls{flex-direction:column; align-items:stretch}
+  .card-head h3{font-size:.95rem}
+}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="inner">
+    <div class="kap">Kapitel 1.2 · Bewegungen beschreiben · Physik EP</div>
+    <h1>Übungsphase: Geradlinige Bewegungen mit konstanter Geschwindigkeit</h1>
+    <div class="sub">Wähle deine Stufe · Nutze die Hilfen schrittweise · Musterlösungen nach Lehrerfreigabe</div>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <div class="backnav"><a href="../">← Zurück zu EP Materialien</a></div>
+
+  <div class="controls">
+    <div class="unlock">
+      <label for="code">🔒 Musterlösungen freischalten:</label>
+      <input id="code" type="text" autocomplete="off" placeholder="Code">
+      <button id="btn-unlock" type="button">Bestätigen</button>
+      <span class="msg" id="msg"></span>
+    </div>
+    <div class="filters">
+      <button class="on" data-f="all" type="button">Alle Stufen</button>
+      <button data-f="1" type="button">Stufe 1</button>
+      <button data-f="2" type="button">Stufe 2</button>
+      <button data-f="3" type="button">Stufe 3</button>
+    </div>
+  </div>
+
+  <div class="note">
+    <strong>Formeln im Überblick:</strong> Geschwindigkeit $v=\dfrac{\Delta s}{\Delta t}$ · Zeit-Ort-Gesetz
+    $s(t)=v\cdot t+s_0$ · Umrechnung $1\,\tfrac{\text{m}}{\text{s}}=3{,}6\,\tfrac{\text{km}}{\text{h}}$ ·
+    Koordinatentransformation ins Bezugssystem eines mit $v_B$ bewegten Beobachters: $s'(t)=s(t)-v_B\cdot t$.
+  </div>
+
+  <!-- ================= STUFE 1 ================= -->
+  <section class="s1" data-stufe="1">
+    <div class="stufe-head">
+      <span class="stufe-badge">Stufe 1</span>
+      <span class="desc">Grundaufgaben · Geschwindigkeit bestimmen, Zeit-Ort-Gesetz aufstellen</span>
+    </div>
+
+    <!-- ---------- Aufgabe 1 ---------- -->
+    <article class="card s1" data-stufe="1">
+      <div class="card-head"><h3>Aufgabe 1 · Geschwindigkeit aus dem Diagramm</h3><span class="chev">▾</span></div>
+      <div class="card-body">
+        <div class="task">
+          <p>Das Diagramm zeigt das $t$-$s$-Diagramm einer Inlineskaterin, die sich mit konstanter Geschwindigkeit auf einer geraden Bahn bewegt.</p>
+          <svg viewBox="0 0 380 220" xmlns="http://www.w3.org/2000/svg">
+            <line x1="50" y1="190" x2="350" y2="190" stroke="#1c1f26" stroke-width="1.2"/>
+            <line x1="50" y1="190" x2="50" y2="20" stroke="#1c1f26" stroke-width="1.2"/>
+            <g stroke="#c7ccd3" stroke-width="1">
+              <line x1="110" y1="30" x2="110" y2="190"/>
+              <line x1="170" y1="30" x2="170" y2="190"/>
+              <line x1="230" y1="30" x2="230" y2="190"/>
+              <line x1="290" y1="30" x2="290" y2="190"/>
+              <line x1="350" y1="30" x2="350" y2="190"/>
+            </g>
+            <g font-size="11" fill="#5c6472" font-family="inherit">
+              <text x="50" y="205" text-anchor="middle">0</text>
+              <text x="110" y="205" text-anchor="middle">2</text>
+              <text x="170" y="205" text-anchor="middle">4</text>
+              <text x="230" y="205" text-anchor="middle">6</text>
+              <text x="290" y="205" text-anchor="middle">8</text>
+              <text x="350" y="205" text-anchor="middle">10</text>
+              <text x="365" y="203" text-anchor="middle" font-size="11">t in s</text>
+              <text x="38" y="194" text-anchor="end">0</text>
+              <text x="38" y="162" text-anchor="end">10</text>
+              <text x="38" y="130" text-anchor="end">20</text>
+              <text x="38" y="98" text-anchor="end">30</text>
+              <text x="38" y="66" text-anchor="end">40</text>
+              <text x="38" y="34" text-anchor="end">50</text>
+              <text x="58" y="24" font-size="11">s in m</text>
+            </g>
+            <line x1="50" y1="174" x2="350" y2="46" stroke="#d4760a" stroke-width="2.4"/>
+            <circle cx="50" cy="174" r="3.2" fill="#d4760a"/>
+            <circle cx="350" cy="46" r="3.2" fill="#d4760a"/>
+          </svg>
+          <p><strong>a)</strong> Lesen Sie aus dem Diagramm den Startort $s_0$ und die Geschwindigkeit $v$ ab.</p>
+          <p><strong>b)</strong> Stellen Sie das Zeit-Ort-Gesetz der Bewegung auf.</p>
+          <p><strong>c)</strong> Berechnen Sie den Ort der Skaterin bei $t=6\,\text{s}$ und vergleichen Sie Ihr Ergebnis mit dem Diagramm.</p>
+        </div>
+
+        <div class="assess">
+          <span class="lab">Einschätzung:</span>
+          <button data-v="ok" type="button">✓ Fertig &amp; verstanden</button>
+          <button data-v="mid" type="button">~ Noch unsicher</button>
+          <button data-v="ask" type="button">? Frage an Lehrer</button>
+        </div>
+
+        <div class="hints">
+          <div class="htitle">Hilfen</div>
+          <div class="htabs">
+            <button type="button">Hilfe 1 · Ablesen</button>
+            <button type="button">Hilfe 2 · Steigung berechnen</button>
+            <button type="button">Hilfe 3 · Fast fertig</button>
+          </div>
+          <div class="hpanel">
+            <h4>Hilfe 1 · Was zeigt das Diagramm?</h4>
+            <p>Der Startort $s_0$ ist der Wert, bei dem die Gerade die $s$-Achse schneidet (also der $s$-Wert bei $t=0\,\text{s}$).</p>
+            <p>Die Geschwindigkeit entspricht der <strong>Steigung</strong> der Geraden. Lies dazu zwei möglichst weit auseinanderliegende Punkte der Geraden ab.</p>
+          </div>
+          <div class="hpanel">
+            <h4>Hilfe 2 · Steigung berechnen</h4>
+            <p>Die Gerade verläuft durch die Punkte $(0\,\text{s}\mid 5\,\text{m})$ und $(10\,\text{s}\mid 45\,\text{m})$.</p>
+            <p>$$v=\frac{\Delta s}{\Delta t}=\frac{45\,\text{m}-5\,\text{m}}{10\,\text{s}-0\,\text{s}}$$</p>
+          </div>
+          <div class="hpanel">
+            <h4>Hilfe 3 · Fast fertig</h4>
+            <p>Mit $s_0=5\,\text{m}$ und $v=4{,}0\,\tfrac{\text{m}}{\text{s}}$ lautet das Zeit-Ort-Gesetz $s(t)=4{,}0\,\tfrac{\text{m}}{\text{s}}\cdot t+5\,\text{m}$.</p>
+            <p>Setze $t=6\,\text{s}$ ein und vergleiche das Ergebnis mit dem Diagramm-Wert bei $t=6\,\text{s}$.</p>
+          </div>
+        </div>
+
+        <div class="sol-lock">🔒 Musterlösung – nach Freigabe durch den Lehrer sichtbar.</div>
+        <div class="sol">
+          <div class="sh">✓ Musterlösung · Aufgabe 1</div>
+          <div class="sb">
+            <p><strong>a)</strong> $s_0=5\,\text{m}$ (Schnittpunkt mit der $s$-Achse).</p>
+            <p>$$v=\frac{\Delta s}{\Delta t}=\frac{45\,\text{m}-5\,\text{m}}{10\,\text{s}}=\frac{40\,\text{m}}{10\,\text{s}}={\color{#1a9e5c}\boldsymbol{4{,}0\,\tfrac{\text{m}}{\text{s}}}}$$</p>
+            <p><strong>b)</strong> $$s(t)=4{,}0\,\tfrac{\text{m}}{\text{s}}\cdot t+5\,\text{m}$$</p>
+            <p><strong>c)</strong> $$s(6\,\text{s})=4{,}0\,\tfrac{\text{m}}{\text{s}}\cdot 6\,\text{s}+5\,\text{m}=24\,\text{m}+5\,\text{m}={\color{#1a9e5c}\boldsymbol{29\,\text{m}}}$$</p>
+            <p>Im Diagramm liegt der Punkt bei $t=6\,\text{s}$ ungefähr auf halber Höhe zwischen den beiden Randwerten $5\,\text{m}$ und $45\,\text{m}$ – das passt zum berechneten Wert von $29\,\text{m}$.</p>
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <!-- ---------- Aufgabe 2 ---------- -->
+    <article class="card s1" data-stufe="1">
+      <div class="card-head"><h3>Aufgabe 2 · Von der Messtabelle zur Geschwindigkeit</h3><span class="chev">▾</span></div>
+      <div class="card-body">
+        <div class="task">
+          <p>Bei der Fahrt einer Straßenbahn zwischen zwei Haltestellen wurden folgende Messwerte aufgenommen:</p>
+          <p>
+            $$
+            \begin{array}{c|c|c|c|c}
+            t \text{ in s} & 0 & 4 & 8 & 12\\\hline
+            s \text{ in m} & 12 & 44 & 76 & 108
+            \end{array}
+            $$
+          </p>
+          <p><strong>a)</strong> Weisen Sie anhand der Tabelle nach, dass es sich um eine gleichförmige Bewegung handelt.</p>
+          <p><strong>b)</strong> Bestimmen Sie die Geschwindigkeit in $\tfrac{\text{m}}{\text{s}}$ und rechnen Sie sie in $\tfrac{\text{km}}{\text{h}}$ um.</p>
+          <p><strong>c)</strong> Stellen Sie das Zeit-Ort-Gesetz auf und berechnen Sie damit den Ort der Straßenbahn bei $t=20\,\text{s}$.</p>
+        </div>
+
+        <div class="assess">
+          <span class="lab">Einschätzung:</span>
+          <button data-v="ok" type="button">✓ Fertig &amp; verstanden</button>
+          <button data-v="mid" type="button">~ Noch unsicher</button>
+          <button data-v="ask" type="button">? Frage an Lehrer</button>
+        </div>
+
+        <div class="hints">
+          <div class="htitle">Hilfen</div>
+          <div class="htabs">
+            <button type="button">Hilfe 1 · Nachweis</button>
+            <button type="button">Hilfe 2 · Umrechnung</button>
+            <button type="button">Hilfe 3 · Zeit-Ort-Gesetz</button>
+          </div>
+          <div class="hpanel">
+            <h4>Hilfe 1 · Wie zeigt man "gleichförmig"?</h4>
+            <p>Berechne für jedes der drei Intervalle die Differenz $\Delta s$ und teile sie durch das jeweilige $\Delta t=4\,\text{s}$. Bleibt der Quotient in allen drei Intervallen gleich groß, handelt es sich um eine gleichförmige Bewegung.</p>
+          </div>
+          <div class="hpanel">
+            <h4>Hilfe 2 · Einheiten umrechnen</h4>
+            <p>Für die Umrechnung von $\tfrac{\text{m}}{\text{s}}$ in $\tfrac{\text{km}}{\text{h}}$ multiplizierst du mit dem Faktor $3{,}6$.</p>
+          </div>
+          <div class="hpanel">
+            <h4>Hilfe 3 · Zeit-Ort-Gesetz aufstellen</h4>
+            <p>Der Wert $s_0$ ist der Ort bei $t=0\,\text{s}$ – der steht bereits in der Tabelle. Setze $v$ und $s_0$ in $s(t)=v\cdot t+s_0$ ein und rechne dann mit $t=20\,\text{s}$ weiter.</p>
+          </div>
+        </div>
+
+        <div class="sol-lock">🔒 Musterlösung – nach Freigabe durch den Lehrer sichtbar.</div>
+        <div class="sol">
+          <div class="sh">✓ Musterlösung · Aufgabe 2</div>
+          <div class="sb">
+            <p><strong>a)</strong> $\dfrac{44-12}{4}=8{,}0\,\tfrac{\text{m}}{\text{s}}$, $\;\dfrac{76-44}{4}=8{,}0\,\tfrac{\text{m}}{\text{s}}$, $\;\dfrac{108-76}{4}=8{,}0\,\tfrac{\text{m}}{\text{s}}$.</p>
+            <p>In allen drei Intervallen ergibt sich derselbe Wert ⇒ die Bewegung ist <strong>gleichförmig</strong>.</p>
+            <p><strong>b)</strong> $$v={\color{#1a9e5c}\boldsymbol{8{,}0\,\tfrac{\text{m}}{\text{s}}}}=8{,}0\cdot 3{,}6\,\tfrac{\text{km}}{\text{h}}={\color{#1a9e5c}\boldsymbol{28{,}8\,\tfrac{\text{km}}{\text{h}}}}$$</p>
+            <p><strong>c)</strong> Mit $s_0=12\,\text{m}$: $$s(t)=8{,}0\,\tfrac{\text{m}}{\text{s}}\cdot t+12\,\text{m}$$</p>
+            <p>$$s(20\,\text{s})=8{,}0\,\tfrac{\text{m}}{\text{s}}\cdot 20\,\text{s}+12\,\text{m}=160\,\text{m}+12\,\text{m}={\color{#1a9e5c}\boldsymbol{172\,\text{m}}}$$</p>
+          </div>
+        </div>
+      </div>
+    </article>
+  </section>
+
+  <!-- ================= STUFE 2 ================= -->
+  <section class="s2" data-stufe="2">
+    <div class="stufe-head">
+      <span class="stufe-badge">Stufe 2</span>
+      <span class="desc">Erweiterung · Bezugssysteme, Treffpunkte, Sachkontexte</span>
+    </div>
+
+    <!-- ---------- Aufgabe 3 ---------- -->
+    <article class="card s2" data-stufe="2">
+      <div class="card-head"><h3>Aufgabe 3 · Überholvorgang auf der Landstraße</h3><span class="chev">▾</span></div>
+      <div class="card-body">
+        <div class="task">
+          <p>Ein Pkw fährt mit $v_P=90\,\tfrac{\text{km}}{\text{h}}$ hinter einem Lkw her, der mit $v_L=54\,\tfrac{\text{km}}{\text{h}}$ fährt. Zu Beginn der Beobachtung ($t=0$) liegt der Lkw $35\,\text{m}$ vor dem Pkw. Es wird angenommen, dass sich beide Fahrzeuge gleichförmig bewegen. Der Überholvorgang gilt als abgeschlossen, sobald der Pkw einen Vorsprung von $25\,\text{m}$ vor dem Lkw hat.</p>
+          <p><strong>a)</strong> Stellen Sie die Zeit-Ort-Gesetze $s_P(t)$ und $s_L(t)$ im Bezugssystem Straße auf.</p>
+          <p><strong>b)</strong> Berechnen Sie die Dauer des Überholvorgangs sowie die dabei vom Pkw zurückgelegte Strecke.</p>
+          <p><strong>c)</strong> Geben Sie die Bewegungsgleichung des Pkw im Bezugssystem des Lkw an und bestätigen Sie damit Ihr Ergebnis aus b).</p>
+        </div>
+
+        <div class="assess">
+          <span class="lab">Einschätzung:</span>
+          <button data-v="ok" type="button">✓ Fertig &amp; verstanden</button>
+          <button data-v="mid" type="button">~ Noch unsicher</button>
+          <button data-v="ask" type="button">? Frage an Lehrer</button>
+        </div>
+
+        <div class="hints">
+          <div class="htitle">Hilfen</div>
+          <div class="htabs">
+            <button type="button">Hilfe 1 · Einheiten</button>
+            <button type="button">Hilfe 2 · Ansatz b)</button>
+            <button type="button">Hilfe 3 · Bezugssystem Lkw</button>
+          </div>
+          <div class="hpanel">
+            <h4>Hilfe 1 · In SI-Einheiten rechnen</h4>
+            <p>Rechne beide Geschwindigkeiten zuerst in $\tfrac{\text{m}}{\text{s}}$ um: $90\,\tfrac{\text{km}}{\text{h}}:3{,}6=25\,\tfrac{\text{m}}{\text{s}}$, entsprechend für den Lkw.</p>
+          </div>
+          <div class="hpanel">
+            <h4>Hilfe 2 · Bedingung für das Überholende</h4>
+            <p>Der Überholvorgang ist beendet, wenn gilt $s_P(t)=s_L(t)+25\,\text{m}$. Setze deine Terme aus a) ein und löse nach $t$ auf.</p>
+          </div>
+          <div class="hpanel">
+            <h4>Hilfe 3 · Wechsel ins Bezugssystem Lkw</h4>
+            <p>Im Bezugssystem des Lkw gilt für die Position des Pkw $s_P'(t)=s_P(t)-v_L\cdot t$. Setze deine Terme ein und vereinfache. Der Überholvorgang ist beendet, wenn $s_P'(t)=+25\,\text{m}$ gilt.</p>
+          </div>
+        </div>
+
+        <div class="sol-lock">🔒 Musterlösung – nach Freigabe durch den Lehrer sichtbar.</div>
+        <div class="sol">
+          <div class="sh">✓ Musterlösung · Aufgabe 3</div>
+          <div class="sb">
+            <p><strong>a)</strong> $v_P=25\,\tfrac{\text{m}}{\text{s}}$, $v_L=15\,\tfrac{\text{m}}{\text{s}}$.</p>
+            <p>$$s_P(t)=25\,\tfrac{\text{m}}{\text{s}}\cdot t \qquad\qquad s_L(t)=15\,\tfrac{\text{m}}{\text{s}}\cdot t+35\,\text{m}$$</p>
+            <p><strong>b)</strong> $$25t=15t+35+25 \;\Rightarrow\; 10t=60 \;\Rightarrow\; t={\color{#1a9e5c}\boldsymbol{6{,}0\,\text{s}}}$$</p>
+            <p>$$s_P(6\,\text{s})=25\,\tfrac{\text{m}}{\text{s}}\cdot 6\,\text{s}={\color{#1a9e5c}\boldsymbol{150\,\text{m}}}$$</p>
+            <p><strong>c)</strong> Relativgeschwindigkeit: $v_P'=v_P-v_L=25-15=10\,\tfrac{\text{m}}{\text{s}}$. Zum Zeitpunkt $t=0$ liegt der Pkw im Bezugssystem Lkw bei $s_P'(0)=0-35\,\text{m}=-35\,\text{m}$.</p>
+            <p>$$s_P'(t)=10\,\tfrac{\text{m}}{\text{s}}\cdot t-35\,\text{m}$$</p>
+            <p>Überholvorgang beendet bei $s_P'(t)=25\,\text{m}$:</p>
+            <p>$$10t-35=25 \;\Rightarrow\; t={\color{#1a9e5c}\boldsymbol{6{,}0\,\text{s}}}\quad\checkmark$$</p>
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <!-- ---------- Aufgabe 4 ---------- -->
+    <article class="card s2" data-stufe="2">
+      <div class="card-head"><h3>Aufgabe 4 · Zwei Radfahrerinnen kommen sich entgegen</h3><span class="chev">▾</span></div>
+      <div class="card-body">
+        <div class="task">
+          <p>Zwei Nachbarorte liegen $18\,\text{km}$ voneinander entfernt und sind durch eine gerade Straße verbunden. Um $14{:}00$ Uhr starten gleichzeitig zwei Radfahrerinnen: Anna startet im Ort A ($s=0$) mit $v_A=20\,\tfrac{\text{km}}{\text{h}}$ in Richtung Ort B, Beke startet im Ort B ($s=18\,\text{km}$) mit $v_B=16\,\tfrac{\text{km}}{\text{h}}$ in Richtung Ort A.</p>
+          <p><strong>a)</strong> Stellen Sie für beide Radfahrerinnen das Zeit-Ort-Gesetz auf.</p>
+          <p><strong>b)</strong> Berechnen Sie, wann und an welchem Ort sich die beiden Radfahrerinnen treffen.</p>
+          <p><strong>c)</strong> Skizzieren Sie qualitativ (ohne genaue Maßstäbe) das $t$-$s$-Diagramm beider Bewegungen in einem gemeinsamen Koordinatensystem.</p>
+        </div>
+
+        <div class="assess">
+          <span class="lab">Einschätzung:</span>
+          <button data-v="ok" type="button">✓ Fertig &amp; verstanden</button>
+          <button data-v="mid" type="button">~ Noch unsicher</button>
+          <button data-v="ask" type="button">? Frage an Lehrer</button>
+        </div>
+
+        <div class="hints">
+          <div class="htitle">Hilfen</div>
+          <div class="htabs">
+            <button type="button">Hilfe 1 · Vorzeichen</button>
+            <button type="button">Hilfe 2 · Treffpunkt</button>
+            <button type="button">Hilfe 3 · Zur Skizze</button>
+          </div>
+          <div class="hpanel">
+            <h4>Hilfe 1 · Richtung beachten</h4>
+            <p>Wähle die Richtung von A nach B als positive Richtung. Annas Geschwindigkeit ist dann positiv. Beke bewegt sich in die entgegengesetzte Richtung – ihre Geschwindigkeit geht mit negativem Vorzeichen in die Gleichung ein. Ihr Startort ist $18\,\text{km}$.</p>
+          </div>
+          <div class="hpanel">
+            <h4>Hilfe 2 · Treffpunkt berechnen</h4>
+            <p>Am Treffpunkt gilt $s_A(t)=s_B(t)$. Setze beide Terme gleich und löse nach $t$ auf; setze anschließend in eine der beiden Gleichungen ein, um den Ort zu erhalten.</p>
+          </div>
+          <div class="hpanel">
+            <h4>Hilfe 3 · Worauf es bei der Skizze ankommt</h4>
+            <p>Beide Graphen sind Geraden. Annas Gerade beginnt bei $s=0$ und steigt an, Bekes Gerade beginnt bei $s=18\,\text{km}$ und fällt ab. Der Schnittpunkt der beiden Geraden entspricht genau eurem Ergebnis aus b).</p>
+          </div>
+        </div>
+
+        <div class="sol-lock">🔒 Musterlösung – nach Freigabe durch den Lehrer sichtbar.</div>
+        <div class="sol">
+          <div class="sh">✓ Musterlösung · Aufgabe 4</div>
+          <div class="sb">
+            <p><strong>a)</strong> $$s_A(t)=20\,\tfrac{\text{km}}{\text{h}}\cdot t \qquad\qquad s_B(t)=18\,\text{km}-16\,\tfrac{\text{km}}{\text{h}}\cdot t$$</p>
+            <p><strong>b)</strong> $$20t=18-16t \;\Rightarrow\; 36t=18 \;\Rightarrow\; t={\color{#1a9e5c}\boldsymbol{0{,}5\,\text{h}=30\,\text{min}}}$$</p>
+            <p>$$s_A(0{,}5\,\text{h})=20\,\tfrac{\text{km}}{\text{h}}\cdot 0{,}5\,\text{h}={\color{#1a9e5c}\boldsymbol{10\,\text{km}\ \text{von A entfernt}}}$$</p>
+            <p>Die Radfahrerinnen treffen sich also um $14{:}30$ Uhr, $10\,\text{km}$ von Ort A entfernt (bzw. $8\,\text{km}$ von Ort B).</p>
+            <p><strong>c)</strong> Zwei Geraden mit gegenläufiger Steigung, die sich bei $t=0{,}5\,\text{h}$ auf der Höhe $s=10\,\text{km}$ schneiden – Annas Gerade beginnt unten links, Bekes Gerade oben links.</p>
+          </div>
+        </div>
+      </div>
+    </article>
+  </section>
+
+  <!-- ================= STUFE 3 ================= -->
+  <section class="s3" data-stufe="3">
+    <div class="stufe-head">
+      <span class="stufe-badge">Stufe 3</span>
+      <span class="desc">Vertiefung · Vernetzung, Verallgemeinerung, Begründung</span>
+    </div>
+
+    <!-- ---------- Aufgabe 5 ---------- -->
+    <article class="card s3" data-stufe="3">
+      <div class="card-head"><h3>Aufgabe 5 · Verfolgungsfahrt mit gestaffeltem Start</h3><span class="chev">▾</span></div>
+      <div class="card-body">
+        <div class="task">
+          <p>Ein Radfahrer startet um $8{:}00$ Uhr ($t=0$) am Ort $s=0$ mit $v_R=18\,\tfrac{\text{km}}{\text{h}}$. Ein Auto startet erst $15$ Minuten später vom selben Ort mit $v_A=54\,\tfrac{\text{km}}{\text{h}}$, um den Radfahrer einzuholen.</p>
+          <p><strong>a)</strong> Stellen Sie die Zeit-Ort-Gesetze für Radfahrer und Auto auf. Achten Sie auf den unterschiedlichen Startzeitpunkt.</p>
+          <p><strong>b)</strong> Berechnen Sie, wann und wo das Auto den Radfahrer einholt.</p>
+          <p><strong>c)</strong> Leiten Sie allgemein her, unter welcher Bedingung an $v_R$ und $v_A$ das Auto den Radfahrer bei einer Verzögerung $\Delta t$ überhaupt einholen kann. Begründen Sie das Ergebnis auch anschaulich, ohne zu rechnen.</p>
+        </div>
+
+        <div class="assess">
+          <span class="lab">Einschätzung:</span>
+          <button data-v="ok" type="button">✓ Fertig &amp; verstanden</button>
+          <button data-v="mid" type="button">~ Noch unsicher</button>
+          <button data-v="ask" type="button">? Frage an Lehrer</button>
+        </div>
+
+        <div class="hints">
+          <div class="htitle">Hilfen</div>
+          <div class="htabs">
+            <button type="button">Hilfe 1 · Startzeitpunkt</button>
+            <button type="button">Hilfe 2 · Gleichung lösen</button>
+            <button type="button">Hilfe 3 · Allgemeine Bedingung</button>
+          </div>
+          <div class="hpanel">
+            <h4>Hilfe 1 · Verschobener Start berücksichtigen</h4>
+            <p>Für den Radfahrer gilt ganz normal $s_R(t)=v_R\cdot t$. Für das Auto darfst du in die Formel nicht $t$, sondern die seit <em>seinem</em> Start vergangene Zeit einsetzen, also $(t-\Delta t)$ mit $\Delta t=0{,}25\,\text{h}$.</p>
+          </div>
+          <div class="hpanel">
+            <h4>Hilfe 2 · Einholpunkt berechnen</h4>
+            <p>Setze $s_R(t)=s_A(t)$, also $v_R\cdot t=v_A\cdot(t-\Delta t)$, und löse nach $t$ auf. Rechne konsequent in Stunden.</p>
+          </div>
+          <div class="hpanel">
+            <h4>Hilfe 3 · Der allgemeine Fall</h4>
+            <p>Löse $v_R\cdot t=v_A\cdot(t-\Delta t)$ nach $t$ auf, ohne Zahlen einzusetzen. Für welche Fälle ergibt sich dabei ein negativer Nenner oder ein negatives $t$ – und was würde das bedeuten?</p>
+          </div>
+        </div>
+
+        <div class="sol-lock">🔒 Musterlösung – nach Freigabe durch den Lehrer sichtbar.</div>
+        <div class="sol">
+          <div class="sh">✓ Musterlösung · Aufgabe 5</div>
+          <div class="sb">
+            <p><strong>a)</strong> $$s_R(t)=18\,\tfrac{\text{km}}{\text{h}}\cdot t \qquad\qquad s_A(t)=54\,\tfrac{\text{km}}{\text{h}}\cdot(t-0{,}25\,\text{h})\ \ \text{für}\ t\ge 0{,}25\,\text{h}$$</p>
+            <p><strong>b)</strong> $$18t=54(t-0{,}25) \;\Rightarrow\; 18t=54t-13{,}5 \;\Rightarrow\; 36t=13{,}5 \;\Rightarrow\; t={\color{#1a9e5c}\boldsymbol{0{,}375\,\text{h}}}$$</p>
+            <p>Das entspricht $22{,}5\,\text{min}$ nach $8{:}00$ Uhr, also um $\mathbf{8{:}22{,}5}$ Uhr (bzw. $7{,}5\,\text{min}$ nach Start des Autos).</p>
+            <p>$$s_R(0{,}375\,\text{h})=18\,\tfrac{\text{km}}{\text{h}}\cdot 0{,}375\,\text{h}={\color{#1a9e5c}\boldsymbol{6{,}75\,\text{km}}}$$</p>
+            <p><strong>c)</strong> Allgemein: $v_R\cdot t=v_A\cdot t-v_A\cdot\Delta t \;\Rightarrow\; t(v_R-v_A)=-v_A\cdot\Delta t \;\Rightarrow\;$</p>
+            <p>$$t=\frac{v_A\cdot\Delta t}{v_A-v_R}$$</p>
+            <p>Diese Zeit ist nur dann positiv und sinnvoll, wenn $v_A-v_R>0$, also $\;{\color{#1a9e5c}\boldsymbol{v_A>v_R}}$ gilt.</p>
+            <p><em>Anschaulich:</em> Ist das Auto nicht schneller als der Radfahrer, verringert sich der Abstand zwischen beiden nie – der Radfahrer hat ja bereits einen Vorsprung und fährt mindestens genauso schnell weiter. Das Auto kann also nur einholen, wenn es tatsächlich die größere Geschwindigkeit hat.</p>
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <!-- ---------- Aufgabe 6 ---------- -->
+    <article class="card s3" data-stufe="3">
+      <div class="card-head"><h3>Aufgabe 6 · Beurteilen und begründen</h3><span class="chev">▾</span></div>
+      <div class="card-body">
+        <div class="task">
+          <p>Untersuchen Sie, ob die folgenden Aussagen wahr oder falsch sind. Begründen Sie Ihre Entscheidung bzw. geben Sie ein Gegenbeispiel an.</p>
+          <p><strong>a)</strong> Befinden sich zwei Beobachter in zueinander bewegten Bezugssystemen, messen sie für ein und dieselbe Bewegung stets unterschiedliche Geschwindigkeiten.</p>
+          <p><strong>b)</strong> Der Ort eines Körpers lässt sich unabhängig vom gewählten Bezugssystem eindeutig angeben.</p>
+          <p><strong>c)</strong> Bei einer gleichförmigen Bewegung ist die Steigung des $t$-$s$-Diagramms in jedem Zeitintervall gleich groß.</p>
+        </div>
+
+        <div class="assess">
+          <span class="lab">Einschätzung:</span>
+          <button data-v="ok" type="button">✓ Fertig &amp; verstanden</button>
+          <button data-v="mid" type="button">~ Noch unsicher</button>
+          <button data-v="ask" type="button">? Frage an Lehrer</button>
+        </div>
+
+        <div class="hints">
+          <div class="htitle">Hilfen</div>
+          <div class="htabs">
+            <button type="button">Hilfe 1 · Zu a)</button>
+            <button type="button">Hilfe 2 · Zu b)</button>
+            <button type="button">Hilfe 3 · Zu c)</button>
+          </div>
+          <div class="hpanel">
+            <h4>Hilfe 1 · Zu a)</h4>
+            <p>Erinnere dich an die Koordinatentransformation: $s'(t)=s(t)-v_B\cdot t$. Leite daraus her, wie sich die gemessenen Geschwindigkeiten $v$ und $v'$ zueinander verhalten, wenn $v_B\neq 0$ ist.</p>
+          </div>
+          <div class="hpanel">
+            <h4>Hilfe 2 · Zu b)</h4>
+            <p>Denke an den Überholvorgang aus Aufgabe 3: Der Pkw hat im Bezugssystem Straße einen Ort $s_P(t)$, im Bezugssystem Lkw dagegen $s_P'(t)$. Sind diese beiden Werte zu einem festen Zeitpunkt gleich?</p>
+          </div>
+          <div class="hpanel">
+            <h4>Hilfe 3 · Zu c)</h4>
+            <p>Formuliere zunächst, was "gleichförmig" für die Geschwindigkeit bedeutet, und überlege dann, was das für die Steigung des $t$-$s$-Diagramms in unterschiedlichen Zeitintervallen bedeutet.</p>
+          </div>
+        </div>
+
+        <div class="sol-lock">🔒 Musterlösung – nach Freigabe durch den Lehrer sichtbar.</div>
+        <div class="sol">
+          <div class="sh">✓ Musterlösung · Aufgabe 6</div>
+          <div class="sb">
+            <p><strong>a) Wahr.</strong> Aus $s'(t)=s(t)-v_B\cdot t$ folgt für die Geschwindigkeiten $v'=v-v_B$. Ist $v_B\neq 0$ (die Bezugssysteme also tatsächlich zueinander bewegt), gilt immer $v'\neq v$ – die gemessenen Geschwindigkeiten unterscheiden sich also grundsätzlich, unabhängig davon, wie schnell der betrachtete Körper ist.</p>
+            <p><strong>b) Falsch.</strong> Der Ort eines Körpers ist immer nur bezüglich eines gewählten Koordinatenursprungs definiert. Im Bezugssystem Straße hat der Pkw aus Aufgabe 3 zum Zeitpunkt $t=6\,\text{s}$ den Ort $s_P=150\,\text{m}$, im Bezugssystem Lkw dagegen $s_P'=25\,\text{m}$ – derselbe physikalische Punkt im Raum wird also je nach Bezugssystem durch unterschiedliche Zahlenwerte beschrieben.</p>
+            <p><strong>c) Wahr.</strong> "Gleichförmig" bedeutet per Definition $v=\text{konstant}$. Da die Steigung des $t$-$s$-Diagramms genau der Geschwindigkeit entspricht, ist sie bei einer gleichförmigen Bewegung in jedem Zeitintervall gleich groß – das Diagramm ist deshalb eine Gerade.</p>
+          </div>
+        </div>
+      </div>
+    </article>
+  </section>
+
+</div>
+
+<footer class="bot">
+  Physik Einführungsphase · Kapitel 1.2 · Bewegungen beschreiben<br>
+  <a href="../">← Zurück zu EP Materialien</a>
+</footer>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+
+  /* ---------- KaTeX ---------- */
+  function render(){
+    if (window.renderMathInElement) {
+      renderMathInElement(document.body, {
+        delimiters: [
+          {left:'$$', right:'$$', display:true},
+          {left:'$',  right:'$',  display:false}
+        ],
+        throwOnError:false
+      });
+    }
+  }
+  if (window.renderMathInElement) render();
+  else window.addEventListener('load', render);
+
+  /* ---------- Karten auf/zu ---------- */
+  document.querySelectorAll('.card-head').forEach(function(h){
+    h.addEventListener('click', function(){
+      h.parentElement.classList.toggle('open');
+    });
+  });
+
+  /* ---------- Hilfe-Reiter ---------- */
+  document.querySelectorAll('.hints').forEach(function(box){
+    var tabs   = box.querySelectorAll('.htabs button');
+    var panels = box.querySelectorAll('.hpanel');
+    tabs.forEach(function(tab, i){
+      tab.addEventListener('click', function(){
+        var wasOn = tab.classList.contains('on');
+        tabs.forEach(function(t){ t.classList.remove('on'); });
+        panels.forEach(function(p){ p.classList.remove('on'); });
+        if (!wasOn) {
+          tab.classList.add('on');
+          if (panels[i]) panels[i].classList.add('on');
+        }
+      });
+    });
+  });
+
+  /* ---------- Selbsteinschätzung ---------- */
+  document.querySelectorAll('.assess').forEach(function(box){
+    var btns = box.querySelectorAll('button');
+    btns.forEach(function(b){
+      b.addEventListener('click', function(){
+        var wasOn = b.classList.contains('on');
+        btns.forEach(function(x){ x.classList.remove('on'); });
+        if (!wasOn) b.classList.add('on');
+      });
+    });
+  });
+
+  /* ---------- Filter ---------- */
+  document.querySelectorAll('.filters button').forEach(function(b){
+    b.addEventListener('click', function(){
+      document.querySelectorAll('.filters button').forEach(function(x){ x.classList.remove('on'); });
+      b.classList.add('on');
+      var f = b.dataset.f;
+      document.querySelectorAll('section[data-stufe]').forEach(function(sec){
+        sec.style.display = (f === 'all' || sec.dataset.stufe === f) ? '' : 'none';
+      });
+    });
+  });
+
+  /* ---------- Musterlösungen freischalten ---------- */
+  var CODE  = 'PHYSIK';
+  var input = document.getElementById('code');
+  var msg   = document.getElementById('msg');
+
+  function tryUnlock(){
+    var val = (input.value || '').trim().toUpperCase();
+    if (val === CODE) {
+      document.body.classList.add('unlocked');
+      msg.textContent = '✓ freigeschaltet';
+      msg.className = 'msg ok';
+      render();
+    } else {
+      msg.textContent = '✗ Code stimmt nicht';
+      msg.className = 'msg bad';
+    }
+  }
+  document.getElementById('btn-unlock').addEventListener('click', tryUnlock);
+  input.addEventListener('keydown', function(e){
+    if (e.key === 'Enter') tryUnlock();
+  });
+
+  /* Erste Aufgabe jeder Stufe geöffnet starten */
+  document.querySelectorAll('section[data-stufe]').forEach(function(sec){
+    var first = sec.querySelector('.card');
+    if (first) first.classList.add('open');
+  });
+});
+</script>
+
+</body>
+</html>
