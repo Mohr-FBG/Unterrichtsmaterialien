@@ -1,0 +1,901 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Abstand Punkt–Gerade | LK Q2</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css">
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/contrib/auto-render.min.js"
+  onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}]})"></script>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --gold:    #e8a800;
+    --gold-bg: #fff8e6;
+    --green:   #1a9e5c;
+    --green-bg:#e8f7f1;
+    --orange:  #d4760a;
+    --orange-bg:#fff3e0;
+    --purple:  #7b3fb5;
+    --purple-bg:#f3eeff;
+    --blue:    #2c5f8a;
+    --border:  #dde1e7;
+    --bg:      #f4f5f7;
+    --text:    #1c1f26;
+  }
+
+  body {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    font-size: 10.5pt;
+    color: var(--text);
+    background: var(--bg);
+    min-height: 100vh;
+  }
+
+  /* ── Seiten-Header ─────────────────────────────── */
+  .page-header {
+    background: linear-gradient(135deg, #1a2a3a 0%, #2c4a6a 100%);
+    color: #fff;
+    padding: 14px 24px 10px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.25);
+  }
+  .back-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(255,255,255,0.15);
+    color: #fff;
+    text-decoration: none;
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 9pt;
+    font-weight: 600;
+    border: 1px solid rgba(255,255,255,0.3);
+    white-space: nowrap;
+    transition: background 0.2s;
+    flex-shrink: 0;
+  }
+  .back-btn:hover { background: rgba(255,255,255,0.28); }
+  .back-btn svg { width: 14px; height: 14px; fill: currentColor; }
+
+  .header-text { flex: 1; }
+  .header-text h1 {
+    font-size: 12pt;
+    font-weight: 700;
+    letter-spacing: 0.01em;
+    line-height: 1.2;
+  }
+  .header-text .sub {
+    font-size: 8.5pt;
+    color: rgba(255,255,255,0.7);
+    margin-top: 2px;
+  }
+  .header-badge {
+    background: var(--gold);
+    color: #1a1a1a;
+    font-size: 8pt;
+    font-weight: 700;
+    padding: 4px 10px;
+    border-radius: 12px;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  /* ── Seiten-Körper ─────────────────────────────── */
+  .page-body {
+    max-width: 780px;
+    margin: 0 auto;
+    padding: 20px 16px 40px;
+  }
+
+  /* ── Lernziel-Box ──────────────────────────────── */
+  .lernziel {
+    background: var(--gold-bg);
+    border-left: 4px solid var(--gold);
+    border-radius: 0 6px 6px 0;
+    padding: 10px 14px;
+    margin-bottom: 22px;
+    font-size: 9.5pt;
+    line-height: 1.55;
+  }
+  .lernziel strong { color: #7a5000; }
+
+  /* ── Stufen-Abschnitt ──────────────────────────── */
+  .stufe-section { margin-bottom: 28px; }
+
+  .stufe-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 12px;
+  }
+  .stufe-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 14px 4px 10px;
+    border-radius: 20px;
+    font-size: 9pt;
+    font-weight: 700;
+    color: #fff;
+  }
+  .stufe-badge .dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.7);
+  }
+  .badge-1 { background: var(--green); }
+  .badge-2 { background: var(--orange); }
+  .badge-3 { background: var(--purple); }
+  .stufe-desc { font-size: 9pt; color: #555; font-style: italic; }
+
+  /* ── Aufgaben-Karte ────────────────────────────── */
+  .task-card {
+    background: #fff;
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    margin-bottom: 14px;
+    overflow: hidden;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+  }
+  .task-stripe {
+    height: 5px;
+  }
+  .stripe-1 { background: var(--green); }
+  .stripe-2 { background: var(--orange); }
+  .stripe-3 { background: var(--purple); }
+
+  .task-inner { padding: 14px 16px 0; }
+
+  .task-num-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 8px;
+  }
+  .task-num {
+    width: 26px; height: 26px;
+    border-radius: 50%;
+    color: #fff;
+    font-size: 9pt;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .num-1 { background: var(--green); }
+  .num-2 { background: var(--orange); }
+  .num-3 { background: var(--purple); }
+  .task-title { font-size: 9.5pt; font-weight: 700; color: var(--text); }
+
+  /* Gegeben-Block */
+  .given-block {
+    background: #f8f9fb;
+    border: 1px solid #e2e5ea;
+    border-radius: 5px;
+    padding: 8px 12px;
+    margin-bottom: 10px;
+    font-size: 9.5pt;
+    line-height: 1.6;
+  }
+  .given-label {
+    font-size: 7.5pt;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: #888;
+    margin-bottom: 4px;
+  }
+
+  /* Aufgabentext */
+  .task-text {
+    font-size: 9.5pt;
+    line-height: 1.55;
+    margin-bottom: 12px;
+    color: #2a2e38;
+  }
+
+  /* ── Hilfestellungen ────────────────────────────── */
+  .hints-section {
+    border-top: 1px solid #eef0f3;
+    padding: 10px 16px 0;
+  }
+  .hints-label {
+    font-size: 8pt;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: #999;
+    margin-bottom: 6px;
+  }
+  .hint-row {
+    display: flex;
+    gap: 7px;
+    margin-bottom: 8px;
+    flex-wrap: wrap;
+  }
+  .hint-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 5px 12px;
+    border-radius: 15px;
+    font-size: 8.5pt;
+    font-weight: 600;
+    border: 1.5px solid;
+    cursor: pointer;
+    background: #fff;
+    transition: all 0.18s;
+    white-space: nowrap;
+  }
+  .hint-btn:disabled { opacity: 0.38; cursor: not-allowed; }
+
+  .hint-1-btn { border-color: var(--green); color: var(--green); }
+  .hint-2-btn { border-color: var(--orange); color: var(--orange); }
+  .hint-3-btn { border-color: var(--purple); color: var(--purple); }
+  .hint-1-btn:not(:disabled):hover { background: var(--green-bg); }
+  .hint-2-btn:not(:disabled):hover { background: var(--orange-bg); }
+  .hint-3-btn:not(:disabled):hover { background: var(--purple-bg); }
+
+  .hint-content {
+    display: none;
+    background: #fafbfc;
+    border: 1px solid #e0e4ea;
+    border-radius: 5px;
+    padding: 9px 12px;
+    font-size: 9pt;
+    line-height: 1.6;
+    margin-bottom: 8px;
+    color: #2a2e38;
+  }
+  .hint-content.visible { display: block; }
+  .hint-content.h1 { border-left: 3px solid var(--green); }
+  .hint-content.h2 { border-left: 3px solid var(--orange); }
+  .hint-content.h3 { border-left: 3px solid var(--purple); }
+
+  /* ── Musterlösung ────────────────────────────────── */
+  .solution-section {
+    border-top: 1px solid #eef0f3;
+    padding: 10px 16px 14px;
+    margin-top: 2px;
+  }
+  .solution-label {
+    font-size: 8pt;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: #999;
+    margin-bottom: 8px;
+  }
+  .code-row {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    flex-wrap: wrap;
+    margin-bottom: 6px;
+  }
+  .code-input {
+    border: 1.5px solid var(--border);
+    border-radius: 6px;
+    padding: 5px 10px;
+    font-size: 9pt;
+    font-family: 'Courier New', monospace;
+    width: 120px;
+    letter-spacing: 0.12em;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .code-input:focus { border-color: var(--gold); }
+  .code-submit {
+    background: var(--gold);
+    color: #1a1a1a;
+    border: none;
+    border-radius: 6px;
+    padding: 5px 14px;
+    font-size: 9pt;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.18s;
+  }
+  .code-submit:hover { background: #d49a00; }
+  .code-hint-text {
+    font-size: 8pt;
+    color: #888;
+    flex: 1;
+  }
+  .code-error {
+    font-size: 8pt;
+    color: #c0392b;
+    display: none;
+  }
+  .code-error.visible { display: block; }
+
+  .solution-content {
+    display: none;
+    background: #f0faf5;
+    border: 1.5px solid var(--green);
+    border-radius: 6px;
+    padding: 10px 14px;
+    font-size: 9pt;
+    line-height: 1.7;
+  }
+  .solution-content.visible { display: block; }
+  .solution-content .sol-row {
+    margin-bottom: 4px;
+  }
+  .solution-content .result-line {
+    font-weight: 700;
+    color: var(--green);
+    border-top: 1px solid #c3e8d5;
+    margin-top: 8px;
+    padding-top: 6px;
+  }
+
+  /* ── Informationsblock ──────────────────────────── */
+  .info-block {
+    background: var(--gold-bg);
+    border: 1px solid #f0d080;
+    border-radius: 6px;
+    padding: 10px 14px;
+    font-size: 9pt;
+    line-height: 1.55;
+    margin-bottom: 22px;
+  }
+  .info-block strong { color: #7a5000; }
+
+  /* ── Fußzeile ───────────────────────────────────── */
+  .page-footer {
+    max-width: 780px;
+    margin: 0 auto;
+    padding: 0 16px 28px;
+    display: flex;
+    justify-content: space-between;
+    font-size: 7.5pt;
+    color: #aaa;
+    border-top: 1px solid var(--border);
+    padding-top: 12px;
+  }
+
+  .katex { font-size: 0.98em !important; }
+  .katex-display { margin: 6px 0 !important; }
+</style>
+</head>
+<body>
+
+<!-- ════════════════════════════════════════════ -->
+<!-- SEITEN-HEADER mit Zurück-Button             -->
+<!-- ════════════════════════════════════════════ -->
+<header class="page-header">
+  <a class="back-btn" href="../">
+    <svg viewBox="0 0 24 24"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>
+    Übersicht
+  </a>
+  <div class="header-text">
+    <h1>Abstand eines Punktes von einer Geraden</h1>
+    <div class="sub">VII · Lagebeziehungen und Abstände &thinsp;·&thinsp; LK Q2</div>
+  </div>
+  <span class="header-badge">LK Q2</span>
+</header>
+
+<!-- ════════════════════════════════════════════ -->
+<!-- SEITEN-KÖRPER                               -->
+<!-- ════════════════════════════════════════════ -->
+<div class="page-body">
+
+  <div class="lernziel">
+    <strong>Lernziel:</strong> Du kannst den Abstand eines Punktes von einer Geraden im Raum berechnen –
+    entweder über eine <strong>Hilfsebene</strong> senkrecht zur Geraden oder über die
+    <strong>Orthogonalitätsbedingung</strong>. Notiere deinen Lösungsweg vollständig und achte
+    auf korrekte Notation. Die Musterlösung wird mit dem Passwort <strong style="color:#7a5000;">MATHE</strong> freigeschaltet.
+  </div>
+
+  <!-- ═══════════════════════════════════════════ -->
+  <!-- STUFE 1 – Grundlegend                      -->
+  <!-- ═══════════════════════════════════════════ -->
+  <section class="stufe-section">
+    <div class="stufe-header">
+      <span class="stufe-badge badge-1"><span class="dot"></span>Stufe 1</span>
+      <span class="stufe-desc">Grundlegende Aufgaben – Direktes Verfahren</span>
+    </div>
+
+    <!-- ─── Aufgabe 1.1 ─────────────────────── -->
+    <div class="task-card">
+      <div class="task-stripe stripe-1"></div>
+      <div class="task-inner">
+        <div class="task-num-row">
+          <span class="task-num num-1">1</span>
+          <span class="task-title">Aufgabe 1.1</span>
+        </div>
+        <div class="given-block">
+          <div class="given-label">Gegeben</div>
+          Gerade $g\colon\;\vec{x} =
+            \begin{pmatrix}1\\2\\0\end{pmatrix}
+            + t \cdot
+            \begin{pmatrix}3\\0\\4\end{pmatrix}$
+          &ensp;und&ensp; Punkt $P(8\mid 2\mid 1)$
+          &ensp;&ensp;<strong>Gesucht:</strong> Abstand $d(P,\,g)$
+        </div>
+        <p class="task-text">
+          Berechne den Abstand des Punktes $P$ von der Geraden $g$.
+          Notiere Lotfußpunkt $F$ und Abstand $d(P,\,g)$.
+        </p>
+      </div>
+
+      <div class="hints-section">
+        <div class="hints-label">Gestufte Hilfestellungen</div>
+        <div class="hint-row">
+          <button class="hint-btn hint-1-btn" onclick="showHint(this,'h11-1','h11-2','h11-3')">💡 Hilfe 1</button>
+          <button class="hint-btn hint-2-btn" disabled onclick="showHint(this,'h11-2','h11-3',null)" id="h11-2-btn">💡 Hilfe 2</button>
+          <button class="hint-btn hint-3-btn" disabled onclick="showHint(this,'h11-3',null,null)" id="h11-3-btn">💡 Hilfe 3</button>
+        </div>
+        <div class="hint-content h1" id="h11-1">
+          <strong>Hilfe 1 – Verbindungsvektor aufstellen:</strong><br>
+          Ein allgemeiner Punkt auf $g$ ist $F_t = \begin{pmatrix}1+3t\\2\\4t\end{pmatrix}$.
+          Bilde den Verbindungsvektor $\overrightarrow{PF_t} = F_t - P$.
+        </div>
+        <div class="hint-content h2" id="h11-2">
+          <strong>Hilfe 2 – Orthogonalitätsbedingung:</strong><br>
+          $\overrightarrow{PF_t} = \begin{pmatrix}3t-7\\0\\4t-1\end{pmatrix}$<br>
+          Der Lotfußpunkt erfüllt: $\overrightarrow{PF_t} \circ \vec{u} = 0$
+          mit Richtungsvektor $\vec{u} = \begin{pmatrix}3\\0\\4\end{pmatrix}$.
+        </div>
+        <div class="hint-content h3" id="h11-3">
+          <strong>Hilfe 3 – Gleichung lösen:</strong><br>
+          $3\cdot(3t-7) + 0\cdot 0 + 4\cdot(4t-1) = 0$<br>
+          $\Rightarrow\; 9t - 21 + 16t - 4 = 0 \;\Rightarrow\; 25t = 25 \;\Rightarrow\; t = 1$<br>
+          Setze $t = 1$ in die Geradengleichung ein, um $F$ zu berechnen.
+        </div>
+      </div>
+
+      <div class="solution-section">
+        <div class="solution-label">Musterlösung</div>
+        <div class="code-row">
+          <input class="code-input" type="text" placeholder="Passwort …" id="sol-code-11">
+          <button class="code-submit" onclick="checkCode('11')">Freischalten</button>
+          <span class="code-hint-text">Passwort: fünf Buchstaben</span>
+          <span class="code-error" id="sol-error-11">Falsches Passwort.</span>
+        </div>
+        <div class="solution-content" id="sol-content-11">
+          <div class="sol-row">Allgemeiner Punkt: $F_t = (1+3t \mid 2 \mid 4t)$</div>
+          <div class="sol-row">Verbindungsvektor: $\overrightarrow{PF_t} = \begin{pmatrix}3t-7\\0\\4t-1\end{pmatrix}$</div>
+          <div class="sol-row">Orthogonalitätsbedingung: $\overrightarrow{PF_t}\circ\vec{u}=0$</div>
+          <div class="sol-row">$3(3t-7)+0+4(4t-1)=0 \;\Rightarrow\; 25t=25 \;\Rightarrow\; {\color{#1a9e5c}\boldsymbol{t=1}}$</div>
+          <div class="sol-row">Lotfußpunkt: $F_1 = \begin{pmatrix}4\\2\\4\end{pmatrix} \;\Rightarrow\; {\color{#1a9e5c}\boldsymbol{F(4\mid 2\mid 4)}}$</div>
+          <div class="sol-row">$\overrightarrow{PF} = F - P = \begin{pmatrix}-4\\0\\3\end{pmatrix}$</div>
+          <div class="result-line">$d(P,\,g) = \bigl|\overrightarrow{PF}\bigr| = \sqrt{16+0+9} = {\color{#1a9e5c}\boldsymbol{5}}$</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─── Aufgabe 1.2 ─────────────────────── -->
+    <div class="task-card">
+      <div class="task-stripe stripe-1"></div>
+      <div class="task-inner">
+        <div class="task-num-row">
+          <span class="task-num num-1">2</span>
+          <span class="task-title">Aufgabe 1.2</span>
+        </div>
+        <div class="given-block">
+          <div class="given-label">Gegeben</div>
+          Gerade $g\colon\;\vec{x} =
+            \begin{pmatrix}-2\\5\\3\end{pmatrix}
+            + t \cdot
+            \begin{pmatrix}2\\-1\\-2\end{pmatrix}$
+          &ensp;und&ensp; Punkt $P(-10\mid 3\mid 5)$
+          &ensp;&ensp;<strong>Gesucht:</strong> Abstand $d(P,\,g)$
+        </div>
+        <p class="task-text">
+          Berechne den Abstand des Punktes $P$ von der Geraden $g$.
+          Notiere Lotfußpunkt $F$ und Abstand $d(P,\,g)$.
+        </p>
+      </div>
+
+      <div class="hints-section">
+        <div class="hints-label">Gestufte Hilfestellungen</div>
+        <div class="hint-row">
+          <button class="hint-btn hint-1-btn" onclick="showHint(this,'h12-1','h12-2','h12-3')">💡 Hilfe 1</button>
+          <button class="hint-btn hint-2-btn" disabled onclick="showHint(this,'h12-2','h12-3',null)" id="h12-2-btn">💡 Hilfe 2</button>
+          <button class="hint-btn hint-3-btn" disabled onclick="showHint(this,'h12-3',null,null)" id="h12-3-btn">💡 Hilfe 3</button>
+        </div>
+        <div class="hint-content h1" id="h12-1">
+          <strong>Hilfe 1 – Verbindungsvektor aufstellen:</strong><br>
+          Allgemeiner Punkt: $F_t = \begin{pmatrix}-2+2t\\5-t\\3-2t\end{pmatrix}$<br>
+          Bilde $\overrightarrow{PF_t} = F_t - P$ komponentenweise.
+        </div>
+        <div class="hint-content h2" id="h12-2">
+          <strong>Hilfe 2 – Orthogonalitätsbedingung ansetzen:</strong><br>
+          $\overrightarrow{PF_t} = \begin{pmatrix}2t+8\\2-t\\-2-2t\end{pmatrix}$<br>
+          Setze $\overrightarrow{PF_t} \circ \begin{pmatrix}2\\-1\\-2\end{pmatrix} = 0$ und löse nach $t$ auf.
+        </div>
+        <div class="hint-content h3" id="h12-3">
+          <strong>Hilfe 3 – Rechnung:</strong><br>
+          $2(2t+8) + (-1)(2-t) + (-2)(-2-2t) = 0$<br>
+          $4t+16 - 2+t + 4+4t = 0$<br>
+          $\Rightarrow\; 9t + 18 = 0 \;\Rightarrow\; t = -2$<br>
+          Setze $t = -2$ ein, um $F$ zu erhalten.
+        </div>
+      </div>
+
+      <div class="solution-section">
+        <div class="solution-label">Musterlösung</div>
+        <div class="code-row">
+          <input class="code-input" type="text" placeholder="Passwort …" id="sol-code-12">
+          <button class="code-submit" onclick="checkCode('12')">Freischalten</button>
+          <span class="code-hint-text">Passwort: fünf Buchstaben</span>
+          <span class="code-error" id="sol-error-12">Falsches Passwort.</span>
+        </div>
+        <div class="solution-content" id="sol-content-12">
+          <div class="sol-row">Allgemeiner Punkt: $F_t = (-2+2t \mid 5-t \mid 3-2t)$</div>
+          <div class="sol-row">$\overrightarrow{PF_t} = \begin{pmatrix}2t+8\\2-t\\-2-2t\end{pmatrix}$</div>
+          <div class="sol-row">Orthogonalitätsbedingung: $2(2t+8)-(2-t)+(-2)(-2-2t)=0$</div>
+          <div class="sol-row">$4t+16-2+t+4+4t=0 \;\Rightarrow\; 9t=-18 \;\Rightarrow\; {\color{#1a9e5c}\boldsymbol{t=-2}}$</div>
+          <div class="sol-row">$F_{-2} = \begin{pmatrix}-6\\7\\7\end{pmatrix} \;\Rightarrow\; {\color{#1a9e5c}\boldsymbol{F(-6\mid 7\mid 7)}}$</div>
+          <div class="sol-row">$\overrightarrow{PF} = \begin{pmatrix}4\\4\\2\end{pmatrix}$</div>
+          <div class="result-line">$d(P,\,g) = \sqrt{16+16+4} = \sqrt{36} = {\color{#1a9e5c}\boldsymbol{6}}$</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════ -->
+  <!-- STUFE 2 – Aufbauend                        -->
+  <!-- ═══════════════════════════════════════════ -->
+  <section class="stufe-section">
+    <div class="stufe-header">
+      <span class="stufe-badge badge-2"><span class="dot"></span>Stufe 2</span>
+      <span class="stufe-desc">Aufbauende Aufgaben – Sachkontexte und Variationen</span>
+    </div>
+
+    <!-- ─── Aufgabe 2.1 ─────────────────────── -->
+    <div class="task-card">
+      <div class="task-stripe stripe-2"></div>
+      <div class="task-inner">
+        <div class="task-num-row">
+          <span class="task-num num-2">3</span>
+          <span class="task-title">Aufgabe 2.1 – Stromtrasse</span>
+        </div>
+        <div class="given-block">
+          <div class="given-label">Sachkontext (Koordinaten in km)</div>
+          Eine Hochspannungsleitung verläuft entlang der Geraden<br>
+          $g\colon\;\vec{x} =
+            \begin{pmatrix}1\\0\\0\end{pmatrix}
+            + t \cdot
+            \begin{pmatrix}2\\1\\2\end{pmatrix}$<br>
+          Ein Bauernhof befindet sich am Punkt $P(3\mid 4\mid 5)$.
+        </div>
+        <p class="task-text">
+          Berechne den kürzesten Abstand des Bauernhofs von der Stromleitungstrasse.
+          Gib das Ergebnis in km an.
+        </p>
+      </div>
+
+      <div class="hints-section">
+        <div class="hints-label">Gestufte Hilfestellungen</div>
+        <div class="hint-row">
+          <button class="hint-btn hint-1-btn" onclick="showHint(this,'h21-1','h21-2','h21-3')">💡 Hilfe 1</button>
+          <button class="hint-btn hint-2-btn" disabled onclick="showHint(this,'h21-2','h21-3',null)" id="h21-2-btn">💡 Hilfe 2</button>
+          <button class="hint-btn hint-3-btn" disabled onclick="showHint(this,'h21-3',null,null)" id="h21-3-btn">💡 Hilfe 3</button>
+        </div>
+        <div class="hint-content h1" id="h21-1">
+          <strong>Hilfe 1 – Modellierung:</strong><br>
+          Der kürzeste Abstand vom Punkt zur Geraden entspricht dem Abstand $d(P, g)$.
+          Stelle $F_t = \begin{pmatrix}1+2t\\t\\2t\end{pmatrix}$ auf und bilde $\overrightarrow{PF_t}$.
+        </div>
+        <div class="hint-content h2" id="h21-2">
+          <strong>Hilfe 2 – Verbindungsvektor:</strong><br>
+          $\overrightarrow{PF_t} = \begin{pmatrix}2t-2\\t-4\\2t-5\end{pmatrix}$<br>
+          Setze die Orthogonalitätsbedingung $\overrightarrow{PF_t} \circ \vec{u} = 0$ mit
+          $\vec{u} = \begin{pmatrix}2\\1\\2\end{pmatrix}$ an.
+        </div>
+        <div class="hint-content h3" id="h21-3">
+          <strong>Hilfe 3 – Gleichung lösen:</strong><br>
+          $2(2t-2)+(t-4)+2(2t-5)=0$<br>
+          $4t-4+t-4+4t-10=0 \;\Rightarrow\; 9t=18 \;\Rightarrow\; t=2$<br>
+          Berechne $F$ und dann $|\overrightarrow{PF}|$.
+        </div>
+      </div>
+
+      <div class="solution-section">
+        <div class="solution-label">Musterlösung</div>
+        <div class="code-row">
+          <input class="code-input" type="text" placeholder="Passwort …" id="sol-code-21">
+          <button class="code-submit" onclick="checkCode('21')">Freischalten</button>
+          <span class="code-hint-text">Passwort: fünf Buchstaben</span>
+          <span class="code-error" id="sol-error-21">Falsches Passwort.</span>
+        </div>
+        <div class="solution-content" id="sol-content-21">
+          <div class="sol-row">$F_t = (1+2t \mid t \mid 2t)$</div>
+          <div class="sol-row">$\overrightarrow{PF_t} = \begin{pmatrix}2t-2\\t-4\\2t-5\end{pmatrix}$</div>
+          <div class="sol-row">$\overrightarrow{PF_t}\circ\vec{u}=0\colon\;2(2t-2)+(t-4)+2(2t-5)=0$</div>
+          <div class="sol-row">$9t=18 \;\Rightarrow\; {\color{#1a9e5c}\boldsymbol{t=2}}$</div>
+          <div class="sol-row">$F_2 = \begin{pmatrix}5\\2\\4\end{pmatrix} \;\Rightarrow\; {\color{#1a9e5c}\boldsymbol{F(5\mid 2\mid 4)}}$</div>
+          <div class="sol-row">$\overrightarrow{PF} = \begin{pmatrix}2\\-2\\-1\end{pmatrix}$</div>
+          <div class="result-line">$d = |\overrightarrow{PF}| = \sqrt{4+4+1} = \sqrt{9} = {\color{#1a9e5c}\boldsymbol{3 \text{ km}}}$</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─── Aufgabe 2.2 ─────────────────────── -->
+    <div class="task-card">
+      <div class="task-stripe stripe-2"></div>
+      <div class="task-inner">
+        <div class="task-num-row">
+          <span class="task-num num-2">4</span>
+          <span class="task-title">Aufgabe 2.2 – Abstände zu den Koordinatenachsen</span>
+        </div>
+        <div class="given-block">
+          <div class="given-label">Gegeben</div>
+          Punkt $P(3\mid 4\mid 0)$
+          &ensp;&ensp;<strong>Gesucht:</strong> Abstände von $P$ zur $x$-Achse, $y$-Achse und $z$-Achse
+        </div>
+        <p class="task-text">
+          Berechne den Abstand des Punktes $P$ von jeder der drei Koordinatenachsen.
+          Formuliere die Koordinatenachsen jeweils als Geradengleichungen und wende
+          das gewohnte Verfahren an.
+        </p>
+      </div>
+
+      <div class="hints-section">
+        <div class="hints-label">Gestufte Hilfestellungen</div>
+        <div class="hint-row">
+          <button class="hint-btn hint-1-btn" onclick="showHint(this,'h22-1','h22-2','h22-3')">💡 Hilfe 1</button>
+          <button class="hint-btn hint-2-btn" disabled onclick="showHint(this,'h22-2','h22-3',null)" id="h22-2-btn">💡 Hilfe 2</button>
+          <button class="hint-btn hint-3-btn" disabled onclick="showHint(this,'h22-3',null,null)" id="h22-3-btn">💡 Hilfe 3</button>
+        </div>
+        <div class="hint-content h1" id="h22-1">
+          <strong>Hilfe 1 – Koordinatenachsen als Geraden:</strong><br>
+          $x$-Achse: $g_x\colon \vec{x} = t \cdot \begin{pmatrix}1\\0\\0\end{pmatrix}$&ensp;
+          $y$-Achse: $g_y\colon \vec{x} = t \cdot \begin{pmatrix}0\\1\\0\end{pmatrix}$&ensp;
+          $z$-Achse: $g_z\colon \vec{x} = t \cdot \begin{pmatrix}0\\0\\1\end{pmatrix}$
+        </div>
+        <div class="hint-content h2" id="h22-2">
+          <strong>Hilfe 2 – Kurzformel für Abstände zu den Achsen:</strong><br>
+          Für einen Punkt $(a\mid b\mid c)$ gilt allgemein:<br>
+          $d(g_x) = \sqrt{b^2+c^2}$,&ensp; $d(g_y) = \sqrt{a^2+c^2}$,&ensp; $d(g_z) = \sqrt{a^2+b^2}$<br>
+          <em>Leite diese Formeln selbst mit der Orthogonalitätsbedingung her!</em>
+        </div>
+        <div class="hint-content h3" id="h22-3">
+          <strong>Hilfe 3 – Einsetzen für $P(3\mid 4\mid 0)$:</strong><br>
+          $d(P,\,g_x) = \sqrt{4^2+0^2}$,&ensp;
+          $d(P,\,g_y) = \sqrt{3^2+0^2}$,&ensp;
+          $d(P,\,g_z) = \sqrt{3^2+4^2}$
+        </div>
+      </div>
+
+      <div class="solution-section">
+        <div class="solution-label">Musterlösung</div>
+        <div class="code-row">
+          <input class="code-input" type="text" placeholder="Passwort …" id="sol-code-22">
+          <button class="code-submit" onclick="checkCode('22')">Freischalten</button>
+          <span class="code-hint-text">Passwort: fünf Buchstaben</span>
+          <span class="code-error" id="sol-error-22">Falsches Passwort.</span>
+        </div>
+        <div class="solution-content" id="sol-content-22">
+          <div class="sol-row"><strong>$x$-Achse</strong> $g_x\colon \vec{x} = t\,\vec{e}_1$, allg. Punkt $F_t = (t\mid 0\mid 0)$</div>
+          <div class="sol-row">$\overrightarrow{PF_t} = \begin{pmatrix}t-3\\-4\\0\end{pmatrix}$, Bed.: $(t-3)\cdot 1=0 \Rightarrow t=3$, $F(3\mid 0\mid 0)$</div>
+          <div class="sol-row">$d(P,\,g_x)=\sqrt{0+16+0}={\color{#1a9e5c}\boldsymbol{4}}$</div>
+          <div class="sol-row" style="margin-top:6px;"><strong>$y$-Achse</strong>: $F_t=(0\mid t\mid 0)$, $t=4$, $F(0\mid 4\mid 0)$</div>
+          <div class="sol-row">$d(P,\,g_y)=\sqrt{9+0+0}={\color{#1a9e5c}\boldsymbol{3}}$</div>
+          <div class="sol-row" style="margin-top:6px;"><strong>$z$-Achse</strong>: $F_t=(0\mid 0\mid t)$, $t=0$, $F(0\mid 0\mid 0)$</div>
+          <div class="result-line">$d(P,\,g_z)=\sqrt{9+16+0}={\color{#1a9e5c}\boldsymbol{5}}$&ensp;
+            (Merke: Pythagoras im Dreieck $OP'P$ mit $P' = (3\mid 4\mid 0)$)</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════ -->
+  <!-- STUFE 3 – Vertiefend                       -->
+  <!-- ═══════════════════════════════════════════ -->
+  <section class="stufe-section">
+    <div class="stufe-header">
+      <span class="stufe-badge badge-3"><span class="dot"></span>Stufe 3</span>
+      <span class="stufe-desc">Vertiefende Aufgaben – Geradenaufstellung und komplexe Sachkontexte</span>
+    </div>
+
+    <!-- ─── Aufgabe 3.1 ─────────────────────── -->
+    <div class="task-card">
+      <div class="task-stripe stripe-3"></div>
+      <div class="task-inner">
+        <div class="task-num-row">
+          <span class="task-num num-3">5</span>
+          <span class="task-title">Aufgabe 3.1 – Gerade durch zwei Punkte</span>
+        </div>
+        <div class="given-block">
+          <div class="given-label">Gegeben</div>
+          Punkte $A(2\mid 0\mid 4)$ und $B(6\mid 4\mid 4)$ definieren eine Gerade $g$.
+          Außerdem: $P(3\mid 1\mid 8)$
+          &ensp;&ensp;<strong>Gesucht:</strong> Abstand $d(P,\,g)$
+        </div>
+        <p class="task-text">
+          Stelle zunächst die Geradengleichung durch $A$ und $B$ auf.
+          Berechne dann den Abstand des Punktes $P$ von $g$.
+        </p>
+      </div>
+
+      <div class="hints-section">
+        <div class="hints-label">Gestufte Hilfestellungen</div>
+        <div class="hint-row">
+          <button class="hint-btn hint-1-btn" onclick="showHint(this,'h31-1','h31-2','h31-3')">💡 Hilfe 1</button>
+          <button class="hint-btn hint-2-btn" disabled onclick="showHint(this,'h31-2','h31-3',null)" id="h31-2-btn">💡 Hilfe 2</button>
+          <button class="hint-btn hint-3-btn" disabled onclick="showHint(this,'h31-3',null,null)" id="h31-3-btn">💡 Hilfe 3</button>
+        </div>
+        <div class="hint-content h1" id="h31-1">
+          <strong>Hilfe 1 – Geradengleichung aufstellen:</strong><br>
+          Richtungsvektor: $\vec{u} = \overrightarrow{AB} = B - A = \begin{pmatrix}4\\4\\0\end{pmatrix}$ (oder vereinfacht $\begin{pmatrix}1\\1\\0\end{pmatrix}$)<br>
+          Geradengleichung: $g\colon \vec{x} = \begin{pmatrix}2\\0\\4\end{pmatrix} + t\cdot\begin{pmatrix}1\\1\\0\end{pmatrix}$
+        </div>
+        <div class="hint-content h2" id="h31-2">
+          <strong>Hilfe 2 – Verbindungsvektor:</strong><br>
+          Allgemeiner Punkt: $F_t = (2+t \mid t \mid 4)$<br>
+          $\overrightarrow{PF_t} = \begin{pmatrix}t-1\\t-1\\-4\end{pmatrix}$<br>
+          Setze $\overrightarrow{PF_t} \circ \begin{pmatrix}1\\1\\0\end{pmatrix} = 0$.
+        </div>
+        <div class="hint-content h3" id="h31-3">
+          <strong>Hilfe 3 – Gleichung lösen:</strong><br>
+          $(t-1)+(t-1)+0=0 \;\Rightarrow\; 2t-2=0 \;\Rightarrow\; t=1$<br>
+          $F = (3\mid 1\mid 4)$<br>
+          $\overrightarrow{PF} = F - P = \begin{pmatrix}0\\0\\-4\end{pmatrix}$
+        </div>
+      </div>
+
+      <div class="solution-section">
+        <div class="solution-label">Musterlösung</div>
+        <div class="code-row">
+          <input class="code-input" type="text" placeholder="Passwort …" id="sol-code-31">
+          <button class="code-submit" onclick="checkCode('31')">Freischalten</button>
+          <span class="code-hint-text">Passwort: fünf Buchstaben</span>
+          <span class="code-error" id="sol-error-31">Falsches Passwort.</span>
+        </div>
+        <div class="solution-content" id="sol-content-31">
+          <div class="sol-row">$\vec{u} = \overrightarrow{AB} = \begin{pmatrix}4\\4\\0\end{pmatrix}$, vereinfacht: $\begin{pmatrix}1\\1\\0\end{pmatrix}$</div>
+          <div class="sol-row">$g\colon \vec{x} = \begin{pmatrix}2\\0\\4\end{pmatrix} + t\cdot\begin{pmatrix}1\\1\\0\end{pmatrix}$, allg. Punkt $F_t = (2+t \mid t \mid 4)$</div>
+          <div class="sol-row">$\overrightarrow{PF_t} = \begin{pmatrix}t-1\\t-1\\-4\end{pmatrix}$</div>
+          <div class="sol-row">$\overrightarrow{PF_t}\circ\vec{u}=0\colon\;(t-1)+(t-1)=0 \;\Rightarrow\; {\color{#1a9e5c}\boldsymbol{t=1}}$</div>
+          <div class="sol-row">${\color{#1a9e5c}\boldsymbol{F(3\mid 1\mid 4)}}$,&ensp; $\overrightarrow{PF} = \begin{pmatrix}0\\0\\-4\end{pmatrix}$</div>
+          <div class="result-line">$d(P,\,g) = \bigl|\overrightarrow{PF}\bigr| = \sqrt{0+0+16} = {\color{#1a9e5c}\boldsymbol{4}}$</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─── Aufgabe 3.2 ─────────────────────── -->
+    <div class="task-card">
+      <div class="task-stripe stripe-3"></div>
+      <div class="task-inner">
+        <div class="task-num-row">
+          <span class="task-num num-3">6</span>
+          <span class="task-title">Aufgabe 3.2 – Segelflugzeug</span>
+        </div>
+        <div class="given-block">
+          <div class="given-label">Sachkontext (Koordinaten in km)</div>
+          Ein Segelflugzeug fliegt auf der Geraden<br>
+          $g\colon\;\vec{x} =
+            \begin{pmatrix}1\\1\\0\end{pmatrix}
+            + t \cdot
+            \begin{pmatrix}2\\2\\1\end{pmatrix}$<br>
+          Eine Windmessstation befindet sich am Punkt $M(3\mid 7\mid 2)$.
+        </div>
+        <p class="task-text">
+          In welchem Mindestabstand (in km) fliegt das Segelflugzeug an der
+          Windmessstation vorbei? Gib das Ergebnis als exakten Wert und als
+          Dezimalzahl (auf zwei Stellen gerundet) an.
+        </p>
+      </div>
+
+      <div class="hints-section">
+        <div class="hints-label">Gestufte Hilfestellungen</div>
+        <div class="hint-row">
+          <button class="hint-btn hint-1-btn" onclick="showHint(this,'h32-1','h32-2','h32-3')">💡 Hilfe 1</button>
+          <button class="hint-btn hint-2-btn" disabled onclick="showHint(this,'h32-2','h32-3',null)" id="h32-2-btn">💡 Hilfe 2</button>
+          <button class="hint-btn hint-3-btn" disabled onclick="showHint(this,'h32-3',null,null)" id="h32-3-btn">💡 Hilfe 3</button>
+        </div>
+        <div class="hint-content h1" id="h32-1">
+          <strong>Hilfe 1 – Verbindungsvektor:</strong><br>
+          Allgemeiner Punkt auf $g$: $F_t = \begin{pmatrix}1+2t\\1+2t\\t\end{pmatrix}$<br>
+          Bilde $\overrightarrow{MF_t} = F_t - M$.
+        </div>
+        <div class="hint-content h2" id="h32-2">
+          <strong>Hilfe 2 – Orthogonalitätsbedingung:</strong><br>
+          $\overrightarrow{MF_t} = \begin{pmatrix}2t-2\\2t-6\\t-2\end{pmatrix}$<br>
+          $\overrightarrow{MF_t} \circ \vec{u} = 0$ mit $\vec{u} = \begin{pmatrix}2\\2\\1\end{pmatrix}$.
+        </div>
+        <div class="hint-content h3" id="h32-3">
+          <strong>Hilfe 3 – Rechnung:</strong><br>
+          $2(2t-2)+2(2t-6)+(t-2)=0$<br>
+          $4t-4+4t-12+t-2=0 \;\Rightarrow\; 9t=18 \;\Rightarrow\; t=2$<br>
+          Berechne $F_2$ und dann $|MF|$.
+        </div>
+      </div>
+
+      <div class="solution-section">
+        <div class="solution-label">Musterlösung</div>
+        <div class="code-row">
+          <input class="code-input" type="text" placeholder="Passwort …" id="sol-code-32">
+          <button class="code-submit" onclick="checkCode('32')">Freischalten</button>
+          <span class="code-hint-text">Passwort: fünf Buchstaben</span>
+          <span class="code-error" id="sol-error-32">Falsches Passwort.</span>
+        </div>
+        <div class="solution-content" id="sol-content-32">
+          <div class="sol-row">$F_t = (1+2t \mid 1+2t \mid t)$</div>
+          <div class="sol-row">$\overrightarrow{MF_t} = \begin{pmatrix}2t-2\\2t-6\\t-2\end{pmatrix}$</div>
+          <div class="sol-row">$\overrightarrow{MF_t}\circ\vec{u}=0\colon\;2(2t-2)+2(2t-6)+(t-2)=0$</div>
+          <div class="sol-row">$9t-18=0 \;\Rightarrow\; {\color{#1a9e5c}\boldsymbol{t=2}}$</div>
+          <div class="sol-row">${\color{#1a9e5c}\boldsymbol{F(5\mid 5\mid 2)}}$,&ensp;
+            $\overrightarrow{MF} = F - M = \begin{pmatrix}2\\-2\\0\end{pmatrix}$</div>
+          <div class="result-line">$d = \bigl|\overrightarrow{MF}\bigr| = \sqrt{4+4+0} = \sqrt{8} = {\color{#1a9e5c}\boldsymbol{2\sqrt{2} \approx 2{,}83 \text{ km}}}$</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</div><!-- /page-body -->
+
+<div class="page-footer">
+  <span>Friedrich-Bährens-Gymnasium Schwerte &thinsp;·&thinsp; M. Mohr &thinsp;·&thinsp; LK Mathematik Q2</span>
+  <span>VII &thinsp;·&thinsp; Lagebeziehungen und Abstände &thinsp;·&thinsp; Abstand Punkt–Gerade</span>
+</div>
+
+<script>
+  // Hint-System: progressiv freischalten
+  function showHint(btn, id1, id2, id3) {
+    // Aktiven Hint anzeigen
+    const el = document.getElementById(id1);
+    if (el) el.classList.add('visible');
+
+    // Button deaktivieren
+    btn.disabled = true;
+
+    // Nächsten Hint-Button freischalten
+    if (id2) {
+      const nextBtn = document.getElementById(id2 + '-btn');
+      if (nextBtn) nextBtn.disabled = false;
+    }
+  }
+
+  // Lösung freischalten
+  function checkCode(taskId) {
+    const input = document.getElementById('sol-code-' + taskId);
+    const error = document.getElementById('sol-error-' + taskId);
+    const content = document.getElementById('sol-content-' + taskId);
+
+    if (input.value.trim().toUpperCase() === 'MATHE') {
+      content.classList.add('visible');
+      input.parentElement.style.display = 'none';
+      error.classList.remove('visible');
+      // KaTeX neu rendern
+      if (window.renderMathInElement) {
+        renderMathInElement(content, {
+          delimiters: [
+            {left: '$$', right: '$$', display: true},
+            {left: '$', right: '$', display: false}
+          ]
+        });
+      }
+    } else {
+      error.classList.add('visible');
+      input.style.borderColor = '#c0392b';
+      setTimeout(() => { input.style.borderColor = ''; }, 1500);
+    }
+  }
+
+  // Enter-Taste in Passwort-Feldern
+  document.querySelectorAll('.code-input').forEach(inp => {
+    inp.addEventListener('keydown', e => {
+      if (e.key === 'Enter') {
+        const id = inp.id.replace('sol-code-', '');
+        checkCode(id);
+      }
+    });
+  });
+</script>
+</body>
+</html>

@@ -1,0 +1,1007 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Übungsphase · Abstand zweier windschiefer Geraden</title>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css">
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/contrib/auto-render.min.js"></script>
+
+<style>
+:root{
+  --gold:#e8a800; --gold-dark:#b58200;
+  --blue:#2c5f8a; --blue-dark:#1a3d5c;
+  --green:#1a9e5c; --orange:#d4760a; --purple:#7b3fb5;
+  --border:#dde1e7; --bg:#f4f5f7; --text:#1c1f26;
+  --muted:#5c6472;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0; background:var(--bg); color:var(--text);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  line-height:1.55; font-size:16px;
+}
+.wrap{max-width:960px; margin:0 auto; padding:0 16px 64px}
+
+/* ---------- Kopf ---------- */
+header.top{background:var(--gold); border-bottom:4px solid var(--gold-dark); color:#fff}
+header.top .inner{max-width:960px; margin:0 auto; padding:22px 16px 24px}
+header.top .kap{font-size:.78rem; font-weight:700; letter-spacing:.06em; text-transform:uppercase; opacity:.92}
+header.top h1{margin:6px 0 4px; font-size:1.7rem; line-height:1.2}
+header.top .sub{font-size:.92rem; opacity:.95}
+
+/* ---------- Steuerleiste ---------- */
+.controls{
+  background:#fff; border:1px solid var(--border); border-radius:10px;
+  padding:14px 16px; margin:18px 0 22px;
+  display:flex; flex-wrap:wrap; gap:16px; align-items:center; justify-content:space-between;
+}
+.unlock{display:flex; align-items:center; gap:8px; flex-wrap:wrap}
+.unlock label{font-size:.9rem; color:var(--muted)}
+.unlock input{
+  border:1px solid var(--border); border-radius:6px; padding:6px 10px;
+  font-size:.95rem; width:130px; font-family:inherit;
+}
+.unlock button{
+  background:var(--blue); color:#fff; border:0; border-radius:6px;
+  padding:7px 14px; font-size:.9rem; font-weight:600; cursor:pointer; font-family:inherit;
+}
+.unlock button:hover{background:var(--blue-dark)}
+.unlock .msg{font-size:.85rem; font-weight:600}
+.unlock .msg.ok{color:var(--green)}
+.unlock .msg.bad{color:#c0392b}
+
+.filters{display:flex; gap:6px; flex-wrap:wrap}
+.filters button{
+  background:#fff; border:1px solid var(--border); border-radius:20px;
+  padding:6px 14px; font-size:.85rem; cursor:pointer; color:var(--muted);
+  font-family:inherit; font-weight:600;
+}
+.filters button:hover{border-color:var(--muted)}
+.filters button.on{background:var(--text); border-color:var(--text); color:#fff}
+
+/* ---------- Stufenabschnitte ---------- */
+.stufe-head{
+  display:flex; align-items:baseline; gap:12px; flex-wrap:wrap;
+  margin:30px 0 12px; padding-bottom:8px; border-bottom:2px solid var(--border);
+}
+.stufe-badge{
+  color:#fff; border-radius:6px; padding:4px 12px;
+  font-weight:700; font-size:.9rem; letter-spacing:.02em;
+}
+.s1 .stufe-badge{background:var(--green)}
+.s2 .stufe-badge{background:var(--orange)}
+.s3 .stufe-badge{background:var(--purple)}
+.stufe-head .desc{color:var(--muted); font-size:.9rem}
+
+/* ---------- Aufgabenkarte ---------- */
+.card{
+  background:#fff; border:1px solid var(--border); border-radius:10px;
+  margin-bottom:14px; overflow:hidden;
+}
+.card.s1{border-top:4px solid var(--green)}
+.card.s2{border-top:4px solid var(--orange)}
+.card.s3{border-top:4px solid var(--purple)}
+.card-head{
+  display:flex; align-items:center; justify-content:space-between; gap:12px;
+  padding:13px 18px; cursor:pointer; user-select:none;
+}
+.card-head:hover{background:#fafbfc}
+.card-head h3{margin:0; font-size:1.03rem; font-weight:700}
+.chev{color:var(--muted); font-size:1.1rem; transition:transform .18s}
+.card.open .chev{transform:rotate(180deg)}
+.card-body{display:none; padding:0 18px 18px}
+.card.open .card-body{display:block}
+
+.task{
+  background:#fbfcfd; border:1px solid var(--border); border-left:3px solid var(--blue);
+  border-radius:6px; padding:12px 15px; margin-bottom:14px;
+}
+.task p{margin:.5em 0}
+.task p:first-child{margin-top:0}
+.task p:last-child{margin-bottom:0}
+
+/* ---------- Selbsteinschätzung ---------- */
+.assess{display:flex; align-items:center; gap:7px; flex-wrap:wrap; margin-bottom:14px}
+.assess .lab{font-size:.83rem; color:var(--muted); margin-right:2px}
+.assess button{
+  border:1px solid var(--border); background:#fff; border-radius:16px;
+  padding:4px 12px; font-size:.8rem; cursor:pointer; color:var(--muted); font-family:inherit;
+}
+.assess button.on[data-v="ok"]{background:var(--green); border-color:var(--green); color:#fff}
+.assess button.on[data-v="mid"]{background:var(--orange); border-color:var(--orange); color:#fff}
+.assess button.on[data-v="ask"]{background:var(--blue); border-color:var(--blue); color:#fff}
+
+/* ---------- Hilfen ---------- */
+.hints{border:1px solid var(--border); border-radius:8px; overflow:hidden; margin-bottom:14px}
+.hints .htitle{
+  background:#f7f8fa; padding:7px 14px; font-size:.8rem; font-weight:700;
+  color:var(--muted); text-transform:uppercase; letter-spacing:.05em;
+  border-bottom:1px solid var(--border);
+}
+.htabs{display:flex; flex-wrap:wrap; gap:6px; padding:10px 14px; background:#fdfdfe}
+.htabs button{
+  border:1px solid var(--border); background:#fff; border-radius:6px;
+  padding:5px 11px; font-size:.82rem; cursor:pointer; color:var(--text); font-family:inherit;
+}
+.htabs button:hover{border-color:var(--blue)}
+.htabs button.on{background:var(--blue); border-color:var(--blue); color:#fff; font-weight:600}
+.hpanel{display:none; padding:12px 15px; border-top:1px solid var(--border); font-size:.95rem}
+.hpanel.on{display:block}
+.hpanel h4{margin:0 0 8px; font-size:.92rem; color:var(--blue-dark)}
+.hpanel p{margin:.5em 0}
+
+/* ---------- Musterlösung ---------- */
+.sol-lock{
+  background:#f7f8fa; border:1px dashed var(--border); border-radius:8px;
+  padding:12px 15px; font-size:.9rem; color:var(--muted); text-align:center;
+}
+.sol{
+  display:none; border:1px solid var(--green); border-radius:8px; overflow:hidden;
+}
+.sol .sh{
+  background:var(--green); color:#fff; padding:7px 15px;
+  font-weight:700; font-size:.88rem;
+}
+.sol .sb{padding:13px 15px; font-size:.95rem}
+.sol .sb p{margin:.55em 0}
+.sol .sb p:first-child{margin-top:0}
+body.unlocked .sol{display:block}
+body.unlocked .sol-lock{display:none}
+
+/* ---------- Kartensatz (Aufgabe 5) ---------- */
+.pairs{display:grid; grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); gap:10px; margin:10px 0}
+.pair{border-radius:8px; padding:11px 13px; font-size:.92rem}
+.pair .pn{font-weight:700; font-size:.8rem; text-transform:uppercase; letter-spacing:.04em; margin-bottom:5px}
+.pair.c1{background:#eaf1f7; border:1px solid #c3d6e6}
+.pair.c2{background:#fdeee4; border:1px solid #f2cdb2}
+.pair.c3{background:#e9f6ee; border:1px solid #bfe3ce}
+.pair.c4{background:#fdf6e0; border:1px solid #f0e0ad}
+
+.note{
+  background:#fdf6e3; border-left:3px solid var(--gold); border-radius:6px;
+  padding:10px 14px; font-size:.9rem; margin:12px 0;
+}
+.katex{font-size:1.04em}
+.katex-display{margin:.6em 0; overflow-x:auto; overflow-y:hidden}
+footer.bot{
+  text-align:center; color:var(--muted); font-size:.82rem;
+  padding:26px 16px; border-top:1px solid var(--border); margin-top:34px;
+}
+footer.bot a{color:var(--blue)}
+@media(max-width:600px){
+  header.top h1{font-size:1.32rem}
+  .controls{flex-direction:column; align-items:stretch}
+  .card-head h3{font-size:.95rem}
+}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="inner">
+    <div class="kap">Kapitel VII · Lagebeziehungen und Abstände · LK Mathematik Q2</div>
+    <h1>Übungsphase: Abstand zweier windschiefer Geraden</h1>
+    <div class="sub">Wähle deine Stufe · Nutze die Hilfen schrittweise · Musterlösungen nach Lehrerfreigabe</div>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <div class="controls">
+    <div class="unlock">
+      <label for="code">🔒 Musterlösungen freischalten:</label>
+      <input id="code" type="text" autocomplete="off" placeholder="Code">
+      <button id="btn-unlock" type="button">Bestätigen</button>
+      <span class="msg" id="msg"></span>
+    </div>
+    <div class="filters">
+      <button class="on" data-f="all" type="button">Alle Stufen</button>
+      <button data-f="1" type="button">Stufe 1</button>
+      <button data-f="2" type="button">Stufe 2</button>
+      <button data-f="3" type="button">Stufe 3</button>
+    </div>
+  </div>
+
+  <div class="note">
+    <strong>Beide Methoden im Blick:</strong> <em>Methode 1</em> bestimmt die Lotfußpunkte $G$ und $H$
+    des gemeinsamen Lotes; der Abstand ist dann $d=\left|\overrightarrow{GH}\right|$.
+    <em>Methode 2</em> führt die Aufgabe auf den Abstand eines Punktes von einer Hilfsebene zurück –
+    schneller, liefert aber $G$ und $H$ nicht. Achte bei jeder Aufgabe darauf, welche Methode gefragt ist.
+  </div>
+
+  <!-- ================= STUFE 1 ================= -->
+  <section class="s1" data-stufe="1">
+    <div class="stufe-head">
+      <span class="stufe-badge">Stufe 1</span>
+      <span class="desc">Grundaufgaben · Methode 1 sicher anwenden</span>
+    </div>
+
+    <!-- ---------- Aufgabe 1 ---------- -->
+    <article class="card s1" data-stufe="1">
+      <div class="card-head"><h3>Aufgabe 1 · Lotfußpunkte und Abstand</h3><span class="chev">▾</span></div>
+      <div class="card-body">
+        <div class="task">
+          <p>Gegeben sind die Geraden</p>
+          <p>$$g\colon \vec{x}=\begin{pmatrix}-1\\2\\5\end{pmatrix}+s\cdot\begin{pmatrix}1\\0\\-1\end{pmatrix}
+          \qquad\text{und}\qquad
+          h\colon \vec{x}=\begin{pmatrix}0\\9\\5\end{pmatrix}+t\cdot\begin{pmatrix}1\\-2\\0\end{pmatrix}.$$</p>
+          <p><strong>a)</strong> Weisen Sie nach, dass $g$ und $h$ windschief sind.</p>
+          <p><strong>b)</strong> Berechnen Sie den Abstand von $g$ und $h$ nach der 1. Methode und geben Sie die Lotfußpunkte $G$ und $H$ an.</p>
+        </div>
+
+        <div class="assess">
+          <span class="lab">Einschätzung:</span>
+          <button data-v="ok" type="button">✓ Fertig &amp; verstanden</button>
+          <button data-v="mid" type="button">~ Noch unsicher</button>
+          <button data-v="ask" type="button">? Frage an Lehrer</button>
+        </div>
+
+        <div class="hints">
+          <div class="htitle">Hilfen</div>
+          <div class="htabs">
+            <button type="button">Hilfe 1 · Windschief?</button>
+            <button type="button">Hilfe 2 · Ansatz</button>
+            <button type="button">Hilfe 3 · Das LGS</button>
+            <button type="button">Hilfe 4 · Fast fertig</button>
+          </div>
+          <div class="hpanel">
+            <h4>Hilfe 1 · Nachweis der Lagebeziehung</h4>
+            <p>Zwei Schritte, beide sind nötig:</p>
+            <p>(1) <strong>Parallel?</strong> Prüfe, ob $\vec{u}$ ein Vielfaches von $\vec{v}$ ist. Gibt es kein $\lambda$ mit $\vec{u}=\lambda\vec{v}$, sind die Geraden nicht parallel.</p>
+            <p>(2) <strong>Schneidend?</strong> Setze $g$ und $h$ gleich. Löse zwei der drei Zeilen und setze die Werte in die dritte ein. Ergibt sich ein Widerspruch, gibt es keinen Schnittpunkt – die Geraden sind windschief.</p>
+          </div>
+          <div class="hpanel">
+            <h4>Hilfe 2 · Allgemeine Punkte ansetzen</h4>
+            <p>Wichtig: $G$ und $H$ brauchen <strong>verschiedene</strong> Parameter.</p>
+            <p>$$G_s\big({-1+s}\mid 2\mid 5-s\big)\in g,\qquad H_t\big(t\mid 9-2t\mid 5\big)\in h$$</p>
+            <p>Bilde damit den Verbindungsvektor $\overrightarrow{G_sH_t}=\overrightarrow{OH_t}-\overrightarrow{OG_s}$.</p>
+          </div>
+          <div class="hpanel">
+            <h4>Hilfe 3 · Die beiden Bedingungen</h4>
+            <p>$$\overrightarrow{G_sH_t}=\begin{pmatrix}t+1-s\\7-2t\\s\end{pmatrix}$$</p>
+            <p>Das gemeinsame Lot steht auf <em>beiden</em> Geraden senkrecht:</p>
+            <p>$$\text{I}\quad \overrightarrow{G_sH_t}\circ\begin{pmatrix}1\\0\\-1\end{pmatrix}=0
+            \qquad\qquad
+            \text{II}\quad \overrightarrow{G_sH_t}\circ\begin{pmatrix}1\\-2\\0\end{pmatrix}=0$$</p>
+            <p>Rechne die beiden Skalarprodukte aus. Du erhältst ein lineares Gleichungssystem mit zwei Gleichungen und den zwei Unbekannten $s$ und $t$.</p>
+          </div>
+          <div class="hpanel">
+            <h4>Hilfe 4 · Fast fertig</h4>
+            <p>Das LGS lautet</p>
+            <p>$$\text{I}\quad t+1-2s=0 \qquad\qquad \text{II}\quad 5t-s-13=0$$</p>
+            <p>Löse I nach $t$ auf ($t=2s-1$) und setze in II ein. Danach $s$ und $t$ in die Geradengleichungen einsetzen, $\overrightarrow{GH}$ bilden und den Betrag berechnen.</p>
+          </div>
+        </div>
+
+        <div class="sol-lock">🔒 Musterlösung – nach Freigabe durch den Lehrer sichtbar.</div>
+        <div class="sol">
+          <div class="sh">✓ Musterlösung · Aufgabe 1</div>
+          <div class="sb">
+            <p><strong>a) Parallel?</strong> Aus $1=\lambda\cdot 1$ folgt $\lambda=1$, aber $0\neq\lambda\cdot(-2)$. Also nicht parallel.</p>
+            <p><strong>Schneidend?</strong> Gleichsetzen:</p>
+            <p>$$\text{II:}\ 2=9-2t\ \Rightarrow\ t=3{,}5 \qquad \text{III:}\ 5-s=5\ \Rightarrow\ s=0$$</p>
+            <p>Probe in I: $-1+0=-1$, aber $t=3{,}5$. <strong>Widerspruch</strong> ⇒ $g$ und $h$ sind windschief. ✓</p>
+            <p><strong>b) 1. Schritt: Lotfußpunkte.</strong></p>
+            <p>$$\overrightarrow{G_sH_t}=\begin{pmatrix}t\\9-2t\\5\end{pmatrix}-\begin{pmatrix}-1+s\\2\\5-s\end{pmatrix}=\begin{pmatrix}t+1-s\\7-2t\\s\end{pmatrix}$$</p>
+            <p>$$\text{I}\quad (t+1-s)\cdot 1+(7-2t)\cdot 0+s\cdot(-1)=t+1-2s=0$$</p>
+            <p>$$\text{II}\quad (t+1-s)\cdot 1+(7-2t)\cdot(-2)+s\cdot 0=5t-s-13=0$$</p>
+            <p>Aus I: $t=2s-1$. In II: $5(2s-1)-s-13=9s-18=0\ \Rightarrow\ s=2,\ t=3$.</p>
+            <p>$$G(1\mid 2\mid 3),\qquad H(3\mid 3\mid 5)$$</p>
+            <p><strong>2. Schritt: Abstand.</strong></p>
+            <p>$$\overrightarrow{GH}=\begin{pmatrix}2\\1\\2\end{pmatrix},\qquad
+            d=\left|\overrightarrow{GH}\right|=\sqrt{4+1+4}={\color{#1a9e5c}\boldsymbol{3}}$$</p>
+            <p><em>Probe:</em> $\overrightarrow{GH}\circ\vec{u}=2-2=0$ ✓ und $\overrightarrow{GH}\circ\vec{v}=2-2=0$ ✓</p>
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <!-- ---------- Aufgabe 2 ---------- -->
+    <article class="card s1" data-stufe="1">
+      <div class="card-head"><h3>Aufgabe 2 · Abstand ohne Vorlage</h3><span class="chev">▾</span></div>
+      <div class="card-body">
+        <div class="task">
+          <p>Gegeben sind die Geraden</p>
+          <p>$$g\colon \vec{x}=\begin{pmatrix}0\\2\\0\end{pmatrix}+s\cdot\begin{pmatrix}2\\-1\\0\end{pmatrix}
+          \qquad\text{und}\qquad
+          h\colon \vec{x}=\begin{pmatrix}4\\3\\6\end{pmatrix}+t\cdot\begin{pmatrix}0\\1\\-1\end{pmatrix}.$$</p>
+          <p><strong>a)</strong> Berechnen Sie den Abstand der beiden Geraden und geben Sie die Lotfußpunkte an.</p>
+          <p><strong>b)</strong> Führen Sie eine Probe durch, die zeigt, dass Ihre Lotfußpunkte tatsächlich das gemeinsame Lot bestimmen.</p>
+        </div>
+
+        <div class="assess">
+          <span class="lab">Einschätzung:</span>
+          <button data-v="ok" type="button">✓ Fertig &amp; verstanden</button>
+          <button data-v="mid" type="button">~ Noch unsicher</button>
+          <button data-v="ask" type="button">? Frage an Lehrer</button>
+        </div>
+
+        <div class="hints">
+          <div class="htitle">Hilfen</div>
+          <div class="htabs">
+            <button type="button">Hilfe 1 · Ansatz</button>
+            <button type="button">Hilfe 2 · Das LGS</button>
+            <button type="button">Hilfe 3 · Die Probe</button>
+          </div>
+          <div class="hpanel">
+            <h4>Hilfe 1 · Ansatz</h4>
+            <p>$$G_s\big(2s\mid 2-s\mid 0\big),\qquad H_t\big(4\mid 3+t\mid 6-t\big)$$</p>
+            <p>$$\overrightarrow{G_sH_t}=\begin{pmatrix}4-2s\\1+t+s\\6-t\end{pmatrix}$$</p>
+            <p>Kontrolliere die mittlere Komponente sorgfältig: $(3+t)-(2-s)=1+t+s$.</p>
+          </div>
+          <div class="hpanel">
+            <h4>Hilfe 2 · Das LGS</h4>
+            <p>$$\text{I}\quad 2(4-2s)-(1+t+s)=7-5s-t=0$$</p>
+            <p>$$\text{II}\quad (1+t+s)-(6-t)=2t+s-5=0$$</p>
+            <p>Löse I nach $t$ auf und setze in II ein. Die Lösung ist ganzzahlig – falls nicht, liegt ein Vorzeichenfehler vor.</p>
+          </div>
+          <div class="hpanel">
+            <h4>Hilfe 3 · Die Probe</h4>
+            <p>Der Vektor $\overrightarrow{GH}$ muss auf <em>beiden</em> Richtungsvektoren senkrecht stehen. Prüfe also</p>
+            <p>$$\overrightarrow{GH}\circ\begin{pmatrix}2\\-1\\0\end{pmatrix}\overset{!}{=}0
+            \qquad\text{und}\qquad
+            \overrightarrow{GH}\circ\begin{pmatrix}0\\1\\-1\end{pmatrix}\overset{!}{=}0$$</p>
+            <p>Diese Probe kostet zwei Zeilen und findet praktisch jeden Rechenfehler.</p>
+          </div>
+        </div>
+
+        <div class="sol-lock">🔒 Musterlösung – nach Freigabe durch den Lehrer sichtbar.</div>
+        <div class="sol">
+          <div class="sh">✓ Musterlösung · Aufgabe 2</div>
+          <div class="sb">
+            <p><strong>a)</strong> $$\overrightarrow{G_sH_t}=\begin{pmatrix}4-2s\\1+t+s\\6-t\end{pmatrix}$$</p>
+            <p>$$\text{I}\quad 2(4-2s)-1(1+t+s)+0=7-5s-t=0$$</p>
+            <p>$$\text{II}\quad 0+1\cdot(1+t+s)-1\cdot(6-t)=2t+s-5=0$$</p>
+            <p>Aus I: $t=7-5s$. In II: $2(7-5s)+s-5=9-9s=0\ \Rightarrow\ s=1,\ t=2$.</p>
+            <p>$$G(2\mid 1\mid 0),\qquad H(4\mid 5\mid 4)$$</p>
+            <p>$$\overrightarrow{GH}=\begin{pmatrix}2\\4\\4\end{pmatrix},\qquad
+            d=\sqrt{4+16+16}=\sqrt{36}={\color{#1a9e5c}\boldsymbol{6}}$$</p>
+            <p><strong>b) Probe:</strong> $\begin{pmatrix}2\\4\\4\end{pmatrix}\circ\begin{pmatrix}2\\-1\\0\end{pmatrix}=4-4+0=0$ ✓ &nbsp;und&nbsp;
+            $\begin{pmatrix}2\\4\\4\end{pmatrix}\circ\begin{pmatrix}0\\1\\-1\end{pmatrix}=0+4-4=0$ ✓</p>
+            <p>$\overrightarrow{GH}$ steht auf beiden Geraden senkrecht, ist also das gemeinsame Lot.</p>
+          </div>
+        </div>
+      </div>
+    </article>
+  </section>
+
+  <!-- ================= STUFE 2 ================= -->
+  <section class="s2" data-stufe="2">
+    <div class="stufe-head">
+      <span class="stufe-badge">Stufe 2</span>
+      <span class="desc">Erweiterung · Hilfsebene, Methodenwahl und Anwendung</span>
+    </div>
+
+    <!-- ---------- Aufgabe 3 ---------- -->
+    <article class="card s2" data-stufe="2">
+      <div class="card-head"><h3>Aufgabe 3 · Die 2. Methode: Rückführung auf eine Hilfsebene</h3><span class="chev">▾</span></div>
+      <div class="card-body">
+        <div class="task">
+          <p>Gegeben sind die windschiefen Geraden</p>
+          <p>$$g\colon \vec{x}=\begin{pmatrix}-1\\-3\\1\end{pmatrix}+s\cdot\begin{pmatrix}1\\2\\0\end{pmatrix}
+          \qquad\text{und}\qquad
+          h\colon \vec{x}=\begin{pmatrix}4\\-1\\6\end{pmatrix}+t\cdot\begin{pmatrix}1\\0\\-1\end{pmatrix}.$$</p>
+          <p><strong>a)</strong> Bestimmen Sie den Abstand der beiden Geraden nach der <strong>2. Methode</strong>, indem Sie ihn auf den Abstand eines Punktes von einer Ebene zurückführen.</p>
+          <p><strong>b)</strong> Bestimmen Sie auch den Abstand der Geraden aus <em>Aufgabe 1</em> mit der 2. Methode. Vergleichen Sie beide Methoden: Welche war schneller? Welche liefert mehr Information?</p>
+        </div>
+
+        <div class="assess">
+          <span class="lab">Einschätzung:</span>
+          <button data-v="ok" type="button">✓ Fertig &amp; verstanden</button>
+          <button data-v="mid" type="button">~ Noch unsicher</button>
+          <button data-v="ask" type="button">? Frage an Lehrer</button>
+        </div>
+
+        <div class="hints">
+          <div class="htitle">Hilfen</div>
+          <div class="htabs">
+            <button type="button">Hilfe 1 · Die Idee</button>
+            <button type="button">Hilfe 2 · Normalenvektor</button>
+            <button type="button">Hilfe 3 · Ebene und Abstand</button>
+            <button type="button">Tipp · Kreuzprodukt</button>
+          </div>
+          <div class="hpanel">
+            <h4>Hilfe 1 · Die Idee hinter der Hilfsebene</h4>
+            <p>Lege eine Ebene $E$ so, dass sie $g$ <em>enthält</em> und zu $h$ <em>parallel</em> ist. Dann hat jeder Punkt von $h$ denselben Abstand zu $E$ – und dieser Abstand ist genau der gesuchte Geradenabstand.</p>
+            <p>Vorgehen: (1) $\vec{n}$ bestimmen, (2) $E$ durch den Stützpunkt von $g$ aufstellen, (3) Abstand eines beliebigen Punktes von $h$ zu $E$ berechnen.</p>
+          </div>
+          <div class="hpanel">
+            <h4>Hilfe 2 · Normalenvektor bestimmen</h4>
+            <p>$\vec{n}$ muss auf <em>beiden</em> Richtungsvektoren senkrecht stehen:</p>
+            <p>$$\text{I}\quad n_1+2n_2=0 \qquad\qquad \text{II}\quad n_1-n_3=0$$</p>
+            <p>Zwei Gleichungen, drei Unbekannte – eine Komponente darf frei gewählt werden, denn nur die <em>Richtung</em> von $\vec{n}$ zählt. Wähle geschickt, damit keine Brüche entstehen: $n_2=-1$ ist hier günstig.</p>
+          </div>
+          <div class="hpanel">
+            <h4>Hilfe 3 · Ebene aufstellen und Abstand berechnen</h4>
+            <p>Mit $\vec{n}=\begin{pmatrix}2\\-1\\2\end{pmatrix}$ und dem Stützpunkt $(-1\mid-3\mid 1)$ von $g$:</p>
+            <p>$$E\colon 2x_1-x_2+2x_3=2\cdot(-1)-(-3)+2\cdot 1$$</p>
+            <p><strong>Kontrolle nicht vergessen:</strong> $\vec{v}\circ\vec{n}=0$ zeigt, dass $h$ wirklich parallel zu $E$ liegt.</p>
+            <p>Setze anschließend den Stützpunkt $(4\mid-1\mid 6)$ von $h$ in die Hessesche Normalenform ein.</p>
+          </div>
+          <div class="hpanel">
+            <h4>Tipp · Der Normalenvektor über das Kreuzprodukt</h4>
+            <p>Statt das LGS zu lösen, liefert das Kreuzprodukt $\vec{n}$ direkt:</p>
+            <p>$$\vec{n}=\vec{u}\times\vec{v}=\begin{pmatrix}1\\2\\0\end{pmatrix}\times\begin{pmatrix}1\\0\\-1\end{pmatrix}
+            =\begin{pmatrix}2\cdot(-1)-0\cdot 0\\0\cdot 1-1\cdot(-1)\\1\cdot 0-2\cdot 1\end{pmatrix}=\begin{pmatrix}-2\\1\\-2\end{pmatrix}$$</p>
+            <p>Das ist das Negative des oben bestimmten Vektors – für den Abstand ohne Bedeutung, da der Zähler im Betrag steht. Das Kreuzprodukt ist <em>keine dritte Methode</em>, sondern eine Abkürzung im ersten Schritt der 2. Methode.</p>
+          </div>
+        </div>
+
+        <div class="sol-lock">🔒 Musterlösung – nach Freigabe durch den Lehrer sichtbar.</div>
+        <div class="sol">
+          <div class="sh">✓ Musterlösung · Aufgabe 3</div>
+          <div class="sb">
+            <p><strong>a) 1. Schritt: Hilfsebene aufstellen.</strong></p>
+            <p>$$\vec{n}\circ\vec{u}=0:\ n_1+2n_2=0 \qquad \vec{n}\circ\vec{v}=0:\ n_1-n_3=0$$</p>
+            <p>Mit $n_2=-1$ folgt $n_1=2$ und $n_3=2$, also $\vec{n}=\begin{pmatrix}2\\-1\\2\end{pmatrix}$, $\;|\vec{n}|=\sqrt{4+1+4}=3$.</p>
+            <p>$E$ durch den Stützpunkt $(-1\mid-3\mid1)$ von $g$:</p>
+            <p>$$E\colon 2x_1-x_2+2x_3=-2+3+2=3$$</p>
+            <p><em>Kontrolle:</em> $\vec{v}\circ\vec{n}=2+0-2=0$ ✓ – $h$ ist parallel zu $E$.</p>
+            <p><strong>2. Schritt: Abstand des Punktes $B(4\mid-1\mid6)\in h$ von $E$.</strong></p>
+            <p>$$d=\frac{|2\cdot 4-(-1)+2\cdot 6-3|}{3}=\frac{|8+1+12-3|}{3}=\frac{18}{3}={\color{#1a9e5c}\boldsymbol{6}}$$</p>
+            <p><strong>b)</strong> Für die Geraden aus Aufgabe 1 gilt $\vec{n}\circ\vec{u}=0:\ n_1-n_3=0$ und $\vec{n}\circ\vec{v}=0:\ n_1-2n_2=0$. Mit $n_2=1$: $\vec{n}=\begin{pmatrix}2\\1\\2\end{pmatrix}$, $|\vec{n}|=3$.</p>
+            <p>$E\colon 2x_1+x_2+2x_3=-2+2+10=10$; &nbsp; Punkt $(0\mid9\mid5)$: $\;0+9+10=19$.</p>
+            <p>$$d=\frac{|19-10|}{3}={\color{#1a9e5c}\boldsymbol{3}}\quad\text{✓ (wie in Aufgabe 1)}$$</p>
+            <p><strong>Vergleich:</strong> Die 2. Methode ist deutlich kürzer – kein Gleichungssystem mit zwei Parametern, sondern nur ein Normalenvektor und ein Einsetzen. Sie liefert allerdings <em>nur den Zahlenwert</em>. Die Lotfußpunkte $G$ und $H$ – und damit die Antwort auf die Frage, <em>wo</em> die Geraden einander am nächsten kommen – bekommt man nur über die 1. Methode.</p>
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <!-- ---------- Aufgabe 4 ---------- -->
+    <article class="card s2" data-stufe="2">
+      <div class="card-head"><h3>Aufgabe 4 · Vier Kärtchen: erst hinschauen, dann rechnen</h3><span class="chev">▾</span></div>
+      <div class="card-body">
+        <div class="task">
+          <p>Auf den Kärtchen sind vier Geradenpaare abgebildet, deren Abstand ermittelt werden soll. <strong>Nutzen Sie, wo möglich, die besondere Lagebeziehung von $g$ zu $h$</strong> – nicht jedes Paar erfordert das gemeinsame Lot.</p>
+
+          <div class="pairs">
+            <div class="pair c1">
+              <div class="pn">Kärtchen A</div>
+              $g\colon\vec{x}=\begin{pmatrix}1\\0\\2\end{pmatrix}+r\begin{pmatrix}2\\-1\\2\end{pmatrix}$,
+              $h\colon\vec{x}=\begin{pmatrix}5\\4\\0\end{pmatrix}+s\begin{pmatrix}-4\\2\\-4\end{pmatrix}$
+            </div>
+            <div class="pair c2">
+              <div class="pn">Kärtchen B</div>
+              $g\colon\vec{x}=\begin{pmatrix}1\\1\\2\end{pmatrix}+r\begin{pmatrix}1\\0\\1\end{pmatrix}$,
+              $h\colon\vec{x}=\begin{pmatrix}2\\3\\1\end{pmatrix}+s\begin{pmatrix}0\\1\\-1\end{pmatrix}$
+            </div>
+            <div class="pair c3">
+              <div class="pn">Kärtchen C</div>
+              $g\colon\vec{x}=\begin{pmatrix}-1\\1\\1\end{pmatrix}+r\begin{pmatrix}2\\-1\\0\end{pmatrix}$,
+              $h\colon\vec{x}=\begin{pmatrix}2\\1\\4\end{pmatrix}+s\begin{pmatrix}0\\1\\-1\end{pmatrix}$
+            </div>
+            <div class="pair c4">
+              <div class="pn">Kärtchen D</div>
+              $g\colon\vec{x}=\begin{pmatrix}1\\2\\3\end{pmatrix}+r\begin{pmatrix}1\\1\\1\end{pmatrix}$,
+              $h\colon\vec{x}=\begin{pmatrix}4\\5\\6\end{pmatrix}+s\begin{pmatrix}-2\\-2\\-2\end{pmatrix}$
+            </div>
+          </div>
+
+          <p><strong>b)</strong> Vergleichen Sie Ihre Ergebnisse mit einem Partner oder einer Partnerin und beurteilen Sie, wer vorteilhafter vorgegangen ist.</p>
+        </div>
+
+        <div class="assess">
+          <span class="lab">Einschätzung:</span>
+          <button data-v="ok" type="button">✓ Fertig &amp; verstanden</button>
+          <button data-v="mid" type="button">~ Noch unsicher</button>
+          <button data-v="ask" type="button">? Frage an Lehrer</button>
+        </div>
+
+        <div class="hints">
+          <div class="htitle">Hilfen</div>
+          <div class="htabs">
+            <button type="button">Hilfe 1 · Reihenfolge</button>
+            <button type="button">Hilfe 2 · Parallele Geraden</button>
+            <button type="button">Hilfe 3 · Kurzcheck je Kärtchen</button>
+          </div>
+          <div class="hpanel">
+            <h4>Hilfe 1 · Erst die Lagebeziehung klären</h4>
+            <p>Prüfe bei jedem Kärtchen <em>zuerst</em>, ob die Richtungsvektoren Vielfache voneinander sind.</p>
+            <p><strong>Ja</strong> → parallel oder identisch. Dann ist das gemeinsame Lot der falsche Weg: Es genügt der Abstand <em>eines Punktes</em> von der anderen Geraden. Prüfe zusätzlich, ob der Stützpunkt der einen Geraden auf der anderen liegt – dann sind sie identisch und der Abstand ist $0$.</p>
+            <p><strong>Nein</strong> → Setze gleich. Gibt es einen Schnittpunkt, ist der Abstand $0$; gibt es einen Widerspruch, sind die Geraden windschief und du brauchst eine der beiden Methoden.</p>
+          </div>
+          <div class="hpanel">
+            <h4>Hilfe 2 · Abstand bei parallelen Geraden</h4>
+            <p>Nimm den Stützpunkt $Q$ von $h$ und den Stützpunkt $P$ von $g$. Bilde $\vec{w}=\overrightarrow{PQ}$.</p>
+            <p>Steht $\vec{w}$ bereits senkrecht auf $\vec{u}$ (also $\vec{w}\circ\vec{u}=0$), so ist $Q$ genau gegenüber von $P$ und es gilt schlicht $d=|\vec{w}|$. Andernfalls musst du erst den Lotfußpunkt auf $g$ bestimmen.</p>
+            <p>Prüfe das bei Kärtchen A – es spart die gesamte Rechnung.</p>
+          </div>
+          <div class="hpanel">
+            <h4>Hilfe 3 · Kurzcheck</h4>
+            <p><strong>A:</strong> $\begin{pmatrix}-4\\2\\-4\end{pmatrix}=-2\cdot\begin{pmatrix}2\\-1\\2\end{pmatrix}$ – was folgt daraus?</p>
+            <p><strong>B:</strong> Gleichsetzen. Versuche es mit $r=1$ und $s=-2$.</p>
+            <p><strong>C:</strong> Die Richtungsvektoren sind keine Vielfachen; das Gleichsetzen führt auf einen Widerspruch. Hier ist echte Arbeit nötig – mit $\vec{n}=\begin{pmatrix}1\\2\\2\end{pmatrix}$ geht es schnell.</p>
+            <p><strong>D:</strong> Liegt der Punkt $(4\mid5\mid6)$ auf $g$?</p>
+          </div>
+        </div>
+
+        <div class="sol-lock">🔒 Musterlösung – nach Freigabe durch den Lehrer sichtbar.</div>
+        <div class="sol">
+          <div class="sh">✓ Musterlösung · Aufgabe 4</div>
+          <div class="sb">
+            <p><strong>Kärtchen A · echt parallel.</strong> $\vec{v}=-2\vec{u}$. Stützpunkte $P(1\mid0\mid2)$ und $Q(5\mid4\mid0)$:</p>
+            <p>$$\vec{w}=\overrightarrow{PQ}=\begin{pmatrix}4\\4\\-2\end{pmatrix},\qquad
+            \vec{w}\circ\vec{u}=8-4-4=0$$</p>
+            <p>$\vec{w}$ steht bereits senkrecht auf $g$, also ist $Q$ selbst der Lotfußpunkt gegenüber $P$:</p>
+            <p>$$d=|\vec{w}|=\sqrt{16+16+4}={\color{#1a9e5c}\boldsymbol{6}}$$</p>
+            <p>Ist $Q$ nicht auf $g$? Probe: $(5\mid4\mid0)$ auf $g$ hieße $1+2r=5\Rightarrow r=2$, aber $0-1\cdot 2=-2\neq 4$. ✓ Also echt parallel.</p>
+
+            <p><strong>Kärtchen B · schneidend.</strong> Gleichsetzen liefert $r=1$, $s=-2$; Probe in allen drei Zeilen stimmt:</p>
+            <p>$$S(2\mid1\mid3),\qquad d={\color{#1a9e5c}\boldsymbol{0}}$$</p>
+
+            <p><strong>Kärtchen C · windschief.</strong> $\vec{n}$ mit $\vec{n}\circ\vec{u}=0$ und $\vec{n}\circ\vec{v}=0$: aus $2n_1-n_2=0$ und $n_2-n_3=0$ folgt mit $n_1=1$: $\vec{n}=\begin{pmatrix}1\\2\\2\end{pmatrix}$, $|\vec{n}|=3$.</p>
+            <p>$E\colon x_1+2x_2+2x_3=-1+2+2=3$; &nbsp;Punkt $(2\mid1\mid4)$: $2+2+8=12$.</p>
+            <p>$$d=\frac{|12-3|}{3}={\color{#1a9e5c}\boldsymbol{3}}$$</p>
+            <p>(Lotfußpunkte über die 1. Methode: $G(1\mid0\mid1)$ und $H(2\mid2\mid3)$.)</p>
+
+            <p><strong>Kärtchen D · identisch.</strong> $\vec{v}=-2\vec{u}$, und $(4\mid5\mid6)$ liegt auf $g$ (für $r=3$). Beide Gleichungen beschreiben dieselbe Gerade:</p>
+            <p>$$d={\color{#1a9e5c}\boldsymbol{0}}$$</p>
+            <p><strong>Fazit:</strong> Nur bei einem der vier Kärtchen ist überhaupt eine Abstandsrechnung für windschiefe Geraden nötig. Wer bei allen vier sofort das gemeinsame Lot ansetzt, rechnet dreimal umsonst – und bei den parallelen Paaren führt der Ansatz sogar in die Irre, weil das LGS dort keine eindeutige Lösung hat.</p>
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <!-- ---------- Aufgabe 5 ---------- -->
+    <article class="card s2" data-stufe="2">
+      <div class="card-head"><h3>Aufgabe 5 · Anwendung: Bohrer und Wasserleitung</h3><span class="chev">▾</span></div>
+      <div class="card-body">
+        <div class="task">
+          <p>Der Koordinatenursprung liegt in der linken unteren Ecke einer Zimmerwand, die Wand liegt in der $x_1x_3$-Ebene, die $x_2$-Achse zeigt in die Wand hinein. <strong>Alle Längen in Zentimetern.</strong></p>
+          <p>In $5$ cm Tiefe verläuft waagerecht auf einer Höhe von $160$ cm eine Wasserleitung mit einem Durchmesser von $1{,}5$ cm:</p>
+          <p>$$r\colon \vec{x}=\begin{pmatrix}0\\5\\160\end{pmatrix}+\lambda\cdot\begin{pmatrix}1\\0\\0\end{pmatrix}$$</p>
+          <p>Ein Heimwerker setzt einen $6$-mm-Bohrer schräg an und bohrt längs der Geraden</p>
+          <p>$$b\colon \vec{x}=\begin{pmatrix}120\\0\\157\end{pmatrix}+t\cdot\begin{pmatrix}0\\4\\3\end{pmatrix}.$$</p>
+          <p><strong>a)</strong> Untersuchen Sie, ob der Bohrer die Wasserleitung beschädigen kann.</p>
+          <p><strong>b)</strong> Bestimmen Sie, wie tief der Bohrer dafür mindestens in die Wand eindringen muss.</p>
+        </div>
+
+        <div class="assess">
+          <span class="lab">Einschätzung:</span>
+          <button data-v="ok" type="button">✓ Fertig &amp; verstanden</button>
+          <button data-v="mid" type="button">~ Noch unsicher</button>
+          <button data-v="ask" type="button">? Frage an Lehrer</button>
+        </div>
+
+        <div class="hints">
+          <div class="htitle">Hilfen</div>
+          <div class="htabs">
+            <button type="button">Hilfe 1 · Modell</button>
+            <button type="button">Hilfe 2 · Das Kriterium</button>
+            <button type="button">Hilfe 3 · Zu b)</button>
+          </div>
+          <div class="hpanel">
+            <h4>Hilfe 1 · Was ist hier eigentlich gesucht?</h4>
+            <p>Beide Geraden sind nur die <em>Achsen</em> von Leitung und Bohrloch – die tatsächlichen Körper sind Zylinder um diese Achsen. Berechne zunächst den Abstand der beiden Geraden ganz normal.</p>
+            <p>Die eigentliche Frage ist dann: Reicht dieser Achsabstand aus, damit sich die beiden Zylinder <em>nicht</em> berühren?</p>
+          </div>
+          <div class="hpanel">
+            <h4>Hilfe 2 · Das Kriterium</h4>
+            <p>Die Zylinder überschneiden sich genau dann, wenn der Achsabstand kleiner ist als die <strong>Summe der beiden Radien</strong>.</p>
+            <p>Leitung: Durchmesser $1{,}5$ cm $\Rightarrow$ Radius $0{,}75$ cm.<br>
+            Bohrer: Durchmesser $6$ mm $=0{,}6$ cm $\Rightarrow$ Radius $0{,}3$ cm.</p>
+            <p>Vergleiche also $d$ mit $0{,}75+0{,}3$.</p>
+          </div>
+          <div class="hpanel">
+            <h4>Hilfe 3 · Zu b) – Eindringtiefe</h4>
+            <p>Bestimme mit der 1. Methode den Lotfußpunkt $H$ auf der Bohrergeraden. Er gehört zu einem bestimmten Parameterwert $t$.</p>
+            <p>Die vom Bohrer zurückgelegte Strecke ist dann $t\cdot|\vec{v}|$ – Achtung: nicht der Parameter selbst, sondern der Parameter mal Länge des Richtungsvektors.</p>
+            <p>Für die <em>Tiefe in der Wand</em> ist dagegen die $x_2$-Koordinate von $H$ maßgeblich.</p>
+          </div>
+        </div>
+
+        <div class="sol-lock">🔒 Musterlösung – nach Freigabe durch den Lehrer sichtbar.</div>
+        <div class="sol">
+          <div class="sh">✓ Musterlösung · Aufgabe 5</div>
+          <div class="sb">
+            <p><strong>a) Abstand der Achsen.</strong> Mit $\vec{u}=\begin{pmatrix}1\\0\\0\end{pmatrix}$ und $\vec{v}=\begin{pmatrix}0\\4\\3\end{pmatrix}$ folgt aus $n_1=0$ und $4n_2+3n_3=0$ mit $n_2=-3$:</p>
+            <p>$$\vec{n}=\begin{pmatrix}0\\-3\\4\end{pmatrix},\qquad |\vec{n}|=\sqrt{0+9+16}=5$$</p>
+            <p>$E$ durch $(0\mid5\mid160)$: $\;-3x_2+4x_3=-15+640=625$.</p>
+            <p>Punkt $(120\mid0\mid157)$ des Bohrers: $\;0+628=628$.</p>
+            <p>$$d=\frac{|628-625|}{5}=\frac{3}{5}={\color{#1a9e5c}\boldsymbol{0{,}6\ \text{cm}}}$$</p>
+            <p><strong>Vergleich:</strong> Summe der Radien $=0{,}75+0{,}3=1{,}05$ cm.</p>
+            <p>$$0{,}6\ \text{cm}<1{,}05\ \text{cm}$$</p>
+            <p>$\;{\color{#1a9e5c}\boldsymbol{\text{Ja}}}\;$ – der Bohrer trifft die Wasserleitung und beschädigt sie.</p>
+            <p><strong>b) Lotfußpunkt auf der Bohrergeraden.</strong></p>
+            <p>$G_\lambda(\lambda\mid5\mid160)$, $H_t(120\mid 4t\mid 157+3t)$, also</p>
+            <p>$$\overrightarrow{G_\lambda H_t}=\begin{pmatrix}120-\lambda\\4t-5\\3t-3\end{pmatrix}$$</p>
+            <p>$\text{I}$: $120-\lambda=0\Rightarrow\lambda=120$. &nbsp; $\text{II}$: $4(4t-5)+3(3t-3)=25t-29=0\Rightarrow t=1{,}16$.</p>
+            <p>$$H(120\mid 4{,}64\mid 160{,}48)$$</p>
+            <p>Der Bohrer muss also mindestens ${\color{#1a9e5c}\boldsymbol{4{,}64\ \text{cm}}}$ tief in die Wand eindringen; die dabei zurückgelegte Bohrstrecke beträgt $t\cdot|\vec{v}|=1{,}16\cdot 5=5{,}8$ cm.</p>
+            <p><em>Kontrolle:</em> $\overrightarrow{GH}=\begin{pmatrix}0\\-0{,}36\\0{,}48\end{pmatrix}$, $\;\left|\overrightarrow{GH}\right|=\sqrt{0{,}1296+0{,}2304}=\sqrt{0{,}36}=0{,}6$ ✓</p>
+          </div>
+        </div>
+      </div>
+    </article>
+  </section>
+
+  <!-- ================= STUFE 3 ================= -->
+  <section class="s3" data-stufe="3">
+    <div class="stufe-head">
+      <span class="stufe-badge">Stufe 3</span>
+      <span class="desc">Vertiefung · Vernetzung, Begründung, Übertrag</span>
+    </div>
+
+    <!-- ---------- Aufgabe 6 ---------- -->
+    <article class="card s3" data-stufe="3">
+      <div class="card-head"><h3>Aufgabe 6 · Im Würfel: Raumdiagonale und Bodendiagonale</h3><span class="chev">▾</span></div>
+      <div class="card-body">
+        <div class="task">
+          <p>Gegeben ist ein Würfel mit der Kantenlänge $6$. Die Grundfläche liegt in der $x_1x_2$-Ebene mit den Ecken</p>
+          <p>$$A(0\mid0\mid0),\quad B(6\mid0\mid0),\quad C(6\mid6\mid0),\quad D(0\mid6\mid0),$$</p>
+          <p>die Deckfläche entsprechend mit $E,F,G,H$ in der Höhe $6$; dabei liegt $G(6\mid6\mid6)$ über $C$.</p>
+          <p><strong>a)</strong> Fertigen Sie zunächst eine Skizze an und begründen Sie, warum die Raumdiagonale $AG$ und die Bodendiagonale $BD$ windschief sind.</p>
+          <p><strong>b)</strong> Berechnen Sie den Abstand der beiden Geraden und bestimmen Sie die Lotfußpunkte.</p>
+          <p><strong>c)</strong> Beschreiben Sie die besondere Lage der beiden Lotfußpunkte im Würfel.</p>
+        </div>
+
+        <div class="assess">
+          <span class="lab">Einschätzung:</span>
+          <button data-v="ok" type="button">✓ Fertig &amp; verstanden</button>
+          <button data-v="mid" type="button">~ Noch unsicher</button>
+          <button data-v="ask" type="button">? Frage an Lehrer</button>
+        </div>
+
+        <div class="hints">
+          <div class="htitle">Hilfen</div>
+          <div class="htabs">
+            <button type="button">Hilfe 1 · Geraden aufstellen</button>
+            <button type="button">Hilfe 2 · Zu a)</button>
+            <button type="button">Hilfe 3 · Zu b)</button>
+          </div>
+          <div class="hpanel">
+            <h4>Hilfe 1 · Die beiden Geraden</h4>
+            <p>$$AG\colon\vec{x}=\begin{pmatrix}0\\0\\0\end{pmatrix}+s\begin{pmatrix}1\\1\\1\end{pmatrix}
+            \qquad
+            BD\colon\vec{x}=\begin{pmatrix}6\\0\\0\end{pmatrix}+t\begin{pmatrix}-1\\1\\0\end{pmatrix}$$</p>
+            <p>Beide Richtungsvektoren wurden gekürzt. Beachte: $G$ gehört zu $s=6$, $D$ zu $t=6$.</p>
+          </div>
+          <div class="hpanel">
+            <h4>Hilfe 2 · Warum windschief?</h4>
+            <p>Die Bodendiagonale $BD$ liegt vollständig in der Ebene $x_3=0$. Die Raumdiagonale $AG$ berührt diese Ebene nur in einem einzigen Punkt, nämlich in $A(0\mid0\mid0)$.</p>
+            <p>Es genügt also zu zeigen, dass $A$ nicht auf $BD$ liegt – dann kann es keinen Schnittpunkt geben. Prüfe zusätzlich, dass die Richtungsvektoren keine Vielfachen sind.</p>
+          </div>
+          <div class="hpanel">
+            <h4>Hilfe 3 · Rechenweg für b)</h4>
+            <p>Am schnellsten geht es über die Hilfsebene. Aus $\vec{n}\circ\begin{pmatrix}1\\1\\1\end{pmatrix}=0$ und $\vec{n}\circ\begin{pmatrix}-1\\1\\0\end{pmatrix}=0$ folgt $n_1=n_2$ und $n_3=-2n_1$.</p>
+            <p>Für die Lotfußpunkte in c) brauchst du trotzdem die 1. Methode. Setze an:</p>
+            <p>$$\overrightarrow{G_sH_t}=\begin{pmatrix}6-t-s\\t-s\\-s\end{pmatrix}$$</p>
+          </div>
+        </div>
+
+        <div class="sol-lock">🔒 Musterlösung – nach Freigabe durch den Lehrer sichtbar.</div>
+        <div class="sol">
+          <div class="sh">✓ Musterlösung · Aufgabe 6</div>
+          <div class="sb">
+            <p><strong>a)</strong> $\begin{pmatrix}1\\1\\1\end{pmatrix}$ und $\begin{pmatrix}-1\\1\\0\end{pmatrix}$ sind keine Vielfachen ⇒ nicht parallel. $BD$ liegt ganz in der Ebene $x_3=0$; von $AG$ liegt dort nur der Punkt $A(0\mid0\mid0)$. Wegen $0\neq 6-t$ und $0=t$ zugleich unmöglich, liegt $A$ nicht auf $BD$ ⇒ kein Schnittpunkt ⇒ <strong>windschief</strong>. ✓</p>
+            <p><strong>b) Normalenvektor:</strong> aus $n_1+n_2+n_3=0$ und $-n_1+n_2=0$ folgt mit $n_1=1$: $n_2=1$, $n_3=-2$.</p>
+            <p>$$\vec{n}=\begin{pmatrix}1\\1\\-2\end{pmatrix},\qquad |\vec{n}|=\sqrt{1+1+4}=\sqrt{6}$$</p>
+            <p>$E$ durch $A(0\mid0\mid0)$: $\;x_1+x_2-2x_3=0$. &nbsp; Punkt $B(6\mid0\mid0)$: $\;6$.</p>
+            <p>$$d=\frac{|6-0|}{\sqrt{6}}=\frac{6}{\sqrt{6}}={\color{#1a9e5c}\boldsymbol{\sqrt{6}\approx 2{,}45}}$$</p>
+            <p><strong>Lotfußpunkte (1. Methode):</strong> $\overrightarrow{G_sH_t}=\begin{pmatrix}6-t-s\\t-s\\-s\end{pmatrix}$</p>
+            <p>$\text{I}$: $(6-t-s)+(t-s)-s=6-3s=0\Rightarrow s=2$.<br>
+            $\text{II}$: $-(6-t-s)+(t-s)=2t-6=0\Rightarrow t=3$.</p>
+            <p>$$G(2\mid2\mid2),\qquad H(3\mid3\mid0)$$</p>
+            <p>Probe: $\overrightarrow{GH}=\begin{pmatrix}1\\1\\-2\end{pmatrix}$, $\left|\overrightarrow{GH}\right|=\sqrt{6}$ ✓</p>
+            <p><strong>c)</strong> $H(3\mid3\mid0)$ ist der <strong>Mittelpunkt der Grundfläche</strong> – also der Schnittpunkt der beiden Bodendiagonalen. $G(2\mid2\mid2)$ liegt auf der Raumdiagonalen bei $s=2$ von insgesamt $s=6$, teilt sie also im Verhältnis $1:2$ und liegt damit im <strong>ersten Drittel</strong> von $A$ aus. Das gemeinsame Lot verläuft senkrecht über dem Mittelpunkt der Grundfläche.</p>
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <!-- ---------- Aufgabe 7 ---------- -->
+    <article class="card s3" data-stufe="3">
+      <div class="card-head"><h3>Aufgabe 7 · Eine Geradenschar und ihr Abstand</h3><span class="chev">▾</span></div>
+      <div class="card-body">
+        <div class="task">
+          <p>Für jedes $a\in\mathbb{R}$ ist eine Gerade gegeben durch</p>
+          <p>$$g_a\colon\vec{x}=\begin{pmatrix}0\\0\\2\end{pmatrix}+t\cdot\begin{pmatrix}1\\0\\a\end{pmatrix}.$$</p>
+          <p><strong>a)</strong> Zeigen Sie, dass $g_a$ für jeden Wert von $a$ windschief zur $x_2$-Achse ist.</p>
+          <p><strong>b)</strong> Bestimmen Sie den Abstand von $g_a$ zur $x_2$-Achse in Abhängigkeit von $a$.</p>
+          <p><strong>c)</strong> Bestimmen Sie den Wert von $a$, für den der Abstand zur $x_2$-Achse genau $1$ beträgt.</p>
+          <p><strong>d)</strong> Bestimmen Sie den Wert von $a$, für den der Abstand maximal wird, und begründen Sie Ihr Ergebnis auch anschaulich.</p>
+        </div>
+
+        <div class="assess">
+          <span class="lab">Einschätzung:</span>
+          <button data-v="ok" type="button">✓ Fertig &amp; verstanden</button>
+          <button data-v="mid" type="button">~ Noch unsicher</button>
+          <button data-v="ask" type="button">? Frage an Lehrer</button>
+        </div>
+
+        <div class="hints">
+          <div class="htitle">Hilfen</div>
+          <div class="htabs">
+            <button type="button">Hilfe 1 · Die x₂-Achse</button>
+            <button type="button">Hilfe 2 · Zu a)</button>
+            <button type="button">Hilfe 3 · Zu b)</button>
+            <button type="button">Hilfe 4 · Zu d)</button>
+          </div>
+          <div class="hpanel">
+            <h4>Hilfe 1 · Die $x_2$-Achse als Gerade</h4>
+            <p>$$x_2\text{-Achse}\colon \vec{x}=\begin{pmatrix}0\\0\\0\end{pmatrix}+\mu\cdot\begin{pmatrix}0\\1\\0\end{pmatrix}$$</p>
+            <p>Sie geht durch den Ursprung und hat den Richtungsvektor des zweiten Einheitsvektors.</p>
+          </div>
+          <div class="hpanel">
+            <h4>Hilfe 2 · Windschief für jedes $a$</h4>
+            <p>Zwei Dinge sind zu zeigen, und beide gehen ohne Fallunterscheidung:</p>
+            <p><strong>Nicht parallel:</strong> $\begin{pmatrix}1\\0\\a\end{pmatrix}=\lambda\begin{pmatrix}0\\1\\0\end{pmatrix}$ scheitert schon an der ersten Zeile ($1\neq 0$), unabhängig von $a$.</p>
+            <p><strong>Kein Schnittpunkt:</strong> Auf der $x_2$-Achse ist stets $x_3=0$. Betrachte die dritte Zeile von $g_a$ und überlege, was $2+ta=0$ für die erste Zeile bedeuten würde.</p>
+          </div>
+          <div class="hpanel">
+            <h4>Hilfe 3 · Normalenvektor mit Parameter</h4>
+            <p>$\vec{n}$ muss senkrecht auf $\begin{pmatrix}1\\0\\a\end{pmatrix}$ und auf $\begin{pmatrix}0\\1\\0\end{pmatrix}$ stehen. Die zweite Bedingung liefert sofort $n_2=0$.</p>
+            <p>Aus der ersten folgt dann $n_1+a\,n_3=0$. Wähle $n_3=1$.</p>
+            <p>Der Betrag $|\vec{n}|$ hängt jetzt von $a$ ab – das ist der Grund, warum auch der Abstand von $a$ abhängt.</p>
+          </div>
+          <div class="hpanel">
+            <h4>Hilfe 4 · Zu d) – wo liegt das Maximum?</h4>
+            <p>Wenn du $d(a)=\dfrac{2}{\sqrt{a^2+1}}$ hast, brauchst du keine Ableitung: Der Bruch wird genau dann am größten, wenn der Nenner am kleinsten ist.</p>
+            <p>Anschaulich: Für $a=0$ verläuft $g_a$ waagerecht in der Höhe $2$ – der Abstand ist dann überall genau die Höhendifferenz. Kippt die Gerade ($a\neq 0$), nähert sie sich der Achse an einer Stelle stärker an.</p>
+          </div>
+        </div>
+
+        <div class="sol-lock">🔒 Musterlösung – nach Freigabe durch den Lehrer sichtbar.</div>
+        <div class="sol">
+          <div class="sh">✓ Musterlösung · Aufgabe 7</div>
+          <div class="sb">
+            <p><strong>a) Nicht parallel:</strong> Die erste Zeile von $\begin{pmatrix}1\\0\\a\end{pmatrix}=\lambda\begin{pmatrix}0\\1\\0\end{pmatrix}$ verlangt $1=0$ – unmöglich für jedes $a$.</p>
+            <p><strong>Kein Schnittpunkt:</strong> Gleichsetzen ergibt in der ersten Zeile $t=0$, in der dritten $2+ta=0$. Mit $t=0$ folgt $2=0$ – Widerspruch, unabhängig von $a$. ⇒ $g_a$ ist für jedes $a$ windschief zur $x_2$-Achse. ✓</p>
+            <p><strong>b)</strong> Aus $\vec{n}\circ\begin{pmatrix}0\\1\\0\end{pmatrix}=0$ folgt $n_2=0$; aus $\vec{n}\circ\begin{pmatrix}1\\0\\a\end{pmatrix}=0$ folgt $n_1=-a\,n_3$. Mit $n_3=1$:</p>
+            <p>$$\vec{n}=\begin{pmatrix}-a\\0\\1\end{pmatrix},\qquad |\vec{n}|=\sqrt{a^2+1}$$</p>
+            <p>$E$ durch den Ursprung (Stützpunkt der $x_2$-Achse): $\;-a\,x_1+x_3=0$. Punkt $(0\mid0\mid2)$ von $g_a$: $\;2$.</p>
+            <p>$$d(a)=\frac{|2-0|}{\sqrt{a^2+1}}={\color{#1a9e5c}\boldsymbol{\frac{2}{\sqrt{a^2+1}}}}$$</p>
+            <p><strong>c)</strong> $$\frac{2}{\sqrt{a^2+1}}=1\ \Rightarrow\ \sqrt{a^2+1}=2\ \Rightarrow\ a^2=3\ \Rightarrow\ {\color{#1a9e5c}\boldsymbol{a=\pm\sqrt{3}}}$$</p>
+            <p><strong>d)</strong> $d(a)$ ist maximal, wenn der Nenner minimal ist. Da $a^2\ge 0$ gilt, ist $\sqrt{a^2+1}\ge 1$ mit Gleichheit genau für $a=0$:</p>
+            <p>$$a=0\quad\text{mit}\quad d(0)={\color{#1a9e5c}\boldsymbol{2}}$$</p>
+            <p><em>Anschaulich:</em> Für $a=0$ verläuft $g_0$ waagerecht in der Höhe $2$ und parallel zur $x_1$-Achse; ihr Abstand zur $x_2$-Achse ist überall genau die Höhendifferenz $2$. Jede Neigung ($a\neq 0$) lässt die Gerade an einer Stelle näher an die Achse heranlaufen, der kleinste Abstand wird also kleiner.</p>
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <!-- ---------- Aufgabe 8 ---------- -->
+    <article class="card s3" data-stufe="3">
+      <div class="card-head"><h3>Aufgabe 8 · An der Pyramide</h3><span class="chev">▾</span></div>
+      <div class="card-body">
+        <div class="task">
+          <p>Eine quadratische Pyramide hat die Grundkante $4$ und die Höhe $6$:</p>
+          <p>$$A(0\mid0\mid0),\quad B(4\mid0\mid0),\quad C(4\mid4\mid0),\quad D(0\mid4\mid0),\quad S(2\mid2\mid6)$$</p>
+          <p><strong>a)</strong> Bestimmen Sie den Abstand der Geraden durch $A$ und $B$ von der Geraden durch $S$ und $C$ und vergleichen Sie ihn mit der Länge der Strecke $\overline{BC}$.</p>
+          <p><strong>b)</strong> Beschreiben Sie die Lage der beiden Punkte auf den Geraden mit der geringsten Entfernung voneinander. Liegen sie jeweils auf der <em>Kante</em> der Pyramide?</p>
+        </div>
+
+        <div class="assess">
+          <span class="lab">Einschätzung:</span>
+          <button data-v="ok" type="button">✓ Fertig &amp; verstanden</button>
+          <button data-v="mid" type="button">~ Noch unsicher</button>
+          <button data-v="ask" type="button">? Frage an Lehrer</button>
+        </div>
+
+        <div class="hints">
+          <div class="htitle">Hilfen</div>
+          <div class="htabs">
+            <button type="button">Hilfe 1 · Geraden aufstellen</button>
+            <button type="button">Hilfe 2 · Rechenweg</button>
+            <button type="button">Hilfe 3 · Zu b)</button>
+          </div>
+          <div class="hpanel">
+            <h4>Hilfe 1 · Die beiden Geraden</h4>
+            <p>$$AB\colon\vec{x}=\begin{pmatrix}0\\0\\0\end{pmatrix}+s\begin{pmatrix}1\\0\\0\end{pmatrix}
+            \qquad
+            SC\colon\vec{x}=\begin{pmatrix}2\\2\\6\end{pmatrix}+t\begin{pmatrix}1\\1\\-3\end{pmatrix}$$</p>
+            <p>Der Richtungsvektor von $SC$ entsteht aus $\overrightarrow{SC}=\begin{pmatrix}2\\2\\-6\end{pmatrix}$ durch Kürzen mit $2$. Beachte: $C$ gehört damit zu $t=2$.</p>
+          </div>
+          <div class="hpanel">
+            <h4>Hilfe 2 · Rechenweg</h4>
+            <p>Über die Hilfsebene: aus $n_1=0$ und $n_1+n_2-3n_3=0$ folgt $n_2=3n_3$. Mit $n_3=1$ erhältst du $\vec{n}=\begin{pmatrix}0\\3\\1\end{pmatrix}$.</p>
+            <p>Für Teil b) brauchst du jedoch die Lotfußpunkte, also die 1. Methode:</p>
+            <p>$$\overrightarrow{G_sH_t}=\begin{pmatrix}2+t-s\\2+t\\6-3t\end{pmatrix}$$</p>
+          </div>
+          <div class="hpanel">
+            <h4>Hilfe 3 · Zu b) – auf der Kante oder nicht?</h4>
+            <p>Die Kante $\overline{AB}$ entspricht auf der Geraden $AB$ den Parameterwerten $0\le s\le 4$, die Kante $\overline{SC}$ auf der Geraden $SC$ den Werten $0\le t\le 2$.</p>
+            <p>Prüfe, ob deine berechneten Parameter in diesen Bereichen liegen. Nur dann liegen die Punkte tatsächlich auf den Kanten des Körpers und nicht auf deren Verlängerung.</p>
+          </div>
+        </div>
+
+        <div class="sol-lock">🔒 Musterlösung – nach Freigabe durch den Lehrer sichtbar.</div>
+        <div class="sol">
+          <div class="sh">✓ Musterlösung · Aufgabe 8</div>
+          <div class="sb">
+            <p><strong>a) Normalenvektor:</strong> aus $n_1=0$ und $n_1+n_2-3n_3=0$ folgt mit $n_3=1$: $\vec{n}=\begin{pmatrix}0\\3\\1\end{pmatrix}$, $|\vec{n}|=\sqrt{10}$.</p>
+            <p>$E$ durch $A(0\mid0\mid0)$: $\;3x_2+x_3=0$. &nbsp; Punkt $S(2\mid2\mid6)$: $\;6+6=12$.</p>
+            <p>$$d=\frac{|12-0|}{\sqrt{10}}=\frac{12}{\sqrt{10}}={\color{#1a9e5c}\boldsymbol{\frac{6\sqrt{10}}{5}\approx 3{,}79}}$$</p>
+            <p><strong>Vergleich:</strong> $\left|\overline{BC}\right|=4$. Wegen $3{,}79<4$ ist der Abstand der beiden Geraden <strong>kleiner</strong> als die Kantenlänge $\overline{BC}$ – die beiden Geraden kommen einander also näher, als es die Grundkante vermuten lässt.</p>
+            <p><strong>b) Lotfußpunkte:</strong> $\overrightarrow{G_sH_t}=\begin{pmatrix}2+t-s\\2+t\\6-3t\end{pmatrix}$</p>
+            <p>$\text{I}$: $2+t-s=0$. &nbsp; $\text{II}$: $(2+t-s)+(2+t)-3(6-3t)=0$.</p>
+            <p>Mit I vereinfacht sich II zu $\;2+t-18+9t=10t-16=0\Rightarrow t=1{,}6$, damit $s=3{,}6$.</p>
+            <p>$$G(3{,}6\mid0\mid0),\qquad H(3{,}6\mid3{,}6\mid1{,}2)$$</p>
+            <p>Probe: $\overrightarrow{GH}=\begin{pmatrix}0\\3{,}6\\1{,}2\end{pmatrix}$, $\left|\overrightarrow{GH}\right|=\sqrt{12{,}96+1{,}44}=\sqrt{14{,}4}\approx 3{,}79$ ✓</p>
+            <p><strong>Lage:</strong> Wegen $0\le 3{,}6\le 4$ liegt $G$ auf der <strong>Grundkante</strong> $\overline{AB}$, und zwar $0{,}4$ vor der Ecke $B$. Wegen $0\le 1{,}6\le 2$ liegt $H$ auf der <strong>Seitenkante</strong> $\overline{SC}$, und zwar bei $80\,\%$ des Weges von der Spitze $S$ zur Ecke $C$ – also deutlich näher an $C$ als an $S$. Beide Punkte liegen tatsächlich auf den Kanten der Pyramide, nicht auf deren Verlängerungen.</p>
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <!-- ---------- Aufgabe 9 ---------- -->
+    <article class="card s3" data-stufe="3">
+      <div class="card-head"><h3>Aufgabe 9 · Beurteilen und begründen</h3><span class="chev">▾</span></div>
+      <div class="card-body">
+        <div class="task">
+          <p><strong>a)</strong> Jim hat eine KI nach dem Abstand windschiefer Geraden gefragt. Die Antwort lautete sinngemäß:</p>
+          <div class="pair c1" style="margin:10px 0">
+            <em>„Die kürzeste Entfernung zweier windschiefer Geraden lässt sich bestimmen, indem man den Abstand einer beliebigen Stelle auf der einen Geraden zur anderen Geraden berechnet. Da sich die beiden Geraden nirgends schneiden, ist ihr Abstand überall gleich groß."</em>
+          </div>
+          <p>Beurteilen Sie die Antwort der KI. Welche Teile stimmen, welche nicht? Formulieren Sie eine korrigierte Fassung.</p>
+          <p><strong>b) – d) Wahr oder falsch?</strong> Beurteilen Sie jede Aussage und begründen Sie kurz oder geben Sie ein Gegenbeispiel an.</p>
+          <p><strong>b)</strong> Wenn zwei windschiefe Geraden in zueinander parallelen Ebenen $E$ und $F$ liegen, lässt sich ihr Abstand deuten als Abstand der Ebenen $E$ und $F$.</p>
+          <p><strong>c)</strong> Alle zu einer Geraden $g$ windschiefen Geraden mit einem festen Abstand von $g$ liegen in zwei zu $g$ parallelen Ebenen.</p>
+          <p><strong>d)</strong> Der Abstand zweier windschiefer Geraden ist stets kleiner als der Abstand zweier beliebig gewählter Punkte auf ihnen.</p>
+        </div>
+
+        <div class="assess">
+          <span class="lab">Einschätzung:</span>
+          <button data-v="ok" type="button">✓ Fertig &amp; verstanden</button>
+          <button data-v="mid" type="button">~ Noch unsicher</button>
+          <button data-v="ask" type="button">? Frage an Lehrer</button>
+        </div>
+
+        <div class="hints">
+          <div class="htitle">Hilfen</div>
+          <div class="htabs">
+            <button type="button">Hilfe 1 · Zu a)</button>
+            <button type="button">Hilfe 2 · Zu b)</button>
+            <button type="button">Hilfe 3 · Zu c)</button>
+            <button type="button">Hilfe 4 · Zu d)</button>
+          </div>
+          <div class="hpanel">
+            <h4>Hilfe 1 · Zu a)</h4>
+            <p>Nimm zwei konkrete windschiefe Geraden – zum Beispiel die aus Aufgabe 1 – und berechne den Abstand des Punktes $G(1\mid2\mid3)$ zur Geraden $h$. Wiederhole das mit einem <em>anderen</em> Punkt von $g$, etwa dem Stützpunkt $(-1\mid2\mid5)$.</p>
+            <p>Kommt beide Male derselbe Wert heraus? Was folgt daraus für den letzten Satz der KI-Antwort?</p>
+          </div>
+          <div class="hpanel">
+            <h4>Hilfe 2 · Zu b)</h4>
+            <p>Denke an die 2. Methode: Dort wurde eine Hilfsebene $E$ konstruiert, die $g$ enthält und zu $h$ parallel ist. Eine zweite Ebene $F$ durch $h$ mit demselben Normalenvektor ist dann parallel zu $E$.</p>
+            <p>Überlege: Der Normalenvektor von $E$ und $F$ steht senkrecht auf beiden Richtungsvektoren – also in Richtung des gemeinsamen Lotes.</p>
+          </div>
+          <div class="hpanel">
+            <h4>Hilfe 3 · Zu c)</h4>
+            <p>Stelle dir $g$ als die $x_3$-Achse vor und suche Geraden im Abstand $1$ dazu.</p>
+            <p>Nimm etwa die waagerechte Gerade durch $(1\mid0\mid0)$ in Richtung $\begin{pmatrix}0\\1\\0\end{pmatrix}$ und danach die durch $(0\mid1\mid0)$ in Richtung $\begin{pmatrix}1\\0\\0\end{pmatrix}$. Beide haben von $g$ den Abstand $1$. Liegen sie in zwei festen parallelen Ebenen?</p>
+            <p>Welche Fläche beschreiben alle Punkte mit Abstand $1$ von einer Geraden?</p>
+          </div>
+          <div class="hpanel">
+            <h4>Hilfe 4 · Zu d)</h4>
+            <p>Achte auf das Wort <em>stets</em> und auf <em>kleiner</em> statt <em>kleiner oder gleich</em>.</p>
+            <p>Gibt es eine Wahl von Punkten $P\in g$ und $Q\in h$, für die der Abstand $|\overrightarrow{PQ}|$ genau gleich dem Geradenabstand ist?</p>
+          </div>
+        </div>
+
+        <div class="sol-lock">🔒 Musterlösung – nach Freigabe durch den Lehrer sichtbar.</div>
+        <div class="sol">
+          <div class="sh">✓ Musterlösung · Aufgabe 9</div>
+          <div class="sb">
+            <p><strong>a)</strong> Der erste Teil ist <em>fast</em> richtig, der zweite ist <strong>falsch</strong>.</p>
+            <p>Richtig ist, dass man den Geradenabstand über Punkt-zu-Gerade-Abstände erfassen kann – aber nicht für eine <em>beliebige</em> Stelle, sondern nur als <strong>Minimum</strong> über alle Punkte der einen Geraden. Falsch ist die Begründung: Dass sich zwei Geraden nicht schneiden, hat nichts damit zu tun, ob ihr Abstand konstant ist. Konstant ist der Abstand nur bei <strong>parallelen</strong> Geraden; bei windschiefen Geraden wächst er in beide Richtungen vom gemeinsamen Lot aus an.</p>
+            <p><em>Korrigierte Fassung:</em> „Der Abstand zweier windschiefer Geraden ist der <strong>kleinstmögliche</strong> Abstand zwischen einem Punkt der einen und einem Punkt der anderen Geraden. Er wird genau an den Lotfußpunkten des gemeinsamen Lotes angenommen. Für alle anderen Punktepaare ist der Abstand größer."</p>
+            <p><strong>b) Wahr.</strong> Legt man $E$ durch $g$ parallel zu $h$ und $F$ durch $h$ parallel zu $g$, so haben beide Ebenen denselben Normalenvektor $\vec{n}$, der senkrecht auf beiden Richtungsvektoren steht – also in Richtung des gemeinsamen Lotes zeigt. Der Abstand der Ebenen wird genau entlang dieser Richtung gemessen und stimmt daher mit $\left|\overrightarrow{GH}\right|$ überein. Genau darauf beruht die 2. Methode.</p>
+            <p><strong>c) Falsch.</strong> Alle Punkte mit festem Abstand $d$ von $g$ bilden einen <strong>Zylinder</strong> mit Radius $d$ um $g$, keine zwei Ebenen. Gegenbeispiel mit $g$ als $x_3$-Achse und $d=1$:</p>
+            <p>$h_1\colon\vec{x}=\begin{pmatrix}1\\0\\0\end{pmatrix}+t\begin{pmatrix}0\\1\\0\end{pmatrix}$ und $h_2\colon\vec{x}=\begin{pmatrix}0\\1\\0\end{pmatrix}+t\begin{pmatrix}1\\0\\0\end{pmatrix}$ haben beide den Abstand $1$ von $g$, liegen aber in den Ebenen $x_1=1$ bzw. $x_2=1$ – und diese sind nicht parallel zueinander. Es gibt unendlich viele solche Ebenen, nämlich alle Tangentialebenen des Zylinders.</p>
+            <p><strong>d) Falsch</strong> – wegen des Wortes <em>stets</em> und <em>kleiner</em>. Richtig ist $\left|\overrightarrow{PQ}\right|\ge d(g,h)$ für alle $P\in g$, $Q\in h$, mit <strong>Gleichheit</strong> für $P=G$ und $Q=H$. Der Geradenabstand ist das Minimum und wird tatsächlich angenommen; die Aussage müsste also „kleiner <em>oder gleich</em>" lauten.</p>
+          </div>
+        </div>
+      </div>
+    </article>
+  </section>
+
+</div>
+
+<footer class="bot">
+  Mathematik Oberstufe LK · Q2 · Kapitel VII · Lagebeziehungen und Abstände<br>
+  <a href="../">← Zurück zur Materialsammlung</a>
+</footer>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+
+  /* ---------- KaTeX ---------- */
+  function render(){
+    if (window.renderMathInElement) {
+      renderMathInElement(document.body, {
+        delimiters: [
+          {left:'$$', right:'$$', display:true},
+          {left:'$',  right:'$',  display:false}
+        ],
+        throwOnError:false
+      });
+    }
+  }
+  if (window.renderMathInElement) render();
+  else window.addEventListener('load', render);
+
+  /* ---------- Karten auf/zu ---------- */
+  document.querySelectorAll('.card-head').forEach(function(h){
+    h.addEventListener('click', function(){
+      h.parentElement.classList.toggle('open');
+    });
+  });
+
+  /* ---------- Hilfe-Reiter ---------- */
+  document.querySelectorAll('.hints').forEach(function(box){
+    var tabs   = box.querySelectorAll('.htabs button');
+    var panels = box.querySelectorAll('.hpanel');
+    tabs.forEach(function(tab, i){
+      tab.addEventListener('click', function(){
+        var wasOn = tab.classList.contains('on');
+        tabs.forEach(function(t){ t.classList.remove('on'); });
+        panels.forEach(function(p){ p.classList.remove('on'); });
+        if (!wasOn) {
+          tab.classList.add('on');
+          if (panels[i]) panels[i].classList.add('on');
+        }
+      });
+    });
+  });
+
+  /* ---------- Selbsteinschätzung ---------- */
+  document.querySelectorAll('.assess').forEach(function(box){
+    var btns = box.querySelectorAll('button');
+    btns.forEach(function(b){
+      b.addEventListener('click', function(){
+        var wasOn = b.classList.contains('on');
+        btns.forEach(function(x){ x.classList.remove('on'); });
+        if (!wasOn) b.classList.add('on');
+      });
+    });
+  });
+
+  /* ---------- Filter ---------- */
+  document.querySelectorAll('.filters button').forEach(function(b){
+    b.addEventListener('click', function(){
+      document.querySelectorAll('.filters button').forEach(function(x){ x.classList.remove('on'); });
+      b.classList.add('on');
+      var f = b.dataset.f;
+      document.querySelectorAll('section[data-stufe]').forEach(function(sec){
+        sec.style.display = (f === 'all' || sec.dataset.stufe === f) ? '' : 'none';
+      });
+    });
+  });
+
+  /* ---------- Musterlösungen freischalten ---------- */
+  var CODE  = 'MATHE';
+  var input = document.getElementById('code');
+  var msg   = document.getElementById('msg');
+
+  function tryUnlock(){
+    var val = (input.value || '').trim().toUpperCase();
+    if (val === CODE) {
+      document.body.classList.add('unlocked');
+      msg.textContent = '✓ freigeschaltet';
+      msg.className = 'msg ok';
+      render();
+    } else {
+      msg.textContent = '✗ Code stimmt nicht';
+      msg.className = 'msg bad';
+    }
+  }
+  document.getElementById('btn-unlock').addEventListener('click', tryUnlock);
+  input.addEventListener('keydown', function(e){
+    if (e.key === 'Enter') tryUnlock();
+  });
+
+  /* Erste Aufgabe jeder Stufe geöffnet starten */
+  document.querySelectorAll('section[data-stufe]').forEach(function(sec){
+    var first = sec.querySelector('.card');
+    if (first) first.classList.add('open');
+  });
+});
+</script>
+
+</body>
+</html>

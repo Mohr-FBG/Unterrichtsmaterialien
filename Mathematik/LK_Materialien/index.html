@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LK-Materialien · Mathematik · FBG Schwerte</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,400;0,600;1,400&display=swap">
+<style>
+  :root {
+    --gold:      #b87500;
+    --gold-pale: #fdf3dc;
+    --bg:        #f5f4f0;
+    --surface:   #ffffff;
+    --border:    #ddd8cc;
+    --text:      #1c1a16;
+    --muted:     #6b6456;
+    --link:      #3d6898;
+    --q1:        #2c5f8a;
+    --q1-pale:   #e5eef7;
+    --q2:        #b87500;
+    --q2-pale:   #fdf3dc;
+    --r:         6px;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --gold:      #d4a030;
+      --gold-pale: #2a2010;
+      --bg:        #1a1814;
+      --surface:   #242018;
+      --border:    #38332a;
+      --text:      #ede8de;
+      --muted:     #9e9482;
+      --link:      #6a9fd8;
+      --q1:        #6a9fd8;
+      --q1-pale:   #0f1e30;
+      --q2:        #d4a030;
+      --q2-pale:   #2a2010;
+    }
+  }
+  :root[data-theme="dark"] {
+    --gold:      #d4a030;
+    --gold-pale: #2a2010;
+    --bg:        #1a1814;
+    --surface:   #242018;
+    --border:    #38332a;
+    --text:      #ede8de;
+    --muted:     #9e9482;
+    --link:      #6a9fd8;
+    --q1:        #6a9fd8;
+    --q1-pale:   #0f1e30;
+    --q2:        #d4a030;
+    --q2-pale:   #2a2010;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    font-size: 16px;
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+
+  /* Topbar */
+  .topbar { background: var(--surface); border-bottom: 1px solid var(--border); padding: 0 20px; }
+  .topbar-inner {
+    max-width: 900px; margin: 0 auto;
+    height: 46px; display: flex; align-items: center;
+    gap: 6px; font-size: 0.82rem; color: var(--muted);
+  }
+  .topbar-inner a { color: var(--link); text-decoration: none; }
+  .topbar-inner a:hover { text-decoration: underline; }
+  .sep { opacity: 0.45; }
+
+  /* Header */
+  header.page-head {
+    background: var(--surface);
+    border-bottom: 3px solid var(--gold);
+    padding: 32px 20px 28px;
+    margin-bottom: 36px;
+  }
+  header.page-head .inner { max-width: 900px; margin: 0 auto; }
+  .head-eyebrow {
+    font-size: 0.78rem; font-weight: 600;
+    letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--gold); margin-bottom: 6px;
+  }
+  header.page-head h1 {
+    font-family: "Crimson Pro", Georgia, serif;
+    font-size: 2.2rem; font-weight: 600;
+    line-height: 1.15; color: var(--text);
+  }
+  header.page-head p { font-size: 0.92rem; color: var(--muted); margin-top: 6px; }
+
+  .wrap { max-width: 900px; margin: 0 auto; padding: 0 20px 80px; }
+
+  /* Kurs-Abschnitte */
+  .kurs-label {
+    font-size: 0.72rem; font-weight: 700;
+    letter-spacing: 0.1em; text-transform: uppercase;
+    padding: 4px 10px; border-radius: 20px;
+    display: inline-block; margin-bottom: 14px;
+  }
+  .kurs-q1 { background: var(--q1-pale); color: var(--q1); }
+  .kurs-q2 { background: var(--q2-pale); color: var(--q2); }
+
+  .section-block { margin-bottom: 40px; }
+  .section-divider {
+    font-size: 0.75rem; font-weight: 600;
+    letter-spacing: 0.09em; text-transform: uppercase;
+    color: var(--muted); border-bottom: 1px solid var(--border);
+    padding-bottom: 8px; margin-bottom: 16px;
+  }
+
+  /* Karten */
+  .cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 16px; }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r);
+    overflow: hidden;
+    text-decoration: none;
+    color: var(--text);
+    display: flex;
+    transition: box-shadow 0.15s, transform 0.12s;
+  }
+  .card:hover { box-shadow: 0 5px 18px rgba(0,0,0,0.09); transform: translateY(-2px); }
+  .card:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+
+  .card-stripe { width: 5px; flex-shrink: 0; }
+  .card-q1 .card-stripe { background: var(--q1); }
+  .card-q2 .card-stripe { background: var(--q2); }
+
+  .card-body { padding: 20px 20px 18px; flex: 1; display: flex; flex-direction: column; }
+  .card-kap {
+    font-size: 0.72rem; font-weight: 600; letter-spacing: 0.06em;
+    text-transform: uppercase; margin-bottom: 6px;
+  }
+  .card-q1 .card-kap { color: var(--q1); }
+  .card-q2 .card-kap { color: var(--q2); }
+
+  .card h2 {
+    font-family: "Crimson Pro", Georgia, serif;
+    font-size: 1.25rem; font-weight: 600; line-height: 1.25;
+    margin-bottom: 8px;
+  }
+  .card p { font-size: 0.85rem; color: var(--muted); flex: 1; line-height: 1.5; }
+  .card-footer {
+    margin-top: 16px; display: flex;
+    align-items: center; justify-content: space-between;
+  }
+  .card-badge {
+    font-size: 0.75rem; font-weight: 600;
+    padding: 2px 9px; border-radius: 20px;
+  }
+  .card-q1 .card-badge { background: var(--q1-pale); color: var(--q1); }
+  .card-q2 .card-badge { background: var(--q2-pale); color: var(--q2); }
+  .card-arr { font-size: 0.95rem; color: var(--muted); transition: transform 0.12s; }
+  .card:hover .card-arr { transform: translateX(3px); }
+
+  /* Platzhalter-Karte */
+  .card-placeholder {
+    background: var(--surface); border: 1px dashed var(--border);
+    border-radius: var(--r); padding: 20px;
+    color: var(--muted); font-size: 0.85rem;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .card-placeholder .ph-icon { font-size: 1.2rem; opacity: 0.5; }
+
+  footer {
+    text-align: center; color: var(--muted); font-size: 0.82rem;
+    margin-top: 64px; padding-top: 20px; border-top: 1px solid var(--border);
+  }
+
+  @media (max-width: 600px) {
+    header.page-head h1 { font-size: 1.8rem; }
+    .cards { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<nav class="topbar" aria-label="Breadcrumb">
+  <div class="topbar-inner">
+    <a href="../../index.html">Unterrichtsmaterialien</a>
+    <span class="sep">›</span>
+    <a href="../index.html">Mathematik</a>
+    <span class="sep">›</span>
+    <span>Leistungskurs</span>
+  </div>
+</nav>
+
+<header class="page-head">
+  <div class="inner">
+    <div class="head-eyebrow">Mathematik · Leistungskurs</div>
+    <h1>LK-Materialien</h1>
+    <p>Interaktive Übungsaufgaben in drei Kompetenzstufen – mit Hinweisen und Musterlösungen.</p>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <!-- Q1 -->
+  <div class="section-block">
+    <div class="section-divider">Qualifikationsphase 1</div>
+    <div class="cards">
+      <div class="card-placeholder">
+        <span class="ph-icon">📋</span>
+        Materialien für Q1 folgen demnächst.
+      </div>
+    </div>
+  </div>
+
+  <!-- Q2 -->
+  <div class="section-block">
+    <div class="section-divider">Qualifikationsphase 2 · Analytische Geometrie</div>
+    <div class="cards">
+
+      <a class="card card-q2" href="q2-abstand-punkt-ebene/">
+        <div class="card-stripe"></div>
+        <div class="card-body">
+          <div class="card-kap">Kapitel VII</div>
+          <h2>Abstand Punkt – Ebene</h2>
+          <p>Lotfußpunkt-Verfahren, Spiegelungen, parallele Ebenen.</p>
+          <div class="card-footer">
+            <span class="card-badge">✓ Verfügbar</span>
+            <span class="card-arr">→</span>
+          </div>
+        </div>
+      </a>
+
+      <a class="card card-q2" href="q2-abstand-punkt-gerade/">
+        <div class="card-stripe"></div>
+        <div class="card-body">
+          <div class="card-kap">Kapitel VII</div>
+          <h2>Abstand Punkt – Gerade</h2>
+          <p>Lotfußpunkt auf einer Geraden, Anwendungsaufgaben.</p>
+          <div class="card-footer">
+            <span class="card-badge">✓ Verfügbar</span>
+            <span class="card-arr">→</span>
+          </div>
+        </div>
+      </a>
+
+      <a class="card card-q2" href="q2-abstand-windschiefe-geraden/">
+        <div class="card-stripe"></div>
+        <div class="card-body">
+          <div class="card-kap">Kapitel VII</div>
+          <h2>Abstand windschiefer Geraden</h2>
+          <p>Zwei Methoden: Hilfsebene und gemeinsames Lot.</p>
+          <div class="card-footer">
+            <span class="card-badge">✓ Verfügbar</span>
+            <span class="card-arr">→</span>
+          </div>
+        </div>
+      </a>
+
+    </div>
+  </div>
+
+</div>
+
+<footer>
+  Unterrichtsmaterialien · Friedrich-Bährens-Gymnasium Schwerte
+</footer>
+
+</body>
+</html>
