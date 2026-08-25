@@ -1,122 +1,330 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-<meta charset="utf-8">
+<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>GK-Materialien · Mathematik · FBG Schwerte</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400;600&display=swap">
+<title>Mathematik GK – Materialiensammlung</title>
 <style>
-  :root {
-    --gk:      #1a7a4a;
-    --gk-pale: #e4f2eb;
-    --bg:      #f5f4f0;
-    --surface: #ffffff;
-    --border:  #ddd8cc;
-    --text:    #1c1a16;
-    --muted:   #6b6456;
-    --link:    #3d6898;
+:root {
+  --gold:       #e8a800;
+  --gold-dk:    #b87e00;
+  --navy:       #1a3a6b;
+  --navy-dk:    #0f2445;
+  --c1:         #1a9e5c;
+  --c1-bg:      #eaf7f1;
+  --c2:         #2c6fad;
+  --c2-bg:      #e5f1fb;
+  --c3:         #7b3fb5;
+  --c3-bg:      #f3edfb;
+  --bg:         #f0f2f7;
+  --surface:    #ffffff;
+  --surface-2:  #f5f6fa;
+  --text:       #1a1c27;
+  --text-muted: #5c6175;
+  --border:     #d4d8e8;
+  --available:  #1a9e5c;
+  --pending:    #9ca3af;
+  --neu:        #d4760a;
+  --neu-bg:     #fff3e6;
+  --kap5:       #1a6b4a;
+  --kap6:       #1a3a6b;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg:         #12141f;
+    --surface:    #1e2130;
+    --surface-2:  #252840;
+    --text:       #e8eaf2;
+    --text-muted: #9096b0;
+    --border:     #2e3250;
+    --c1-bg:      #112a1e;
+    --c2-bg:      #0e2038;
+    --c3-bg:      #1e1030;
+    --neu-bg:     #33220e;
   }
-  @media (prefers-color-scheme: dark) {
-    :root:not([data-theme="light"]) {
-      --gk:      #3db870;
-      --gk-pale: #0a2018;
-      --bg:      #1a1814;
-      --surface: #242018;
-      --border:  #38332a;
-      --text:    #ede8de;
-      --muted:   #9e9482;
-      --link:    #6a9fd8;
-    }
-  }
-  :root[data-theme="dark"] {
-    --gk:      #3db870;
-    --gk-pale: #0a2018;
-    --bg:      #1a1814;
-    --surface: #242018;
-    --border:  #38332a;
-    --text:    #ede8de;
-    --muted:   #9e9482;
-    --link:    #6a9fd8;
-  }
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  body {
-    background: var(--bg); color: var(--text);
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-    font-size: 16px; line-height: 1.6; min-height: 100vh;
-  }
-  .topbar { background: var(--surface); border-bottom: 1px solid var(--border); padding: 0 20px; }
-  .topbar-inner {
-    max-width: 900px; margin: 0 auto; height: 46px;
-    display: flex; align-items: center; gap: 6px;
-    font-size: 0.82rem; color: var(--muted);
-  }
-  .topbar-inner a { color: var(--link); text-decoration: none; }
-  .topbar-inner a:hover { text-decoration: underline; }
-  .sep { opacity: 0.45; }
-  header.page-head {
-    background: var(--surface); border-bottom: 3px solid var(--gk);
-    padding: 32px 20px 28px; margin-bottom: 40px;
-  }
-  header.page-head .inner { max-width: 900px; margin: 0 auto; }
-  .head-eyebrow {
-    font-size: 0.78rem; font-weight: 600; letter-spacing: 0.1em;
-    text-transform: uppercase; color: var(--gk); margin-bottom: 6px;
-  }
-  h1 {
-    font-family: "Crimson Pro", Georgia, serif;
-    font-size: 2.2rem; font-weight: 600; color: var(--text);
-  }
-  header.page-head p { font-size: 0.92rem; color: var(--muted); margin-top: 6px; }
-  .wrap { max-width: 900px; margin: 0 auto; padding: 0 20px 80px; }
-  .coming-soon {
-    background: var(--surface); border: 1px solid var(--border);
-    border-left: 4px solid var(--gk); border-radius: 6px;
-    padding: 32px 28px; text-align: center;
-  }
-  .coming-soon .icon { font-size: 2rem; margin-bottom: 12px; opacity: 0.6; }
-  .coming-soon h2 {
-    font-family: "Crimson Pro", Georgia, serif;
-    font-size: 1.4rem; font-weight: 600; margin-bottom: 8px;
-  }
-  .coming-soon p { color: var(--muted); font-size: 0.9rem; }
-  footer {
-    text-align: center; color: var(--muted); font-size: 0.82rem;
-    margin-top: 64px; padding-top: 20px; border-top: 1px solid var(--border);
-  }
+}
+:root[data-theme="dark"] {
+  --bg:         #12141f;
+  --surface:    #1e2130;
+  --surface-2:  #252840;
+  --text:       #e8eaf2;
+  --text-muted: #9096b0;
+  --border:     #2e3250;
+  --c1-bg:      #112a1e;
+  --c2-bg:      #0e2038;
+  --c3-bg:      #1e1030;
+  --neu-bg:     #33220e;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  line-height: 1.5;
+}
+a { color: inherit; text-decoration: none; }
+.site-header { background: var(--navy); color: #fff; padding: 0; }
+.site-header-inner {
+  max-width: 960px; margin: 0 auto; padding: 28px 24px 24px;
+  display: flex; align-items: flex-start; gap: 20px;
+}
+.site-badge {
+  background: var(--gold); color: var(--navy-dk); font-weight: 800; font-size: 13px;
+  letter-spacing: .08em; padding: 4px 10px; border-radius: 4px; white-space: nowrap; margin-top: 4px;
+}
+.site-title-block { flex: 1; }
+.site-title { font-size: 22px; font-weight: 700; letter-spacing: .01em; margin-bottom: 4px; }
+.site-subtitle { font-size: 13px; color: rgba(255,255,255,.65); letter-spacing: .02em; }
+.site-gold-bar { height: 4px; background: var(--gold); }
+.theme-toggle {
+  position: fixed; top: 14px; right: 16px; background: rgba(255,255,255,.12);
+  border: 1px solid rgba(255,255,255,.2); color: #fff; border-radius: 6px;
+  padding: 5px 10px; font-size: 12px; cursor: pointer; z-index: 100;
+}
+.theme-toggle:hover { background: rgba(255,255,255,.2); }
+.main { max-width: 960px; margin: 0 auto; padding: 32px 24px 64px; }
+.intro {
+  background: var(--surface); border: 1px solid var(--border); border-radius: 10px;
+  padding: 20px 24px; margin-bottom: 36px; display: flex; align-items: flex-start; gap: 16px;
+}
+.intro-icon { font-size: 28px; flex-shrink: 0; line-height: 1; }
+.intro-text { font-size: 14px; color: var(--text-muted); line-height: 1.7; }
+.intro-text strong { color: var(--text); }
+.legend { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 12px; }
+.legend-chip { font-size: 12px; font-weight: 600; padding: 3px 10px; border-radius: 20px; }
+.chip-1 { background: var(--c1-bg); color: var(--c1); }
+.chip-2 { background: var(--c2-bg); color: var(--c2); }
+.chip-3 { background: var(--c3-bg); color: var(--c3); }
+.chapter-block { margin-bottom: 40px; }
+.chapter-header {
+  display: flex; align-items: center; gap: 14px; margin-bottom: 16px;
+  padding-bottom: 12px; border-bottom: 2px solid var(--border);
+}
+.chapter-roman { font-size: 28px; font-weight: 800; letter-spacing: -.02em; min-width: 44px; line-height: 1; }
+.chapter-kap5 .chapter-roman { color: var(--kap5); }
+.chapter-kap6 .chapter-roman { color: var(--kap6); }
+.chapter-name { font-size: 18px; font-weight: 700; color: var(--text); }
+.chapter-pages { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+.topic-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 12px; }
+.topic-card {
+  background: var(--surface); border: 1px solid var(--border); border-radius: 10px;
+  padding: 16px 18px; transition: box-shadow .18s, transform .18s; position: relative;
+}
+.topic-card.available { border-left: 4px solid var(--available); cursor: pointer; }
+.topic-card.available:hover { box-shadow: 0 4px 20px rgba(0,0,0,.12); transform: translateY(-2px); }
+.topic-card.pending { opacity: .72; border-left: 4px solid var(--pending); }
+.topic-num {
+  font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase;
+  color: var(--text-muted); margin-bottom: 5px;
+}
+.topic-name { font-size: 14.5px; font-weight: 600; color: var(--text); margin-bottom: 10px; line-height: 1.35; }
+.topic-meta { display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap; }
+.status-badge { font-size: 11px; font-weight: 700; padding: 3px 9px; border-radius: 20px; letter-spacing: .04em; }
+.badge-available { background: var(--c1-bg); color: var(--available); }
+.badge-pending { background: var(--surface-2); color: var(--pending); }
+.badge-neu {
+  position: absolute; top: 12px; right: 12px; background: var(--neu-bg); color: var(--neu);
+  font-size: 10px; font-weight: 800; letter-spacing: .08em; padding: 2px 8px; border-radius: 20px;
+}
+.topic-stufen { display: flex; gap: 4px; }
+.topic-stufen .dot { width: 7px; height: 7px; border-radius: 50%; }
+.dot-1 { background: var(--c1); }
+.dot-2 { background: var(--c2); }
+.dot-3 { background: var(--c3); }
+.dot-empty { background: var(--border); }
+.arrow-icon { font-size: 16px; color: var(--available); margin-left: auto; }
+.extra-row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 10px; }
+.extra-chip {
+  font-size: 12px; font-weight: 600; padding: 5px 14px; border-radius: 20px;
+  border: 1px solid var(--border); background: var(--surface-2); color: var(--text-muted);
+}
+.extra-chip.gold { border-color: var(--gold); color: var(--gold-dk); }
+.site-footer {
+  text-align: center; font-size: 12px; color: var(--text-muted); padding: 24px 0 16px;
+  border-top: 1px solid var(--border); margin-top: 20px;
+}
 </style>
 </head>
 <body>
 
-<nav class="topbar" aria-label="Breadcrumb">
-  <div class="topbar-inner">
-    <a href="../../index.html">Unterrichtsmaterialien</a>
-    <span class="sep">›</span>
-    <a href="../index.html">Mathematik</a>
-    <span class="sep">›</span>
-    <span>Grundkurs</span>
-  </div>
-</nav>
+<button class="theme-toggle" onclick="toggleTheme()" title="Helles/dunkles Design">☀︎ / ☾</button>
 
-<header class="page-head">
-  <div class="inner">
-    <div class="head-eyebrow">Mathematik · Grundkurs</div>
-    <h1>GK-Materialien</h1>
-    <p>Interaktive Übungsaufgaben für den Grundkurs.</p>
+<header class="site-header">
+  <div class="site-header-inner">
+    <div class="site-badge">GK&nbsp;Mathematik</div>
+    <div class="site-title-block">
+      <div class="site-title">Interaktive Materialiensammlung</div>
+      <div class="site-subtitle">
+        Friedrich-Bährens-Gymnasium Schwerte &nbsp;·&nbsp;
+        Analytische Geometrie &nbsp;·&nbsp; M.&nbsp;Mohr
+      </div>
+    </div>
   </div>
+  <div class="site-gold-bar"></div>
 </header>
 
-<div class="wrap">
-  <div class="coming-soon">
-    <div class="icon">📚</div>
-    <h2>Materialien folgen demnächst</h2>
-    <p>Die GK-Materialien werden hier schrittweise ergänzt.</p>
-  </div>
-</div>
+<main class="main">
 
-<footer>
-  Unterrichtsmaterialien · Friedrich-Bährens-Gymnasium Schwerte
+  <div class="intro">
+    <div class="intro-icon">📐</div>
+    <div class="intro-text">
+      <strong>Willkommen bei der Materialiensammlung für den Grundkurs.</strong><br>
+      Hier findest du nach und nach interaktive Übungsaufgaben zu allen Themen
+      aus Kapitel V und VI. Aufgaben mit
+      <span style="color:var(--c1);font-weight:600;">grünem</span> Badge sind bereits verfügbar –
+      klicke einfach auf die Karte, um direkt zu den Aufgaben zu gelangen.
+      <div class="legend">
+        <span class="legend-chip chip-1">Stufe 1 – Grundaufgaben</span>
+        <span class="legend-chip chip-2">Stufe 2 – Standardaufgaben</span>
+        <span class="legend-chip chip-3">Stufe 3 – Erweiterungsaufgaben</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="chapter-block chapter-kap5">
+    <div class="chapter-header">
+      <div class="chapter-roman">V</div>
+      <div class="chapter-title-block">
+        <div class="chapter-name">Vektoren, Geraden und Winkel</div>
+        <div class="chapter-pages">Schulbuch S. 150–178</div>
+      </div>
+    </div>
+
+    <div class="topic-grid">
+
+      <!-- V.1 – bestehende Seite, ANNAHME: Ordner heißt geraden-lagebeziehungen -->
+      <a href="Kapitel%20V.1%20-%20Geraden%20und%20Lagebeziehung/index.html" class="topic-card available">
+        <div class="topic-num">Kapitel V · 1</div>
+        <div class="topic-name">Wiederholung: Geraden und Lagebeziehungen</div>
+        <div class="topic-meta">
+          <span class="status-badge badge-available">Verfügbar</span>
+          <div class="topic-stufen">
+            <div class="dot dot-1" title="Stufe 1"></div>
+            <div class="dot dot-2" title="Stufe 2"></div>
+            <div class="dot dot-3" title="Stufe 3"></div>
+          </div>
+          <span class="arrow-icon">→</span>
+        </div>
+      </a>
+
+      <!-- V.2 -->
+      <a href="Kapitel%20V.2%20-%20Zueinander%20orthogonalte%20Vektoren%20-%20Skalarprodukt/index.html" class="topic-card available">
+        <span class="badge-neu">NEU</span>
+        <div class="topic-num">Kapitel V · 2</div>
+        <div class="topic-name">Zueinander orthogonale Vektoren – Skalarprodukt</div>
+        <div class="topic-meta">
+          <span class="status-badge badge-available">Verfügbar</span>
+          <div class="topic-stufen">
+            <div class="dot dot-1" title="Stufe 1"></div>
+            <div class="dot dot-2" title="Stufe 2"></div>
+            <div class="dot dot-3" title="Stufe 3"></div>
+          </div>
+          <span class="arrow-icon">→</span>
+        </div>
+      </a>
+
+      <!-- V.3 -->
+      <div class="topic-card pending">
+        <div class="topic-num">Kapitel V · 3</div>
+        <div class="topic-name">Winkel und Schnittwinkel</div>
+        <div class="topic-meta">
+          <span class="status-badge badge-pending">In Vorbereitung</span>
+          <div class="topic-stufen">
+            <div class="dot dot-empty"></div>
+            <div class="dot dot-empty"></div>
+            <div class="dot dot-empty"></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="extra-row">
+      <span class="extra-chip gold">Klausurtraining (S. 170)</span>
+      <span class="extra-chip">Rückblick (S. 174)</span>
+      <span class="extra-chip">Probeklausur (S. 175)</span>
+      <span class="extra-chip">Exkursion: Das Vektorprodukt (S. 178)</span>
+    </div>
+
+  </div>
+
+  <div class="chapter-block chapter-kap6">
+    <div class="chapter-header">
+      <div class="chapter-roman">VI</div>
+      <div class="chapter-title-block">
+        <div class="chapter-name">Ebenen</div>
+        <div class="chapter-pages">Schulbuch S. 180–212</div>
+      </div>
+    </div>
+
+    <div class="topic-grid">
+      <div class="topic-card pending">
+        <div class="topic-num">Kapitel VI · 1</div>
+        <div class="topic-name">Der Gauß-Algorithmus</div>
+        <div class="topic-meta">
+          <span class="status-badge badge-pending">In Vorbereitung</span>
+          <div class="topic-stufen"><div class="dot dot-empty"></div><div class="dot dot-empty"></div><div class="dot dot-empty"></div></div>
+        </div>
+      </div>
+      <div class="topic-card pending">
+        <div class="topic-num">Kapitel VI · 2</div>
+        <div class="topic-name">Ebenen im Raum – die Parameterform</div>
+        <div class="topic-meta">
+          <span class="status-badge badge-pending">In Vorbereitung</span>
+          <div class="topic-stufen"><div class="dot dot-empty"></div><div class="dot dot-empty"></div><div class="dot dot-empty"></div></div>
+        </div>
+      </div>
+      <div class="topic-card pending">
+        <div class="topic-num">Kapitel VI · 3</div>
+        <div class="topic-name">Koordinatenform und Normalenvektor</div>
+        <div class="topic-meta">
+          <span class="status-badge badge-pending">In Vorbereitung</span>
+          <div class="topic-stufen"><div class="dot dot-empty"></div><div class="dot dot-empty"></div><div class="dot dot-empty"></div></div>
+        </div>
+      </div>
+      <div class="topic-card pending">
+        <div class="topic-num">Kapitel VI · 4</div>
+        <div class="topic-name">Schnittwinkel und Schnittpunkte</div>
+        <div class="topic-meta">
+          <span class="status-badge badge-pending">In Vorbereitung</span>
+          <div class="topic-stufen"><div class="dot dot-empty"></div><div class="dot dot-empty"></div><div class="dot dot-empty"></div></div>
+        </div>
+      </div>
+      <div class="topic-card pending">
+        <div class="topic-num">Kapitel VI · 5</div>
+        <div class="topic-name">Geometrische Objekte im Raum</div>
+        <div class="topic-meta">
+          <span class="status-badge badge-pending">In Vorbereitung</span>
+          <div class="topic-stufen"><div class="dot dot-empty"></div><div class="dot dot-empty"></div><div class="dot dot-empty"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="extra-row">
+      <span class="extra-chip gold">Klausurtraining (S. 204)</span>
+      <span class="extra-chip">Rückblick (S. 208)</span>
+      <span class="extra-chip">Probeklausur (S. 209)</span>
+      <span class="extra-chip">Exkursion: Schrägbilder (S. 212)</span>
+    </div>
+
+  </div>
+
+</main>
+
+<footer class="site-footer">
+  Friedrich-Bährens-Gymnasium Schwerte &nbsp;·&nbsp;
+  Mathematik Grundkurs &nbsp;·&nbsp; M.&nbsp;Mohr &nbsp;·&nbsp;
+  <a href="https://mohr-fbg.github.io/Unterrichtsmaterialien/Mathematik/GK_Materialien/"
+     style="color:var(--gold-dk);">GK-Materialsammlung</a>
 </footer>
+
+<script>
+function toggleTheme() {
+  const root = document.documentElement;
+  const cur = root.getAttribute('data-theme');
+  root.setAttribute('data-theme', cur === 'dark' ? 'light' : 'dark');
+}
+</script>
 </body>
 </html>

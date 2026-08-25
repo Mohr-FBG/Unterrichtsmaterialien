@@ -1,0 +1,784 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kap. V.2 – Zueinander orthogonale Vektoren · GK</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/contrib/auto-render.min.js"></script>
+<style>
+:root {
+  --gold:      #e8a800;
+  --gold-dark: #b87e00;
+  --blue:      #2c5f8a;
+  --blue-dark: #1a3d5c;
+  --green:     #1a9e5c;
+  --green-bg:  #eaf7f1;
+  --orange:    #d4760a;
+  --orange-bg: #fff3e6;
+  --purple:    #7b3fb5;
+  --purple-bg: #f3edfb;
+  --border:    #dde1e7;
+  --bg:        #f4f5f7;
+  --text:      #1c1f26;
+  --card-bg:   #ffffff;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Segoe UI', Arial, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  font-size: 15px;
+  padding: 0;
+}
+.page-header {
+  background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%);
+  color: #fff;
+  padding: 22px 28px 18px;
+  position: relative;
+}
+.page-header h1 { font-size: 22px; font-weight: 800; line-height: 1.2; }
+.page-header .sub { font-size: 13px; opacity: .85; margin-top: 4px; }
+.header-badge {
+  display: inline-block;
+  background: rgba(255,255,255,0.2);
+  border: 1.5px solid rgba(255,255,255,0.45);
+  border-radius: 20px;
+  padding: 4px 14px;
+  font-size: 12px;
+  font-weight: 600;
+  margin-top: 10px;
+  margin-right: 6px;
+}
+main { max-width: 900px; margin: 0 auto; padding: 22px 16px 40px; }
+.intro-box {
+  background: #fff;
+  border: 1.5px solid var(--border);
+  border-left: 5px solid var(--gold);
+  border-radius: 8px;
+  padding: 14px 18px;
+  margin-bottom: 24px;
+  font-size: 14px;
+  line-height: 1.6;
+}
+.intro-box strong { color: var(--gold-dark); }
+.merk-box {
+  background: #fff;
+  border: 1.5px solid var(--border);
+  border-left: 5px solid var(--blue);
+  border-radius: 8px;
+  padding: 14px 18px;
+  margin-bottom: 24px;
+  font-size: 14px;
+  line-height: 1.7;
+  text-align: center;
+}
+.merk-box .label {
+  display: block;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  color: var(--blue);
+  margin-bottom: 6px;
+}
+.section-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 28px 0 14px;
+  font-size: 18px;
+  font-weight: 800;
+}
+.section-title .dot { width: 12px; height: 12px; border-radius: 50%; flex-shrink: 0; }
+.dot-green  { background: var(--green); }
+.dot-orange { background: var(--orange); }
+.dot-purple { background: var(--purple); }
+.section-badge {
+  font-size: 11px;
+  font-weight: 700;
+  padding: 3px 10px;
+  border-radius: 12px;
+  letter-spacing: .04em;
+  margin-left: auto;
+}
+.badge-green  { background: var(--green-bg);  color: var(--green); }
+.badge-orange { background: var(--orange-bg); color: var(--orange); }
+.badge-purple { background: var(--purple-bg); color: var(--purple); }
+.task-card {
+  background: var(--card-bg);
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  margin-bottom: 14px;
+  overflow: hidden;
+  box-shadow: 0 1px 5px rgba(0,0,0,0.06);
+}
+.task-stripe { height: 5px; }
+.stripe-green  { background: var(--green); }
+.stripe-orange { background: var(--orange); }
+.stripe-purple { background: var(--purple); }
+.task-header {
+  padding: 12px 16px 8px;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  border-bottom: 1px solid var(--bg);
+}
+.task-num {
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  color: #fff;
+  font-weight: 800;
+  font-size: 13px;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+.num-green  { background: var(--green); }
+.num-orange { background: var(--orange); }
+.num-purple { background: var(--purple); }
+.task-meta { flex: 1; }
+.task-meta h3 { font-size: 14px; font-weight: 700; line-height: 1.3; }
+.task-meta .tag {
+  display: inline-block;
+  font-size: 10.5px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 1px 8px;
+  margin-top: 4px;
+  color: #666;
+}
+.task-body { padding: 12px 16px 14px; }
+.task-body p, .task-body li { font-size: 14px; line-height: 1.65; }
+.task-body ul { padding-left: 18px; margin-top: 6px; }
+.task-body li { margin-bottom: 4px; }
+.subtasks { margin-top: 10px; }
+.subtask { display: flex; gap: 10px; margin-bottom: 8px; align-items: flex-start; }
+.subtask-label { font-weight: 700; min-width: 22px; font-size: 14px; }
+.btn-row { display: flex; gap: 8px; margin-top: 14px; flex-wrap: wrap; }
+.btn {
+  border: none;
+  border-radius: 20px;
+  padding: 7px 16px;
+  font-size: 12.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity .15s;
+}
+.btn:hover { opacity: .85; }
+.btn-hint { background: #e8f4ff; color: var(--blue); }
+.btn-sol-green  { background: var(--green);  color: #fff; }
+.btn-sol-orange { background: var(--orange); color: #fff; }
+.btn-sol-purple { background: var(--purple); color: #fff; }
+.panel {
+  display: none;
+  margin-top: 10px;
+  border-radius: 7px;
+  padding: 12px 14px;
+  font-size: 13.5px;
+  line-height: 1.7;
+  border: 1.5px solid;
+}
+.panel.open { display: block; }
+.panel-hint { background: #eaf2fb; border-color: #a8c9e8; color: #1a3d5c; }
+.panel-sol-green  { background: var(--green-bg);  border-color: var(--green); }
+.panel-sol-orange { background: var(--orange-bg); border-color: var(--orange); }
+.panel-sol-purple { background: var(--purple-bg); border-color: var(--purple); }
+.panel h4 {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  margin-bottom: 8px;
+  opacity: .7;
+}
+.sol-step { margin-bottom: 7px; padding-bottom: 7px; border-bottom: 1px solid rgba(0,0,0,0.07); }
+.sol-step:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+.res-green  { color: var(--green);  font-weight: 800; }
+.res-orange { color: var(--orange); font-weight: 800; }
+.res-purple { color: var(--purple); font-weight: 800; }
+.cas-box {
+  background: #fff;
+  border: 1.5px solid var(--border);
+  border-left: 5px solid var(--blue);
+  border-radius: 8px;
+  padding: 14px 18px;
+  margin: 24px 0;
+  font-size: 13.5px;
+  line-height: 1.7;
+}
+.cas-box h4 { font-size: 14px; margin-bottom: 6px; color: var(--blue-dark); }
+.cas-box code {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 1px 6px;
+  font-size: 12.5px;
+}
+.check-box {
+  background: #fff;
+  border: 1.5px solid var(--green);
+  border-radius: 10px;
+  padding: 16px 18px;
+  margin-top: 28px;
+}
+.check-box h3 { font-size: 15px; margin-bottom: 10px; }
+.check-box ul { list-style: none; }
+.check-box li {
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+  font-size: 13.5px;
+  line-height: 1.6;
+  margin-bottom: 7px;
+}
+.check-box .box {
+  flex-shrink: 0;
+  width: 14px; height: 14px;
+  border: 1.6px solid var(--green);
+  border-radius: 3px;
+  margin-top: 3px;
+}
+.check-box .ref { margin-left: auto; color: #999; font-size: 12px; white-space: nowrap; padding-left: 10px; }
+.divider { border: none; border-top: 2px dashed var(--border); margin: 28px 0; }
+footer { text-align: center; padding: 18px; font-size: 12px; color: #999; border-top: 1px solid var(--border); }
+footer a { color: var(--blue); text-decoration: none; }
+</style>
+</head>
+<body>
+
+<div class="page-header">
+  <h1>Kapitel V.2 · Zueinander orthogonale Vektoren – Skalarprodukt</h1>
+  <div class="sub">Mathematik · Grundkurs · Friedrich-Bährens-Gymnasium Schwerte</div>
+  <div>
+    <span class="header-badge">📐 Analytische Geometrie</span>
+    <span class="header-badge">⏱ ca. 45 Min</span>
+    <span class="header-badge">3 Kompetenzstufen</span>
+  </div>
+</div>
+
+<main>
+
+<div class="intro-box">
+  <strong>Ziel dieser Einheit:</strong> Ihr habt das Skalarprodukt eingeführt und an zwei Beispielen angewendet. Mit dieser Aufgabensammlung übt ihr das Kriterium für Orthogonalität — vom reinen Rechnen über rechte Winkel in Dreiecken und Vierecken bis zur Geraden, die zwei andere Geraden senkrecht schneidet.<br>
+  <strong>Vorgehen:</strong> Bearbeitet die Aufgaben je nach eurem Kenntnisstand. Klappt Hinweise und Musterlösungen erst auf, wenn ihr es selbst versucht habt — bei den größeren Aufgaben gibt es mehrere Hinweisstufen.
+</div>
+
+<div class="merk-box">
+  <span class="label">Das Kriterium</span>
+  \(\vec{a} \perp \vec{b} \quad \Longleftrightarrow \quad \vec{a} \circ \vec{b} = 0\) &nbsp;&nbsp;&nbsp; mit &nbsp;&nbsp;&nbsp; \(\vec{a} \circ \vec{b} = a_1b_1 + a_2b_2 + a_3b_3\)
+</div>
+
+<div class="section-title">
+  <div class="dot dot-green"></div>
+  Stufe 1 · Grundlegend
+  <span class="section-badge badge-green">★ Pflicht für alle</span>
+</div>
+
+<div class="task-card">
+  <div class="task-stripe stripe-green"></div>
+  <div class="task-header">
+    <div class="task-num num-green">1</div>
+    <div class="task-meta">
+      <h3>Skalarprodukte berechnen und Orthogonalität erkennen</h3>
+      <span class="tag">Skalarprodukt · Rechenregel</span>
+    </div>
+  </div>
+  <div class="task-body">
+    <p>Gegeben sind \(\vec{a} = \begin{pmatrix}1\\0\\-2\end{pmatrix}\), \(\vec{b} = \begin{pmatrix}4\\3\\2\end{pmatrix}\) und \(\vec{c} = \begin{pmatrix}-1\\1\\3\end{pmatrix}\).</p>
+    <div class="subtasks">
+      <div class="subtask"><span class="subtask-label">a)</span><span>Berechnen Sie \(\vec{a} \circ \vec{b}\), \(\vec{c} \circ \vec{a}\), \(\vec{b} \circ \vec{c}\) und \(\vec{a} \circ \vec{c}\).</span></div>
+      <div class="subtask"><span class="subtask-label">b)</span><span>Welche beiden Vektoren stehen senkrecht aufeinander?</span></div>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-hint" onclick="toggle('h11')">💡 Hinweis</button>
+      <button class="btn btn-sol-green" onclick="toggle('s11')">✓ Musterlösung</button>
+    </div>
+    <div id="h11" class="panel panel-hint">
+      <h4>Hinweis</h4>
+      <p>Multipliziere die Koordinaten paarweise (erste mal erste, zweite mal zweite, dritte mal dritte) und addiere die drei Produkte. Für \(\vec{a} \circ \vec{b}\) also \(1\cdot 4 + 0\cdot 3 + (-2)\cdot 2\). Achte besonders auf die Vorzeichen.</p>
+    </div>
+    <div id="s11" class="panel panel-sol-green">
+      <h4>Musterlösung</h4>
+      <div class="sol-step">
+        <strong>a)</strong> \(\vec{a} \circ \vec{b} = 4 + 0 - 4 = 0\) · \(\vec{c} \circ \vec{a} = -1 + 0 - 6 = -7\)<br>
+        \(\vec{b} \circ \vec{c} = -4 + 3 + 6 = 5\) · \(\vec{a} \circ \vec{c} = -1 + 0 - 6 = -7\)
+      </div>
+      <div class="sol-step">
+        <strong>b)</strong> Nur bei \(\vec{a}\) und \(\vec{b}\) ergibt sich null, also gilt <span class="res-green">\(\vec{a} \perp \vec{b}\)</span>. Bei den übrigen Paaren ist das Skalarprodukt von null verschieden — sie schließen keinen rechten Winkel ein.
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="task-card">
+  <div class="task-stripe stripe-green"></div>
+  <div class="task-header">
+    <div class="task-num num-green">2</div>
+    <div class="task-meta">
+      <h3>Fehlende Koordinate bestimmen</h3>
+      <span class="tag">Orthogonalität · Gleichung lösen</span>
+    </div>
+  </div>
+  <div class="task-body">
+    <p>Bestimmen Sie die fehlende Koordinate so, dass \(\vec{a} \perp \vec{b}\) gilt.</p>
+    <div class="subtasks">
+      <div class="subtask"><span class="subtask-label">a)</span><span>\(\vec{a} = \begin{pmatrix}a_1\\-1\\3\end{pmatrix}\), \(\vec{b} = \begin{pmatrix}1\\2\\1\end{pmatrix}\)</span></div>
+      <div class="subtask"><span class="subtask-label">b)</span><span>\(\vec{a} = \begin{pmatrix}2\\5\\4\end{pmatrix}\), \(\vec{b} = \begin{pmatrix}2\\b_2\\-1\end{pmatrix}\)</span></div>
+      <div class="subtask"><span class="subtask-label">c)</span><span>\(\vec{a} = \begin{pmatrix}1\\4\\2\end{pmatrix}\), \(\vec{b} = \begin{pmatrix}2\\1\\b_3\end{pmatrix}\)</span></div>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-hint" onclick="toggle('h12')">💡 Hinweis</button>
+      <button class="btn btn-sol-green" onclick="toggle('s12')">✓ Musterlösung</button>
+    </div>
+    <div id="h12" class="panel panel-hint">
+      <h4>Hinweis</h4>
+      <p>Setze das Skalarprodukt gleich null — dadurch entsteht eine lineare Gleichung mit einer Unbekannten. Bei a): \(a_1 \cdot 1 + (-1)\cdot 2 + 3 \cdot 1 = 0\), also \(a_1 - 2 + 3 = 0\).</p>
+    </div>
+    <div id="s12" class="panel panel-sol-green">
+      <h4>Musterlösung</h4>
+      <div class="sol-step"><strong>a)</strong> \(a_1 - 2 + 3 = 0 \Rightarrow\) <span class="res-green">\(a_1 = -1\)</span></div>
+      <div class="sol-step"><strong>b)</strong> \(4 + 5b_2 - 4 = 0 \Rightarrow 5b_2 = 0 \Rightarrow\) <span class="res-green">\(b_2 = 0\)</span></div>
+      <div class="sol-step"><strong>c)</strong> \(2 + 4 + 2b_3 = 0 \Rightarrow 2b_3 = -6 \Rightarrow\) <span class="res-green">\(b_3 = -3\)</span></div>
+    </div>
+  </div>
+</div>
+
+<div class="task-card">
+  <div class="task-stripe stripe-green"></div>
+  <div class="task-header">
+    <div class="task-num num-green">3</div>
+    <div class="task-meta">
+      <h3>Orthogonale Vektoren selbst finden</h3>
+      <span class="tag">Freie Wahl von Koordinaten · Begründen</span>
+    </div>
+  </div>
+  <div class="task-body">
+    <p>Gegeben ist \(\vec{a} = \begin{pmatrix}2\\1\\0\end{pmatrix}\).</p>
+    <div class="subtasks">
+      <div class="subtask"><span class="subtask-label">a)</span><span>Geben Sie drei Vektoren an, die in verschiedene Richtungen zeigen und orthogonal zu \(\vec{a}\) sind.</span></div>
+      <div class="subtask"><span class="subtask-label">b)</span><span>Begründen Sie, warum es unendlich viele solcher Vektoren gibt.</span></div>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-hint" onclick="toggle('h13a')">💡 Hinweis 1</button>
+      <button class="btn btn-hint" onclick="toggle('h13b')">💡 Hinweis 2</button>
+      <button class="btn btn-sol-green" onclick="toggle('s13')">✓ Musterlösung</button>
+    </div>
+    <div id="h13a" class="panel panel-hint">
+      <h4>Hinweis 1 – Bedingung aufstellen</h4>
+      <p>Für \(\vec{x} = \begin{pmatrix}x_1\\x_2\\x_3\end{pmatrix}\) lautet die Bedingung \(2x_1 + 1x_2 + 0 \cdot x_3 = 0\), also \(2x_1 + x_2 = 0\). Beachte: \(x_3\) kommt gar nicht vor.</p>
+    </div>
+    <div id="h13b" class="panel panel-hint">
+      <h4>Hinweis 2 – Werte wählen</h4>
+      <p>Wähle \(x_1\) frei, dann folgt \(x_2 = -2x_1\). \(x_3\) darfst du völlig beliebig setzen. Probiere zuerst \(x_1 = 0\), dann \(x_1 = 1\) mit zwei verschiedenen Werten für \(x_3\).</p>
+    </div>
+    <div id="s13" class="panel panel-sol-green">
+      <h4>Musterlösung</h4>
+      <div class="sol-step">
+        <strong>a)</strong> Zum Beispiel \(\begin{pmatrix}0\\0\\1\end{pmatrix}\), \(\begin{pmatrix}1\\-2\\0\end{pmatrix}\) und \(\begin{pmatrix}1\\-2\\5\end{pmatrix}\).<br>
+        Probe beim letzten: \(2\cdot 1 + 1\cdot(-2) + 0\cdot 5 = 0\) ✓
+      </div>
+      <div class="sol-step">
+        <strong>b)</strong> Die Bedingung \(2x_1 + x_2 = 0\) ist <em>eine</em> Gleichung mit drei Unbekannten. Zwei Koordinaten bleiben frei wählbar, deshalb gibt es <span class="res-green">unendlich viele Lösungen</span> — anschaulich bilden sie eine Ebene, die senkrecht zu \(\vec{a}\) durch den Ursprung verläuft.
+      </div>
+    </div>
+  </div>
+</div>
+
+<hr class="divider">
+
+<div class="section-title">
+  <div class="dot dot-orange"></div>
+  Stufe 2 · Aufbauend
+  <span class="section-badge badge-orange">★★ Für Sicherheit</span>
+</div>
+
+<div class="task-card">
+  <div class="task-stripe stripe-orange"></div>
+  <div class="task-header">
+    <div class="task-num num-orange">4</div>
+    <div class="task-meta">
+      <h3>Rechtwinkliges Dreieck nachweisen</h3>
+      <span class="tag">Dreieck · Rechter Winkel · Flächeninhalt</span>
+    </div>
+  </div>
+  <div class="task-body">
+    <p>Gegeben ist das Dreieck \(ABC\) mit \(A(5\mid 2\mid 2)\), \(B(1\mid 5\mid 4)\) und \(C(4\mid 9\mid 4)\).</p>
+    <div class="subtasks">
+      <div class="subtask"><span class="subtask-label">a)</span><span>Zeigen Sie mithilfe des Skalarprodukts, dass das Dreieck rechtwinklig ist. Bei welchem Punkt liegt der rechte Winkel?</span></div>
+      <div class="subtask"><span class="subtask-label">b)</span><span>Berechnen Sie den Flächeninhalt des Dreiecks.</span></div>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-hint" onclick="toggle('h21a')">💡 Hinweis 1</button>
+      <button class="btn btn-hint" onclick="toggle('h21b')">💡 Hinweis 2</button>
+      <button class="btn btn-sol-orange" onclick="toggle('s21')">✓ Musterlösung</button>
+    </div>
+    <div id="h21a" class="panel panel-hint">
+      <h4>Hinweis 1 – Wo suchen?</h4>
+      <p>Der rechte Winkel kann bei \(A\), \(B\) oder \(C\) liegen. Bilde jeweils die beiden Vektoren, die vom betrachteten Punkt ausgehen — bei \(B\) also \(\overrightarrow{BA}\) und \(\overrightarrow{BC}\) — und prüfe ihr Skalarprodukt.</p>
+    </div>
+    <div id="h21b" class="panel panel-hint">
+      <h4>Hinweis 2 – Flächeninhalt</h4>
+      <p>Im rechtwinkligen Dreieck sind die beiden Seiten am rechten Winkel Grundseite und Höhe: \(A = \tfrac{1}{2} \cdot |\overrightarrow{BA}| \cdot |\overrightarrow{BC}|\). Die Länge berechnest du mit \(|\vec{v}| = \sqrt{v_1^2 + v_2^2 + v_3^2}\).</p>
+    </div>
+    <div id="s21" class="panel panel-sol-orange">
+      <h4>Musterlösung</h4>
+      <div class="sol-step">
+        <strong>a)</strong> \(\overrightarrow{BA} = \begin{pmatrix}4\\-3\\-2\end{pmatrix}\), \(\overrightarrow{BC} = \begin{pmatrix}3\\4\\0\end{pmatrix}\)<br>
+        \(\overrightarrow{BA} \circ \overrightarrow{BC} = 12 - 12 + 0 = 0\) \(\Rightarrow\) <span class="res-orange">rechter Winkel bei \(B\)</span>
+      </div>
+      <div class="sol-step">
+        <strong>b)</strong> \(|\overrightarrow{BA}| = \sqrt{16+9+4} = \sqrt{29}\), \(|\overrightarrow{BC}| = \sqrt{9+16+0} = 5\)<br>
+        \(A = \tfrac{1}{2} \cdot \sqrt{29} \cdot 5 = \tfrac{5}{2}\sqrt{29} \approx\) <span class="res-orange">\(13{,}46\) FE</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="task-card">
+  <div class="task-stripe stripe-orange"></div>
+  <div class="task-header">
+    <div class="task-num num-orange">5</div>
+    <div class="task-meta">
+      <h3>Rechteck durch einen vierten Punkt ergänzen</h3>
+      <span class="tag">Rechteck · Ortsvektor · Parallelogrammbedingung</span>
+    </div>
+  </div>
+  <div class="task-body">
+    <p>Zeigen Sie, dass es zu \(A(1\mid 0\mid 2)\), \(B(3\mid 2\mid 3)\) und \(C(4\mid 0\mid 5)\) einen Punkt \(D\) gibt, sodass das Viereck \(ABCD\) ein Rechteck ist, und bestimmen Sie \(D\).</p>
+    <div class="btn-row">
+      <button class="btn btn-hint" onclick="toggle('h22a')">💡 Hinweis 1</button>
+      <button class="btn btn-hint" onclick="toggle('h22b')">💡 Hinweis 2</button>
+      <button class="btn btn-sol-orange" onclick="toggle('s22')">✓ Musterlösung</button>
+    </div>
+    <div id="h22a" class="panel panel-hint">
+      <h4>Hinweis 1 – Zwei Schritte</h4>
+      <p>Erst den rechten Winkel nachweisen: \(\overrightarrow{BA} \circ \overrightarrow{BC} = 0\). Danach den Punkt \(D\) über die Bedingung \(\overrightarrow{AD} = \overrightarrow{BC}\) bestimmen — nur so wird aus dem rechten Winkel ein Rechteck.</p>
+    </div>
+    <div id="h22b" class="panel panel-hint">
+      <h4>Hinweis 2 – Ortsvektor von D</h4>
+      <p>Aus \(\overrightarrow{AD} = \overrightarrow{BC}\) folgt \(\overrightarrow{OD} = \overrightarrow{OA} + \overrightarrow{BC}\). Setze die Zahlen ein und lies die Koordinaten von \(D\) ab.</p>
+    </div>
+    <div id="s22" class="panel panel-sol-orange">
+      <h4>Musterlösung</h4>
+      <div class="sol-step">
+        <strong>Rechter Winkel bei \(B\):</strong><br>
+        \(\overrightarrow{BA} \circ \overrightarrow{BC} = \begin{pmatrix}-2\\-2\\-1\end{pmatrix} \circ \begin{pmatrix}1\\-2\\2\end{pmatrix} = -2 + 4 - 2 = 0\) ✓
+      </div>
+      <div class="sol-step">
+        <strong>Punkt \(D\):</strong><br>
+        \(\overrightarrow{OD} = \begin{pmatrix}1\\0\\2\end{pmatrix} + \begin{pmatrix}1\\-2\\2\end{pmatrix} = \begin{pmatrix}2\\-2\\4\end{pmatrix}\) \(\Rightarrow\) <span class="res-orange">\(D(2\mid -2\mid 4)\)</span>
+      </div>
+      <div class="sol-step">
+        Wegen \(\overrightarrow{AD} = \overrightarrow{BC}\) ist \(ABCD\) ein Parallelogramm; zusammen mit dem rechten Winkel bei \(B\) also ein Rechteck.
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="task-card">
+  <div class="task-stripe stripe-orange"></div>
+  <div class="task-header">
+    <div class="task-num num-orange">6</div>
+    <div class="task-meta">
+      <h3>Vierecke klassifizieren</h3>
+      <span class="tag">Parallelogramm · Raute · Rechteck · Quadrat</span>
+    </div>
+  </div>
+  <div class="task-body">
+    <p>Untersuchen Sie jeweils, ob das Viereck \(ABCD\) ein Parallelogramm, eine Raute, ein Rechteck oder sogar ein Quadrat ist.</p>
+    <div class="subtasks">
+      <div class="subtask"><span class="subtask-label">a)</span><span>\(A(2\mid 6\mid 5)\), \(B(-2\mid 6\mid 4)\), \(C(-4\mid 4\mid 1)\), \(D(0\mid 4\mid 2)\)</span></div>
+      <div class="subtask"><span class="subtask-label">b)</span><span>\(A(2\mid 10\mid -5)\), \(B(12\mid 2\mid 1)\), \(C(2\mid -6\mid 7)\), \(D(-8\mid 2\mid 1)\)</span></div>
+      <div class="subtask"><span class="subtask-label">c)</span><span>\(A(-2\mid 2\mid 3)\), \(B(5\mid 5\mid 5)\), \(C(9\mid 6\mid 5)\), \(D(2\mid 3\mid 3)\)</span></div>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-hint" onclick="toggle('h23a')">💡 Hinweis 1</button>
+      <button class="btn btn-hint" onclick="toggle('h23b')">💡 Hinweis 2</button>
+      <button class="btn btn-sol-orange" onclick="toggle('s23')">✓ Musterlösung</button>
+    </div>
+    <div id="h23a" class="panel panel-hint">
+      <h4>Hinweis 1 – Systematischer Ablauf</h4>
+      <p><strong>Schritt 1:</strong> \(\overrightarrow{AB} = \overrightarrow{DC}\)? Wenn ja → Parallelogramm.<br>
+      <strong>Schritt 2:</strong> \(|\overrightarrow{AB}| = |\overrightarrow{AD}|\)? Wenn ja → Raute.<br>
+      <strong>Schritt 3:</strong> \(\overrightarrow{AB} \circ \overrightarrow{AD} = 0\)? Wenn ja → Rechteck.<br>
+      Treffen Schritt 2 <em>und</em> 3 zu, handelt es sich um ein Quadrat.</p>
+    </div>
+    <div id="h23b" class="panel panel-hint">
+      <h4>Hinweis 2 – Einstieg bei a)</h4>
+      <p>\(\overrightarrow{AB} = \begin{pmatrix}-4\\0\\-1\end{pmatrix}\) und \(\overrightarrow{DC} = \begin{pmatrix}-4\\0\\-1\end{pmatrix}\) — die Parallelogrammbedingung ist erfüllt. Berechne nun \(|\overrightarrow{AB}|\) und \(|\overrightarrow{AD}|\) sowie das Skalarprodukt der beiden.</p>
+    </div>
+    <div id="s23" class="panel panel-sol-orange">
+      <h4>Musterlösung</h4>
+      <div class="sol-step">
+        <strong>a)</strong> \(\overrightarrow{AB} = \overrightarrow{DC} = \begin{pmatrix}-4\\0\\-1\end{pmatrix}\) → Parallelogramm.<br>
+        \(|\overrightarrow{AB}| = |\overrightarrow{AD}| = \sqrt{17}\), aber \(\overrightarrow{AB} \circ \overrightarrow{AD} = 8 + 0 + 3 = 11 \neq 0\)<br>
+        \(\Rightarrow\) <span class="res-orange">Raute</span>
+      </div>
+      <div class="sol-step">
+        <strong>b)</strong> \(\overrightarrow{AB} = \overrightarrow{DC} = \begin{pmatrix}10\\-8\\6\end{pmatrix}\), \(\overrightarrow{AD} = \begin{pmatrix}-10\\-8\\6\end{pmatrix}\)<br>
+        \(\overrightarrow{AB} \circ \overrightarrow{AD} = -100 + 64 + 36 = 0\) und \(|\overrightarrow{AB}| = |\overrightarrow{AD}| = \sqrt{200}\)<br>
+        \(\Rightarrow\) <span class="res-orange">Quadrat</span>
+      </div>
+      <div class="sol-step">
+        <strong>c)</strong> \(\overrightarrow{AB} = \overrightarrow{DC} = \begin{pmatrix}7\\3\\2\end{pmatrix}\) → Parallelogramm.<br>
+        \(\overrightarrow{AB} \circ \overrightarrow{AD} = 28 + 3 + 0 = 31 \neq 0\) und \(\sqrt{62} \neq \sqrt{17}\)<br>
+        \(\Rightarrow\) <span class="res-orange">nur Parallelogramm</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="task-card">
+  <div class="task-stripe stripe-orange"></div>
+  <div class="task-header">
+    <div class="task-num num-orange">7</div>
+    <div class="task-meta">
+      <h3>Geraden auf Orthogonalität prüfen</h3>
+      <span class="tag">Geraden · Richtungsvektoren</span>
+    </div>
+  </div>
+  <div class="task-body">
+    <p>Untersuchen Sie, ob die sich schneidenden Geraden \(g\) und \(h\) zueinander orthogonal sind.</p>
+    <div class="subtasks">
+      <div class="subtask"><span class="subtask-label">a)</span><span>\(g\colon \vec{x} = \begin{pmatrix}2\\3\\1\end{pmatrix} + r\cdot\begin{pmatrix}-1\\2\\4\end{pmatrix}\), \(\quad h\colon \vec{x} = \begin{pmatrix}0\\7\\9\end{pmatrix} + s\cdot\begin{pmatrix}6\\1\\1\end{pmatrix}\)</span></div>
+      <div class="subtask"><span class="subtask-label">b)</span><span>\(g\colon \vec{x} = \begin{pmatrix}2\\5\\-2\end{pmatrix} + r\cdot\begin{pmatrix}3\\2\\1\end{pmatrix}\), \(\quad h\colon \vec{x} = \begin{pmatrix}-1\\3\\-3\end{pmatrix} + s\cdot\begin{pmatrix}1\\-1\\1\end{pmatrix}\)</span></div>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-hint" onclick="toggle('h24')">💡 Hinweis</button>
+      <button class="btn btn-sol-orange" onclick="toggle('s24')">✓ Musterlösung</button>
+    </div>
+    <div id="h24" class="panel panel-hint">
+      <h4>Hinweis</h4>
+      <p>Für den Winkel zwischen zwei Geraden zählen nur die Richtungsvektoren — die Stützvektoren spielen keine Rolle. Dass sich die Geraden schneiden, ist hier bereits vorgegeben.</p>
+    </div>
+    <div id="s24" class="panel panel-sol-orange">
+      <h4>Musterlösung</h4>
+      <div class="sol-step"><strong>a)</strong> \(\begin{pmatrix}-1\\2\\4\end{pmatrix} \circ \begin{pmatrix}6\\1\\1\end{pmatrix} = -6 + 2 + 4 = 0\) \(\Rightarrow\) <span class="res-orange">orthogonal</span></div>
+      <div class="sol-step"><strong>b)</strong> \(\begin{pmatrix}3\\2\\1\end{pmatrix} \circ \begin{pmatrix}1\\-1\\1\end{pmatrix} = 3 - 2 + 1 = 2 \neq 0\) \(\Rightarrow\) <span class="res-orange">nicht orthogonal</span></div>
+    </div>
+  </div>
+</div>
+
+<div class="cas-box">
+  <h4>🖩 Kontrolle mit dem TI-Nspire CAS</h4>
+  <p>Vektoren immer über die <strong>Matrixvorlage</strong> eingeben (<code>Menü ▸ Matrix und Vektor ▸ Erstellen ▸ Matrix</code>, 3 Zeilen / 1 Spalte) — getippte eckige Klammern führen zu <em>Fehler: Syntax</em>.<br>
+  Skalarprodukt: <code>Menü ▸ Matrix und Vektor ▸ Vektor ▸ Skalarprodukt</code> bzw. <code>dotP(ba,bc)</code>.<br>
+  Unterbestimmte Gleichungssysteme (Aufgabe 8): <code>linSolve</code> unter <code>Menü ▸ Algebra ▸ Gleichungssystem lösen</code> — die freie Wahl als zusätzliche Gleichung ergänzen.</p>
+</div>
+
+<hr class="divider">
+
+<div class="section-title">
+  <div class="dot dot-purple"></div>
+  Stufe 3 · Vertiefend
+  <span class="section-badge badge-purple">★★★ Herausforderung</span>
+</div>
+
+<div class="task-card">
+  <div class="task-stripe stripe-purple"></div>
+  <div class="task-header">
+    <div class="task-num num-purple">8</div>
+    <div class="task-meta">
+      <h3>Gerade k, die g und h orthogonal schneidet</h3>
+      <span class="tag">Schnittpunkt · Gleichungssystem · Parameterform</span>
+    </div>
+  </div>
+  <div class="task-body">
+    <p>Gegeben sind die Geraden</p>
+    <p style="margin:8px 0;">\(g\colon \vec{x} = \begin{pmatrix}3\\2\\-1\end{pmatrix} + s\cdot\begin{pmatrix}2\\1\\1\end{pmatrix}\) und \(h\colon \vec{x} = \begin{pmatrix}-6\\-4\\-6\end{pmatrix} + t\cdot\begin{pmatrix}3\\3\\2\end{pmatrix}\).</p>
+    <div class="subtasks">
+      <div class="subtask"><span class="subtask-label">a)</span><span>Überprüfen Sie, ob sich \(g\) und \(h\) orthogonal schneiden.</span></div>
+      <div class="subtask"><span class="subtask-label">b)</span><span>Stellen Sie eine Parameterform der Geraden \(k\) auf, die sowohl \(g\) als auch \(h\) orthogonal schneidet.</span></div>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-hint" onclick="toggle('h31a')">💡 Hinweis 1</button>
+      <button class="btn btn-hint" onclick="toggle('h31b')">💡 Hinweis 2</button>
+      <button class="btn btn-hint" onclick="toggle('h31c')">💡 Hinweis 3</button>
+      <button class="btn btn-sol-purple" onclick="toggle('s31')">✓ Musterlösung</button>
+    </div>
+    <div id="h31a" class="panel panel-hint">
+      <h4>Hinweis 1 – Zwei Bausteine</h4>
+      <p>Eine Parameterform braucht einen Stützvektor und einen Richtungsvektor. Da \(k\) beide Geraden schneiden soll, verläuft \(k\) durch den Schnittpunkt von \(g\) und \(h\) — bestimme ihn zuerst durch Gleichsetzen.</p>
+    </div>
+    <div id="h31b" class="panel panel-hint">
+      <h4>Hinweis 2 – Gleichungssystem für den Richtungsvektor</h4>
+      <p>Der Richtungsvektor \(\vec{w}\) muss auf beiden Richtungsvektoren senkrecht stehen:<br>
+      I: \(2w_1 + w_2 + w_3 = 0\) &nbsp;·&nbsp; II: \(3w_1 + 3w_2 + 2w_3 = 0\)</p>
+    </div>
+    <div id="h31c" class="panel panel-hint">
+      <h4>Hinweis 3 – Freie Wahl</h4>
+      <p>Zwei Gleichungen, drei Unbekannte: Das System ist unterbestimmt. Da die <em>Länge</em> von \(\vec{w}\) keine Rolle spielt, darfst du \(w_3 = 1\) setzen. Entstehende Brüche beseitigst du am Ende, indem du den ganzen Vektor mit dem Hauptnenner multiplizierst.</p>
+    </div>
+    <div id="s31" class="panel panel-sol-purple">
+      <h4>Musterlösung</h4>
+      <div class="sol-step">
+        <strong>a)</strong> \(\begin{pmatrix}2\\1\\1\end{pmatrix} \circ \begin{pmatrix}3\\3\\2\end{pmatrix} = 6 + 3 + 2 = 11 \neq 0\)<br>
+        Gleichsetzen liefert \(s = -3\) und \(t = 1\), also den Schnittpunkt \(S(-3\mid -1\mid -4)\).<br>
+        \(\Rightarrow\) <span class="res-purple">Die Geraden schneiden sich, aber nicht orthogonal.</span>
+      </div>
+      <div class="sol-step">
+        <strong>b)</strong> Mit \(w_3 = 1\) wird aus I: \(2w_1 + w_2 = -1\) und aus II: \(3w_1 + 3w_2 = -2\).<br>
+        Auflösen ergibt \(w_1 = w_2 = -\tfrac{1}{3}\), also \(\vec{w} = \begin{pmatrix}-\frac{1}{3}\\-\frac{1}{3}\\1\end{pmatrix}\). Multiplikation mit 3: \(\vec{w} = \begin{pmatrix}-1\\-1\\3\end{pmatrix}\)
+      </div>
+      <div class="sol-step">
+        \(k\colon \vec{x} = \begin{pmatrix}-3\\-1\\-4\end{pmatrix} + u\cdot\begin{pmatrix}-1\\-1\\3\end{pmatrix}\)<br>
+        Probe: \(2(-1) + 1(-1) + 1\cdot 3 = 0\) ✓ und \(3(-1) + 3(-1) + 2\cdot 3 = 0\) ✓
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="task-card">
+  <div class="task-stripe stripe-purple"></div>
+  <div class="task-header">
+    <div class="task-num num-purple">9</div>
+    <div class="task-meta">
+      <h3>Parameter bestimmen</h3>
+      <span class="tag">Parameter · Orthogonalität · Schnittpunkt</span>
+    </div>
+  </div>
+  <div class="task-body">
+    <p>Bestimmen Sie den Parameter \(a\) so, dass sich die folgenden Geraden orthogonal schneiden:</p>
+    <p style="margin:8px 0;">\(g\colon \vec{x} = \begin{pmatrix}1\\0\\1\end{pmatrix} + s\cdot\begin{pmatrix}a\\2\\2\end{pmatrix}\) und \(h\colon \vec{x} = \begin{pmatrix}1\\0\\1\end{pmatrix} + t\cdot\begin{pmatrix}1\\1\\1\end{pmatrix}\).</p>
+    <div class="btn-row">
+      <button class="btn btn-hint" onclick="toggle('h32a')">💡 Hinweis 1</button>
+      <button class="btn btn-hint" onclick="toggle('h32b')">💡 Hinweis 2</button>
+      <button class="btn btn-sol-purple" onclick="toggle('s32')">✓ Musterlösung</button>
+    </div>
+    <div id="h32a" class="panel panel-hint">
+      <h4>Hinweis 1 – Schnittpunkt</h4>
+      <p>Vergleiche die beiden Stützvektoren. Was bedeutet es für den Schnittpunkt, wenn sie übereinstimmen? Diesen Teil der Aufgabe musst du dann gar nicht rechnen.</p>
+    </div>
+    <div id="h32b" class="panel panel-hint">
+      <h4>Hinweis 2 – Bedingung</h4>
+      <p>Es bleibt die Orthogonalitätsbedingung für die Richtungsvektoren: \(a \cdot 1 + 2 \cdot 1 + 2 \cdot 1 = 0\). Löse nach \(a\) auf.</p>
+    </div>
+    <div id="s32" class="panel panel-sol-purple">
+      <h4>Musterlösung</h4>
+      <div class="sol-step">Beide Geraden verlaufen durch \(P(1\mid 0\mid 1)\) — sie schneiden sich also für jedes \(a\) in diesem Punkt.</div>
+      <div class="sol-step">
+        Orthogonalität: \(a + 2 + 2 = 0 \Rightarrow\) <span class="res-purple">\(a = -4\)</span><br>
+        Probe: \(\begin{pmatrix}-4\\2\\2\end{pmatrix} \circ \begin{pmatrix}1\\1\\1\end{pmatrix} = -4 + 2 + 2 = 0\) ✓
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="task-card">
+  <div class="task-stripe stripe-purple"></div>
+  <div class="task-header">
+    <div class="task-num num-purple">10</div>
+    <div class="task-meta">
+      <h3>Gilt immer – gilt nie – es kommt darauf an</h3>
+      <span class="tag">Argumentieren · Sonderfälle · Betrag</span>
+    </div>
+  </div>
+  <div class="task-body">
+    <p>Untersuchen Sie, ob die folgenden Aussagen immer gelten, nie stimmen oder nur in bestimmten Fällen richtig sind. Geben Sie gegebenenfalls die Bedingungen an.</p>
+    <div class="subtasks">
+      <div class="subtask"><span class="subtask-label">a)</span><span>Wenn \(\vec{a} \circ \vec{a} = 0\) ist, dann ist \(\vec{a}\) der Nullvektor \(\vec{o}\).</span></div>
+      <div class="subtask"><span class="subtask-label">b)</span><span>In einem Rechteck \(ABCD\) gilt \(\overrightarrow{AC} \circ \overrightarrow{BD} = 0\).</span></div>
+      <div class="subtask"><span class="subtask-label">c)</span><span>Das Skalarprodukt eines Vektors mit sich selbst ist das Quadrat seines Betrags.</span></div>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-hint" onclick="toggle('h33a')">💡 Hinweis 1</button>
+      <button class="btn btn-hint" onclick="toggle('h33b')">💡 Hinweis 2</button>
+      <button class="btn btn-sol-purple" onclick="toggle('s33')">✓ Musterlösung</button>
+    </div>
+    <div id="h33a" class="panel panel-hint">
+      <h4>Hinweis 1 – Zu a) und c)</h4>
+      <p>Schreibe \(\vec{a} \circ \vec{a}\) einmal vollständig mit Koordinaten auf. Was fällt dir an den drei Summanden auf — welches Vorzeichen können sie haben?</p>
+    </div>
+    <div id="h33b" class="panel panel-hint">
+      <h4>Hinweis 2 – Zu b)</h4>
+      <p>Teste die Aussage an einem konkreten flachen Rechteck, etwa \(A(0\mid 0\mid 0)\), \(B(4\mid 0\mid 0)\), \(C(4\mid 1\mid 0)\), \(D(0\mid 1\mid 0)\), und vergleiche das Ergebnis mit einem Quadrat.</p>
+    </div>
+    <div id="s33" class="panel panel-sol-purple">
+      <h4>Musterlösung</h4>
+      <div class="sol-step">
+        <strong>a) Gilt immer.</strong> \(\vec{a} \circ \vec{a} = a_1^2 + a_2^2 + a_3^2\) ist eine Summe von Quadraten, also nie negativ. Sie wird genau dann null, wenn jede einzelne Koordinate null ist — und das ist der Nullvektor.
+      </div>
+      <div class="sol-step">
+        <strong>b) Es kommt darauf an.</strong> Im Beispiel gilt \(\overrightarrow{AC} \circ \overrightarrow{BD} = \begin{pmatrix}4\\1\\0\end{pmatrix} \circ \begin{pmatrix}-4\\1\\0\end{pmatrix} = -16 + 1 = -15 \neq 0\).<br>
+        Die Diagonalen stehen nur dann senkrecht aufeinander, wenn das Rechteck ein <span class="res-purple">Quadrat</span> ist.
+      </div>
+      <div class="sol-step">
+        <strong>c) Gilt immer.</strong> \(\vec{a} \circ \vec{a} = a_1^2 + a_2^2 + a_3^2 = \left(\sqrt{a_1^2 + a_2^2 + a_3^2}\right)^2 = |\vec{a}|^2\)
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="task-card">
+  <div class="task-stripe stripe-purple"></div>
+  <div class="task-header">
+    <div class="task-num num-purple">11</div>
+    <div class="task-meta">
+      <h3>Bedingungen mit Vektoren formulieren</h3>
+      <span class="tag">Begriffe verknüpfen · Vollständigkeit prüfen</span>
+    </div>
+  </div>
+  <div class="task-body">
+    <p>Erläutern Sie, wie man mit Vektoren beschreiben kann, dass</p>
+    <div class="subtasks">
+      <div class="subtask"><span class="subtask-label">a)</span><span>ein Dreieck \(ABC\) bei \(A\) rechtwinklig ist,</span></div>
+      <div class="subtask"><span class="subtask-label">b)</span><span>ein Viereck \(ABCD\) ein Rechteck ist,</span></div>
+      <div class="subtask"><span class="subtask-label">c)</span><span>ein Viereck \(ABCD\) ein Quadrat ist.</span></div>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-hint" onclick="toggle('h34')">💡 Hinweis</button>
+      <button class="btn btn-sol-purple" onclick="toggle('s34')">✓ Musterlösung</button>
+    </div>
+    <div id="h34" class="panel panel-hint">
+      <h4>Hinweis</h4>
+      <p>Frage dich bei jedem Teil: Welche Vektoren gehen vom betrachteten Punkt aus? Und bei b) und c): Reicht eine Bedingung aus, oder könnte die Figur damit noch etwas anderes sein?</p>
+    </div>
+    <div id="s34" class="panel panel-sol-purple">
+      <h4>Musterlösung</h4>
+      <div class="sol-step"><strong>a)</strong> Man bildet die beiden Vektoren, die von \(A\) ausgehen, und zeigt \(\overrightarrow{AB} \circ \overrightarrow{AC} = 0\).</div>
+      <div class="sol-step"><strong>b)</strong> Zwei Bedingungen zusammen: \(\overrightarrow{AB} = \overrightarrow{DC}\) (damit ist die Figur ein Parallelogramm) und \(\overrightarrow{AB} \circ \overrightarrow{AD} = 0\) (rechter Winkel). Ein rechter Winkel allein genügt nicht — das Viereck könnte sonst ein Trapez sein.</div>
+      <div class="sol-step"><strong>c)</strong> Wie bei b), zusätzlich \(|\overrightarrow{AB}| = |\overrightarrow{AD}|\). Erst alle drei Bedingungen zusammen schließen Raute und Rechteck als Alternativen aus.</div>
+    </div>
+  </div>
+</div>
+
+<div class="check-box">
+  <h3>✓ Checkliste – das kann ich jetzt</h3>
+  <ul>
+    <li><span class="box"></span>Ich berechne das Skalarprodukt zweier Vektoren.<span class="ref">Aufg. 1</span></li>
+    <li><span class="box"></span>Ich prüfe mit dem Skalarprodukt, ob zwei Vektoren orthogonal sind.<span class="ref">Aufg. 1, 7</span></li>
+    <li><span class="box"></span>Ich bestimme eine fehlende Koordinate, sodass zwei Vektoren orthogonal sind.<span class="ref">Aufg. 2, 9</span></li>
+    <li><span class="box"></span>Ich finde Vektoren, die zu einem gegebenen Vektor orthogonal sind.<span class="ref">Aufg. 3</span></li>
+    <li><span class="box"></span>Ich weise rechte Winkel in Dreiecken und Vierecken nach.<span class="ref">Aufg. 4, 5</span></li>
+    <li><span class="box"></span>Ich unterscheide Parallelogramm, Raute, Rechteck und Quadrat.<span class="ref">Aufg. 6, 11</span></li>
+    <li><span class="box"></span>Ich bestimme einen Vektor, der auf zwei Vektoren senkrecht steht.<span class="ref">Aufg. 8</span></li>
+    <li><span class="box"></span>Ich begründe meine Antworten in vollständigen Sätzen.<span class="ref">Aufg. 10, 11</span></li>
+  </ul>
+</div>
+
+</main>
+
+<footer>
+  <p>Materialsammlung GK · <a href="../index.html">← Zurück zur Übersicht</a> · <a href="https://mohr-fbg.github.io/Unterrichtsmaterialien/Mathematik/GK_Materialien/">mohr-fbg.github.io/.../GK_Materialien</a></p>
+  <p style="margin-top:4px;">Friedrich-Bährens-Gymnasium Schwerte · M. Mohr</p>
+</footer>
+
+<script>
+function toggle(id) {
+  const el = document.getElementById(id);
+  if (el) el.classList.toggle('open');
+}
+document.addEventListener('DOMContentLoaded', function() {
+  renderMathInElement(document.body, {
+    delimiters: [
+      {left: '\\(', right: '\\)', display: false},
+      {left: '\\[', right: '\\]', display: true}
+    ],
+    throwOnError: false
+  });
+});
+</script>
+</body>
+</html>
