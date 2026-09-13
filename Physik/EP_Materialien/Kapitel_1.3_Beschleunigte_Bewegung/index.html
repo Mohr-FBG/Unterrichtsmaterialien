@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Übungsphase · Geradlinige Bewegungen mit veränderlicher Geschwindigkeit</title>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css">
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/contrib/auto-render.min.js"></script>
+
+<style>
+:root{
+  --teal:#0f6e56; --teal-dark:#085041;
+  --blue:#2c5f8a; --blue-dark:#1a3d5c;
+  --green:#1a9e5c; --orange:#d4760a; --purple:#7b3fb5;
+  --border:#dde1e7; --bg:#f4f5f7; --text:#1c1f26;
+  --muted:#5c6472;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0; background:var(--bg); color:var(--text);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  line-height:1.55; font-size:16px;
+}
+.wrap{max-width:960px; margin:0 auto; padding:0 16px 64px}
+
+/* ---------- Kopf ---------- */
+header.top{background:var(--teal); border-bottom:4px solid var(--teal-dark); color:#fff}
+header.top .inner{max-width:960px; margin:0 auto; padding:22px 16px 24px}
+header.top .kap{font-size:.78rem; font-weight:700; letter-spacing:.06em; text-transform:uppercase; opacity:.92}
+header.top h1{margin:6px 0 4px; font-size:1.7rem; line-height:1.2}
+header.top .sub{font-size:.92rem; opacity:.95}
+
+/* ---------- Steuerleiste ---------- */
+.controls{
+  background:#fff; border:1px solid var(--border); border-radius:10px;
+  padding:14px 16px; margin:18px 0 22px;
+  display:flex; flex-wrap:wrap; gap:16px; align-items:center; justify-content:space-between;
+}
+.unlock{display:flex; align-items:center; gap:8px; flex-wrap:wrap}
+.unlock label{font-size:.9rem; color:var(--muted)}
+.unlock input{
+  border:1px solid var(--border); border-radius:6px; padding:6px 10px;
+  font-size:.95rem; width:130px; font-family:inherit;
+}
+.unlock button{
+  background:var(--blue); color:#fff; border:0; border-radius:6px;
+  padding:7px 14px; font-size:.9rem; font-weight:600; cursor:pointer; font-family:inherit;
+}
+.unlock button:hover{background:var(--blue-dark)}
+.unlock .msg{font-size:.85rem; font-weight:600}
+.unlock .msg.ok{color:var(--green)}
+.unlock .msg.bad{color:#c0392b}
+
+.filters{display:flex; gap:6px; flex-wrap:wrap}
+.filters button{
+  background:#fff; border:1px solid var(--border); border-radius:20px;
+  padding:6px 14px; font-size:.85rem; cursor:pointer; color:var(--muted);
+  font-family:inherit; font-weight:600;
+}
+.filters button:hover{border-color:var(--muted)}
+.filters button.on{background:var(--text); border-color:var(--text); color:#fff}
+
+/* ---------- Stufenabschnitte ---------- */
+.stufe-head{
+  display:flex; align-items:baseline; gap:12px; flex-wrap:wrap;
+  margin:30px 0 12px; padding-bottom:8px; border-bottom:2px solid var(--border);
+}
+.stufe-badge{
+  color:#fff; border-radius:6px; padding:4px 12px;
+  font-weight:700; font-size:.9rem; letter-spacing:.02em;
+}
+.s1 .stufe-badge{background:var(--green)}
+.s2 .stufe-badge{background:var(--orange)}
+.s3 .stufe-badge{background:var(--purple)}
+.stufe-head .desc{color:var(--muted); font-size:.9rem}
+
+/* ---------- Aufgabenkarte ---------- */
+.card{
+  background:#fff; border:1px solid var(--border); border-radius:10px;
+  margin-bottom:14px; overflow:hidden;
+}
+.card.s1{border-top:4px solid var(--green)}
+.card.s2{border-top:4px solid var(--orange)}
+.card.s3{border-top:4px solid var(--purple)}
+.card-head{
+  display:flex; align-items:center; justify-content:space-between; gap:12px;
+  padding:13px 18px; cursor:pointer; user-select:none;
+}
+.card-head:hover{background:#fafbfc}
+.card-head h3{margin:0; font-size:1.03rem; font-weight:700}
+.chev{color:var(--muted); font-size:1.1rem; transition:transform .18s}
+.card.open .chev{transform:rotate(180deg)}
+.card-body{display:none; padding:0 18px 18px}
+.card.open .card-body{display:block}
+
+.task{
+  background:#fbfcfd; border:1px solid var(--border); border-left:3px solid var(--blue);
+  border-radius:6px; padding:12px 15px; margin-bottom:14px;
+}
+.task p{margin:.5em 0}
+.task p:first-child{margin-top:0}
+.task p:last-child{margin-bottom:0}
+.task svg{display:block; margin:10px auto; max-width:100%; height:auto}
+.task table{border-collapse:collapse; margin:10px auto}
+.task td,.task th{border:1px solid var(--border); padding:5px 10px; font-size:.92rem; text-align:center}
+
+/* ---------- Selbsteinschätzung ---------- */
+.assess{display:flex; align-items:center; gap:7px; flex-wrap:wrap; margin-bottom:14px}
+.assess .lab{font-size:.83rem; color:var(--muted); margin-right:2px}
+.assess button{
+  border:1px solid var(--border); background:#fff; border-radius:16px;
+  padding:4px 12px; font-size:.8rem; cursor:pointer; color:var(--muted); font-family:inherit;
+}
+.assess button.on[data-v="ok"]{background:var(--green); border-color:var(--green); color:#fff}
+.assess button.on[data-v="mid"]{background:var(--orange); border-color:var(--orange); color:#fff}
+.assess button.on[data-v="ask"]{background:var(--blue); border-color:var(--blue); color:#fff}
+
+/* ---------- Hilfen ---------- */
+.hints{border:1px solid var(--border); border-radius:8px; overflow:hidden; margin-bottom:14px}
+.hints .htitle{
+  background:#f7f8fa; padding:7px 14px; font-size:.8rem; font-weight:700;
+  color:var(--muted); text-transform:uppercase; letter-spacing:.05em;
+  border-bottom:1px solid var(--border);
+}
+.htabs{display:flex; flex-wrap:wrap; gap:6px; padding:10px 14px; background:#fdfdfe}
+.htabs button{
+  border:1px solid var(--border); background:#fff; border-radius:6px;
+  padding:5px 11px; font-size:.82rem; cursor:pointer; color:var(--text); font-family:inherit;
+}
+.htabs button:hover{border-color:var(--teal)}
+.htabs button.on{background:var(--teal); border-color:var(--teal); color:#fff; font-weight:600}
+.hpanel{display:none; padding:12px 15px; border-top:1px solid var(--border); font-size:.95rem}
+.hpanel.on{display:block}
+.hpanel h4{margin:0 0 8px; font-size:.92rem; color:var(--teal-dark)}
+.hpanel p{margin:.5em 0}
+
+/* ---------- Musterlösung ---------- */
+.sol-lock{
+  background:#f7f8fa; border:1px dashed var(--border); border-radius:8px;
+  padding:12px 15px; font-size:.9rem; color:var(--muted); text-align:center;
+}
+.sol{
+  display:none; border:1px solid var(--green); border-radius:8px; overflow:hidden;
+}
+.sol .sh{
+  background:var(--green); color:#fff; padding:7px 15px;
+  font-weight:700; font-size:.88rem;
+}
+.sol .sb{padding:13px 15px; font-size:.95rem}
+.sol .sb p{margin:.55em 0}
+.sol .sb p:first-child{margin-top:0}
+body.unlocked .sol{display:block}
+body.unlocked .sol-lock{display:none}
+
+.note{
+  background:#eaf4f0; border-left:3px solid var(--teal); border-radius:6px;
+  padding:10px 14px; font-size:.9rem; margin:12px 0;
+}
+.katex{font-size:1.04em}
+.katex-display{margin:.6em 0; overflow-x:auto; overflow-y:hidden}
+.backnav{margin:18px 0 4px}
+.backnav a{
+  display:inline-flex; align-items:center; gap:6px;
+  font-size:.86rem; font-weight:600; color:var(--muted);
+  text-decoration:none; border:1px solid var(--border); border-radius:20px;
+  padding:5px 13px; background:#fff;
+}
+.backnav a:hover{border-color:var(--muted); color:var(--text)}
+
+footer.bot{
+  text-align:center; color:var(--muted); font-size:.82rem;
+  padding:26px 16px; border-top:1px solid var(--border); margin-top:34px;
+}
+footer.bot a{color:var(--blue)}
+@media(max-width:600px){
+  header.top h1{font-size:1.32rem}
+  .controls{flex-direction:column; align-items:stretch}
+  .card-head h3{font-size:.95rem}
+}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="inner">
+    <div class="kap">Kapitel 1.3 · Bewegungen beschreiben · Physik EP</div>
+    <h1>Übungsphase: Geradlinige Bewegungen mit veränderlicher Geschwindigkeit</h1>
+    <div class="sub">Wähle deine Stufe · Nutze die Hilfen schrittweise · Musterlösungen nach Lehrerfreigabe</div>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <div class="backnav"><a href="../">← Zurück zu EP Materialien</a></div>
+
+  <div class="controls">
+    <div class="unlock">
+      <label for="code">🔒 Musterlösungen freischalten:</label>
+      <input id="code" type="text" autocomplete="off" placeholder="Code">
+      <button id="btn-unlock" type="button">Bestätigen</button>
+      <span class="msg" id="msg"></span>
+    </div>
+    <div class="filters">
+      <button class="on" data-f="all" type="button">Alle Stufen</button>
+      <button data-f="1" type="button">Stufe 1</button>
+      <button data-f="2" type="button">Stufe 2</button>
+      <button data-f="3" type="button">Stufe 3</button>
+    </div>
+  </div>
+
+  <div class="note">
+    <strong>Formeln im Überblick:</strong> Beschleunigung $a=\dfrac{\Delta v}{\Delta t}$ · Geschwindigkeit-Zeit-Gesetz
+    $v(t)=a\cdot t+v_0$ · Zeit-Ort-Gesetz $s(t)=\dfrac{1}{2}\,a\cdot t^2+v_0\cdot t+s_0$ · bei einem
+    <em>Bremsvorgang</em> (gleichmäßig verzögerte Bewegung) gelten dieselben Gesetze mit $a<0$.
+  </div>
+
+  <!-- ================= STUFE 1 ================= -->
+  <section class="s1" data-stufe="1">
+    <div class="stufe-head">
+      <span class="stufe-badge">Stufe 1</span>
+      <span class="desc">Grundaufgaben · Beschleunigung bestimmen, Bewegungsgesetze aufstellen</span>
+    </div>
+
+    <!-- ---------- Aufgabe 1 ---------- -->
+    <article class="card s1" data-stufe="1">
+      <div class="card-head"><h3>Aufgabe 1 · Beschleunigung aus dem Diagramm</h3><span class="chev">▾</span></div>
+      <div class="card-body">
+        <div class="task">
+          <p>Das Diagramm zeigt das $t$-$v$-Diagramm eines Wagens, der aus der Ruhe heraus gleichmäßig beschleunigt.</p>
+          <svg viewBox="0 0 380 220" xmlns="http://www.w3.org/2000/svg">
+            <line x1="50" y1="190" x2="350" y2="190" stroke="#1c1f26" stroke-width="1.2"/>
+            <line x1="50" y1="190" x2="50" y2="20" stroke="#1c1f26" stroke-width="1.2"/>
+            <g stroke="#c7ccd3" stroke-width="1">
+              <line x1="110" y1="30" x2="110" y2="190"/>
+              <line x1="170" y1="30" x2="170" y2="190"/>
+              <line x1="230" y1="30" x2="230" y2="190"/>
+              <line x1="290" y1="30" x2="290" y2="190"/>
+              <line x1="350" y1="30" x2="350" y2="190"/>
+            </g>
+            <g font-size="11" fill="#5c6472" font-family="inherit">
+              <text x="50" y="205" text-anchor="middle">0</text>
+              <text x="110" y="205" text-anchor="middle">2</text>
+              <text x="170" y="205" text-anchor="middle">4</text>
+              <text x="230" y="205" text-anchor="middle">6</text>
+              <text x="290" y="205" text-anchor="middle">8</text>
+              <text x="350" y="205" text-anchor="middle">10</text>
+              <text x="365" y="203" text-anchor="middle" font-size="11">t in s</text>
+              <text x="38" y="194" text-anchor="end">0</text>
+              <text x="38" y="162" text-anchor="end">10</text>
+              <text x="38" y="130" text-anchor="end">20</text>
+              <text x="38" y="98" text-anchor="end">30</text>
+              <text x="38" y="66" text-anchor="end">40</text>
+              <text x="38" y="34" text-anchor="end">50</text>
+              <text x="58" y="24" font-size="11">v in m/s</text>
+            </g>
+            <line x1="50" y1="190" x2="350" y2="78" stroke="#d4760a" stroke-width="2.4"/>
+            <circle cx="50" cy="190" r="3.2" fill="#d4760a"/>
+            <circle cx="200" cy="134" r="3.2" fill="#d4760a"/>
+            <line x1="200" y1="134" x2="200" y2="190" stroke="#5c6472" stroke-width="1" stroke-dasharray="3,3"/>
+            <line x1="50" y1="134" x2="200" y2="134" stroke="#5c6472" stroke-width="1" stroke-dasharray="3,3"/>
+          </svg>
+          <p><strong>a)</strong> Lesen Sie aus dem Diagramm die Geschwindigkeitsänderung $\Delta v$ in den ersten $5\,\text{s}$ ab und bestimmen Sie die Beschleunigung $a$.</p>
+          <p><strong>b)</strong> Stellen Sie das Geschwindigkeit-Zeit-Gesetz der Bewegung auf.</p>
+          <p><strong>c)</strong> Berechnen Sie die Geschwindigkeit des Wagens bei $t=8\,\text{s}$.</p>
+        </div>
+
+        <div class="assess">
+          <span class="lab">Einschätzung:</span>
+          <button data-v="ok" type="button">✓ Fertig &amp; verstanden</button>
+          <button data-v="mid" type="button">~ Noch unsicher</button>
+          <button data-v="ask" type="button">? Frage an Lehrer</button>
+        </div>
+
+        <div class="hints">
+          <div class="htitle">Hilfen</div>
+          <div class="htabs">
+            <button type="button">Hilfe 1 · Ablesen</button>
+            <button type="button">Hilfe 2 · Beschleunigung berechnen</button>
+            <button type="button">Hilfe 3 · Fast fertig</button>
+          </div>
+          <div class="hpanel">
+            <h4>Hilfe 1 · Was zeigt das Diagramm?</h4>
+            <p>Die Gerade beginnt im Ursprung ($v_0=0$). Die Beschleunigung entspricht der <strong>Steigung</strong> der Geraden. Lies dazu den $v$-Wert beim gestrichelt markierten Punkt bei $t=5\,\text{s}$ ab.</p>
+          </div>
+          <div class="hpanel">
+            <h4>Hilfe 2 · Steigung berechnen</h4>
+            <p>Bei $t=5\,\text{s}$ liegt der markierte Punkt bei $v=20\,\tfrac{\text{m}}{\text{s}}$.</p>
+            <p>$$a=\frac{\Delta v}{\Delta t}=\frac{20\,\tfrac{\text{m}}{\text{s}}-0}{5\,\text{s}-0}$$</p>
+          </div>
+          <div class="hpanel">
+            <h4>Hilfe 3 · Fast fertig</h4>
+            <p>Mit $v_0=0$ und $a=4{,}0\,\tfrac{\text{m}}{\text{s}^2}$ lautet das Geschwindigkeit-Zeit-Gesetz $v(t)=4{,}0\,\tfrac{\text{m}}{\text{s}^2}\cdot t$.</p>
+            <p>Setze $t=8\,\text{s}$ ein.</p>
+          </div>
+        </div>
+
+        <div class="sol-lock">🔒 Musterlösung – nach Freigabe durch den Lehrer sichtbar.</div>
+        <div class="sol">
+          <div class="sh">✓ Musterlösung · Aufgabe 1</div>
+          <div class="sb">
+            <p><strong>a)</strong> $\Delta v=20\,\tfrac{\text{m}}{\text{s}}$ in $\Delta t=5\,\text{s}$.</p>
+            <p>$$a=\frac{\Delta v}{\Delta t}=\frac{20\,\tfrac{\text{m}}{\text{s}}}{5\,\text{s}}={\color{#1a9e5c}\boldsymbol{4{,}0\,\tfrac{\text{m}}{\text{s}^2}}}$$</p>
+            <p><strong>b)</strong> $$v(t)=4{,}0\,\tfrac{\text{m}}{\text{s}^2}\cdot t$$</p>
+            <p><strong>c)</strong> $$v(8\,\text{s})=4{,}0\,\tfrac{\text{m}}{\text{s}^2}\cdot 8\,\text{s}={\color{#1a9e5c}\boldsymbol{32\,\tfrac{\text{m}}{\text{s}}}}$$</p>
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <!-- ---------- Aufgabe 2 ---------- -->
+    <article class="card s1" data-stufe="1">
+      <div class="card-head"><h3>Aufgabe 2 · Von der Messtabelle zur Beschleunigung</h3><span class="chev">▾</span></div>
+      <div class="card-body">
+        <div class="task">
+          <p>Bei der Video-Auswertung einer Kugel, die aus der Ruhe eine schiefe Ebene hinabrollt, wurden folgende Messwerte bestimmt:</p>
+          <p>
+            $$
+            \begin{array}{c|c|c|c|c}
+            t \text{ in s} & 0 & 1 & 2 & 3\\\hline
+            s \text{ in m} & 0 & 0{,}10 & 0{,}40 & 0{,}90
+            \end{array}
+            $$
+          </p>
+          <p><strong>a)</strong> Weisen Sie anhand der Wegdifferenzen $\Delta s$ zwischen den einzelnen Sekunden nach, dass es sich um eine gleichmäßig beschleunigte Bewegung handelt.</p>
+          <p><strong>b)</strong> Bestimmen Sie die Beschleunigung $a$ und geben Sie $v(t)$ und $s(t)$ an.</p>
+          <p><strong>c)</strong> Berechnen Sie die Geschwindigkeit der Kugel bei $t=3\,\text{s}$.</p>
+        </div>
+
+        <div class="assess">
+          <span class="lab">Einschätzung:</span>
+          <button data-v="ok" type="button">✓ Fertig &amp; verstanden</button>
+          <button data-v="mid" type="button">~ Noch unsicher</button>
+          <button data-v="ask" type="button">? Frage an Lehrer</button>
+        </div>
+
+        <div class="hints">
+          <div class="htitle">Hilfen</div>
+          <div class="htabs">
+            <button type="button">Hilfe 1 · Wegdifferenzen</button>
+            <button type="button">Hilfe 2 · Beschleunigung aus $k$</button>
+            <button type="button">Hilfe 3 · Geschwindigkeit</button>
+          </div>
+          <div class="hpanel">
+            <h4>Hilfe 1 · Wegdifferenzen bilden</h4>
+            <p>Berechne $\Delta s_1=s(1)-s(0)$, $\Delta s_2=s(2)-s(1)$ und $\Delta s_3=s(3)-s(2)$. Bei einer gleichmäßig beschleunigten Bewegung aus der Ruhe verhalten sich diese Differenzen wie $1:3:5$.</p>
+          </div>
+          <div class="hpanel">
+            <h4>Hilfe 2 · Zusammenhang $s=k\cdot t^2$</h4>
+            <p>Prüfe, ob der Quotient $\dfrac{s}{t^2}$ für alle Messwerte (außer $t=0$) denselben Wert $k$ ergibt. Es gilt $a=2k$.</p>
+          </div>
+          <div class="hpanel">
+            <h4>Hilfe 3 · Geschwindigkeit bei $t=3\,\text{s}$</h4>
+            <p>Setze deinen Wert für $a$ in $v(t)=a\cdot t$ ein und rechne mit $t=3\,\text{s}$.</p>
+          </div>
+        </div>
+
+        <div class="sol-lock">🔒 Musterlösung – nach Freigabe durch den Lehrer sichtbar.</div>
+        <div class="sol">
+          <div class="sh">✓ Musterlösung · Aufgabe 2</div>
+          <div class="sb">
+            <p><strong>a)</strong> $\Delta s_1=0{,}10\,\text{m}$, $\Delta s_2=0{,}30\,\text{m}$, $\Delta s_3=0{,}50\,\text{m}$ -- das Verhältnis $0{,}10:0{,}30:0{,}50=1:3:5$ ist genau das Kennzeichen einer gleichmäßig beschleunigten Bewegung aus der Ruhe.</p>
+            <p><strong>b)</strong> $\dfrac{s}{t^2}$ ergibt jeweils $0{,}10\,\tfrac{\text{m}}{\text{s}^2}$, also $k=0{,}10\,\tfrac{\text{m}}{\text{s}^2}$ und</p>
+            <p>$$a=2k={\color{#1a9e5c}\boldsymbol{0{,}20\,\tfrac{\text{m}}{\text{s}^2}}}$$</p>
+            <p>$$v(t)=0{,}20\,\tfrac{\text{m}}{\text{s}^2}\cdot t \qquad\qquad s(t)=0{,}10\,\tfrac{\text{m}}{\text{s}^2}\cdot t^2$$</p>
+            <p><strong>c)</strong> $$v(3\,\text{s})=0{,}20\,\tfrac{\text{m}}{\text{s}^2}\cdot 3\,\text{s}={\color{#1a9e5c}\boldsymbol{0{,}60\,\tfrac{\text{m}}{\text{s}}}}$$</p>
+          </div>
+        </div>
+      </div>
+    </article>
+  </section>
+
+  <!-- ================= STUFE 2 ================= -->
+  <section class="s2" data-stufe="2">
+    <div class="stufe-head">
+      <span class="stufe-badge">Stufe 2</span>
+      <span class="desc">Erweiterung · Anfangsgeschwindigkeit, Bremsvorgänge</span>
+    </div>
+
+    <!-- ---------- Aufgabe 3 ---------- -->
+    <article class="card s2" data-stufe="2">
+      <div class="card-head"><h3>Aufgabe 3 · Beschleunigen aus der Fahrt</h3><span class="chev">▾</span></div>
+      <div class="card-body">
+        <div class="task">
+          <p>Ein Auto fährt bereits mit $v_0=10\,\tfrac{\text{m}}{\text{s}}$, als der Fahrer beschleunigt. Die Beschleunigung ist mit $a=2{,}0\,\tfrac{\text{m}}{\text{s}^2}$ konstant.</p>
+          <p><strong>a)</strong> Geben Sie das Geschwindigkeit-Zeit-Gesetz $v(t)$ der Bewegung an.</p>
+          <p><strong>b)</strong> Nach welcher Zeit erreicht das Auto eine Geschwindigkeit von $22\,\tfrac{\text{m}}{\text{s}}$?</p>
+          <p><strong>c)</strong> Welche Strecke hat das Auto in dieser Zeit zurückgelegt?</p>
+        </div>
+
+        <div class="assess">
+          <span class="lab">Einschätzung:</span>
+          <button data-v="ok" type="button">✓ Fertig &amp; verstanden</button>
+          <button data-v="mid" type="button">~ Noch unsicher</button>
+          <button data-v="ask" type="button">? Frage an Lehrer</button>
+        </div>
+
+        <div class="hints">
+          <div class="htitle">Hilfen</div>
+          <div class="htabs">
+            <button type="button">Hilfe 1 · Ansatz</button>
+            <button type="button">Hilfe 2 · Nach $t$ auflösen</button>
+            <button type="button">Hilfe 3 · Strecke</button>
+          </div>
+          <div class="hpanel">
+            <h4>Hilfe 1 · $v_0$ nicht vergessen</h4>
+            <p>Anders als bei einem Start aus der Ruhe ist hier $v_0\neq 0$. Nutze $v(t)=a\cdot t+v_0$.</p>
+          </div>
+          <div class="hpanel">
+            <h4>Hilfe 2 · Gleichung lösen</h4>
+            <p>Setze $v(t)=22\,\tfrac{\text{m}}{\text{s}}$ und löse $22=2t+10$ nach $t$ auf.</p>
+          </div>
+          <div class="hpanel">
+            <h4>Hilfe 3 · Zeit-Ort-Gesetz nutzen</h4>
+            <p>Mit $s_0=0$ gilt $s(t)=\tfrac12 a\cdot t^2+v_0\cdot t$. Setze deinen Wert für $t$ aus b) ein.</p>
+          </div>
+        </div>
+
+        <div class="sol-lock">🔒 Musterlösung – nach Freigabe durch den Lehrer sichtbar.</div>
+        <div class="sol">
+          <div class="sh">✓ Musterlösung · Aufgabe 3</div>
+          <div class="sb">
+            <p><strong>a)</strong> $$v(t)=2{,}0\,\tfrac{\text{m}}{\text{s}^2}\cdot t+10\,\tfrac{\text{m}}{\text{s}}$$</p>
+            <p><strong>b)</strong> $$22=2t+10 \;\Rightarrow\; 2t=12 \;\Rightarrow\; t={\color{#1a9e5c}\boldsymbol{6{,}0\,\text{s}}}$$</p>
+            <p><strong>c)</strong> $$s(6\,\text{s})=\tfrac12\cdot 2{,}0\,\tfrac{\text{m}}{\text{s}^2}\cdot(6\,\text{s})^2+10\,\tfrac{\text{m}}{\text{s}}\cdot 6\,\text{s}=36\,\text{m}+60\,\text{m}={\color{#1a9e5c}\boldsymbol{96\,\text{m}}}$$</p>
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <!-- ---------- Aufgabe 4 ---------- -->
+    <article class="card s2" data-stufe="2">
+      <div class="card-head"><h3>Aufgabe 4 · Bremsweg berechnen</h3><span class="chev">▾</span></div>
+      <div class="card-body">
+        <div class="task">
+          <p>Ein Auto fährt mit $v_0=20\,\tfrac{\text{m}}{\text{s}}$ ($=72\,\tfrac{\text{km}}{\text{h}}$), als der Fahrer eine Vollbremsung einleitet. Die Verzögerung beträgt $a=-4{,}0\,\tfrac{\text{m}}{\text{s}^2}$.</p>
+          <p><strong>a)</strong> Nach welcher Zeit steht das Auto?</p>
+          <p><strong>b)</strong> Berechnen Sie den Bremsweg.</p>
+          <p><strong>c)</strong> Wie groß wäre der Bremsweg bei gleicher Verzögerung, wenn das Auto statt mit $20\,\tfrac{\text{m}}{\text{s}}$ mit $30\,\tfrac{\text{m}}{\text{s}}$ unterwegs gewesen wäre? Vergleichen Sie mit dem Ergebnis aus b).</p>
+        </div>
+
+        <div class="assess">
+          <span class="lab">Einschätzung:</span>
+          <button data-v="ok" type="button">✓ Fertig &amp; verstanden</button>
+          <button data-v="mid" type="button">~ Noch unsicher</button>
+          <button data-v="ask" type="button">? Frage an Lehrer</button>
+        </div>
+
+        <div class="hints">
+          <div class="htitle">Hilfen</div>
+          <div class="htabs">
+            <button type="button">Hilfe 1 · Stillstand</button>
+            <button type="button">Hilfe 2 · Bremsweg</button>
+            <button type="button">Hilfe 3 · Vergleich</button>
+          </div>
+          <div class="hpanel">
+            <h4>Hilfe 1 · Bedingung für den Stillstand</h4>
+            <p>Das Auto steht, wenn $v(t)=0$ gilt. Löse $0=a\cdot t+v_0$ nach $t$ auf (denk an das Vorzeichen von $a$!).</p>
+          </div>
+          <div class="hpanel">
+            <h4>Hilfe 2 · Bremsweg berechnen</h4>
+            <p>Setze deinen Wert für $t$ aus a) in $s(t)=\tfrac12 a\cdot t^2+v_0\cdot t$ ein.</p>
+          </div>
+          <div class="hpanel">
+            <h4>Hilfe 3 · Zum Vergleich</h4>
+            <p>Wiederhole a) und b) mit $v_0=30\,\tfrac{\text{m}}{\text{s}}$ und bilde anschließend das Verhältnis der beiden Bremswege. Vergleiche es mit dem Verhältnis der beiden Anfangsgeschwindigkeiten.</p>
+          </div>
+        </div>
+
+        <div class="sol-lock">🔒 Musterlösung – nach Freigabe durch den Lehrer sichtbar.</div>
+        <div class="sol">
+          <div class="sh">✓ Musterlösung · Aufgabe 4</div>
+          <div class="sb">
+            <p><strong>a)</strong> $$0=-4{,}0\,\tfrac{\text{m}}{\text{s}^2}\cdot t+20\,\tfrac{\text{m}}{\text{s}} \;\Rightarrow\; t={\color{#1a9e5c}\boldsymbol{5{,}0\,\text{s}}}$$</p>
+            <p><strong>b)</strong> $$s(5\,\text{s})=\tfrac12\cdot(-4{,}0\,\tfrac{\text{m}}{\text{s}^2})\cdot(5\,\text{s})^2+20\,\tfrac{\text{m}}{\text{s}}\cdot 5\,\text{s}=-50\,\text{m}+100\,\text{m}={\color{#1a9e5c}\boldsymbol{50\,\text{m}}}$$</p>
+            <p><strong>c)</strong> Mit $v_0=30\,\tfrac{\text{m}}{\text{s}}$: $t=7{,}5\,\text{s}$ und $$s=\tfrac12\cdot(-4{,}0)\cdot 7{,}5^2+30\cdot 7{,}5=-112{,}5\,\text{m}+225\,\text{m}={\color{#1a9e5c}\boldsymbol{112{,}5\,\text{m}}}$$</p>
+            <p>Das Verhältnis der Bremswege ist $\dfrac{112{,}5}{50}=2{,}25$, das Verhältnis der Geschwindigkeiten dagegen nur $\dfrac{30}{20}=1{,}5$. Bei $1{,}5$-facher Geschwindigkeit wird der Bremsweg also nicht $1{,}5$-mal, sondern $1{,}5^2=2{,}25$-mal so groß -- der Bremsweg wächst quadratisch mit der Geschwindigkeit.</p>
+          </div>
+        </div>
+      </div>
+    </article>
+  </section>
+
+  <!-- ================= STUFE 3 ================= -->
+  <section class="s3" data-stufe="3">
+    <div class="stufe-head">
+      <span class="stufe-badge">Stufe 3</span>
+      <span class="desc">Vertiefung · Vernetzung, Sachkontexte, Begründung</span>
+    </div>
+
+    <!-- ---------- Aufgabe 5 ---------- -->
+    <article class="card s3" data-stufe="3">
+      <div class="card-head"><h3>Aufgabe 5 · Anhalteweg an der Ampel</h3><span class="chev">▾</span></div>
+      <div class="card-body">
+        <div class="task">
+          <p>Ein Autofahrer nähert sich mit $v_0=20\,\tfrac{\text{m}}{\text{s}}$ einer Ampel, die gerade auf Gelb springt. Seine Reaktionszeit beträgt $t_R=1{,}0\,\text{s}$ -- währenddessen fährt er unverändert mit $v_0$ weiter. Erst danach bremst er mit $a=-5{,}0\,\tfrac{\text{m}}{\text{s}^2}$ bis zum Stillstand ab.</p>
+          <p><strong>a)</strong> Berechnen Sie den Reaktionsweg.</p>
+          <p><strong>b)</strong> Berechnen Sie den Bremsweg.</p>
+          <p><strong>c)</strong> Wie weit vor der Kreuzung muss die Ampel mindestens stehen, damit der Fahrer bei Gelb noch sicher anhalten kann?</p>
+        </div>
+
+        <div class="assess">
+          <span class="lab">Einschätzung:</span>
+          <button data-v="ok" type="button">✓ Fertig &amp; verstanden</button>
+          <button data-v="mid" type="button">~ Noch unsicher</button>
+          <button data-v="ask" type="button">? Frage an Lehrer</button>
+        </div>
+
+        <div class="hints">
+          <div class="htitle">Hilfen</div>
+          <div class="htabs">
+            <button type="button">Hilfe 1 · Reaktionsweg</button>
+            <button type="button">Hilfe 2 · Bremsweg</button>
+            <button type="button">Hilfe 3 · Gesamtweg</button>
+          </div>
+          <div class="hpanel">
+            <h4>Hilfe 1 · Während der Reaktionszeit</h4>
+            <p>In der Reaktionszeit ändert sich die Geschwindigkeit noch nicht -- das ist eine Bewegung mit konstanter Geschwindigkeit. Nutze $s_R=v_0\cdot t_R$.</p>
+          </div>
+          <div class="hpanel">
+            <h4>Hilfe 2 · Bremsvorgang wie in Aufgabe 4</h4>
+            <p>Bestimme zuerst die Bremszeit aus $v(t)=0$, setze sie anschließend in $s(t)=\tfrac12 a\cdot t^2+v_0\cdot t$ ein (jetzt zählt $t$ ab Bremsbeginn).</p>
+          </div>
+          <div class="hpanel">
+            <h4>Hilfe 3 · Beide Wegstrecken zusammenfügen</h4>
+            <p>Der gesamte Anhalteweg ist die Summe aus Reaktionsweg und Bremsweg: $s_{ges}=s_R+s_B$.</p>
+          </div>
+        </div>
+
+        <div class="sol-lock">🔒 Musterlösung – nach Freigabe durch den Lehrer sichtbar.</div>
+        <div class="sol">
+          <div class="sh">✓ Musterlösung · Aufgabe 5</div>
+          <div class="sb">
+            <p><strong>a)</strong> $$s_R=v_0\cdot t_R=20\,\tfrac{\text{m}}{\text{s}}\cdot 1{,}0\,\text{s}={\color{#1a9e5c}\boldsymbol{20\,\text{m}}}$$</p>
+            <p><strong>b)</strong> Bremszeit: $0=-5{,}0\cdot t+20 \;\Rightarrow\; t=4{,}0\,\text{s}$.</p>
+            <p>$$s_B=\tfrac12\cdot(-5{,}0\,\tfrac{\text{m}}{\text{s}^2})\cdot(4{,}0\,\text{s})^2+20\,\tfrac{\text{m}}{\text{s}}\cdot 4{,}0\,\text{s}=-40\,\text{m}+80\,\text{m}={\color{#1a9e5c}\boldsymbol{40\,\text{m}}}$$</p>
+            <p><strong>c)</strong> $$s_{ges}=s_R+s_B=20\,\text{m}+40\,\text{m}={\color{#1a9e5c}\boldsymbol{60\,\text{m}}}$$</p>
+            <p>Die Ampel muss also mindestens $60\,\text{m}$ vor der Kreuzung stehen, damit der Fahrer bei Gelb noch rechtzeitig zum Stehen kommt.</p>
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <!-- ---------- Aufgabe 6 ---------- -->
+    <article class="card s3" data-stufe="3">
+      <div class="card-head"><h3>Aufgabe 6 · Beurteilen und begründen</h3><span class="chev">▾</span></div>
+      <div class="card-body">
+        <div class="task">
+          <p>Untersuchen Sie, ob die folgenden Aussagen wahr oder falsch sind. Begründen Sie Ihre Entscheidung bzw. geben Sie ein Gegenbeispiel an.</p>
+          <p><strong>a)</strong> Eine Verzögerung ist nichts anderes als eine negative Beschleunigung.</p>
+          <p><strong>b)</strong> Im $t$-$v$-Diagramm einer gleichmäßig beschleunigten Bewegung entspricht die Fläche unter dem Graphen der zurückgelegten Strecke.</p>
+          <p><strong>c)</strong> Bei einer gleichmäßig beschleunigten Bewegung aus der Ruhe verdoppelt sich die zurückgelegte Strecke, wenn die Zeit verdoppelt wird.</p>
+        </div>
+
+        <div class="assess">
+          <span class="lab">Einschätzung:</span>
+          <button data-v="ok" type="button">✓ Fertig &amp; verstanden</button>
+          <button data-v="mid" type="button">~ Noch unsicher</button>
+          <button data-v="ask" type="button">? Frage an Lehrer</button>
+        </div>
+
+        <div class="hints">
+          <div class="htitle">Hilfen</div>
+          <div class="htabs">
+            <button type="button">Hilfe 1 · Zu a)</button>
+            <button type="button">Hilfe 2 · Zu b)</button>
+            <button type="button">Hilfe 3 · Zu c)</button>
+          </div>
+          <div class="hpanel">
+            <h4>Hilfe 1 · Zu a)</h4>
+            <p>Überlege, ob es für eine Verzögerung eine eigene Formel braucht, oder ob $v(t)=a\cdot t+v_0$ auch dann noch gilt, wenn der Körper langsamer wird.</p>
+          </div>
+          <div class="hpanel">
+            <h4>Hilfe 2 · Zu b)</h4>
+            <p>Die Fläche unter einer Geraden im $t$-$v$-Diagramm (von $0$ bis $t$) ist ein Trapez mit den parallelen Seiten $v_0$ und $v(t)$. Berechne diese Fläche allgemein und vergleiche das Ergebnis mit $s(t)$.</p>
+          </div>
+          <div class="hpanel">
+            <h4>Hilfe 3 · Zu c)</h4>
+            <p>Schau dir noch einmal die Messwerte aus Aufgabe 2 an: Wie verhält sich $s(1\,\text{s})$ zu $s(2\,\text{s})$?</p>
+          </div>
+        </div>
+
+        <div class="sol-lock">🔒 Musterlösung – nach Freigabe durch den Lehrer sichtbar.</div>
+        <div class="sol">
+          <div class="sh">✓ Musterlösung · Aufgabe 6</div>
+          <div class="sb">
+            <p><strong>a) Wahr.</strong> Für die Geschwindigkeit gilt immer $v(t)=a\cdot t+v_0$, egal ob der Körper schneller oder langsamer wird. Eine "Verzögerung" ist einfach der Fall, dass $a$ ein negatives Vorzeichen hat (und damit der Bewegung entgegengerichtet ist) -- eine eigene Formel braucht es dafür nicht.</p>
+            <p><strong>b) Wahr.</strong> Die Fläche unter der Geraden ist ein Trapez mit Höhe $t$ und den parallelen Seiten $v_0$ und $v(t)=a t+v_0$:</p>
+            <p>$$A=\frac{v_0+v(t)}{2}\cdot t=\frac{v_0+(at+v_0)}{2}\cdot t=v_0\cdot t+\frac12 a\cdot t^2=s(t)$$</p>
+            <p>Das ist genau das Zeit-Ort-Gesetz (für $s_0=0$) -- die Fläche unter dem $t$-$v$-Graphen entspricht also tatsächlich der zurückgelegten Strecke.</p>
+            <p><strong>c) Falsch.</strong> Aus Aufgabe 2: $s(1\,\text{s})=0{,}10\,\text{m}$ und $s(2\,\text{s})=0{,}40\,\text{m}$ -- die Strecke ist also viermal, nicht zweimal so groß. Das liegt daran, dass $s(t)=\tfrac12 a\cdot t^2$ quadratisch von $t$ abhängt: Verdoppelt man $t$, vervierfacht sich $s$.</p>
+          </div>
+        </div>
+      </div>
+    </article>
+  </section>
+
+</div>
+
+<footer class="bot">
+  Physik Einführungsphase · Kapitel 1.3 · Bewegungen beschreiben<br>
+  <a href="../">← Zurück zu EP Materialien</a>
+</footer>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+
+  /* ---------- KaTeX ---------- */
+  function render(){
+    if (window.renderMathInElement) {
+      renderMathInElement(document.body, {
+        delimiters: [
+          {left:'$$', right:'$$', display:true},
+          {left:'$',  right:'$',  display:false}
+        ],
+        throwOnError:false
+      });
+    }
+  }
+  if (window.renderMathInElement) render();
+  else window.addEventListener('load', render);
+
+  /* ---------- Karten auf/zu ---------- */
+  document.querySelectorAll('.card-head').forEach(function(h){
+    h.addEventListener('click', function(){
+      h.parentElement.classList.toggle('open');
+    });
+  });
+
+  /* ---------- Hilfe-Reiter ---------- */
+  document.querySelectorAll('.hints').forEach(function(box){
+    var tabs   = box.querySelectorAll('.htabs button');
+    var panels = box.querySelectorAll('.hpanel');
+    tabs.forEach(function(tab, i){
+      tab.addEventListener('click', function(){
+        var wasOn = tab.classList.contains('on');
+        tabs.forEach(function(t){ t.classList.remove('on'); });
+        panels.forEach(function(p){ p.classList.remove('on'); });
+        if (!wasOn) {
+          tab.classList.add('on');
+          if (panels[i]) panels[i].classList.add('on');
+        }
+      });
+    });
+  });
+
+  /* ---------- Selbsteinschätzung ---------- */
+  document.querySelectorAll('.assess').forEach(function(box){
+    var btns = box.querySelectorAll('button');
+    btns.forEach(function(b){
+      b.addEventListener('click', function(){
+        var wasOn = b.classList.contains('on');
+        btns.forEach(function(x){ x.classList.remove('on'); });
+        if (!wasOn) b.classList.add('on');
+      });
+    });
+  });
+
+  /* ---------- Filter ---------- */
+  document.querySelectorAll('.filters button').forEach(function(b){
+    b.addEventListener('click', function(){
+      document.querySelectorAll('.filters button').forEach(function(x){ x.classList.remove('on'); });
+      b.classList.add('on');
+      var f = b.dataset.f;
+      document.querySelectorAll('section[data-stufe]').forEach(function(sec){
+        sec.style.display = (f === 'all' || sec.dataset.stufe === f) ? '' : 'none';
+      });
+    });
+  });
+
+  /* ---------- Musterlösungen freischalten ---------- */
+  var CODE  = 'PHYSIK';
+  var input = document.getElementById('code');
+  var msg   = document.getElementById('msg');
+
+  function tryUnlock(){
+    var val = (input.value || '').trim().toUpperCase();
+    if (val === CODE) {
+      document.body.classList.add('unlocked');
+      msg.textContent = '✓ freigeschaltet';
+      msg.className = 'msg ok';
+      render();
+    } else {
+      msg.textContent = '✗ Code stimmt nicht';
+      msg.className = 'msg bad';
+    }
+  }
+  document.getElementById('btn-unlock').addEventListener('click', tryUnlock);
+  input.addEventListener('keydown', function(e){
+    if (e.key === 'Enter') tryUnlock();
+  });
+
+  /* Erste Aufgabe jeder Stufe geöffnet starten */
+  document.querySelectorAll('section[data-stufe]').forEach(function(sec){
+    var first = sec.querySelector('.card');
+    if (first) first.classList.add('open');
+  });
+});
+</script>
+
+</body>
+</html>
