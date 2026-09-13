@@ -1,0 +1,892 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Übungsphase · Abstandsberechnungen in Kontexten</title>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css">
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/contrib/auto-render.min.js"></script>
+
+<style>
+:root{
+  --gold:#e8a800; --gold-dark:#b58200;
+  --blue:#2c5f8a; --blue-dark:#1a3d5c;
+  --green:#1a9e5c; --orange:#d4760a; --purple:#7b3fb5;
+  --border:#dde1e7; --bg:#f4f5f7; --text:#1c1f26;
+  --muted:#5c6472;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0; background:var(--bg); color:var(--text);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  line-height:1.55; font-size:16px;
+}
+.wrap{max-width:960px; margin:0 auto; padding:0 16px 64px}
+
+/* ---------- Kopf ---------- */
+header.top{background:var(--gold); border-bottom:4px solid var(--gold-dark); color:#fff}
+header.top .inner{max-width:960px; margin:0 auto; padding:22px 16px 24px}
+header.top .kap{font-size:.78rem; font-weight:700; letter-spacing:.06em; text-transform:uppercase; opacity:.92}
+header.top h1{margin:6px 0 4px; font-size:1.7rem; line-height:1.2}
+header.top .sub{font-size:.92rem; opacity:.95}
+
+/* ---------- Steuerleiste ---------- */
+.controls{
+  background:#fff; border:1px solid var(--border); border-radius:10px;
+  padding:14px 16px; margin:18px 0 22px;
+  display:flex; flex-wrap:wrap; gap:16px; align-items:center; justify-content:space-between;
+}
+.unlock{display:flex; align-items:center; gap:8px; flex-wrap:wrap}
+.unlock label{font-size:.9rem; color:var(--muted)}
+.unlock input{
+  border:1px solid var(--border); border-radius:6px; padding:6px 10px;
+  font-size:.95rem; width:130px; font-family:inherit;
+}
+.unlock button{
+  background:var(--blue); color:#fff; border:0; border-radius:6px;
+  padding:7px 14px; font-size:.9rem; font-weight:600; cursor:pointer; font-family:inherit;
+}
+.unlock button:hover{background:var(--blue-dark)}
+.unlock .msg{font-size:.85rem; font-weight:600}
+.unlock .msg.ok{color:var(--green)}
+.unlock .msg.bad{color:#c0392b}
+
+.filters{display:flex; gap:6px; flex-wrap:wrap}
+.filters button{
+  background:#fff; border:1px solid var(--border); border-radius:20px;
+  padding:6px 14px; font-size:.85rem; cursor:pointer; color:var(--muted);
+  font-family:inherit; font-weight:600;
+}
+.filters button:hover{border-color:var(--muted)}
+.filters button.on{background:var(--text); border-color:var(--text); color:#fff}
+
+/* ---------- Stufenabschnitte ---------- */
+.stufe-head{
+  display:flex; align-items:baseline; gap:12px; flex-wrap:wrap;
+  margin:30px 0 12px; padding-bottom:8px; border-bottom:2px solid var(--border);
+}
+.stufe-badge{
+  color:#fff; border-radius:6px; padding:4px 12px;
+  font-weight:700; font-size:.9rem; letter-spacing:.02em;
+}
+.s1 .stufe-badge{background:var(--green)}
+.s2 .stufe-badge{background:var(--orange)}
+.s3 .stufe-badge{background:var(--purple)}
+.stufe-head .desc{color:var(--muted); font-size:.9rem}
+
+/* ---------- Aufgabenkarte ---------- */
+.card{
+  background:#fff; border:1px solid var(--border); border-radius:10px;
+  margin-bottom:14px; overflow:hidden;
+}
+.card.s1{border-top:4px solid var(--green)}
+.card.s2{border-top:4px solid var(--orange)}
+.card.s3{border-top:4px solid var(--purple)}
+.card-head{
+  display:flex; align-items:center; justify-content:space-between; gap:12px;
+  padding:13px 18px; cursor:pointer; user-select:none;
+}
+.card-head:hover{background:#fafbfc}
+.card-head h3{margin:0; font-size:1.03rem; font-weight:700}
+.chev{color:var(--muted); font-size:1.1rem; transition:transform .18s}
+.card.open .chev{transform:rotate(180deg)}
+.card-body{display:none; padding:0 18px 18px}
+.card.open .card-body{display:block}
+
+.task{
+  background:#fbfcfd; border:1px solid var(--border); border-left:3px solid var(--blue);
+  border-radius:6px; padding:12px 15px; margin-bottom:14px;
+}
+.task p{margin:.5em 0}
+.task p:first-child{margin-top:0}
+.task p:last-child{margin-bottom:0}
+
+/* ---------- Selbsteinschätzung ---------- */
+.assess{display:flex; align-items:center; gap:7px; flex-wrap:wrap; margin-bottom:14px}
+.assess .lab{font-size:.83rem; color:var(--muted); margin-right:2px}
+.assess button{
+  border:1px solid var(--border); background:#fff; border-radius:16px;
+  padding:4px 12px; font-size:.8rem; cursor:pointer; color:var(--muted); font-family:inherit;
+}
+.assess button.on[data-v="ok"]{background:var(--green); border-color:var(--green); color:#fff}
+.assess button.on[data-v="mid"]{background:var(--orange); border-color:var(--orange); color:#fff}
+.assess button.on[data-v="ask"]{background:var(--blue); border-color:var(--blue); color:#fff}
+
+/* ---------- Hilfen ---------- */
+.hints{border:1px solid var(--border); border-radius:8px; overflow:hidden; margin-bottom:14px}
+.hints .htitle{
+  background:#f7f8fa; padding:7px 14px; font-size:.8rem; font-weight:700;
+  color:var(--muted); text-transform:uppercase; letter-spacing:.05em;
+  border-bottom:1px solid var(--border);
+}
+.htabs{display:flex; flex-wrap:wrap; gap:6px; padding:10px 14px; background:#fdfdfe}
+.htabs button{
+  border:1px solid var(--border); background:#fff; border-radius:6px;
+  padding:5px 11px; font-size:.82rem; cursor:pointer; color:var(--text); font-family:inherit;
+}
+.htabs button:hover{border-color:var(--blue)}
+.htabs button.on{background:var(--blue); border-color:var(--blue); color:#fff; font-weight:600}
+.hpanel{display:none; padding:12px 15px; border-top:1px solid var(--border); font-size:.95rem}
+.hpanel.on{display:block}
+.hpanel h4{margin:0 0 8px; font-size:.92rem; color:var(--blue-dark)}
+.hpanel p{margin:.5em 0}
+
+/* ---------- Musterlösung ---------- */
+.sol-lock{
+  background:#f7f8fa; border:1px dashed var(--border); border-radius:8px;
+  padding:12px 15px; font-size:.9rem; color:var(--muted); text-align:center;
+}
+.sol-lock.active{
+  cursor:pointer; background:#eef4f9; border:1px solid var(--blue); color:var(--blue-dark); font-weight:600;
+}
+.sol-lock.active:hover{background:#e2ecf5}
+.sol{
+  display:none; border:1px solid var(--green); border-radius:8px; overflow:hidden;
+}
+.sol.shown{display:block}
+.sol .sh{
+  background:var(--green); color:#fff; padding:7px 15px;
+  font-weight:700; font-size:.88rem;
+}
+.sol .sb{padding:13px 15px; font-size:.95rem}
+.sol .sb p{margin:.55em 0}
+.sol .sb p:first-child{margin-top:0}
+
+.note{
+  background:#fdf6e3; border-left:3px solid var(--gold); border-radius:6px;
+  padding:10px 14px; font-size:.9rem; margin:12px 0;
+}
+.katex{font-size:1.04em}
+.katex-display{margin:.6em 0; overflow-x:auto; overflow-y:hidden}
+footer.bot{
+  text-align:center; color:var(--muted); font-size:.82rem;
+  padding:26px 16px; border-top:1px solid var(--border); margin-top:34px;
+}
+footer.bot a{color:var(--blue)}
+@media(max-width:600px){
+  header.top h1{font-size:1.32rem}
+  .controls{flex-direction:column; align-items:stretch}
+  .card-head h3{font-size:.95rem}
+}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="inner">
+    <div class="kap">Kapitel VII · Lagebeziehungen und Abstände · LK Mathematik Q2</div>
+    <h1>Abstandsberechnungen in Kontexten</h1>
+    <div class="sub">Wähle deine Stufe · Nutze die Hilfen schrittweise · Musterlösungen nach Lehrerfreigabe</div>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <div class="controls">
+    <div class="unlock">
+      <label for="code">🔒 Musterlösungen freischalten:</label>
+      <input id="code" type="text" autocomplete="off" placeholder="Code">
+      <button id="btn-unlock" type="button">Bestätigen</button>
+      <span class="msg" id="msg"></span>
+    </div>
+    <div class="filters">
+      <button class="on" data-f="all" type="button">Alle Stufen</button>
+      <button data-f="1" type="button">Stufe 1</button>
+      <button data-f="2" type="button">Stufe 2</button>
+      <button data-f="3" type="button">Stufe 3</button>
+    </div>
+  </div>
+
+  <div class="note">
+    <strong>Der Rechenplan aus der Einstiegsstunde:</strong>
+    (1) <em>Verstehen der Aufgabe</em> – Was ist gegeben, was gesucht? (2) <em>Zerlegen in Teilprobleme</em> –
+    welche bekannten Rechenwege führen zum Ziel? (3) <em>Durchführung des Rechenwegs.</em>
+    (4) <em>Rückschau und Antwort</em> – Ist das Ergebnis plausibel, liegt eine vollständige Antwort vor?
+    Nutze diese vier Schritte bei jeder Aufgabe dieser Seite als Leitfaden.
+  </div>
+
+  <!-- ================= BEISPIEL (Rückblick Einstieg) ================= -->
+  <div class="stufe-head">
+    <span class="stufe-badge" style="background:var(--gold)">Aus dem Einstieg</span>
+    <span class="desc">Vollständig durchgerechnetes Beispiel als Rückblick und Referenz</span>
+  </div>
+
+  <article class="card open" style="border-top:4px solid var(--gold)">
+    <div class="card-head"><h3>Beispiel · Nähern sich Kleinflugzeug und Rettungshubschrauber gefährlich an?</h3><span class="chev">▾</span></div>
+    <div class="card-body">
+      <div class="task">
+        <p>Zum Zeitpunkt $t=0$ (in Minuten) befindet sich ein Kleinflugzeug im Punkt $F_0(-8\mid4\mid6)$ und bewegt
+        sich geradlinig mit konstanter Geschwindigkeit in Richtung des Vektors $\begin{pmatrix}10\\-2\\-3\end{pmatrix}$.
+        Zum selben Zeitpunkt befindet sich ein Rettungshubschrauber im Punkt $H_0(6\mid-8\mid1)$ und fliegt in Richtung
+        des Vektors $\begin{pmatrix}-4\\5\\2\end{pmatrix}$. Die Koordinaten sind in Kilometern angegeben.</p>
+        <p>Untersuchen Sie, wann sich die beiden Flugobjekte am nächsten kommen und wie groß der Abstand zu diesem
+        Zeitpunkt ist.</p>
+      </div>
+
+      <div class="sol" style="display:block">
+        <div class="sh">Lösung nach dem Rechenplan</div>
+        <div class="sb">
+          <p><strong>1. Schritt: Verstehen.</strong> Gesucht ist der Zeitpunkt $t$, zu dem der Abstand der beiden
+          Flugobjekte minimal wird, sowie dieser minimale Abstand selbst. Beide Objekte bewegen sich gleichzeitig,
+          es gibt also nur <em>einen</em> gemeinsamen Zeitparameter $t$.</p>
+
+          <p><strong>2. Schritt: Zerlegen.</strong> Bewegungsgleichungen aufstellen, daraus den Verbindungsvektor
+          $\overrightarrow{F(t)H(t)}$ in Abhängigkeit von $t$ bilden, den Betrag quadrieren (das erspart die Wurzel
+          beim Ableiten) und die entstehende quadratische Funktion minimieren.</p>
+
+          <p><strong>3. Schritt: Durchführung.</strong></p>
+          <p>$$f\colon\vec{x}=\begin{pmatrix}-8\\4\\6\end{pmatrix}+t\begin{pmatrix}10\\-2\\-3\end{pmatrix}
+          \qquad\qquad
+          h\colon\vec{x}=\begin{pmatrix}6\\-8\\1\end{pmatrix}+t\begin{pmatrix}-4\\5\\2\end{pmatrix}$$</p>
+          <p>$$\overrightarrow{F(t)H(t)}=\begin{pmatrix}6\\-8\\1\end{pmatrix}-\begin{pmatrix}-8\\4\\6\end{pmatrix}
+          +t\left[\begin{pmatrix}-4\\5\\2\end{pmatrix}-\begin{pmatrix}10\\-2\\-3\end{pmatrix}\right]
+          =\begin{pmatrix}14\\-12\\-5\end{pmatrix}+t\begin{pmatrix}-14\\7\\5\end{pmatrix}
+          =\begin{pmatrix}14-14t\\-12+7t\\-5+5t\end{pmatrix}$$</p>
+          <p>Quadrierter Abstand:</p>
+          <p>$$d^2(t)=(14-14t)^2+(-12+7t)^2+(-5+5t)^2=270t^2-610t+365$$</p>
+          <p>Minimum über die Ableitung: $\ (d^2)'(t)=540t-610=0\ \Rightarrow\ t=\dfrac{610}{540}=\dfrac{61}{54}\approx{\color{#1a9e5c}\boldsymbol{1{,}13}}$</p>
+          <p>Da der Graph von $d^2$ eine nach oben geöffnete Parabel ist, liegt hier tatsächlich das Minimum vor.
+          Einsetzen in den Verbindungsvektor liefert $\overrightarrow{F(1{,}13)H(1{,}13)}\approx\begin{pmatrix}1{,}82\\4{,}09\\-0{,}65\end{pmatrix}$, also</p>
+          <p>$$d(1{,}13)\approx\sqrt{1{,}82^2+4{,}09^2+0{,}65^2}=\sqrt{20{,}46}\approx{\color{#1a9e5c}\boldsymbol{4{,}52\ \text{km}}}$$</p>
+
+          <p><strong>4. Schritt: Rückschau und Antwort.</strong> Nach ca. $1{,}13$ Minuten (rund $68$ Sekunden)
+          kommen sich Flugzeug und Hubschrauber mit einem minimalen Abstand von etwa $4{,}52$ km am nächsten. Da die
+          Diskriminante von $d^2(t)$ negativ ist ($610^2-4\cdot270\cdot365=-22\,100<0$), wird $d^2(t)$ nie $0$ – eine
+          Kollision ist also ausgeschlossen. $4{,}52$ km gilt in der Luftfahrt dennoch als kritisch nah, sodass die
+          Flugsicherung informiert werden sollte.</p>
+        </div>
+      </div>
+    </div>
+  </article>
+
+  <!-- ================= STUFE 1 ================= -->
+  <section class="s1" data-stufe="1">
+    <div class="stufe-head">
+      <span class="stufe-badge">Stufe 1</span>
+      <span class="desc">Grundaufgaben · Abstandsformeln zu Ebene und Gerade sicher anwenden</span>
+    </div>
+
+    <!-- ---------- Aufgabe 1 ---------- -->
+    <article class="card s1" data-stufe="1">
+      <div class="card-head"><h3>Aufgabe 1 · Punkt, Gerade und Ebene im Abstand zu einer Ebene</h3><span class="chev">▾</span></div>
+      <div class="card-body">
+        <div class="task">
+          <p>Gegeben ist die Ebene $E\colon 2x_1-x_2+2x_3=6$.</p>
+          <p><strong>a)</strong> Geben Sie einen Punkt $P$ an, der von $E$ den Abstand $d=9$ hat.</p>
+          <p><strong>b)</strong> Geben Sie eine Gerade $g$ an, die in jedem ihrer Punkte den Abstand $d=9$ von $E$ hat.</p>
+          <p><strong>c)</strong> Geben Sie eine zu $E$ parallele Ebene $E'$ an, die den Abstand $d=9$ von $E$ hat.</p>
+        </div>
+
+        <div class="assess">
+          <span class="lab">Einschätzung:</span>
+          <button data-v="ok" type="button">✓ Fertig &amp; verstanden</button>
+          <button data-v="mid" type="button">~ Noch unsicher</button>
+          <button data-v="ask" type="button">? Frage an Lehrer</button>
+        </div>
+
+        <div class="hints">
+          <div class="htitle">Hilfen</div>
+          <div class="htabs">
+            <button type="button">Hilfe 1 · Idee</button>
+            <button type="button">Hilfe 2 · Einheitsnormalenvektor</button>
+            <button type="button">Hilfe 3 · Zu b) und c)</button>
+          </div>
+          <div class="hpanel">
+            <h4>Hilfe 1 · Die Grundidee</h4>
+            <p>Von jedem Punkt der Ebene $E$ aus erreichst du in Richtung des Normalenvektors $\vec n$ (oder seiner
+            Gegenrichtung) nach der Strecke $d$ automatisch einen Punkt im Abstand $d$ von $E$ – vorausgesetzt, du
+            bewegst dich um genau die Länge $d$, nicht um $d$ „Einheiten des Normalenvektors“.</p>
+          </div>
+          <div class="hpanel">
+            <h4>Hilfe 2 · Einheitsnormalenvektor bilden</h4>
+            <p>$\vec n=\begin{pmatrix}2\\-1\\2\end{pmatrix}$, $|\vec n|=\sqrt{4+1+4}=3$. Der Einheitsnormalenvektor
+            ist $\hat n=\frac13\vec n$. Suche zunächst einen beliebigen Punkt $Q\in E$, z. B. mit $x_1=x_3=0$.</p>
+          </div>
+          <div class="hpanel">
+            <h4>Hilfe 3 · Zu b) und c)</h4>
+            <p>Für b): Jede zu $E$ <em>parallele</em> Gerade durch deinen Punkt $P$ hat automatisch überall denselben
+            Abstand von $E$. Ihr Richtungsvektor muss also senkrecht auf $\vec n$ stehen.</p>
+            <p>Für c): Eine zu $E$ parallele Ebene hat dieselbe linke Seite wie $E$, nur eine andere Konstante. Der
+            „Abstand pro Konstante“ ist $|\vec n|$ – überlege, um wie viel sich die Konstante ändern muss.</p>
+          </div>
+        </div>
+
+        <div class="sol-lock">🔒 Musterlösung – nach Freigabe durch den Lehrer sichtbar.</div>
+        <div class="sol">
+          <div class="sh">✓ Musterlösung · Aufgabe 1 (eine von unendlich vielen möglichen Lösungen)</div>
+          <div class="sb">
+            <p><strong>Vorbereitung.</strong> $\vec n=\begin{pmatrix}2\\-1\\2\end{pmatrix}$, $|\vec n|=3$,
+            $\hat n=\begin{pmatrix}2/3\\-1/3\\2/3\end{pmatrix}$. Als Punkt auf $E$ wähle $Q(0\mid-6\mid0)$
+            (Probe: $2\cdot0-(-6)+2\cdot0=6$ ✓).</p>
+            <p><strong>a)</strong> $$P=Q+9\hat n=\begin{pmatrix}0\\-6\\0\end{pmatrix}+9\begin{pmatrix}2/3\\-1/3\\2/3\end{pmatrix}
+            ={\color{#1a9e5c}\boldsymbol{(6\mid-9\mid6)}}$$</p>
+            <p>Probe: $\dfrac{|2\cdot6-(-9)+2\cdot6-6|}{3}=\dfrac{27}{3}=9$ ✓. (Ebenso richtig wäre $Q-9\hat n=(-6\mid-3\mid-6)$
+            auf der anderen Seite von $E$.)</p>
+            <p><strong>b)</strong> Richtungsvektor $\vec u$ senkrecht zu $\vec n$, z. B. $\vec u=\begin{pmatrix}1\\2\\0\end{pmatrix}$
+            (Probe: $2\cdot1-1\cdot2+2\cdot0=0$ ✓):
+            $${\color{#1a9e5c}\boldsymbol{g\colon\vec x=\begin{pmatrix}6\\-9\\6\end{pmatrix}+r\begin{pmatrix}1\\2\\0\end{pmatrix}}}$$</p>
+            <p>Da $g$ parallel zu $E$ verläuft, hat jeder ihrer Punkte denselben Abstand $9$ von $E$.</p>
+            <p><strong>c)</strong> Eine Verschiebung um die Strecke $d$ entlang $\hat n$ ändert die Konstante der
+            Ebenengleichung um $|\vec n|\cdot d=3\cdot9=27$:
+            $${\color{#1a9e5c}\boldsymbol{E'\colon 2x_1-x_2+2x_3=33}}$$</p>
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <!-- ---------- Aufgabe 2 ---------- -->
+    <article class="card s1" data-stufe="1">
+      <div class="card-head"><h3>Aufgabe 2 · Punkt und Gerade im Abstand zu einer Geraden</h3><span class="chev">▾</span></div>
+      <div class="card-body">
+        <div class="task">
+          <p>Gegeben ist die Gerade $g\colon\vec x=\begin{pmatrix}1\\2\\-3\end{pmatrix}+r\begin{pmatrix}2\\-2\\1\end{pmatrix}$.</p>
+          <p><strong>a)</strong> Geben Sie einen Punkt $P$ an, der von $g$ den Abstand $d=3\sqrt2$ hat.</p>
+          <p><strong>b)</strong> Geben Sie eine zu $g$ parallele Gerade $h$ an, die überall den Abstand $d=3\sqrt2$ von $g$ hat.</p>
+        </div>
+
+        <div class="assess">
+          <span class="lab">Einschätzung:</span>
+          <button data-v="ok" type="button">✓ Fertig &amp; verstanden</button>
+          <button data-v="mid" type="button">~ Noch unsicher</button>
+          <button data-v="ask" type="button">? Frage an Lehrer</button>
+        </div>
+
+        <div class="hints">
+          <div class="htitle">Hilfen</div>
+          <div class="htabs">
+            <button type="button">Hilfe 1 · Idee</button>
+            <button type="button">Hilfe 2 · Orthogonalen Vektor finden</button>
+            <button type="button">Hilfe 3 · Probe</button>
+          </div>
+          <div class="hpanel">
+            <h4>Hilfe 1 · Die Grundidee</h4>
+            <p>Anders als bei einer Ebene gibt es zu einer Geraden nicht <em>einen</em> Normalenvektor, sondern eine
+            ganze Ebene voller Vektoren, die senkrecht auf dem Richtungsvektor stehen. Wähle irgendeinen davon.</p>
+          </div>
+          <div class="hpanel">
+            <h4>Hilfe 2 · Einen passenden orthogonalen Vektor finden</h4>
+            <p>Gesucht ist $\vec w$ mit $\vec w\circ\begin{pmatrix}2\\-2\\1\end{pmatrix}=0$. Probiere einen Vektor mit
+            einer Null-Komponente, z. B. $\vec w=\begin{pmatrix}1\\1\\0\end{pmatrix}$, und rechne das Skalarprodukt nach.</p>
+            <p>Normiere $\vec w$ und multipliziere mit $d=3\sqrt2$ – die Wurzel im gegebenen Abstand ist ein Hinweis
+            darauf, dass $|\vec w|=\sqrt2$ günstig ist.</p>
+          </div>
+          <div class="hpanel">
+            <h4>Hilfe 3 · Probe</h4>
+            <p>Der Verbindungsvektor vom Stützpunkt zu deinem Punkt $P$ muss (1) die Länge $3\sqrt2$ haben und
+            (2) senkrecht auf dem Richtungsvektor von $g$ stehen – nur dann ist der Stützpunkt selbst der
+            Lotfußpunkt und dein Vektor tatsächlich der kürzeste Verbindungsvektor.</p>
+          </div>
+        </div>
+
+        <div class="sol-lock">🔒 Musterlösung – nach Freigabe durch den Lehrer sichtbar.</div>
+        <div class="sol">
+          <div class="sh">✓ Musterlösung · Aufgabe 2 (eine von unendlich vielen möglichen Lösungen)</div>
+          <div class="sb">
+            <p><strong>a)</strong> $\vec w=\begin{pmatrix}1\\1\\0\end{pmatrix}$ steht senkrecht auf
+            $\vec u=\begin{pmatrix}2\\-2\\1\end{pmatrix}$, denn $\vec w\circ\vec u=2-2+0=0$ ✓. Mit $|\vec w|=\sqrt2$
+            ist $\hat w=\frac{1}{\sqrt2}\begin{pmatrix}1\\1\\0\end{pmatrix}$, also</p>
+            <p>$$P=\begin{pmatrix}1\\2\\-3\end{pmatrix}+3\sqrt2\cdot\hat w
+            =\begin{pmatrix}1\\2\\-3\end{pmatrix}+\begin{pmatrix}3\\3\\0\end{pmatrix}
+            ={\color{#1a9e5c}\boldsymbol{(4\mid5\mid-3)}}$$</p>
+            <p>Probe: $\overrightarrow{PQ}=\begin{pmatrix}3\\3\\0\end{pmatrix}$ mit $|\overrightarrow{PQ}|=\sqrt{18}=3\sqrt2$ ✓
+            und $\begin{pmatrix}3\\3\\0\end{pmatrix}\circ\vec u=6-6+0=0$ ✓ – der Stützpunkt von $g$ ist tatsächlich der Lotfußpunkt.</p>
+            <p><strong>b)</strong> Parallel zu $g$ durch $P$:
+            $${\color{#1a9e5c}\boldsymbol{h\colon\vec x=\begin{pmatrix}4\\5\\-3\end{pmatrix}+s\begin{pmatrix}2\\-2\\1\end{pmatrix}}}$$</p>
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <!-- ---------- Aufgabe 3 ---------- -->
+    <article class="card s1" data-stufe="1">
+      <div class="card-head"><h3>Aufgabe 3 · Punkte auf einer Geraden mit vorgegebenem Ebenenabstand</h3><span class="chev">▾</span></div>
+      <div class="card-body">
+        <div class="task">
+          <p>Gegeben sind die Ebene $E\colon 2x_1-x_2-2x_3=8$ und die Gerade
+          $g\colon\vec x=\begin{pmatrix}2\\3\\-5\end{pmatrix}+r\begin{pmatrix}1\\1\\0\end{pmatrix}$.</p>
+          <p>Bestimmen Sie die Punkte auf $g$, die von $E$ den Abstand $3$ haben.</p>
+        </div>
+
+        <div class="assess">
+          <span class="lab">Einschätzung:</span>
+          <button data-v="ok" type="button">✓ Fertig &amp; verstanden</button>
+          <button data-v="mid" type="button">~ Noch unsicher</button>
+          <button data-v="ask" type="button">? Frage an Lehrer</button>
+        </div>
+
+        <div class="hints">
+          <div class="htitle">Hilfen</div>
+          <div class="htabs">
+            <button type="button">Hilfe 1 · Ansatz</button>
+            <button type="button">Hilfe 2 · Betrag auflösen</button>
+            <button type="button">Hilfe 3 · Wie viele Lösungen?</button>
+          </div>
+          <div class="hpanel">
+            <h4>Hilfe 1 · Allgemeinen Punkt einsetzen</h4>
+            <p>Setze $P_r(2+r\mid3+r\mid-5)\in g$ in den Zähler der Hesseschen Normalenform von $E$ ein und fasse
+            zusammen. Du erhältst einen Term, der nur noch von $r$ abhängt.</p>
+          </div>
+          <div class="hpanel">
+            <h4>Hilfe 2 · Betragsgleichung</h4>
+            <p>$|\vec n|=\sqrt{4+1+4}=3$. Die Gleichung $\dfrac{|\dots|}{3}=3$ bedeutet: der Term in den Betragsstrichen
+            ist entweder $+9$ oder $-9$. Das liefert zwei Gleichungen für $r$.</p>
+          </div>
+          <div class="hpanel">
+            <h4>Hilfe 3 · Wie viele Lösungen erwartest du?</h4>
+            <p>Prüfe $\vec u\circ\vec n$ mit dem Richtungsvektor $\vec u=\begin{pmatrix}1\\1\\0\end{pmatrix}$ von $g$.
+            Ist dieses Skalarprodukt $\neq0$, so ist $g$ nicht parallel zu $E$ und schneidet jede zu $E$ parallele
+            Ebene in genau einem Punkt – du solltest also zwei Lösungspunkte erhalten, einen auf jeder Seite von $E$.</p>
+          </div>
+        </div>
+
+        <div class="sol-lock">🔒 Musterlösung – nach Freigabe durch den Lehrer sichtbar.</div>
+        <div class="sol">
+          <div class="sh">✓ Musterlösung · Aufgabe 3</div>
+          <div class="sb">
+            <p>Einsetzen von $P_r(2+r\mid3+r\mid-5)$ in den Zähler:</p>
+            <p>$$2(2+r)-(3+r)-2\cdot(-5)=4+2r-3-r+10=11+r$$</p>
+            <p>Mit $|\vec n|=3$ lautet die Abstandsbedingung $\dfrac{|11+r-8|}{3}=3$, also $|r+3|=9$:</p>
+            <p>$$r+3=9\ \Rightarrow\ r=6 \qquad\text{oder}\qquad r+3=-9\ \Rightarrow\ r=-12$$</p>
+            <p>Einsetzen in $g$ liefert die beiden Punkte:</p>
+            <p>$${\color{#1a9e5c}\boldsymbol{P_1(8\mid9\mid-5)}}\qquad\text{und}\qquad{\color{#1a9e5c}\boldsymbol{P_2(-10\mid-9\mid-5)}}$$</p>
+            <p><em>Rückschau:</em> $\vec u\circ\vec n=1\cdot2+1\cdot(-1)+0\cdot(-2)=1\neq0$, $g$ ist also nicht parallel
+            zu $E$ und schneidet folglich jede zu $E$ parallele Ebene in genau einem Punkt – die zwei gefundenen
+            Punkte (einer auf jeder Seite von $E$) sind damit tatsächlich alle Lösungen.</p>
+          </div>
+        </div>
+      </div>
+    </article>
+  </section>
+
+  <!-- ================= STUFE 2 ================= -->
+  <section class="s2" data-stufe="2">
+    <div class="stufe-head">
+      <span class="stufe-badge">Stufe 2</span>
+      <span class="desc">Erweiterung · Extremwertprobleme bei bewegten Objekten</span>
+    </div>
+
+    <!-- ---------- Aufgabe 4 ---------- -->
+    <article class="card s2" data-stufe="2">
+      <div class="card-head"><h3>Aufgabe 4 · Zwei Ansätze im Vergleich</h3><span class="chev">▾</span></div>
+      <div class="card-body">
+        <div class="task">
+          <p>Zwei Kleinflugzeuge bewegen sich geradlinig mit konstanter Geschwindigkeit. Eine Längeneinheit entspricht
+          dabei $10$ Metern, die Zeit $t$ wird in Sekunden gemessen:</p>
+          <p>$$f\colon\vec x=\begin{pmatrix}9\\-2\\0\end{pmatrix}+t\begin{pmatrix}-3\\-4\\-6\end{pmatrix}
+          \qquad\qquad
+          h\colon\vec x=\begin{pmatrix}-6\\-2\\2\end{pmatrix}+t\begin{pmatrix}2\\-4\\-6\end{pmatrix}$$</p>
+          <p><strong>a)</strong> Erläutern Sie, welcher der beiden folgenden Ansätze die Frage beantwortet, wie nahe
+          sich die beiden Flugzeuge tatsächlich kommen:</p>
+          <p>(A) Abstand der beiden Geraden $f$ und $h$ wie bei windschiefen Geraden bestimmen (mit
+          <em>unabhängigen</em> Parametern $r$ und $s$).<br>
+          (B) Minimum der Funktion $d(t)=\left|\overrightarrow{f(t)h(t)}\right|$ bestimmen (mit
+          <em>demselben</em> Parameter $t$ für beide Flugzeuge).</p>
+          <p><strong>b)</strong> Berechnen Sie beide Abstände aus a) und erläutern Sie, wie die unterschiedlichen
+          Ergebnisse zustande kommen.</p>
+        </div>
+
+        <div class="assess">
+          <span class="lab">Einschätzung:</span>
+          <button data-v="ok" type="button">✓ Fertig &amp; verstanden</button>
+          <button data-v="mid" type="button">~ Noch unsicher</button>
+          <button data-v="ask" type="button">? Frage an Lehrer</button>
+        </div>
+
+        <div class="hints">
+          <div class="htitle">Hilfen</div>
+          <div class="htabs">
+            <button type="button">Hilfe 1 · Zu a)</button>
+            <button type="button">Hilfe 2 · Ansatz B aufstellen</button>
+            <button type="button">Hilfe 3 · Ansatz A aufstellen</button>
+          </div>
+          <div class="hpanel">
+            <h4>Hilfe 1 · Worin liegt der Unterschied?</h4>
+            <p>Bei windschiefen Geraden dürfen $G$ und $H$ zu <em>verschiedenen</em> Parameterwerten gehören – die
+            Geraden sind ja nur Bahnkurven ohne Zeitbezug. Hier bewegen sich aber <em>beide</em> Flugzeuge zur
+            <em>gleichen Zeit</em> $t$. Ein Ansatz mit zwei unabhängigen Parametern beantwortet deshalb eine andere
+            Frage als „Wie nah kommen sich die Flugzeuge zueinander?“.</p>
+          </div>
+          <div class="hpanel">
+            <h4>Hilfe 2 · Ansatz B: gemeinsamer Parameter $t$</h4>
+            <p>Bilde $\overrightarrow{f(t)h(t)}$, quadriere den Betrag und leite die entstehende quadratische
+            Funktion nach $t$ ab.</p>
+          </div>
+          <div class="hpanel">
+            <h4>Hilfe 3 · Ansatz A: unabhängige Parameter</h4>
+            <p>Setze $P_r\in f$ und $Q_s\in h$ mit unabhängigen Parametern $r,s$ an und minimiere
+            $\left|\overrightarrow{P_rQ_s}\right|^2$ nach beiden Variablen gleichzeitig (zwei partielle Ableitungen,
+            je gleich Null setzen). Alternativ – schneller – über die Hilfsebene wie bei windschiefen Geraden.</p>
+          </div>
+        </div>
+
+        <div class="sol-lock">🔒 Musterlösung – nach Freigabe durch den Lehrer sichtbar.</div>
+        <div class="sol">
+          <div class="sh">✓ Musterlösung · Aufgabe 4</div>
+          <div class="sb">
+            <p><strong>a)</strong> Ansatz <strong>(B)</strong> beantwortet die Frage: Da beide Flugzeuge zur
+            gleichen Zeit $t$ fliegen, ist nur die Funktion $d(t)$ mit gemeinsamem Parameter physikalisch sinnvoll.
+            Ansatz (A) bestimmt den Abstand der beiden Flugbahnen als geometrische Objekte im Raum, unabhängig davon,
+            wann sich welches Flugzeug an welcher Stelle befindet – das ist eine andere Fragestellung.</p>
+            <p><strong>b) Ansatz B.</strong> $$\overrightarrow{f(t)h(t)}=\begin{pmatrix}-6-9\\-2+2\\2-0\end{pmatrix}
+            +t\begin{pmatrix}2+3\\-4+4\\-6+6\end{pmatrix}=\begin{pmatrix}-15\\0\\2\end{pmatrix}+t\begin{pmatrix}5\\0\\0\end{pmatrix}$$</p>
+            <p>$$d^2(t)=(-15+5t)^2+0^2+2^2=25t^2-150t+229$$</p>
+            <p>$(d^2)'(t)=50t-150=0\ \Rightarrow\ t=3$. Damit $d^2(3)=225-450+229=4$, also</p>
+            <p>$$d_{\text{gemeinsam}}(3)={\color{#1a9e5c}\boldsymbol{2\ \text{LE}\ (=20\ \text{m})}}$$</p>
+            <p><strong>Ansatz A.</strong> Mit unabhängigen Parametern $r,s$ ergibt die Minimierung
+            $r=\tfrac{189}{65}$, $s=\tfrac{204}{65}$ und</p>
+            <p>$$d_{\text{Geraden}}=\frac{4\sqrt{13}}{13}\approx{\color{#1a9e5c}\boldsymbol{1{,}11\ \text{LE}}}$$</p>
+            <p><strong>Erläuterung:</strong> $d_{\text{Geraden}} < d_{\text{gemeinsam}}$, weil die beiden Bahnkurven
+            als reine Geraden betrachtet sich näher kämen – allerdings zu unterschiedlichen Zeiten $r\neq s$, sodass
+            sich dort in Wirklichkeit <em>kein</em> Flugzeug befindet, wenn das andere dort ist. Nur der mit Ansatz
+            B berechnete Wert $2$ LE beschreibt den Abstand, den die beiden Flugzeuge tatsächlich einmal zueinander
+            haben.</p>
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <!-- ---------- Aufgabe 5 ---------- -->
+    <article class="card s2" data-stufe="2">
+      <div class="card-head"><h3>Aufgabe 5 · Geschwindigkeit und Richtung – Kollisionswarnung?</h3><span class="chev">▾</span></div>
+      <div class="card-body">
+        <div class="task">
+          <p>Bezogen auf ein geeignetes Koordinatensystem mit der Einheit $1$ km befindet sich ein erstes Flugzeug zu
+          Beobachtungsbeginn im Punkt $F_0(0\mid0\mid0)$ und bewegt sich geradlinig mit einer Geschwindigkeit von
+          $350\ \tfrac{\text{km}}{\text{h}}$ in Richtung des Vektors $\begin{pmatrix}2\\3\\6\end{pmatrix}$. Ein
+          zweites Flugzeug befindet sich zu Beobachtungsbeginn im Punkt $H_0(160\mid70\mid60)$ und bewegt sich mit
+          $260\ \tfrac{\text{km}}{\text{h}}$ in Richtung des Vektors $\begin{pmatrix}-3\\4\\12\end{pmatrix}$.</p>
+          <p><strong>a)</strong> Bestimmen Sie die Bewegungsgleichungen beider Flugzeuge ($t$ in Stunden).</p>
+          <p><strong>b)</strong> Untersuchen Sie, ob und wann sich die beiden Flugzeuge gefährlich nahekommen, und
+          geben Sie gegebenenfalls eine Handlungsempfehlung.</p>
+        </div>
+
+        <div class="assess">
+          <span class="lab">Einschätzung:</span>
+          <button data-v="ok" type="button">✓ Fertig &amp; verstanden</button>
+          <button data-v="mid" type="button">~ Noch unsicher</button>
+          <button data-v="ask" type="button">? Frage an Lehrer</button>
+        </div>
+
+        <div class="hints">
+          <div class="htitle">Hilfen</div>
+          <div class="htabs">
+            <button type="button">Hilfe 1 · Richtungsvektor normieren</button>
+            <button type="button">Hilfe 2 · Geschwindigkeitsvektor</button>
+            <button type="button">Hilfe 3 · Zu b)</button>
+          </div>
+          <div class="hpanel">
+            <h4>Hilfe 1 · Warum normieren?</h4>
+            <p>Der angegebene Vektor gibt nur die <em>Richtung</em> an, nicht die tatsächliche Geschwindigkeit. Um aus
+            „$350\ \text{km/h}$ in Richtung $(2\mid3\mid6)$“ einen brauchbaren Richtungsvektor für die
+            Geradengleichung zu machen, musst du zunächst die Länge von $(2\mid3\mid6)$ bestimmen.</p>
+          </div>
+          <div class="hpanel">
+            <h4>Hilfe 2 · Den Geschwindigkeitsvektor berechnen</h4>
+            <p>$\left|\begin{pmatrix}2\\3\\6\end{pmatrix}\right|=\sqrt{4+9+36}=7$. Der Geschwindigkeitsvektor (in
+            km pro Stunde) ist dann $\dfrac{350}{7}\cdot\begin{pmatrix}2\\3\\6\end{pmatrix}$. Verfahre beim zweiten
+            Flugzeug entsprechend.</p>
+          </div>
+          <div class="hpanel">
+            <h4>Hilfe 3 · Zu b)</h4>
+            <p>Bilde $\overrightarrow{F(t)H(t)}$. Prüfe, ob sich der Term dabei auffällig vereinfachen lässt, bevor
+            du ihn quadrierst und ableitest – das erspart Rechenarbeit.</p>
+          </div>
+        </div>
+
+        <div class="sol-lock">🔒 Musterlösung – nach Freigabe durch den Lehrer sichtbar.</div>
+        <div class="sol">
+          <div class="sh">✓ Musterlösung · Aufgabe 5</div>
+          <div class="sb">
+            <p><strong>a)</strong> $\left|\begin{pmatrix}2\\3\\6\end{pmatrix}\right|=7$, also
+            $\vec v_F=\tfrac{350}{7}\begin{pmatrix}2\\3\\6\end{pmatrix}=\begin{pmatrix}100\\150\\300\end{pmatrix}$.
+            $\left|\begin{pmatrix}-3\\4\\12\end{pmatrix}\right|=13$, also
+            $\vec v_H=\tfrac{260}{13}\begin{pmatrix}-3\\4\\12\end{pmatrix}=\begin{pmatrix}-60\\80\\240\end{pmatrix}$.</p>
+            <p>$$f\colon\vec x=\begin{pmatrix}0\\0\\0\end{pmatrix}+t\begin{pmatrix}100\\150\\300\end{pmatrix}
+            \qquad\qquad
+            h\colon\vec x=\begin{pmatrix}160\\70\\60\end{pmatrix}+t\begin{pmatrix}-60\\80\\240\end{pmatrix}$$</p>
+            <p><strong>b)</strong> $$\overrightarrow{f(t)h(t)}=\begin{pmatrix}160\\70\\60\end{pmatrix}
+            +t\begin{pmatrix}-160\\-70\\-60\end{pmatrix}=(1-t)\begin{pmatrix}160\\70\\60\end{pmatrix}$$</p>
+            <p>Der Verbindungsvektor ist also für jedes $t$ ein Vielfaches von $\begin{pmatrix}160\\70\\60\end{pmatrix}$,
+            und damit</p>
+            <p>$$d(t)=|1-t|\cdot\left|\begin{pmatrix}160\\70\\60\end{pmatrix}\right|=|1-t|\cdot\sqrt{34\,100}$$</p>
+            <p>Das Minimum $d(t)=0$ liegt bei ${\color{#1a9e5c}\boldsymbol{t=1}}$ (Stunde). Probe:
+            $f(1)=(100\mid150\mid300)$ und $h(1)=(160-60\mid70+80\mid60+240)=(100\mid150\mid300)$ – identisch!</p>
+            <p><strong>Handlungsempfehlung:</strong> Nach genau einer Stunde befänden sich beide Flugzeuge exakt am
+            selben Ort – ein eindeutiges Kollisionsrisiko. Die Flugsicherung muss rechtzeitig eingreifen, etwa durch
+            eine Kurs- oder Höhenänderung eines der beiden Flugzeuge.</p>
+          </div>
+        </div>
+      </div>
+    </article>
+  </section>
+
+  <!-- ================= STUFE 3 ================= -->
+  <section class="s3" data-stufe="3">
+    <div class="stufe-head">
+      <span class="stufe-badge">Stufe 3</span>
+      <span class="desc">Vertiefung · Volumen über Abstände, Lage von Punkten zu Körpern</span>
+    </div>
+
+    <!-- ---------- Aufgabe 6 ---------- -->
+    <article class="card s3" data-stufe="3">
+      <div class="card-head"><h3>Aufgabe 6 · Pyramidenvolumen über den Lotfußpunkt</h3><span class="chev">▾</span></div>
+      <div class="card-body">
+        <div class="task">
+          <p>Eine quadratische Pyramide mit der Spitze $S(9\mid5\mid10)$ steht senkrecht auf der Ebene
+          $E\colon 2x_1-x_2+2x_3=12$. Die Länge der Seitenkanten von $S$ zu den vier Eckpunkten der Grundfläche
+          beträgt jeweils $25$ LE.</p>
+          <p>Bestimmen Sie das Volumen der Pyramide.</p>
+        </div>
+
+        <div class="assess">
+          <span class="lab">Einschätzung:</span>
+          <button data-v="ok" type="button">✓ Fertig &amp; verstanden</button>
+          <button data-v="mid" type="button">~ Noch unsicher</button>
+          <button data-v="ask" type="button">? Frage an Lehrer</button>
+        </div>
+
+        <div class="hints">
+          <div class="htitle">Hilfen</div>
+          <div class="htabs">
+            <button type="button">Hilfe 1 · Was wird benötigt?</button>
+            <button type="button">Hilfe 2 · Höhe bestimmen</button>
+            <button type="button">Hilfe 3 · Von der Seitenkante zur Grundfläche</button>
+          </div>
+          <div class="hpanel">
+            <h4>Hilfe 1 · Was wird benötigt?</h4>
+            <p>$V=\tfrac13\cdot G\cdot h$. Benötigt werden die Höhe $h$ (Abstand der Spitze $S$ von der Ebene $E$)
+            und die Grundfläche $G$ des Quadrats.</p>
+          </div>
+          <div class="hpanel">
+            <h4>Hilfe 2 · Höhe als Abstand Punkt–Ebene</h4>
+            <p>Der Lotfußpunkt $M$ des Lots von $S$ auf $E$ ist zugleich der Mittelpunkt der quadratischen
+            Grundfläche (denn die Pyramide „steht senkrecht“ auf $E$). Berechne $h=\left|\overrightarrow{SM}\right|$
+            direkt mit der Abstandsformel Punkt–Ebene – die Lotgerade selbst musst du dafür nicht aufstellen.</p>
+          </div>
+          <div class="hpanel">
+            <h4>Hilfe 3 · Vom Mittelpunkt zur Seite des Quadrats</h4>
+            <p>Der Abstand $r$ von $M$ zu einem Eckpunkt der Grundfläche (der halbe Diagonalenabstand), die Höhe $h$
+            und die Seitenkante bilden ein rechtwinkliges Dreieck mit rechtem Winkel bei $M$ – Satz des Pythagoras.
+            Für ein Quadrat mit „Umkreisradius“ $r$ gilt für die Fläche $G=2r^2$ (aus Seitenlänge $a=r\sqrt2$).</p>
+          </div>
+        </div>
+
+        <div class="sol-lock">🔒 Musterlösung – nach Freigabe durch den Lehrer sichtbar.</div>
+        <div class="sol">
+          <div class="sh">✓ Musterlösung · Aufgabe 6</div>
+          <div class="sb">
+            <p><strong>1. Schritt: Gesucht.</strong> $V=\tfrac13\cdot G\cdot h$; benötigt werden $h$ und $G$.</p>
+            <p><strong>2. Schritt: Höhe $h$.</strong>
+            $$h=\frac{|2\cdot9-5+2\cdot10-12|}{\sqrt{2^2+(-1)^2+2^2}}=\frac{|18-5+20-12|}{3}=\frac{21}{3}={\color{#1a9e5c}\boldsymbol{7}}$$</p>
+            <p><strong>3. Schritt: Radius und Grundfläche.</strong>
+            $$r=\sqrt{25^2-7^2}=\sqrt{625-49}=\sqrt{576}=24 \qquad\Rightarrow\qquad G=2r^2=2\cdot576=1152$$</p>
+            <p><strong>4. Schritt: Volumen.</strong>
+            $$V=\frac13\cdot1152\cdot7={\color{#1a9e5c}\boldsymbol{2688\ \text{VE}}}$$</p>
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <!-- ---------- Aufgabe 7 ---------- -->
+    <article class="card s3" data-stufe="3">
+      <div class="card-head"><h3>Aufgabe 7 · Liegt der Punkt im Prisma?</h3><span class="chev">▾</span></div>
+      <div class="card-body">
+        <div class="task">
+          <p>Ein gerades Prisma mit dreieckiger Grundfläche hat die Eckpunkte $A(0\mid0\mid0)$, $B(6\mid0\mid0)$ und
+          $C(0\mid6\mid0)$; die dazu parallele Deckfläche $A'B'C'$ liegt in der Höhe $x_3=6$.</p>
+          <p><strong>a)</strong> Geben Sie für jede der drei rechteckigen Seitenflächen des Prismas eine
+          Ebenengleichung an.</p>
+          <p><strong>b)</strong> Untersuchen Sie für die Punkte $P(2\mid2\mid3)$, $Q(5\mid5\mid3)$ und $R(3\mid3\mid3)$,
+          ob sie innerhalb, außerhalb oder auf einer Seitenfläche des Prismas liegen. Begründen Sie Ihre Entscheidung
+          jeweils mithilfe der Ebenengleichungen aus a).</p>
+        </div>
+
+        <div class="assess">
+          <span class="lab">Einschätzung:</span>
+          <button data-v="ok" type="button">✓ Fertig &amp; verstanden</button>
+          <button data-v="mid" type="button">~ Noch unsicher</button>
+          <button data-v="ask" type="button">? Frage an Lehrer</button>
+        </div>
+
+        <div class="hints">
+          <div class="htitle">Hilfen</div>
+          <div class="htabs">
+            <button type="button">Hilfe 1 · Zu a)</button>
+            <button type="button">Hilfe 2 · Innen oder außen?</button>
+            <button type="button">Hilfe 3 · Zu R</button>
+          </div>
+          <div class="hpanel">
+            <h4>Hilfe 1 · Die drei Seitenflächen</h4>
+            <p>Jede Seitenfläche wird von einer Kante der Grundfläche und der zugehörigen Kante der Deckfläche
+            aufgespannt, verläuft also „senkrecht nach oben“ über dieser Kante. Für welche Gleichung $x_1=\dots$,
+            $x_2=\dots$ bzw. $x_1+x_2=\dots$ erfüllen jeweils <em>beide</em> Endpunkte einer Grundkante – unabhängig
+            von $x_3$?</p>
+          </div>
+          <div class="hpanel">
+            <h4>Hilfe 2 · Innerhalb, außerhalb, auf der Fläche</h4>
+            <p>Das Innere des Prismas ist durch drei Ungleichungen <em>und</em> die Höhenbedingung $0 < x_3 < 6$
+            beschrieben. Setze jeden Punkt in alle drei Ebenengleichungen ein und vergleiche mit den Grenzwerten:
+            Gilt „$<$“ überall, liegt der Punkt innen; wird eine Grenze exakt erreicht, liegt er auf der
+            entsprechenden Fläche; wird eine Grenze überschritten, liegt er außerhalb.</p>
+          </div>
+          <div class="hpanel">
+            <h4>Hilfe 3 · Der kritische Fall $R$</h4>
+            <p>Prüfe bei $R$ zuerst die schräge Seitenfläche. Erfüllt $R$ deren Gleichung exakt? Prüfe danach, ob
+            $R$ dabei tatsächlich <em>innerhalb</em> der Begrenzungen dieser Fläche liegt (nicht etwa auf einer
+            Kante) – das entscheidet, ob $R$ „auf der Fläche“ oder „auf einer Kante“ liegt.</p>
+          </div>
+        </div>
+
+        <div class="sol-lock">🔒 Musterlösung – nach Freigabe durch den Lehrer sichtbar.</div>
+        <div class="sol">
+          <div class="sh">✓ Musterlösung · Aufgabe 7</div>
+          <div class="sb">
+            <p><strong>a)</strong> Seitenfläche $ABB'A'$ (über der Kante $AB$, beide Punkte haben $x_2=0$):
+            $${\color{#1a9e5c}\boldsymbol{x_2=0}}$$</p>
+            <p>Seitenfläche $ACC'A'$ (über der Kante $AC$, beide Punkte haben $x_1=0$):
+            $${\color{#1a9e5c}\boldsymbol{x_1=0}}$$</p>
+            <p>Seitenfläche $BCC'B'$ (über der Kante $BC$; $B(6\mid0)$ und $C(0\mid6)$ erfüllen beide $x_1+x_2=6$):
+            $${\color{#1a9e5c}\boldsymbol{x_1+x_2=6}}$$</p>
+            <p><strong>b)</strong> Im Innern des Prismas gilt: $x_1>0$, $x_2>0$, $x_1+x_2 < 6$ und $0 < x_3 < 6$.</p>
+            <p>$P(2\mid2\mid3)$: $x_1=2>0$ ✓, $x_2=2>0$ ✓, $x_1+x_2=4<6$ ✓, $x_3=3\in(0,6)$ ✓
+            $\;\Rightarrow\;$ $P$ liegt ${\color{#1a9e5c}\boldsymbol{\text{im Innern}}}$ des Prismas.</p>
+            <p>$Q(5\mid5\mid3)$: $x_1+x_2=10>6$ – die Bedingung an die schräge Seitenfläche $BCC'B'$ ist verletzt
+            $\;\Rightarrow\;$ $Q$ liegt ${\color{#1a9e5c}\boldsymbol{\text{außerhalb}}}$ des Prismas, jenseits dieser Fläche.</p>
+            <p>$R(3\mid3\mid3)$: $x_1+x_2=6$ exakt, dabei $x_1=3>0$, $x_2=3>0$ und $x_3=3\in(0,6)$
+            $\;\Rightarrow\;$ $R$ erfüllt die Ebenengleichung von $BCC'B'$ und liegt innerhalb von deren
+            Begrenzungen, also ${\color{#1a9e5c}\boldsymbol{\text{genau auf dieser Seitenfläche}}}$ (dem Mittelpunkt der
+            Kante $BC$ auf halber Prismenhöhe).</p>
+          </div>
+        </div>
+      </div>
+    </article>
+  </section>
+
+</div>
+
+<footer class="bot">
+  Mathematik Oberstufe LK · Q2 · Kapitel VII · Lagebeziehungen und Abstände<br>
+  <a href="../">← Zurück zur Materialsammlung</a>
+</footer>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+
+  /* ---------- KaTeX ---------- */
+  function render(){
+    if (window.renderMathInElement) {
+      renderMathInElement(document.body, {
+        delimiters: [
+          {left:'$$', right:'$$', display:true},
+          {left:'$',  right:'$',  display:false}
+        ],
+        throwOnError:false
+      });
+    }
+  }
+  if (window.renderMathInElement) render();
+  else window.addEventListener('load', render);
+
+  /* ---------- Karten auf/zu ---------- */
+  document.querySelectorAll('.card-head').forEach(function(h){
+    h.addEventListener('click', function(){
+      h.parentElement.classList.toggle('open');
+    });
+  });
+
+  /* ---------- Hilfe-Reiter ---------- */
+  document.querySelectorAll('.hints').forEach(function(box){
+    var tabs   = box.querySelectorAll('.htabs button');
+    var panels = box.querySelectorAll('.hpanel');
+    tabs.forEach(function(tab, i){
+      tab.addEventListener('click', function(){
+        var wasOn = tab.classList.contains('on');
+        tabs.forEach(function(t){ t.classList.remove('on'); });
+        panels.forEach(function(p){ p.classList.remove('on'); });
+        if (!wasOn) {
+          tab.classList.add('on');
+          if (panels[i]) panels[i].classList.add('on');
+        }
+      });
+    });
+  });
+
+  /* ---------- Selbsteinschätzung ---------- */
+  document.querySelectorAll('.assess').forEach(function(box){
+    var btns = box.querySelectorAll('button');
+    btns.forEach(function(b){
+      b.addEventListener('click', function(){
+        var wasOn = b.classList.contains('on');
+        btns.forEach(function(x){ x.classList.remove('on'); });
+        if (!wasOn) b.classList.add('on');
+      });
+    });
+  });
+
+  /* ---------- Filter ---------- */
+  document.querySelectorAll('.filters button').forEach(function(b){
+    b.addEventListener('click', function(){
+      document.querySelectorAll('.filters button').forEach(function(x){ x.classList.remove('on'); });
+      b.classList.add('on');
+      var f = b.dataset.f;
+      document.querySelectorAll('section[data-stufe]').forEach(function(sec){
+        sec.style.display = (f === 'all' || sec.dataset.stufe === f) ? '' : 'none';
+      });
+    });
+  });
+
+  /* ---------- Musterlösungen freischalten (pro Aufgabe einzeln einblendbar) ---------- */
+  var CODE  = 'MATHE';
+  var input = document.getElementById('code');
+  var msg   = document.getElementById('msg');
+
+  function activateLocks(){
+    document.querySelectorAll('.sol-lock').forEach(function(lock){
+      lock.classList.add('active');
+      lock.textContent = '👁 Musterlösung anzeigen';
+    });
+  }
+
+  function tryUnlock(){
+    var val = (input.value || '').trim().toUpperCase();
+    if (val === CODE) {
+      document.body.classList.add('unlocked');
+      msg.textContent = '✓ freigeschaltet – Musterlösungen jetzt einzeln aufklappbar';
+      msg.className = 'msg ok';
+      activateLocks();
+      render();
+    } else {
+      msg.textContent = '✗ Code stimmt nicht';
+      msg.className = 'msg bad';
+    }
+  }
+  document.getElementById('btn-unlock').addEventListener('click', tryUnlock);
+  input.addEventListener('keydown', function(e){
+    if (e.key === 'Enter') tryUnlock();
+  });
+
+  /* Jede Musterlösung einzeln per Klick auf- und zuklappen (nur nach Freischaltung) */
+  document.querySelectorAll('.sol-lock').forEach(function(lock){
+    lock.addEventListener('click', function(){
+      if (!document.body.classList.contains('unlocked')) return;
+      var sol = lock.nextElementSibling;
+      if (!sol || !sol.classList.contains('sol')) return;
+      var showing = sol.classList.toggle('shown');
+      lock.textContent = showing ? '🙈 Musterlösung wieder ausblenden' : '👁 Musterlösung anzeigen';
+      if (showing) { render(); sol.scrollIntoView({behavior:'smooth', block:'nearest'}); }
+    });
+  });
+
+  /* Erste Aufgabe jeder Stufe geöffnet starten */
+  document.querySelectorAll('section[data-stufe]').forEach(function(sec){
+    var first = sec.querySelector('.card');
+    if (first) first.classList.add('open');
+  });
+});
+</script>
+
+</body>
+</html>
