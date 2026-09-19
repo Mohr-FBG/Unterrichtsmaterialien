@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Klausurvorbereitung · Vektorielle Geometrie · LK Mathematik Q2</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/contrib/auto-render.min.js"></script>
+<style>
+:root{
+  --gold:#e8a800;
+  --gold-dark:#b98400;
+  --blue:#2c5f8a;
+  --blue-dark:#1a3d5c;
+  --green:#1a9e5c;
+  --orange:#d4760a;
+  --purple:#7b3fb5;
+  --border:#dde1e7;
+  --bg:#f4f5f7;
+  --text:#1c1f26;
+  --card-bg:#ffffff;
+}
+*{box-sizing:border-box;}
+body{
+  margin:0;
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  line-height:1.55;
+}
+header.page-head{
+  background:linear-gradient(135deg,var(--gold) 0%,var(--gold-dark) 100%);
+  color:#fff;
+  padding:2.2rem 1.5rem 1.8rem;
+  text-align:center;
+}
+header.page-head .crumbs{
+  font-size:0.82rem;
+  opacity:0.85;
+  margin-bottom:0.6rem;
+}
+header.page-head h1{
+  margin:0 0 0.3rem;
+  font-size:1.9rem;
+}
+header.page-head p.subtitle{
+  margin:0;
+  font-size:1.05rem;
+  opacity:0.95;
+}
+main{
+  max-width:900px;
+  margin:0 auto;
+  padding:1.6rem 1rem 3rem;
+}
+.intro-box{
+  background:var(--card-bg);
+  border:1px solid var(--border);
+  border-left:5px solid var(--gold);
+  border-radius:8px;
+  padding:1rem 1.2rem;
+  margin-bottom:1.4rem;
+  font-size:0.96rem;
+}
+.unlock-bar{
+  background:var(--card-bg);
+  border:1px solid var(--border);
+  border-radius:8px;
+  padding:1rem 1.2rem;
+  margin-bottom:2rem;
+  display:flex;
+  flex-wrap:wrap;
+  align-items:center;
+  gap:0.6rem;
+}
+.unlock-bar label{font-weight:600;font-size:0.92rem;}
+.unlock-bar input{
+  padding:0.45rem 0.6rem;
+  border:1px solid var(--border);
+  border-radius:6px;
+  font-size:0.95rem;
+  width:140px;
+}
+.unlock-bar button{
+  background:var(--green);
+  color:#fff;
+  border:none;
+  border-radius:6px;
+  padding:0.5rem 1rem;
+  font-size:0.92rem;
+  font-weight:600;
+  cursor:pointer;
+}
+.unlock-bar button:hover{background:#158049;}
+#unlock-msg{font-size:0.88rem;font-weight:600;}
+#unlock-msg.ok{color:var(--green);}
+#unlock-msg.bad{color:#c0392b;}
+
+.block-heading{
+  display:flex;
+  align-items:baseline;
+  gap:0.6rem;
+  margin:2.2rem 0 1rem;
+  padding-bottom:0.4rem;
+  border-bottom:2px solid var(--gold);
+}
+.block-heading h2{
+  margin:0;
+  font-size:1.35rem;
+  color:var(--blue-dark);
+}
+.block-heading .block-meta{
+  font-size:0.85rem;
+  color:#666;
+}
+
+article.task{
+  background:var(--card-bg);
+  border:1px solid var(--border);
+  border-radius:10px;
+  margin-bottom:1.3rem;
+  overflow:hidden;
+}
+.task-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  flex-wrap:wrap;
+  gap:0.4rem;
+  background:#fbf3e0;
+  padding:0.7rem 1.1rem;
+  border-bottom:1px solid var(--border);
+}
+.task-head .task-num{
+  display:inline-block;
+  background:var(--gold);
+  color:#fff;
+  font-weight:700;
+  border-radius:5px;
+  padding:0.15rem 0.55rem;
+  margin-right:0.5rem;
+  font-size:0.9rem;
+}
+.task-head h3{
+  margin:0;
+  font-size:1.05rem;
+  display:inline;
+  color:var(--blue-dark);
+}
+.task-head .task-time{
+  font-size:0.85rem;
+  color:#7a6a3f;
+  font-style:italic;
+}
+.task-body{
+  padding:0.9rem 1.1rem 0.3rem;
+  font-size:0.97rem;
+}
+.task-body p{margin:0.55rem 0;}
+.task-body .sub{margin-left:0.2rem;}
+.task-body .sub-label{font-weight:700;margin-right:0.3rem;}
+
+.hints{
+  padding:0.4rem 1.1rem 0.9rem;
+}
+.hints details{
+  background:#f7f8fa;
+  border:1px solid var(--border);
+  border-radius:6px;
+  margin:0.4rem 0;
+  padding:0.45rem 0.7rem;
+}
+.hints summary{
+  cursor:pointer;
+  font-weight:600;
+  color:var(--blue);
+  font-size:0.9rem;
+}
+.hints details[open] summary{color:var(--blue-dark);}
+.hints .hint-text{margin-top:0.5rem;font-size:0.92rem;}
+
+.sol-lock{
+  border-top:1px dashed var(--border);
+  padding:0.8rem 1.1rem 1rem;
+  background:#fafafa;
+}
+.sol-toggle{
+  background:#eceef1;
+  color:#555;
+  border:1px solid var(--border);
+  border-radius:6px;
+  padding:0.5rem 0.9rem;
+  font-size:0.9rem;
+  font-weight:600;
+  cursor:not-allowed;
+  width:100%;
+  text-align:left;
+}
+.sol-toggle.active{
+  background:#e6f6ee;
+  color:var(--green);
+  border-color:var(--green);
+  cursor:pointer;
+}
+.sol-toggle.active:hover{background:#d9f0e4;}
+.sol{
+  margin-top:0.7rem;
+  font-size:0.94rem;
+  border-left:3px solid var(--green);
+  padding-left:0.8rem;
+}
+.sol p{margin:0.5rem 0;}
+.sol .res{color:var(--green);font-weight:700;}
+
+footer.page-foot{
+  text-align:center;
+  padding:1.6rem 1rem 2.2rem;
+  font-size:0.85rem;
+  color:#888;
+}
+@media (max-width:600px){
+  header.page-head h1{font-size:1.5rem;}
+  .task-head{flex-direction:column;align-items:flex-start;}
+}
+</style>
+</head>
+<body>
+
+<header class="page-head">
+  <div class="crumbs">Unterrichtsmaterialien › Mathematik › LK-Materialien</div>
+  <h1>Klausurvorbereitung</h1>
+  <p class="subtitle">Vektorielle Geometrie · LK Mathematik Q2 · 12 Übungsaufgaben mit gestuften Hilfen und Musterlösungen</p>
+</header>
+
+<main>
+
+<div class="intro-box">
+  Diese Seite fasst die Verfahren der Einheit <em>Vektorielle Geometrie</em> noch einmal in zwölf Übungsaufgaben zusammen (Gesamtumfang ca. 5 Stunden). Zu jeder Aufgabe gibt es drei gestufte Hilfen (frei nutzbar) und eine Musterlösung, die nach Freischaltung durch die Lehrkraft einzeln pro Aufgabe eingeblendet werden kann.
+</div>
+
+<div class="unlock-bar">
+  <label for="unlock-input">Freischalt-Code:</label>
+  <input type="text" id="unlock-input" placeholder="Code eingeben" autocomplete="off">
+  <button onclick="tryUnlock()">Bestätigen</button>
+  <span id="unlock-msg"></span>
+</div>
+
+<!-- ============================================================ -->
+<!-- BLOCK I -->
+<!-- ============================================================ -->
+<div class="block-heading">
+  <h2>Block I · Geraden, Ebenen und ihre Lagebeziehungen</h2>
+  <span class="block-meta">Ü1–Ü4</span>
+</div>
+
+<article class="task" data-task="u1">
+  <div class="task-head"><span><span class="task-num">Ü1</span><h3>Lagebeziehungen zweier Geraden</h3></span><span class="task-time">ca. 20 Min.</span></div>
+  <div class="task-body">
+    <p><span class="sub-label">a)</span>Untersuchen Sie die Lage der Geraden
+    $$g:\ \vec x=\begin{pmatrix}2\\-1\\3\end{pmatrix}+r\begin{pmatrix}1\\2\\-2\end{pmatrix}\qquad\text{und}\qquad h:\ \vec x=\begin{pmatrix}5\\3\\-3\end{pmatrix}+s\begin{pmatrix}-2\\-4\\4\end{pmatrix}$$
+    zueinander.</p>
+    <p><span class="sub-label">b)</span>Untersuchen Sie die Lage der Geraden
+    $$g:\ \vec x=\begin{pmatrix}1\\0\\-2\end{pmatrix}+r\begin{pmatrix}1\\-1\\2\end{pmatrix}\qquad\text{und}\qquad k:\ \vec x=\begin{pmatrix}4\\5\\1\end{pmatrix}+s\begin{pmatrix}2\\1\\-1\end{pmatrix}$$
+    zueinander.</p>
+  </div>
+  <div class="hints">
+    <details><summary>Hilfe 1</summary><p class="hint-text">Vergleichen Sie zuerst die beiden Richtungsvektoren: Ist einer ein Vielfaches des anderen?</p></details>
+    <details><summary>Hilfe 2</summary><p class="hint-text">Bei a) sind die Richtungsvektoren Vielfache voneinander (Faktor $-2$). Setzen Sie einen Wert für $r$ ein, sodass die erste Koordinate von $g$ mit der ersten Koordinate von $h_0$ übereinstimmt, und vergleichen Sie die übrigen Koordinaten. Bei b) sind die Richtungsvektoren <em>nicht</em> Vielfache voneinander — hier müssen Sie das Gleichungssystem $g=k$ lösen.</p></details>
+    <details><summary>Hilfe 3</summary><p class="hint-text">Teil b): Aus den ersten beiden Gleichungen erhalten Sie $r=-\frac73$ und $s=-\frac83$. Setzen Sie diese Werte in die dritte Gleichung ein — stimmt sie nicht, sind die Geraden windschief.</p></details>
+  </div>
+  <div class="sol-lock" data-task="u1">
+    <button class="sol-toggle" disabled>🔒 Musterlösung – nach Freigabe durch die Lehrkraft sichtbar</button>
+    <div class="sol" hidden>
+      <p><b>a)</b> Der Richtungsvektor von $h$ ist $(-2;-4;4)=-2\cdot(1;2;-2)$, also ein Vielfaches des Richtungsvektors von $g$ $\Rightarrow$ $g\parallel h$. Einsetzen von $r=3$ liefert $(5;5;-3)$; der Stützpunkt von $h$ ist $(5;3;-3)$ — die zweite Koordinate stimmt nicht überein. Damit sind $g$ und $h$ <span class="res">echt parallel</span>.</p>
+      <p><b>b)</b> Die Richtungsvektoren $(1;-1;2)$ und $(2;1;-1)$ sind keine Vielfachen voneinander. Gleichsetzen liefert aus den ersten beiden Gleichungen $r=-\frac73$, $s=-\frac83$; die dritte Gleichung ist damit nicht erfüllt ($-\frac{20}{3}\neq\frac{11}{3}$). $g$ und $k$ sind <span class="res">windschief</span>.</p>
+    </div>
+  </div>
+</article>
+
+<article class="task" data-task="u2">
+  <div class="task-head"><span><span class="task-num">Ü2</span><h3>Ebenengleichung aus drei Punkten</h3></span><span class="task-time">ca. 20 Min.</span></div>
+  <div class="task-body">
+    <p>Gegeben sind die Punkte $A(1|0|2)$, $B(3|1|0)$, $C(0|4|1)$ und $D(5|-3|7)$.</p>
+    <p><span class="sub-label">a)</span>Bestimmen Sie eine Koordinatengleichung der Ebene $E$ durch $A$, $B$ und $C$. Verwenden Sie dazu den Ansatz über den Normalenvektor (nicht das Kreuzprodukt).</p>
+    <p><span class="sub-label">b)</span>Untersuchen Sie, ob der Punkt $D$ in der Ebene $E$ liegt.</p>
+  </div>
+  <div class="hints">
+    <details><summary>Hilfe 1</summary><p class="hint-text">Bilden Sie zunächst zwei Spannvektoren, z. B. $\overrightarrow{AB}$ und $\overrightarrow{AC}$.</p></details>
+    <details><summary>Hilfe 2</summary><p class="hint-text">Setzen Sie $\vec n=(n_1;n_2;n_3)$ an und lösen Sie $\overrightarrow{AB}\cdot\vec n=0$ und $\overrightarrow{AC}\cdot\vec n=0$ nach $n_1,n_2$ (abhängig von $n_3$) auf. Wählen Sie $n_3$ so, dass $n_1,n_2$ ganzzahlig werden.</p></details>
+    <details><summary>Hilfe 3</summary><p class="hint-text">Mit $n_3=9$ ergibt sich $\vec n=(7;4;9)$. Setzen Sie $A$ ein, um $d=\vec n\cdot A$ zu berechnen, und prüfen Sie dann, ob $D$ dieselbe Gleichung erfüllt.</p></details>
+  </div>
+  <div class="sol-lock" data-task="u2">
+    <button class="sol-toggle" disabled>🔒 Musterlösung – nach Freigabe durch die Lehrkraft sichtbar</button>
+    <div class="sol" hidden>
+      <p><b>a)</b> $\overrightarrow{AB}=(2;1;-2)$, $\overrightarrow{AC}=(-1;4;-1)$. Ansatz: $2n_1+n_2-2n_3=0$, $-n_1+4n_2-n_3=0$. Daraus $n_1=4n_2-n_3$, eingesetzt: $9n_2=4n_3\Rightarrow n_2=\frac49n_3$. Mit $n_3=9$: $\vec n=(7;4;9)$. $d=\vec n\cdot A=25$.
+      $$E:\ {\color{#1a9e5c}\boldsymbol{7x_1+4x_2+9x_3=25}}$$</p>
+      <p><b>b)</b> $\vec n\cdot D=7\cdot5+4\cdot(-3)+9\cdot7=86\neq25$. $D$ liegt <span class="res">nicht</span> in $E$.</p>
+    </div>
+  </div>
+</article>
+
+<article class="task" data-task="u3">
+  <div class="task-head"><span><span class="task-num">Ü3</span><h3>Lagebeziehungen zwischen Ebenen</h3></span><span class="task-time">ca. 35 Min.</span></div>
+  <div class="task-body">
+    <p>Gegeben sind die Ebenen
+    $$E_1:\ 2x_1-2x_2+x_3=3,\qquad E_2:\ 4x_1-4x_2+2x_3=-12,\qquad E_3:\ x_1+x_3=5.$$</p>
+    <p><span class="sub-label">a)</span>Untersuchen Sie die Lage von $E_1$ und $E_2$ zueinander.</p>
+    <p><span class="sub-label">b)</span>Bestimmen Sie die Schnittgerade von $E_1$ und $E_3$.</p>
+    <p><span class="sub-label">c)</span>Berechnen Sie den Abstand von $E_1$ und $E_2$.</p>
+  </div>
+  <div class="hints">
+    <details><summary>Hilfe 1</summary><p class="hint-text">Vergleichen Sie die Normalenvektoren von $E_1$ und $E_2$ — Vielfache voneinander? Für $E_1$ und $E_3$ prüfen Sie dasselbe.</p></details>
+    <details><summary>Hilfe 2</summary><p class="hint-text">$E_1$ und $E_2$ sind parallel (aber nicht identisch). $E_1$ und $E_3$ sind nicht parallel — setzen Sie $x_3=t$ und lösen Sie beide Gleichungen nach $x_1,x_2$ auf. Für den Abstand: Punkt auf $E_1$ bestimmen und wie bei Punkt-Ebene-Abstand zu $E_2$ berechnen.</p></details>
+    <details><summary>Hilfe 3</summary><p class="hint-text">Ein Punkt auf $E_1$ ist z. B. $P=(1{,}5|0|0)$. Der Abstand zu $E_2$ beträgt genau $3$ LE. Die Schnittgerade von $E_1,E_3$ verläuft durch $(4|3|1)$.</p></details>
+  </div>
+  <div class="sol-lock" data-task="u3">
+    <button class="sol-toggle" disabled>🔒 Musterlösung – nach Freigabe durch die Lehrkraft sichtbar</button>
+    <div class="sol" hidden>
+      <p><b>a)</b> $\vec n_2=(4;-4;2)=2\vec n_1$, also parallel. $P=(1{,}5|0|0)$ auf $E_1$, eingesetzt in $E_2$: $6\neq-12$. Damit <span class="res">echt parallel</span>.</p>
+      <p><b>b)</b> $\vec n_1,\vec n_3$ nicht parallel $\Rightarrow$ Schnittgerade. Mit $x_3=t$: $x_1=5-t$ (aus $E_3$), eingesetzt in $E_1$: $x_2=\frac{7-t}2$. Bei $t=1$: $(4;3;1)$, Richtung (skaliert) $(-2;-1;2)$.
+      $$s:\ \vec x={\color{#1a9e5c}\boldsymbol{\begin{pmatrix}4\\3\\1\end{pmatrix}+t\begin{pmatrix}-2\\-1\\2\end{pmatrix}}},\quad t\in\mathbb R$$</p>
+      <p><b>c)</b> $d(E_1,E_2)=\dfrac{|4\cdot1{,}5-4\cdot0+2\cdot0-(-12)|}{\sqrt{4^2+(-4)^2+2^2}}=\dfrac{18}{6}={\color{#1a9e5c}\boldsymbol{3}}$</p>
+    </div>
+  </div>
+</article>
+
+<article class="task" data-task="u4">
+  <div class="task-head"><span><span class="task-num">Ü4</span><h3>Lagebeziehungen zwischen Gerade und Ebene</h3></span><span class="task-time">ca. 20 Min.</span></div>
+  <div class="task-body">
+    <p>Gegeben ist die Ebene $E:\ x_1+2x_2-x_3=5$ sowie die Geraden
+    $$g:\ \vec x=\begin{pmatrix}2\\0\\1\end{pmatrix}+t\begin{pmatrix}1\\1\\-1\end{pmatrix}\qquad\text{und}\qquad h:\ \vec x=s\begin{pmatrix}2\\1\\4\end{pmatrix}.$$</p>
+    <p><span class="sub-label">a)</span>Untersuchen Sie die Lage von $g$ zu $E$. Bestimmen Sie ggf. den Schnittpunkt.</p>
+    <p><span class="sub-label">b)</span>Untersuchen Sie die Lage von $h$ zu $E$.</p>
+    <p><span class="sub-label">c)</span>Berechnen Sie den Winkel, den $g$ mit $E$ einschließt.</p>
+  </div>
+  <div class="hints">
+    <details><summary>Hilfe 1</summary><p class="hint-text">Berechnen Sie jeweils das Skalarprodukt aus Richtungsvektor und Normalenvektor $\vec n=(1;2;-1)$ von $E$.</p></details>
+    <details><summary>Hilfe 2</summary><p class="hint-text">Bei $g$ ist das Skalarprodukt ungleich Null — Schnittpunkt über Einsetzen und Auflösen nach $t$. Bei $h$ ist es Null — prüfen Sie, ob der Stützpunkt von $h$ in $E$ liegt. Für c): $\sin\varphi=\dfrac{|\vec u_g\cdot\vec n|}{|\vec u_g|\cdot|\vec n|}$.</p></details>
+    <details><summary>Hilfe 3</summary><p class="hint-text">Für $g$: $t=1$, Schnittpunkt $(3|1|0)$. Für $h$: Stützpunkt $(0|0|0)$ liegt nicht in $E$ — echt parallel. Für c): mit $\vec u_g\cdot\vec n=4$ ergibt sich $\varphi\approx70{,}5^\circ$.</p></details>
+  </div>
+  <div class="sol-lock" data-task="u4">
+    <button class="sol-toggle" disabled>🔒 Musterlösung – nach Freigabe durch die Lehrkraft sichtbar</button>
+    <div class="sol" hidden>
+      <p><b>a)</b> $\vec u_g\cdot\vec n=1+2+1=4\neq0\Rightarrow g$ schneidet $E$. Einsetzen: $1+4t=5\Rightarrow t=1$. Schnittpunkt ${\color{#1a9e5c}\boldsymbol{(3|1|0)}}$.</p>
+      <p><b>b)</b> $\vec u_h\cdot\vec n=2+2-4=0\Rightarrow h\parallel E$. $h_0=(0;0;0)$ eingesetzt: $0\neq5$. Damit $h$ zu $E$ <span class="res">echt parallel</span>.</p>
+      <p><b>c)</b> $|\vec u_g|=\sqrt3$, $|\vec n|=\sqrt6$.
+      $$\sin\varphi=\frac{4}{\sqrt3\cdot\sqrt6}=\frac{2\sqrt2}{3}\;\Rightarrow\;{\color{#1a9e5c}\boldsymbol{\varphi\approx70{,}5^\circ}}$$</p>
+    </div>
+  </div>
+</article>
+
+<!-- ============================================================ -->
+<!-- BLOCK II -->
+<!-- ============================================================ -->
+<div class="block-heading">
+  <h2>Block II · Abstände</h2>
+  <span class="block-meta">Ü5–Ü7</span>
+</div>
+
+<article class="task" data-task="u5">
+  <div class="task-head"><span><span class="task-num">Ü5</span><h3>Abstand Punkt–Ebene, Spiegelpunkt</h3></span><span class="task-time">ca. 20 Min.</span></div>
+  <div class="task-body">
+    <p>Gegeben sind die Ebene $E:\ 2x_1-x_2+2x_3=9$ und der Punkt $P(1|2|0)$.</p>
+    <p><span class="sub-label">a)</span>Berechnen Sie den Abstand von $P$ zu $E$ mit dem Lotfußpunktverfahren.</p>
+    <p><span class="sub-label">b)</span>Geben Sie den Lotfußpunkt $F$ an.</p>
+    <p><span class="sub-label">c)</span>Bestimmen Sie den Spiegelpunkt $P'$ von $P$ an $E$.</p>
+  </div>
+  <div class="hints">
+    <details><summary>Hilfe 1</summary><p class="hint-text">Stellen Sie die Lotgerade durch $P$ mit Richtungsvektor $\vec n$ auf und setzen Sie sie in die Koordinatengleichung von $E$ ein.</p></details>
+    <details><summary>Hilfe 2</summary><p class="hint-text">Sie erhalten $\lambda=1$. Der Lotfußpunkt ist $F=P+1\cdot\vec n$.</p></details>
+    <details><summary>Hilfe 3</summary><p class="hint-text">$F=(3|1|2)$, Abstand $d=|\lambda|\cdot|\vec n|=3$. Spiegelpunkt: $P'=P+2\lambda\vec n=(5|0|4)$ — $F$ ist der Mittelpunkt von $P,P'$.</p></details>
+  </div>
+  <div class="sol-lock" data-task="u5">
+    <button class="sol-toggle" disabled>🔒 Musterlösung – nach Freigabe durch die Lehrkraft sichtbar</button>
+    <div class="sol" hidden>
+      <p>Lotgerade $\vec x=P+\lambda\vec n$, $\vec n=(2;-1;2)$. Einsetzen in $E$: $9\lambda+2=9\Rightarrow\lambda=1$.</p>
+      <p><b>a)</b> $d(P,E)=|\lambda|\cdot|\vec n|=1\cdot3={\color{#1a9e5c}\boldsymbol{3}}$</p>
+      <p><b>b)</b> $F=P+1\cdot\vec n={\color{#1a9e5c}\boldsymbol{(3|1|2)}}$</p>
+      <p><b>c)</b> $P'=P+2\lambda\vec n={\color{#1a9e5c}\boldsymbol{(5|0|4)}}$. Probe: Mittelpunkt von $P,P'$ ist $(3;1;2)=F$ ✓</p>
+    </div>
+  </div>
+</article>
+
+<article class="task" data-task="u6">
+  <div class="task-head"><span><span class="task-num">Ü6</span><h3>Abstand Punkt–Gerade</h3></span><span class="task-time">ca. 30 Min.</span></div>
+  <div class="task-body">
+    <p>Gegeben sind die Gerade $g:\ \vec x=\begin{pmatrix}1\\1\\1\end{pmatrix}+t\begin{pmatrix}2\\-1\\2\end{pmatrix}$ und der Punkt $Q(7|1|4)$.</p>
+    <p><span class="sub-label">a)</span>Berechnen Sie den Abstand von $Q$ zu $g$ mit dem Lotfußpunktverfahren.</p>
+    <p><span class="sub-label">b)</span>Berechnen Sie den Abstand erneut über die Abstandsfunktion $D(t)=|\overrightarrow{QF(t)}|^2$ und deren Ableitung.</p>
+    <p><span class="sub-label">c)</span>Vergleichen Sie beide Vorgehensweisen: Gemeinsamkeiten und Unterschiede?</p>
+  </div>
+  <div class="hints">
+    <details><summary>Hilfe 1</summary><p class="hint-text">Für a): Setzen Sie $F(t)=g_0+t\vec u$ an und fordern Sie $\overrightarrow{QF(t)}\perp\vec u$, also $\overrightarrow{QF(t)}\cdot\vec u=0$.</p></details>
+    <details><summary>Hilfe 2</summary><p class="hint-text">Für b): Bilden Sie $D(t)=\overrightarrow{QF(t)}\cdot\overrightarrow{QF(t)}$ als quadratische Funktion und bestimmen Sie das Minimum über $D'(t)=0$.</p></details>
+    <details><summary>Hilfe 3</summary><p class="hint-text">Beide Verfahren liefern $t^\ast=2$, Lotfußpunkt $F=(5|-1|5)$, Abstand $d=3$. $D(t)=9t^2-36t+45$.</p></details>
+  </div>
+  <div class="sol-lock" data-task="u6">
+    <button class="sol-toggle" disabled>🔒 Musterlösung – nach Freigabe durch die Lehrkraft sichtbar</button>
+    <div class="sol" hidden>
+      <p><b>a)</b> $\overrightarrow{QF(t)}=(2t-6;-t;2t-3)$. Bedingung: $(2t-6)\cdot2+(-t)\cdot(-1)+(2t-3)\cdot2=0\Rightarrow9t-18=0\Rightarrow t=2$.
+      Lotfußpunkt $F=(5;-1;5)$, $d=|\overrightarrow{QF}|=\sqrt{4+4+1}={\color{#1a9e5c}\boldsymbol{3}}$</p>
+      <p><b>b)</b> $D(t)=(2t-6)^2+t^2+(2t-3)^2=9t^2-36t+45$. $D'(t)=18t-36=0\Rightarrow t=2$ (gleich wie a)). $D(2)=9\Rightarrow d={\color{#1a9e5c}\boldsymbol{3}}$</p>
+      <p><b>c)</b> Beide Verfahren liefern denselben Parameter $t=2$ und Abstand $d=3$ — die Orthogonalitätsbedingung aus a) ist äquivalent zur Nullstelle der Ableitung in b), da $D'(t)=2\cdot\overrightarrow{QF(t)}\cdot\vec u$ gilt.</p>
+    </div>
+  </div>
+</article>
+
+<article class="task" data-task="u7">
+  <div class="task-head"><span><span class="task-num">Ü7</span><h3>Abstand windschiefer Geraden</h3></span><span class="task-time">ca. 30 Min.</span></div>
+  <div class="task-body">
+    <p>Gegeben sind die Geraden $g:\ \vec x=t\begin{pmatrix}1\\1\\0\end{pmatrix}$ und $h:\ \vec x=\begin{pmatrix}0\\2\\3\end{pmatrix}+s\begin{pmatrix}1\\0\\1\end{pmatrix}$.</p>
+    <p><span class="sub-label">a)</span>Zeigen Sie, dass $g$ und $h$ windschief zueinander sind.</p>
+    <p><span class="sub-label">b)</span>Bestimmen Sie über den Ansatz einen Vektor, der senkrecht auf beiden Richtungsvektoren steht, und berechnen Sie damit den Abstand von $g$ und $h$.</p>
+  </div>
+  <div class="hints">
+    <details><summary>Hilfe 1</summary><p class="hint-text">Zeigen Sie wie bei Ü1, dass die Richtungsvektoren nicht parallel sind und das Gleichungssystem $g=h$ keine Lösung besitzt.</p></details>
+    <details><summary>Hilfe 2</summary><p class="hint-text">Ansatz $\vec n=(n_1;n_2;n_3)$: $\vec n\cdot(1;1;0)=0$ und $\vec n\cdot(1;0;1)=0$. Lösen Sie nach $n_1,n_2$ (abhängig von $n_3$).</p></details>
+    <details><summary>Hilfe 3</summary><p class="hint-text">Ein möglicher Normalenvektor: $\vec n=(1;-1;-1)$. Abstand über $d=\dfrac{|\overrightarrow{g_0h_0}\cdot\vec n|}{|\vec n|}$ mit $\overrightarrow{g_0h_0}=(0;2;3)$, also $d=\frac{5\sqrt3}{3}$.</p></details>
+  </div>
+  <div class="sol-lock" data-task="u7">
+    <button class="sol-toggle" disabled>🔒 Musterlösung – nach Freigabe durch die Lehrkraft sichtbar</button>
+    <div class="sol" hidden>
+      <p><b>a)</b> Richtungsvektoren $(1;1;0)$, $(1;0;1)$ nicht parallel. Gleichsetzen $g=(r;r;0)$, $h=(s;2;3+s)$: $r=s$ (I), $r=2$ (II), $0=3+s$ (III). Aus (I),(II): $s=2$; eingesetzt in (III): $0\neq5$ — Widerspruch. Damit <span class="res">windschief</span>.</p>
+      <p><b>b)</b> Ansatz: $n_1+n_2=0$, $n_1+n_3=0\Rightarrow n_1=-n_2=-n_3$. Wahl $n_3=-1$: $\vec n=(1;-1;-1)$. $\overrightarrow{g_0h_0}=(0;2;3)$.
+      $$d(g,h)=\frac{|0-2-3|}{\sqrt3}=\frac{5}{\sqrt3}={\color{#1a9e5c}\boldsymbol{\frac{5\sqrt3}{3}\approx2{,}89}}$$</p>
+    </div>
+  </div>
+</article>
+
+<!-- ============================================================ -->
+<!-- BLOCK III -->
+<!-- ============================================================ -->
+<div class="block-heading">
+  <h2>Block III · Winkel, Flächen und Volumen</h2>
+  <span class="block-meta">Ü8–Ü9</span>
+</div>
+
+<article class="task" data-task="u8">
+  <div class="task-head"><span><span class="task-num">Ü8</span><h3>Winkel: Laderampe eines Lieferwagens</h3></span><span class="task-time">ca. 20 Min.</span></div>
+  <div class="task-body">
+    <p>Die Ladefläche eines Lieferwagens wird über eine Rampe beladen. Die Ebene der Rampe besitzt (in einem geeigneten Koordinatensystem) den Normalenvektor $\vec n=(0;3;4)$; der Boden entspricht der $x_1x_2$-Ebene. Auf der Rampe verlaufen zwei gerade Führungsschienen mit den Richtungsvektoren $\vec r_1=(2;1;2)$ und $\vec r_2=(1;-2;2)$.</p>
+    <p><span class="sub-label">a)</span>Berechnen Sie den Neigungswinkel der Rampe gegenüber dem Boden.</p>
+    <p><span class="sub-label">b)</span>Berechnen Sie den Winkel zwischen den beiden Führungsschienen.</p>
+  </div>
+  <div class="hints">
+    <details><summary>Hilfe 1</summary><p class="hint-text">Der Boden entspricht der $x_1x_2$-Ebene mit Normalenvektor $\vec e_3=(0;0;1)$. Der Winkel zwischen zwei Ebenen wird über den Winkel zwischen ihren Normalenvektoren berechnet.</p></details>
+    <details><summary>Hilfe 2</summary><p class="hint-text">$\cos\varphi=\dfrac{|\vec n\cdot\vec e_3|}{|\vec n|\cdot|\vec e_3|}$ für a); für b) dieselbe Formel mit $\vec r_1,\vec r_2$ statt der Normalenvektoren.</p></details>
+    <details><summary>Hilfe 3</summary><p class="hint-text">a) $\cos\varphi=\frac45\Rightarrow\varphi\approx36{,}9^\circ$. b) $\cos\varphi=\frac49\Rightarrow\varphi\approx63{,}6^\circ$.</p></details>
+  </div>
+  <div class="sol-lock" data-task="u8">
+    <button class="sol-toggle" disabled>🔒 Musterlösung – nach Freigabe durch die Lehrkraft sichtbar</button>
+    <div class="sol" hidden>
+      <p><b>a)</b> $\cos\varphi=\dfrac{|\vec n\cdot\vec e_3|}{|\vec n|\cdot|\vec e_3|}=\dfrac{4}{5\cdot1}=\frac45\Rightarrow{\color{#1a9e5c}\boldsymbol{\varphi\approx36{,}9^\circ}}$</p>
+      <p><b>b)</b> $\vec r_1\cdot\vec r_2=2-2+4=4$, $|\vec r_1|=|\vec r_2|=3$. $\cos\varphi=\frac{4}{9}\Rightarrow{\color{#1a9e5c}\boldsymbol{\varphi\approx63{,}6^\circ}}$</p>
+    </div>
+  </div>
+</article>
+
+<article class="task" data-task="u9">
+  <div class="task-head"><span><span class="task-num">Ü9</span><h3>Gewächshaus mit Trapezquerschnitt</h3></span><span class="task-time">ca. 30 Min.</span></div>
+  <div class="task-body">
+    <p>Der Querschnitt eines Gewächshauses hat die Form eines Vierecks $ABCD$ mit
+    $$A(0|0|0),\quad B(8|6|0),\quad C(6|2|4),\quad D(2|-1|4).$$
+    Das Gewächshaus ist in der dazu senkrechten Richtung vereinfachend $12\,$m tief.</p>
+    <p><span class="sub-label">a)</span>Zeigen Sie, dass $ABCD$ ein Trapez mit $\overline{AB}\parallel\overline{DC}$ ist.</p>
+    <p><span class="sub-label">b)</span>Berechnen Sie die Höhe des Trapezes und seinen Flächeninhalt.</p>
+    <p><span class="sub-label">c)</span>Berechnen Sie das Volumen des Gewächshauses.</p>
+  </div>
+  <div class="hints">
+    <details><summary>Hilfe 1</summary><p class="hint-text">Berechnen Sie $\overrightarrow{AB}$ und $\overrightarrow{DC}$ und vergleichen Sie sie — damit zeigen Sie die Parallelität.</p></details>
+    <details><summary>Hilfe 2</summary><p class="hint-text">Für die Höhe: Bestimmen Sie den Lotfußpunkt von $D$ auf der Geraden $AB$ (genau wie bei Ü6) und berechnen Sie den Abstand von $D$ zu diesem Fußpunkt.</p></details>
+    <details><summary>Hilfe 3</summary><p class="hint-text">$|\overrightarrow{AB}|=10$, $|\overrightarrow{DC}|=5$, Höhe $h=2\sqrt5$. Fläche $=15\sqrt5\approx33{,}5\,\text{m}^2$. Volumen $=180\sqrt5\approx402{,}5\,\text{m}^3$.</p></details>
+  </div>
+  <div class="sol-lock" data-task="u9">
+    <button class="sol-toggle" disabled>🔒 Musterlösung – nach Freigabe durch die Lehrkraft sichtbar</button>
+    <div class="sol" hidden>
+      <p><b>a)</b> $\overrightarrow{AB}=(8;6;0)$, $\overrightarrow{DC}=(4;3;0)=\frac12\overrightarrow{AB}$. Damit parallel, gleichgerichtet, unterschiedliche Länge $\Rightarrow$ Trapez mit $\overline{AB}\parallel\overline{DC}$.</p>
+      <p><b>b)</b> $|\overrightarrow{AB}|=10$, $|\overrightarrow{DC}|=5$. Lotfußpunkt von $D$ auf $AB$: $F(t)=t(8;6;0)$, $(D-F(t))\cdot\overrightarrow{AB}=0\Rightarrow t=0{,}1\Rightarrow F=(0{,}8;0{,}6;0)$. Höhe $h=|\overrightarrow{FD}|=\sqrt{20}=2\sqrt5$.
+      $$A=\frac12(10+5)\cdot2\sqrt5={\color{#1a9e5c}\boldsymbol{15\sqrt5\approx33{,}5\,\text{m}^2}}$$</p>
+      <p><b>c)</b> $V=A\cdot12=180\sqrt5\approx{\color{#1a9e5c}\boldsymbol{402{,}5\,\text{m}^3}}$</p>
+    </div>
+  </div>
+</article>
+
+<!-- ============================================================ -->
+<!-- BLOCK IV -->
+<!-- ============================================================ -->
+<div class="block-heading">
+  <h2>Block IV · Anwendungsaufgaben</h2>
+  <span class="block-meta">Ü10–Ü12</span>
+</div>
+
+<article class="task" data-task="u10">
+  <div class="task-head"><span><span class="task-num">Ü10</span><h3>Zwei Wanderer</h3></span><span class="task-time">ca. 35 Min.</span></div>
+  <div class="task-body">
+    <p>Zwei Wanderer bewegen sich (näherungsweise) mit konstanter Geschwindigkeit auf geraden Streckenabschnitten durch ein Bergmassiv. Alle Koordinaten sind in Metern angegeben, $t$ in Minuten seit Beobachtungsbeginn:
+    $$U(t)=\begin{pmatrix}0\\0\\1200\end{pmatrix}+t\begin{pmatrix}5\\3\\-4\end{pmatrix},\qquad V(t)=\begin{pmatrix}-5\\15\\1212\end{pmatrix}+t\begin{pmatrix}8\\-1\\-4\end{pmatrix}.$$</p>
+    <p><span class="sub-label">a)</span>Erläutern Sie die Bedeutung von $U(0),V(0)$ und der beiden Richtungsvektoren im Sachzusammenhang.</p>
+    <p><span class="sub-label">b)</span>Bestimmen Sie den Zeitpunkt, zu dem der Abstand zwischen den beiden Wanderern minimal ist, sowie diesen minimalen Abstand.</p>
+    <p><span class="sub-label">c)</span>Ab einer Entfernung von höchstens $15\,$m können sich die Wanderer gut zurufen. Untersuchen Sie, ob und in welchem Zeitraum dies möglich ist.</p>
+  </div>
+  <div class="hints">
+    <details><summary>Hilfe 1</summary><p class="hint-text">Für b): Bilden Sie den Differenzvektor $\vec d(t)=V(t)-U(t)$ und daraus $D(t)=\vec d(t)\cdot\vec d(t)$.</p></details>
+    <details><summary>Hilfe 2</summary><p class="hint-text">$D(t)=25t^2-150t+394$. Minimum über $D'(t)=0$. Für c) müssen Sie die Ungleichung $D(t)\le15^2$ lösen (nicht nur die Gleichung!).</p></details>
+    <details><summary>Hilfe 3</summary><p class="hint-text">Minimum bei $t^\ast=3$ mit $d_{\min}=13\,$m. Da $13<15$, gibt es ein Zeitintervall um $t^\ast=3$ — lösen Sie die quadratische Ungleichung z. B. über die Mitternachtsformel.</p></details>
+  </div>
+  <div class="sol-lock" data-task="u10">
+    <button class="sol-toggle" disabled>🔒 Musterlösung – nach Freigabe durch die Lehrkraft sichtbar</button>
+    <div class="sol" hidden>
+      <p><b>a)</b> $U(0),V(0)$ sind die Startpositionen der Wanderer ($x_3$ = Höhe über einem Bezugsniveau). Die Richtungsvektoren geben Richtung und Geschwindigkeit je Minute an (jeweils $4\,$m Höhenverlust/Minute).</p>
+      <p><b>b)</b> $\vec d(t)=(-5+3t;15-4t;12)$, $D(t)=25t^2-150t+394$. $D'(t)=50t-150=0\Rightarrow t^\ast=3$. $D(3)=169\Rightarrow d_{\min}=\sqrt{169}={\color{#1a9e5c}\boldsymbol{13\,\text{m}}}$ bei $t^\ast=3$.</p>
+      <p><b>c)</b> $D(t)\le225\Leftrightarrow25t^2-150t+169\le0$. Mitternachtsformel: $t=3\pm\frac{2\sqrt{14}}5$, also $t\in{\color{#1a9e5c}\boldsymbol{[1{,}50;\,4{,}50]}}$ (Minuten) — in diesem Zeitraum können sich die Wanderer zurufen.</p>
+    </div>
+  </div>
+</article>
+
+<article class="task" data-task="u11">
+  <div class="task-head"><span><span class="task-num">Ü11</span><h3>Sichtbarkeit von einer Aussichtsplattform</h3></span><span class="task-time">ca. 30 Min.</span></div>
+  <div class="task-body">
+    <p>Von einer Aussichtsplattform im Punkt $P(0|15|25)$ aus soll ein markanter Punkt $S(90|20|5)$ auf einem gegenüberliegenden Berggrat gesehen werden (alle Angaben in Metern). Zwischen beiden Punkten befindet sich eine näherungsweise ebene Felsplatte, die in der Ebene $x_1=50$ liegt und dort auf den Bereich $5\le x_2\le25$ und $0\le x_3\le20$ begrenzt ist.</p>
+    <p><span class="sub-label">a)</span>Untersuchen Sie, ob die Sichtverbindung von $P$ nach $S$ durch die Felsplatte verläuft.</p>
+    <p><span class="sub-label">b)</span>Die Plattform könnte um $5\,$m erhöht werden, sodass sich der Beobachtungspunkt bei $P'(0|15|30)$ befindet. Untersuchen Sie, ob dadurch die Sicht auf $S$ frei wird.</p>
+  </div>
+  <div class="hints">
+    <details><summary>Hilfe 1</summary><p class="hint-text">Stellen Sie die Verbindungsgerade auf: $\vec x=P+u\cdot(S-P)$, und bestimmen Sie $u$ für $x_1=50$.</p></details>
+    <details><summary>Hilfe 2</summary><p class="hint-text">Prüfen Sie zunächst $u\in[0;1]$. Prüfen Sie dann, ob $x_2,x_3$ des Schnittpunkts innerhalb der angegebenen Grenzen liegen. Für b): wiederholen Sie dieselbe Rechnung mit $P'$.</p></details>
+    <details><summary>Hilfe 3</summary><p class="hint-text">$u=\frac59\in[0;1]$, Durchstoßpunkt $\approx(50|17{,}8|13{,}9)$ — beide innerhalb der Grenzen, also verdeckt. Bei $P'$: neuer Durchstoßpunkt $\approx(50|17{,}8|16{,}1)$ — ebenfalls noch innerhalb.</p></details>
+  </div>
+  <div class="sol-lock" data-task="u11">
+    <button class="sol-toggle" disabled>🔒 Musterlösung – nach Freigabe durch die Lehrkraft sichtbar</button>
+    <div class="sol" hidden>
+      <p><b>a)</b> $\vec x=P+u(S-P)$, $S-P=(90;5;-20)$. $90u=50\Rightarrow u=\frac59\in[0;1]$.
+      $$X\left(\tfrac59\right)=\left(50;\,\tfrac{160}9;\,\tfrac{125}9\right)\approx(50;17{,}8;13{,}9)$$
+      Da $17{,}8\in[5;25]$ und $13{,}9\in[0;20]$: die Sichtlinie durchstößt die Felsplatte — $S$ ist von $P$ aus <span class="res">nicht sichtbar</span>.</p>
+      <p><b>b)</b> Mit $P'(0|15|30)$, $S-P'=(90;5;-25)$: gleiches $u=\frac59$ (da $x_1,x_2$ unverändert). Neuer Durchstoßpunkt: $x_3=30-\frac59\cdot25=\frac{145}9\approx16{,}1\in[0;20]$. Die Sichtlinie verläuft <span class="res">immer noch durch die Felsplatte</span> — die Erhöhung um $5\,$m reicht nicht aus.</p>
+    </div>
+  </div>
+</article>
+
+<article class="task" data-task="u12">
+  <div class="task-head"><span><span class="task-num">Ü12</span><h3>Fallunterscheidung mit einem Parameter</h3></span><span class="task-time">ca. 20 Min.</span></div>
+  <div class="task-body">
+    <p>Gegeben sind für $a\in\mathbb R$ die Gerade $g_a:\ \vec x=\begin{pmatrix}1\\0\\-2\end{pmatrix}+t\begin{pmatrix}1\\a\\2\end{pmatrix}$ und die Gerade $h:\ \vec x=\begin{pmatrix}5\\2\\6\end{pmatrix}+s\begin{pmatrix}2\\-1\\4\end{pmatrix}$.</p>
+    <p><span class="sub-label">a)</span>Untersuchen Sie die Lage von $g_a$ und $h$ in Abhängigkeit von $a$. Geben Sie für alle $a\neq-\frac12$ den gemeinsamen Punkt in Abhängigkeit von $a$ an.</p>
+    <p><span class="sub-label">b)</span>Untersuchen Sie den Fall $a=-\frac12$ gesondert. Begründen Sie, warum dieser Fall bei einem rein rechnerischen Vorgehen leicht übersehen werden kann.</p>
+  </div>
+  <div class="hints">
+    <details><summary>Hilfe 1</summary><p class="hint-text">Setzen Sie $g_a=h$ und lösen Sie zunächst die ersten beiden Gleichungen nach $t$ und $s$ — die Lösung enthält den Term $(2a+1)$ im Nenner.</p></details>
+    <details><summary>Hilfe 2</summary><p class="hint-text">Für welchen Wert von $a$ wird dieser Nenner Null? Für diesen Wert ist die Lösung nicht definiert und muss getrennt untersucht werden — prüfen Sie dort, ob die Richtungsvektoren parallel sind.</p></details>
+    <details><summary>Hilfe 3</summary><p class="hint-text">Für $a\neq-\frac12$: $t=\dfrac{8}{2a+1}$. Für $a=-\frac12$ sind die Richtungsvektoren parallel (Faktor $\frac12$); eine Punktprobe zeigt, dass die Geraden dann echt parallel sind.</p></details>
+  </div>
+  <div class="sol-lock" data-task="u12">
+    <button class="sol-toggle" disabled>🔒 Musterlösung – nach Freigabe durch die Lehrkraft sichtbar</button>
+    <div class="sol" hidden>
+      <p><b>a)</b> Gleichsetzen: $t-2s=4$ (I), $at=2-s$ (II), $2t-4s=8$ (III $=2\cdot$I). Aus (I): $s=\frac{t-4}2$. In (II): $t\left(a+\frac12\right)=4\Rightarrow t=\dfrac{8}{2a+1}$ (für $a\neq-\frac12$).
+      $$P(a)={\color{#1a9e5c}\boldsymbol{\begin{pmatrix}1\\0\\-2\end{pmatrix}+\frac{8}{2a+1}\begin{pmatrix}1\\a\\2\end{pmatrix}}}$$</p>
+      <p><b>b)</b> Für $a=-\frac12$ wird der Nenner $2a+1$ Null. Richtungsvektor von $g_{-1/2}$ ist $\left(1;-\frac12;2\right)=\frac12(2;-1;4)$ — ein Vielfaches des Richtungsvektors von $h$, also parallel. Punktprobe: Stützpunkt $(5;2;6)$ von $h$ liegt nicht auf $g_{-1/2}$ ($t=4$ liefert zweite Koordinate $-2\neq2$). Damit sind $g_{-1/2}$ und $h$ <span class="res">echt parallel</span> (kein gemeinsamer Punkt). Wer die Formel aus a) rein algorithmisch herleitet, ohne die Nullstelle des Nenners zu beachten, übersieht diesen Sonderfall leicht.</p>
+    </div>
+  </div>
+</article>
+
+</main>
+
+<footer class="page-foot">
+  Unterrichtsmaterialien · Friedrich-Bährens-Gymnasium Schwerte
+</footer>
+
+<script>
+const UNLOCK_CODE = "MATHE";
+
+function tryUnlock(){
+  const input = document.getElementById('unlock-input');
+  const msg = document.getElementById('unlock-msg');
+  const val = input.value.trim().toUpperCase();
+  if(val === UNLOCK_CODE){
+    document.querySelectorAll('.sol-toggle').forEach(btn=>{
+      btn.disabled = false;
+      btn.classList.add('active');
+      btn.textContent = "👁 Musterlösung anzeigen";
+    });
+    msg.textContent = "Freigeschaltet ✓";
+    msg.className = "ok";
+  } else {
+    msg.textContent = "Code nicht korrekt.";
+    msg.className = "bad";
+  }
+}
+
+document.getElementById('unlock-input').addEventListener('keydown', function(e){
+  if(e.key === 'Enter'){ tryUnlock(); }
+});
+
+document.querySelectorAll('.sol-toggle').forEach(btn=>{
+  btn.addEventListener('click', function(){
+    if(!btn.classList.contains('active')) return;
+    const sol = btn.nextElementSibling;
+    const isHidden = sol.hasAttribute('hidden');
+    if(isHidden){
+      sol.removeAttribute('hidden');
+      btn.textContent = "🙈 Musterlösung verbergen";
+    } else {
+      sol.setAttribute('hidden','');
+      btn.textContent = "👁 Musterlösung anzeigen";
+    }
+  });
+});
+
+document.addEventListener("DOMContentLoaded", function(){
+  renderMathInElement(document.body, {
+    delimiters: [
+      {left: "$$", right: "$$", display: true},
+      {left: "$", right: "$", display: false}
+    ],
+    throwOnError: false
+  });
+});
+</script>
+
+</body>
+</html>
