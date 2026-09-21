@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>V.3 Winkel und Schnittwinkel</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Source+Sans+3:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --gold:#e8a800;
+    --gold-deep:#b98300;
+    --blue:#2b6cb0;
+    --green:#2f9e44;
+    --orange:#e8720c;
+    --ink:#22262e;
+    --ink-soft:#565d68;
+    --paper:#ffffff;
+    --bg:#f4f5f7;
+    --line:#dde1e6;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    font-family:'Source Sans 3', system-ui, sans-serif;
+    background:var(--bg);
+    color:var(--ink);
+    line-height:1.55;
+  }
+  h1,h2{ font-family:'Fraunces', Georgia, serif; font-weight:600; margin:0 0 6px 0; }
+  header{
+    background:linear-gradient(135deg, var(--gold) 0%, var(--gold-deep) 100%);
+    color:#2a1d00;
+    padding:26px clamp(16px,4vw,48px);
+  }
+  header .eyebrow{ font-size:0.85rem; font-weight:600; color:#4a3400; margin-bottom:2px; }
+  header h1{ font-size:clamp(1.4rem, 3vw, 2rem); color:#221800; }
+  main{ max-width:760px; margin:0 auto; padding:28px clamp(14px,4vw,32px); }
+  .lead{ color:var(--ink-soft); font-size:1rem; margin-bottom:26px; }
+  .page-grid{ display:grid; grid-template-columns:1fr; gap:16px; }
+  a.page-card{
+    display:block;
+    background:var(--paper);
+    border:1px solid var(--line);
+    border-left:5px solid var(--blue);
+    border-radius:10px;
+    padding:18px 20px;
+    text-decoration:none;
+    color:var(--ink);
+    transition:transform .1s, box-shadow .15s;
+  }
+  a.page-card:hover{ transform:translateY(-1px); box-shadow:0 6px 16px rgba(0,0,0,0.08); }
+  a.page-card.uebung{ border-left-color:var(--orange); }
+  a.page-card .tag{
+    display:inline-block; font-size:0.75rem; font-weight:700; letter-spacing:.02em;
+    padding:2px 10px; border-radius:999px; margin-bottom:8px;
+    background:#e7f0fa; color:var(--blue);
+  }
+  a.page-card.uebung .tag{ background:#fdefe3; color:var(--orange); }
+  a.page-card h2{ font-size:1.15rem; margin-bottom:4px; }
+  a.page-card p{ margin:0; color:var(--ink-soft); font-size:0.95rem; }
+  footer{ text-align:center; color:var(--ink-soft); font-size:0.82rem; padding:30px 20px; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="eyebrow">Analytische Geometrie &middot; Grundkurs</div>
+  <h1>V.3 &middot; Winkel und Schnittwinkel</h1>
+</header>
+
+<main>
+  <p class="lead">Winkel zwischen zwei Vektoren und Schnittwinkel zweier Geraden: Herleitung, Übung und Vertiefung.</p>
+
+  <div class="page-grid">
+    <a class="page-card" href="erarbeitung-winkel-puzzle.html">
+      <span class="tag">ERARBEITUNG</span>
+      <h2>Herleitungs-Puzzle</h2>
+      <p>Interaktive Gruppenarbeit: die Formel für den Winkel zwischen zwei Vektoren selbst herleiten (Orthogonalprojektion oder Kosinussatz), inkl. Simulationen zu s, x und b−a.</p>
+    </a>
+    <a class="page-card uebung" href="uebung-winkel-schnittwinkel.html">
+      <span class="tag">ÜBUNG</span>
+      <h2>Übung: Winkel und Schnittwinkel</h2>
+      <p>Aufgaben in drei Stufen (A/B/C) mit Tipps, Lösungen und Selbsteinschätzungsbogen.</p>
+    </a>
+  </div>
+</main>
+
+<footer>Kapitel V.3 &middot; Winkel und Schnittwinkel</footer>
+
+</body>
+</html>

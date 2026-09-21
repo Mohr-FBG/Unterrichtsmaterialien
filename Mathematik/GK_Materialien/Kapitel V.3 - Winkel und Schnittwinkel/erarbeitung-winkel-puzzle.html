@@ -1,0 +1,851 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>V.3 Winkel zwischen zwei Vektoren – Herleitungs-Puzzle</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Source+Sans+3:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --gold:#e8a800;
+    --gold-deep:#b98300;
+    --blue:#2b6cb0;
+    --green:#2f9e44;
+    --pink:#d6336c;
+    --purple:#a534d6;
+    --ink:#22262e;
+    --ink-soft:#565d68;
+    --paper:#ffffff;
+    --bg:#f4f5f7;
+    --line:#dde1e6;
+    --ok:#2f9e44;
+    --ok-bg:#eaf7ec;
+    --bad:#d6336c;
+    --bad-bg:#fcebf1;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    font-family:'Source Sans 3', system-ui, sans-serif;
+    background:var(--bg);
+    color:var(--ink);
+    line-height:1.5;
+    padding-bottom:60px;
+  }
+  h1,h2,h3{
+    font-family:'Fraunces', Georgia, serif;
+    font-weight:600;
+    margin:0 0 6px 0;
+  }
+  header{
+    background:linear-gradient(135deg, var(--gold) 0%, var(--gold-deep) 100%);
+    color:#2a1d00;
+    padding:22px clamp(16px,4vw,48px);
+  }
+  header .eyebrow{
+    font-size:0.85rem;
+    font-weight:600;
+    color:#4a3400;
+    margin-bottom:2px;
+  }
+  header h1{
+    font-size:clamp(1.3rem, 3vw, 1.9rem);
+    color:#221800;
+  }
+  main{
+    max-width:920px;
+    margin:0 auto;
+    padding:22px clamp(14px,4vw,32px);
+  }
+  section{margin-bottom:34px;}
+  .card{
+    background:var(--paper);
+    border:1px solid var(--line);
+    border-radius:10px;
+    padding:18px 20px;
+  }
+  .lead{color:var(--ink-soft); font-size:0.98rem;}
+
+  /* --- Intro --- */
+  #intro-diagram{display:flex; align-items:center; gap:24px; flex-wrap:wrap;}
+  #intro-diagram svg{flex-shrink:0;}
+  .task-box{
+    border-left:4px solid var(--gold-deep);
+    background:#fff9ec;
+    padding:12px 16px;
+    border-radius:6px;
+    font-size:1.02rem;
+  }
+
+  /* --- Reminder cards --- */
+  .reminder-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:16px;
+  }
+  @media (max-width:680px){ .reminder-grid{grid-template-columns:1fr;} }
+  .reminder-grid .card h3{font-size:1.05rem; margin-bottom:10px;}
+  .reminder-grid .card{display:flex; flex-direction:column; gap:10px;}
+  .reminder-grid svg{align-self:center;}
+  .formula-line{font-size:1.05rem; text-align:center; padding:4px 0;}
+
+  /* --- Method choice --- */
+  .method-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:16px;
+  }
+  @media (max-width:680px){ .method-grid{grid-template-columns:1fr;} }
+  .method-btn{
+    cursor:pointer;
+    border-radius:10px;
+    border:2px solid var(--line);
+    background:var(--paper);
+    padding:18px 20px;
+    text-align:left;
+    font-family:inherit;
+    transition:border-color .15s, transform .1s;
+  }
+  .method-btn:hover{border-color:var(--gold-deep); transform:translateY(-1px);}
+  .method-btn .tag{
+    display:inline-block;
+    font-size:0.75rem;
+    font-weight:700;
+    letter-spacing:.02em;
+    padding:2px 9px;
+    border-radius:999px;
+    margin-bottom:8px;
+  }
+  .method-btn.a .tag{background:#e7f0fa; color:var(--blue);}
+  .method-btn.b .tag{background:#eaf7ec; color:var(--green);}
+  .method-btn h3{font-size:1.1rem;}
+  .method-btn p{margin:6px 0 0 0; color:var(--ink-soft); font-size:0.94rem;}
+
+  /* --- Puzzle --- */
+  #puzzle-section{display:none;}
+  .puzzle-head{
+    display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;
+    margin-bottom:14px;
+  }
+  .method-label{
+    font-weight:700; font-size:0.95rem;
+    padding:4px 12px; border-radius:999px;
+  }
+  .method-label.a{background:#e7f0fa; color:var(--blue);}
+  .method-label.b{background:#eaf7ec; color:var(--green);}
+  .btn-row{display:flex; gap:8px; flex-wrap:wrap;}
+  button.ctrl{
+    font-family:inherit;
+    font-size:0.9rem;
+    font-weight:600;
+    padding:9px 16px;
+    border-radius:8px;
+    border:1px solid var(--line);
+    background:var(--paper);
+    cursor:pointer;
+  }
+  button.ctrl:hover{border-color:var(--gold-deep);}
+  button.ctrl.primary{
+    background:var(--gold);
+    border-color:var(--gold-deep);
+    color:#2a1d00;
+  }
+  button.ctrl.primary:hover{background:var(--gold-deep); color:#fff;}
+  button.ctrl.small{ padding:6px 12px; font-size:0.82rem; }
+
+  /* --- Simulation cards --- */
+  .sim-card{ margin-bottom:18px; }
+  .sim-card h3{ font-size:1.05rem; }
+  .sim-body{
+    display:flex; gap:20px; flex-wrap:wrap; align-items:flex-start;
+  }
+  .sim-body svg{ flex-shrink:0; touch-action:none; background:#fafbfc; border-radius:8px; border:1px solid var(--line); }
+  .sim-controls{ flex:1; min-width:220px; display:flex; flex-direction:column; gap:10px; }
+  .sim-controls input[type=range]{ width:100%; accent-color: var(--gold-deep); }
+  .sim-readout{
+    font-size:0.95rem;
+    background:#f7f7f8;
+    border-radius:8px;
+    padding:8px 12px;
+    display:flex;
+    flex-direction:column;
+    gap:4px;
+  }
+  .sim-hint{ font-size:0.88rem; font-weight:600; min-height:1.4em; }
+  .sim-hint.ok{ color:var(--ok); }
+  .sim-hint.mid{ color:var(--ink-soft); font-weight:400; }
+  .sim-caption{ font-size:0.88rem; color:var(--ink-soft); margin-top:10px; }
+  .drag-point{ cursor:grab; touch-action:none; }
+  .drag-point:active{ cursor:grabbing; }
+
+  #piece-list{
+    list-style:none; margin:0; padding:0;
+    display:flex; flex-direction:column; gap:10px;
+    touch-action:pan-y;
+  }
+  .piece{
+    display:flex; align-items:center; gap:12px;
+    background:var(--paper);
+    border:1.5px solid var(--line);
+    border-left:5px solid var(--line);
+    border-radius:8px;
+    padding:12px 14px;
+    user-select:none;
+  }
+  .piece.dragging{
+    box-shadow:0 8px 20px rgba(0,0,0,0.15);
+    border-color:var(--gold-deep);
+    z-index:5;
+    opacity:0.95;
+  }
+  .piece.correct{border-left-color:var(--ok); background:var(--ok-bg);}
+  .piece.incorrect{border-left-color:var(--bad); background:var(--bad-bg);}
+  .handle{
+    flex-shrink:0;
+    width:34px; height:34px;
+    display:flex; align-items:center; justify-content:center;
+    font-size:1.3rem;
+    color:var(--ink-soft);
+    cursor:grab;
+    touch-action:none;
+    border-radius:6px;
+  }
+  .handle:active{cursor:grabbing; background:#eee;}
+  .piece-body{flex:1; min-width:0;}
+  .piece-math{font-size:1.02rem; overflow-x:auto;}
+  .piece-note{font-size:0.85rem; color:var(--ink-soft); margin-top:3px;}
+  .updown{display:flex; flex-direction:column; gap:2px;}
+  .updown button{
+    width:28px; height:22px;
+    border:1px solid var(--line);
+    background:#fafafa;
+    border-radius:5px;
+    cursor:pointer;
+    font-size:0.8rem;
+    line-height:1;
+  }
+  .updown button:hover{background:#eee;}
+
+  #feedback{
+    margin-top:14px;
+    font-weight:600;
+  }
+  #feedback.ok{color:var(--ok);}
+  #feedback.mid{color:#a06a00;}
+
+  #success-panel{
+    display:none;
+    margin-top:20px;
+    border:2px solid var(--blue);
+    background:#f3f8fd;
+    border-radius:10px;
+    padding:18px 20px;
+  }
+  #success-panel h3{color:var(--blue);}
+  .final-formula{
+    text-align:center;
+    font-size:1.25rem;
+    background:#fff;
+    border:1.5px solid var(--line);
+    border-radius:8px;
+    padding:14px;
+    margin:12px 0;
+  }
+  #success-panel ul{margin:10px 0 0 0; padding-left:20px; font-size:0.95rem;}
+  #success-panel li{margin-bottom:4px;}
+
+  footer{
+    text-align:center;
+    color:var(--ink-soft);
+    font-size:0.82rem;
+    padding:20px;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="eyebrow">Kapitel V.3 &middot; Winkel und Schnittwinkel</div>
+  <h1>Herleitungs-Puzzle: Winkel zwischen zwei Vektoren</h1>
+</header>
+
+<main>
+
+  <section id="intro">
+    <div class="card" id="intro-diagram">
+      <svg id="intro-svg" width="230" height="200" viewBox="0 0 230 200"></svg>
+      <div>
+        <p class="lead" style="margin-top:0;">Gegeben sind zwei Vektoren <span class="math" data-tex="\vec a=\binom{6}{3}"></span> und <span class="math" data-tex="\vec b=\binom{2}{6}"></span> mit gemeinsamem Anfangspunkt.</p>
+        <div class="task-box">
+          Bringt die Puzzlezeilen in die richtige Reihenfolge, sodass eine <strong>Herleitung der Formel für <span class="math" data-tex="\cos(\alpha)"></span></strong> entsteht. Stellt euren Weg anschließend dem Kurs vor.
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="reminders">
+    <h2 style="font-size:1.15rem;">Zur Erinnerung, bevor es losgeht</h2>
+    <div class="reminder-grid">
+      <div class="card">
+        <h3>Sinus &amp; Kosinus im rechtwinkligen Dreieck</h3>
+        <svg width="180" height="130" viewBox="0 0 180 130">
+          <polygon points="15,110 165,110 165,20" fill="none" stroke="#22262e" stroke-width="2"/>
+          <rect x="150" y="95" width="15" height="15" fill="none" stroke="#22262e" stroke-width="1.5"/>
+          <path d="M 45 110 A 30 30 0 0 1 40.7 94.6" fill="none" stroke="#d6336c" stroke-width="2"/>
+          <text x="50" y="101" font-size="13" fill="#d6336c">β</text>
+          <text x="85" y="126" font-size="12" fill="#22262e">Ankathete</text>
+          <text x="169" y="70" font-size="12" fill="#22262e" transform="rotate(90 169 70)">Gegenkathete</text>
+          <text x="75" y="58" font-size="12" fill="#22262e" transform="rotate(-31 75 58)">Hypotenuse</text>
+        </svg>
+        <div class="formula-line"><span class="math" data-tex="\sin(\beta)=\dfrac{\text{Gegenkathete}}{\text{Hypotenuse}}"></span></div>
+        <div class="formula-line"><span class="math" data-tex="\cos(\beta)=\dfrac{\text{Ankathete}}{\text{Hypotenuse}}"></span></div>
+      </div>
+      <div class="card">
+        <h3>Kosinussatz</h3>
+        <svg width="180" height="130" viewBox="0 0 180 130">
+          <polygon points="20,115 160,115 100,15" fill="none" stroke="#22262e" stroke-width="2"/>
+          <text x="82" y="132" font-size="12" fill="#22262e">c</text>
+          <text x="145" y="70" font-size="12" fill="#22262e">a</text>
+          <text x="52" y="70" font-size="12" fill="#22262e">b</text>
+          <path d="M 111.32 33.86 A 22 22 0 0 1 86.26 32.18" fill="none" stroke="#d6336c" stroke-width="2"/>
+          <text x="92" y="53" font-size="12" fill="#d6336c">γ</text>
+        </svg>
+        <div class="formula-line"><span class="math" data-tex="c^2=a^2+b^2-2ab\cdot\cos(\gamma)"></span></div>
+        <p class="lead" style="margin:0; font-size:0.85rem;">γ liegt zwischen den Seiten a und b – gegenüber der Seite c. Verallgemeinerung des Satzes von Pythagoras.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="method-choice">
+    <h2 style="font-size:1.15rem;">Wählt eure Herleitung</h2>
+    <div class="method-grid">
+      <button class="method-btn a" onclick="startPuzzle('A')">
+        <span class="tag">METHODE A</span>
+        <h3>Orthogonalprojektion</h3>
+        <p>Konstruiere ein rechtwinkliges Hilfsdreieck, indem du einen Vektor senkrecht auf <span class="math" data-tex="\vec a"></span> stellst.</p>
+      </button>
+      <button class="method-btn b" onclick="startPuzzle('B')">
+        <span class="tag">METHODE B</span>
+        <h3>Kosinussatz</h3>
+        <p>Nutze das Dreieck aus <span class="math" data-tex="\vec a"></span>, <span class="math" data-tex="\vec b"></span> und der Verbindungsstrecke <span class="math" data-tex="\vec b-\vec a"></span>.</p>
+      </button>
+    </div>
+  </section>
+
+  <section id="puzzle-section">
+    <div class="puzzle-head">
+      <span id="method-label" class="method-label"></span>
+      <div class="btn-row">
+        <button class="ctrl" onclick="backToChoice()">&larr; andere Methode</button>
+        <button class="ctrl" onclick="shuffleCurrent()">Neu mischen</button>
+        <button class="ctrl primary" onclick="checkOrder()">Reihenfolge prüfen</button>
+      </div>
+    </div>
+
+    <!-- Simulation A: what are s and x -->
+    <div id="sim-A-panel" class="card sim-card">
+      <h3>Simulation: Was bedeuten <span class="math" data-tex="s"></span> und <span class="math" data-tex="\vec x"></span>?</h3>
+      <div class="sim-body">
+        <svg id="simA-svg" width="300" height="230" viewBox="0 0 300 230"></svg>
+        <div class="sim-controls">
+          <label for="simA-slider" style="font-size:0.9rem; font-weight:600;">Punkt <span class="math" data-tex="s\cdot\vec a"></span> auf der Linie verschieben:</label>
+          <input type="range" id="simA-slider" min="-0.25" max="1.55" step="0.01" value="0">
+          <div class="sim-readout">
+            <div>s = <span id="simA-s-val">0.00</span></div>
+            <div><span class="math" data-tex="\vec a\circ\vec x"></span> = <span id="simA-dot-val">0.00</span></div>
+          </div>
+          <div id="simA-hint" class="sim-hint mid">Verschiebe den Punkt, bis <span class="math" data-tex="\vec a\circ\vec x=0"></span> wird.</div>
+          <div class="btn-row">
+            <button class="ctrl small" onclick="updateSimA(0)">Zurücksetzen</button>
+            <button class="ctrl small" onclick="updateSimA(S_STAR)">Lösung zeigen</button>
+          </div>
+        </div>
+      </div>
+      <p class="sim-caption">Der Punkt bewegt sich auf der Linie aller Vielfachen <span class="math" data-tex="s\cdot\vec a"></span> (gestrichelt). Von dort zeigt <span class="math" data-tex="\vec x=\vec b-s\cdot\vec a"></span> zur Pfeilspitze von <span class="math" data-tex="\vec b"></span>. Gesucht ist genau der Wert von <span class="math" data-tex="s"></span>, bei dem <span class="math" data-tex="\vec x"></span> senkrecht auf <span class="math" data-tex="\vec a"></span> steht.</p>
+    </div>
+
+    <!-- Simulation B: what is b - a -->
+    <div id="sim-B-panel" class="card sim-card">
+      <h3>Simulation: Der Vektor <span class="math" data-tex="\vec b-\vec a"></span></h3>
+      <div class="sim-body">
+        <svg id="simB-svg" width="300" height="230" viewBox="0 0 300 230"></svg>
+        <div class="sim-controls">
+          <label for="simB-slider" style="font-size:0.9rem; font-weight:600;">Vektor entlang seiner Richtung verschieben:</label>
+          <input type="range" id="simB-slider" min="0" max="1" step="0.01" value="0">
+          <div class="sim-readout">
+            <div>t = <span id="simB-t-val">0.00</span> (0 = an der Dreiecksseite, 1 = vom Ursprung aus)</div>
+            <div><span class="math" data-tex="|\vec b-\vec a|"></span> = <span id="simB-len-val">5.00</span> (bleibt gleich!)</div>
+          </div>
+          <div class="btn-row">
+            <button class="ctrl small" onclick="updateSimB(0)">An Dreiecksseite</button>
+            <button class="ctrl small" onclick="updateSimB(1)">Vom Ursprung aus</button>
+          </div>
+        </div>
+      </div>
+      <p class="sim-caption">Die pinke Strecke verbindet die Pfeilspitze von <span class="math" data-tex="\vec a"></span> mit der Pfeilspitze von <span class="math" data-tex="\vec b"></span> – das ist die dritte Dreiecksseite <span class="math" data-tex="\vec b-\vec a"></span>. Der Regler verschiebt sie parallel zu sich selbst: Länge und Richtung ändern sich dabei nicht. Genau deshalb darf der Kosinussatz sie als ganz normale Dreiecksseite behandeln.</p>
+    </div>
+
+    <ul id="piece-list"></ul>
+    <div id="feedback"></div>
+
+    <div id="success-panel">
+      <h3>Fertig! So lautet die Formel:</h3>
+      <div class="final-formula"><span class="math" data-tex="\cos(\alpha)=\dfrac{\vec a\circ\vec b}{|\vec a|\cdot|\vec b|}\ \ \text{mit}\ \ 0^\circ\le\alpha\le180^\circ"></span></div>
+      <p><strong>Bereitet eure Vorstellung vor:</strong></p>
+      <ul>
+        <li>Erklärt bei jedem Schritt, <em>welche Regel oder welches Gesetz</em> angewendet wurde.</li>
+        <li>Zeigt, an welcher Stelle euer Weg das rechtwinklige Dreieck bzw. den Kosinussatz nutzt.</li>
+        <li>Überlegt: Warum gilt eure Formel gleich für den ganzen Bereich <span class="math" data-tex="0^\circ\le\alpha\le180^\circ"></span> — oder brauchte es dafür einen zusätzlichen Schritt?</li>
+      </ul>
+    </div>
+  </section>
+
+</main>
+
+<footer>Kapitel V.3 &middot; Winkel und Schnittwinkel &middot; Erarbeitungspuzzle</footer>
+
+<script>
+// ================= shared vector data =================
+const VEC_A = [6,3];
+const VEC_B = [2,6];
+const A_LEN2 = VEC_A[0]*VEC_A[0] + VEC_A[1]*VEC_A[1];
+const A_DOT_B = VEC_A[0]*VEC_B[0] + VEC_A[1]*VEC_B[1];
+const S_STAR = A_DOT_B / A_LEN2;
+
+// ================= puzzle data =================
+const PIECES = {
+  A: [
+    {id:'a1', tex:"\\vec x=\\vec b-s\\cdot\\vec a", note:"Definition des Hilfsvektors \\(\\vec x\\), der senkrecht zu \\(\\vec a\\) stehen soll"},
+    {id:'a2', tex:"\\vec a\\circ(\\vec b-s\\cdot\\vec a)=0", note:"Bedingung für Orthogonalität: \\(\\vec a\\perp\\vec x\\)"},
+    {id:'a3', tex:"\\vec a\\circ\\vec b-s\\cdot(\\vec a\\circ\\vec a)=0", note:"Distributivgesetz des Skalarprodukts"},
+    {id:'a4', tex:"\\vec a\\circ\\vec b-s\\cdot|\\vec a|^2=0", note:"Es gilt \\(\\vec a\\circ\\vec a=|\\vec a|^2\\)"},
+    {id:'a5', tex:"s=\\dfrac{\\vec a\\circ\\vec b}{|\\vec a|^2}", note:"Äquivalenzumformung nach \\(s\\)"},
+    {id:'a6', tex:"\\cos(\\alpha)=\\dfrac{|s|\\cdot|\\vec a|}{|\\vec b|}", note:"Definition von Kosinus im rechtwinkligen Dreieck (Ankathete durch Hypotenuse)"},
+    {id:'a7', tex:"\\cos(\\alpha)=\\dfrac{\\left|\\frac{\\vec a\\circ\\vec b}{|\\vec a|^{2}}\\right|\\cdot|\\vec a|}{|\\vec b|}=\\dfrac{|\\vec a\\circ\\vec b|}{|\\vec a|\\cdot|\\vec b|}", note:"Einsetzen von \\(s\\) und Kürzen"},
+    {id:'a8', tex:"\\cos(\\alpha)=\\dfrac{\\vec a\\circ\\vec b}{|\\vec a|\\cdot|\\vec b|},\\ \\ 0^\\circ\\le\\alpha\\le180^\\circ", note:"Erweiterung auf alle Winkel: Betragsstriche im Zähler weglassen"}
+  ],
+  B: [
+    {id:'b1', tex:"\\text{Betrachte das Dreieck mit den Seiten } |\\vec a|,\\ |\\vec b|\\ \\text{und}\\ |\\vec b-\\vec a|", note:"Ansatz: Kosinussatz im Vektordreieck"},
+    {id:'b2', tex:"|\\vec b-\\vec a|^2=|\\vec a|^2+|\\vec b|^2-2\\cdot|\\vec a|\\cdot|\\vec b|\\cdot\\cos(\\alpha)", note:"Kosinussatz, angewendet auf das Dreieck"},
+    {id:'b3', tex:"|\\vec b-\\vec a|^2=(\\vec b-\\vec a)\\circ(\\vec b-\\vec a)", note:"Betrag zum Quadrat als Skalarprodukt eines Vektors mit sich selbst"},
+    {id:'b4', tex:"(\\vec b-\\vec a)\\circ(\\vec b-\\vec a)=\\vec b\\circ\\vec b-2\\cdot(\\vec a\\circ\\vec b)+\\vec a\\circ\\vec a", note:"Distributivgesetz (Ausmultiplizieren)"},
+    {id:'b5', tex:"=|\\vec b|^2-2\\cdot(\\vec a\\circ\\vec b)+|\\vec a|^2", note:"Es gilt \\(\\vec a\\circ\\vec a=|\\vec a|^2\\) und \\(\\vec b\\circ\\vec b=|\\vec b|^2\\)"},
+    {id:'b6', tex:"|\\vec a|^2+|\\vec b|^2-2|\\vec a||\\vec b|\\cos(\\alpha)=|\\vec a|^2+|\\vec b|^2-2(\\vec a\\circ\\vec b)", note:"Beide Ausdrücke für \\(|\\vec b-\\vec a|^2\\) gleichsetzen"},
+    {id:'b7', tex:"-2|\\vec a||\\vec b|\\cos(\\alpha)=-2(\\vec a\\circ\\vec b)", note:"\\(|\\vec a|^2\\) und \\(|\\vec b|^2\\) auf beiden Seiten subtrahieren"},
+    {id:'b8', tex:"\\cos(\\alpha)=\\dfrac{\\vec a\\circ\\vec b}{|\\vec a|\\cdot|\\vec b|},\\ \\ 0^\\circ\\le\\alpha\\le180^\\circ", note:"Durch \\(-2|\\vec a||\\vec b|\\) teilen"}
+  ]
+};
+
+let currentMethod = null;
+let draggedEl = null;
+
+// ================= KaTeX helpers =================
+function renderTex(el){
+  const tex = el.getAttribute('data-tex');
+  try{ katex.render(tex, el, {throwOnError:false}); }
+  catch(e){ el.textContent = tex; }
+}
+function renderAllStatic(){
+  document.querySelectorAll('.math[data-tex]').forEach(renderTex);
+}
+
+// ================= puzzle logic =================
+function shuffle(arr){
+  const a = arr.slice();
+  for(let i=a.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [a[i],a[j]]=[a[j],a[i]];
+  }
+  if(a.every((v,i)=>v===arr[i])) return shuffle(arr);
+  return a;
+}
+
+function buildPieceNode(piece){
+  const li = document.createElement('li');
+  li.className = 'piece';
+  li.dataset.id = piece.id;
+
+  const handle = document.createElement('div');
+  handle.className = 'handle';
+  handle.innerHTML = '&#10022;&#10022;';
+  handle.style.fontSize = '1rem';
+  handle.setAttribute('aria-label','Ziehen zum Sortieren');
+
+  const body = document.createElement('div');
+  body.className = 'piece-body';
+  const mathDiv = document.createElement('div');
+  mathDiv.className = 'piece-math';
+  const note = document.createElement('div');
+  note.className = 'piece-note';
+  body.appendChild(mathDiv);
+  body.appendChild(note);
+
+  const updown = document.createElement('div');
+  updown.className = 'updown';
+  const up = document.createElement('button');
+  up.type='button'; up.textContent='▲';
+  up.onclick = ()=>moveNode(li,-1);
+  const down = document.createElement('button');
+  down.type='button'; down.textContent='▼';
+  down.onclick = ()=>moveNode(li,1);
+  updown.appendChild(up); updown.appendChild(down);
+
+  li.appendChild(handle);
+  li.appendChild(body);
+  li.appendChild(updown);
+
+  try{ katex.render(piece.tex, mathDiv, {throwOnError:false, displayMode:false}); }
+  catch(e){ mathDiv.textContent = piece.tex; }
+
+  renderInlineNote(note, piece.note);
+  attachDrag(handle, li);
+  return li;
+}
+
+function renderInlineNote(el, raw){
+  el.innerHTML = '';
+  const parts = raw.split(/(\\\([^)]*\\\))/g);
+  parts.forEach(p=>{
+    if(p.startsWith('\\(') && p.endsWith('\\)')){
+      const span = document.createElement('span');
+      try{ katex.render(p.slice(2,-2), span, {throwOnError:false}); }
+      catch(e){ span.textContent = p; }
+      el.appendChild(span);
+    } else {
+      el.appendChild(document.createTextNode(p));
+    }
+  });
+}
+
+function moveNode(li, dir){
+  const list = document.getElementById('piece-list');
+  if(dir === -1 && li.previousElementSibling){
+    list.insertBefore(li, li.previousElementSibling);
+  } else if(dir === 1 && li.nextElementSibling){
+    list.insertBefore(li.nextElementSibling, li);
+  }
+  clearFeedback();
+}
+
+function attachDrag(handle, li){
+  handle.addEventListener('pointerdown', (e)=>{
+    draggedEl = li;
+    li.classList.add('dragging');
+    handle.setPointerCapture(e.pointerId);
+    handle.addEventListener('pointermove', onMove);
+    handle.addEventListener('pointerup', onUp);
+    handle.addEventListener('pointercancel', onUp);
+  });
+
+  function onMove(e){
+    if(!draggedEl) return;
+    const list = document.getElementById('piece-list');
+    const siblings = [...list.querySelectorAll('.piece:not(.dragging)')];
+    for(const sib of siblings){
+      const rect = sib.getBoundingClientRect();
+      if(e.clientY > rect.top && e.clientY < rect.bottom){
+        if(e.clientY < rect.top + rect.height/2){
+          list.insertBefore(draggedEl, sib);
+        } else {
+          list.insertBefore(draggedEl, sib.nextSibling);
+        }
+        break;
+      }
+    }
+  }
+  function onUp(e){
+    if(draggedEl){ draggedEl.classList.remove('dragging'); }
+    draggedEl = null;
+    handle.removeEventListener('pointermove', onMove);
+    handle.removeEventListener('pointerup', onUp);
+    handle.removeEventListener('pointercancel', onUp);
+    clearFeedback();
+  }
+}
+
+function clearFeedback(){
+  document.querySelectorAll('#piece-list .piece').forEach(p=>{
+    p.classList.remove('correct','incorrect');
+  });
+  document.getElementById('feedback').textContent = '';
+  document.getElementById('feedback').className = '';
+  document.getElementById('success-panel').style.display = 'none';
+}
+
+function renderPuzzle(method){
+  const list = document.getElementById('piece-list');
+  list.innerHTML = '';
+  const shuffled = shuffle(PIECES[method]);
+  shuffled.forEach(p => list.appendChild(buildPieceNode(p)));
+  clearFeedback();
+}
+
+function startPuzzle(method){
+  currentMethod = method;
+  document.getElementById('method-choice').style.display = 'none';
+  document.getElementById('puzzle-section').style.display = 'block';
+  const label = document.getElementById('method-label');
+  label.textContent = method === 'A' ? 'Methode A · Orthogonalprojektion' : 'Methode B · Kosinussatz';
+  label.className = 'method-label ' + method.toLowerCase();
+  document.getElementById('sim-A-panel').style.display = method === 'A' ? 'block' : 'none';
+  document.getElementById('sim-B-panel').style.display = method === 'B' ? 'block' : 'none';
+  if(method === 'A') updateSimA(0); else updateSimB(0);
+  renderPuzzle(method);
+}
+
+function backToChoice(){
+  document.getElementById('method-choice').style.display = 'block';
+  document.getElementById('puzzle-section').style.display = 'none';
+}
+
+function shuffleCurrent(){
+  if(currentMethod) renderPuzzle(currentMethod);
+}
+
+function checkOrder(){
+  const correctOrder = PIECES[currentMethod].map(p=>p.id);
+  const list = document.getElementById('piece-list');
+  const items = [...list.querySelectorAll('.piece')];
+  let correctCount = 0;
+  items.forEach((el, i)=>{
+    el.classList.remove('correct','incorrect');
+    if(el.dataset.id === correctOrder[i]){
+      el.classList.add('correct');
+      correctCount++;
+    } else {
+      el.classList.add('incorrect');
+    }
+  });
+  const fb = document.getElementById('feedback');
+  const panel = document.getElementById('success-panel');
+  if(correctCount === correctOrder.length){
+    fb.textContent = 'Alle 8 Schritte an der richtigen Stelle – stark gemacht!';
+    fb.className = 'ok';
+    panel.style.display = 'block';
+    panel.scrollIntoView({behavior:'smooth', block:'nearest'});
+  } else {
+    fb.textContent = correctCount + ' von ' + correctOrder.length + ' Schritten stehen bereits richtig. Weiter versuchen!';
+    fb.className = 'mid';
+    panel.style.display = 'none';
+  }
+}
+
+// ================= generic SVG helpers =================
+const NS = 'http://www.w3.org/2000/svg';
+function svgEl(tag, attrs){
+  const el = document.createElementNS(NS, tag);
+  for(const k in attrs){ el.setAttribute(k, attrs[k]); }
+  return el;
+}
+function addArrowMarker(svg, id, color){
+  let defs = svg.querySelector('defs');
+  if(!defs){ defs = svgEl('defs',{}); svg.appendChild(defs); }
+  const marker = svgEl('marker',{ id, markerWidth:8, markerHeight:8, refX:6, refY:3, orient:'auto' });
+  const path = svgEl('path',{ d:'M0,0 L0,6 L7,3 z', fill:color });
+  marker.appendChild(path);
+  defs.appendChild(marker);
+}
+function screenToMath(svg, clientX, clientY, ox, oy, scale){
+  const pt = svg.createSVGPoint();
+  pt.x = clientX; pt.y = clientY;
+  const inv = svg.getScreenCTM().inverse();
+  const loc = pt.matrixTransform(inv);
+  return [ (loc.x - ox)/scale, (oy - loc.y)/scale ];
+}
+
+// ================= intro diagram =================
+function drawIntroSvg(){
+  const svg = document.getElementById('intro-svg');
+  const scale = 22, ox = 25, oy = 175;
+  function pt(x,y){ return [ox + x*scale, oy - y*scale]; }
+
+  svg.appendChild(svgEl('line',{x1:0,y1:oy,x2:210,y2:oy,stroke:'#8a8f98','stroke-width':1.2}));
+  svg.appendChild(svgEl('line',{x1:ox,y1:10,x2:ox,y2:190,stroke:'#8a8f98','stroke-width':1.2}));
+
+  addArrowMarker(svg,'arr-intro-a','#2b6cb0');
+  addArrowMarker(svg,'arr-intro-b','#2f9e44');
+  const [ax,ay] = pt(6,3), [bx,by] = pt(2,6);
+  const la = svgEl('line',{x1:ox,y1:oy,x2:ax,y2:ay,stroke:'#2b6cb0','stroke-width':2.6});
+  la.setAttribute('marker-end','url(#arr-intro-a)'); svg.appendChild(la);
+  const lb = svgEl('line',{x1:ox,y1:oy,x2:bx,y2:by,stroke:'#2f9e44','stroke-width':2.6});
+  lb.setAttribute('marker-end','url(#arr-intro-b)'); svg.appendChild(lb);
+
+  const ta = svgEl('text',{x:ax+4,y:ay-2,fill:'#2b6cb0','font-size':14}); ta.textContent='a'; svg.appendChild(ta);
+  const tb = svgEl('text',{x:bx-14,y:by-4,fill:'#2f9e44','font-size':14}); tb.textContent='b'; svg.appendChild(tb);
+
+  const r = 26;
+  const a1 = Math.atan2(3,6), a2 = Math.atan2(6,2);
+  const sx = ox + r*Math.cos(a1), sy = oy - r*Math.sin(a1);
+  const ex = ox + r*Math.cos(a2), ey = oy - r*Math.sin(a2);
+  const arc = svgEl('path',{ d:`M ${sx} ${sy} A ${r} ${r} 0 0 0 ${ex} ${ey}`, fill:'none', stroke:'#d6336c','stroke-width':2 });
+  svg.appendChild(arc);
+  const midA = (a1+a2)/2;
+  const talpha = svgEl('text',{x:ox + (r+14)*Math.cos(midA)-5, y:oy - (r+14)*Math.sin(midA), fill:'#d6336c','font-size':15}); talpha.textContent='α'; svg.appendChild(talpha);
+  const to = svgEl('text',{x:ox-12,y:oy+14,fill:'#22262e','font-size':12}); to.textContent='O'; svg.appendChild(to);
+}
+
+// ================= Simulation A: s and x =================
+const SIMA_SCALE = 24, SIMA_OX = 50, SIMA_OY = 205;
+function simAPt(x,y){ return [SIMA_OX + x*SIMA_SCALE, SIMA_OY - y*SIMA_SCALE]; }
+let simA_point, simA_xline, simA_svg;
+
+function initSimA(){
+  simA_svg = document.getElementById('simA-svg');
+  const svg = simA_svg;
+
+  // guide line (all points s*a)
+  const [gx1,gy1] = simAPt(-0.25*VEC_A[0], -0.25*VEC_A[1]);
+  const [gx2,gy2] = simAPt(1.55*VEC_A[0], 1.55*VEC_A[1]);
+  svg.appendChild(svgEl('line',{x1:gx1,y1:gy1,x2:gx2,y2:gy2,stroke:'#c3c8d0','stroke-width':2,'stroke-dasharray':'5,5'}));
+
+  // origin marker
+  const [ox0,oy0] = simAPt(0,0);
+  const oDot = svgEl('circle',{cx:ox0,cy:oy0,r:2.5,fill:'#22262e'}); svg.appendChild(oDot);
+  const oLbl = svgEl('text',{x:ox0-12,y:oy0+14,'font-size':12,fill:'#22262e'}); oLbl.textContent='O'; svg.appendChild(oLbl);
+
+  // vector a
+  addArrowMarker(svg,'arr-simA-a','#2b6cb0');
+  const [ax,ay] = simAPt(VEC_A[0],VEC_A[1]);
+  const la = svgEl('line',{x1:ox0,y1:oy0,x2:ax,y2:ay,stroke:'#2b6cb0','stroke-width':2.6});
+  la.setAttribute('marker-end','url(#arr-simA-a)'); svg.appendChild(la);
+  const talab = svgEl('text',{x:ax+4,y:ay-2,'font-size':13,fill:'#2b6cb0'}); talab.textContent='a'; svg.appendChild(talab);
+
+  // vector b
+  addArrowMarker(svg,'arr-simA-b','#2f9e44');
+  const [bx,by] = simAPt(VEC_B[0],VEC_B[1]);
+  const lb = svgEl('line',{x1:ox0,y1:oy0,x2:bx,y2:by,stroke:'#2f9e44','stroke-width':2.6});
+  lb.setAttribute('marker-end','url(#arr-simA-b)'); svg.appendChild(lb);
+  const tblab = svgEl('text',{x:bx-16,y:by-6,'font-size':13,fill:'#2f9e44'}); tblab.textContent='b'; svg.appendChild(tblab);
+  const btip = svgEl('circle',{cx:bx,cy:by,r:3.5,fill:'#2f9e44'}); svg.appendChild(btip);
+
+  // x vector (from P to b-tip)
+  addArrowMarker(svg,'arr-simA-x','#a534d6');
+  simA_xline = svgEl('line',{x1:ox0,y1:oy0,x2:bx,y2:by,stroke:'#a534d6','stroke-width':2.6});
+  simA_xline.setAttribute('marker-end','url(#arr-simA-x)');
+  svg.appendChild(simA_xline);
+
+  // draggable point P
+  simA_point = svgEl('circle',{cx:ox0,cy:oy0,r:8,fill:'#e8a800',stroke:'#2a1d00','stroke-width':1.5,class:'drag-point'});
+  svg.appendChild(simA_point);
+
+  simA_point.addEventListener('pointerdown', (e)=>{
+    simA_point.setPointerCapture(e.pointerId);
+    function move(ev){
+      const [mx,my] = screenToMath(simA_svg, ev.clientX, ev.clientY, SIMA_OX, SIMA_OY, SIMA_SCALE);
+      let s = (mx*VEC_A[0] + my*VEC_A[1]) / A_LEN2;
+      s = Math.max(-0.25, Math.min(1.55, s));
+      updateSimA(s);
+    }
+    function up(){
+      simA_point.removeEventListener('pointermove', move);
+      simA_point.removeEventListener('pointerup', up);
+    }
+    simA_point.addEventListener('pointermove', move);
+    simA_point.addEventListener('pointerup', up);
+  });
+
+  document.getElementById('simA-slider').addEventListener('input', function(){
+    updateSimA(parseFloat(this.value));
+  });
+}
+
+function updateSimA(s){
+  const Px = s*VEC_A[0], Py = s*VEC_A[1];
+  const [psx,psy] = simAPt(Px,Py);
+  simA_point.setAttribute('cx',psx); simA_point.setAttribute('cy',psy);
+
+  const [btx,bty] = simAPt(VEC_B[0],VEC_B[1]);
+  simA_xline.setAttribute('x1',psx); simA_xline.setAttribute('y1',psy);
+  simA_xline.setAttribute('x2',btx); simA_xline.setAttribute('y2',bty);
+
+  const xVec = [VEC_B[0]-Px, VEC_B[1]-Py];
+  const dot = VEC_A[0]*xVec[0] + VEC_A[1]*xVec[1];
+  const perpendicular = Math.abs(dot) < 0.4;
+
+  simA_xline.setAttribute('stroke', perpendicular ? '#2f9e44' : '#a534d6');
+  simA_point.setAttribute('fill', perpendicular ? '#2f9e44' : '#e8a800');
+
+  document.getElementById('simA-s-val').textContent = s.toFixed(2);
+  document.getElementById('simA-dot-val').textContent = dot.toFixed(2);
+  const hint = document.getElementById('simA-hint');
+  if(perpendicular){
+    hint.textContent = '✓ x steht (fast) senkrecht auf a — das ist genau der gesuchte Fall (s ≈ ' + S_STAR.toFixed(3) + ')!';
+    hint.className = 'sim-hint ok';
+  } else {
+    hint.textContent = 'Verschiebe den Punkt, bis a∘x = 0 wird.';
+    hint.className = 'sim-hint mid';
+  }
+  document.getElementById('simA-slider').value = s;
+}
+
+// ================= Simulation B: b - a =================
+const SIMB_SCALE = 24, SIMB_OX = 110, SIMB_OY = 205;
+function simBPt(x,y){ return [SIMB_OX + x*SIMB_SCALE, SIMB_OY - y*SIMB_SCALE]; }
+let simB_line, simB_label;
+
+function initSimB(){
+  const svg = document.getElementById('simB-svg');
+  const [ox0,oy0] = simBPt(0,0);
+  svg.appendChild(svgEl('circle',{cx:ox0,cy:oy0,r:2.5,fill:'#22262e'}));
+  svg.appendChild((()=>{ const t=svgEl('text',{x:ox0-12,y:oy0+14,'font-size':12,fill:'#22262e'}); t.textContent='O'; return t; })());
+
+  addArrowMarker(svg,'arr-simB-a','#2b6cb0');
+  const [ax,ay] = simBPt(VEC_A[0],VEC_A[1]);
+  const la = svgEl('line',{x1:ox0,y1:oy0,x2:ax,y2:ay,stroke:'#2b6cb0','stroke-width':2.6});
+  la.setAttribute('marker-end','url(#arr-simB-a)'); svg.appendChild(la);
+  svg.appendChild((()=>{ const t=svgEl('text',{x:ax+4,y:ay-2,'font-size':13,fill:'#2b6cb0'}); t.textContent='a'; return t; })());
+
+  addArrowMarker(svg,'arr-simB-b','#2f9e44');
+  const [bx,by] = simBPt(VEC_B[0],VEC_B[1]);
+  const lb = svgEl('line',{x1:ox0,y1:oy0,x2:bx,y2:by,stroke:'#2f9e44','stroke-width':2.6});
+  lb.setAttribute('marker-end','url(#arr-simB-b)'); svg.appendChild(lb);
+  svg.appendChild((()=>{ const t=svgEl('text',{x:bx-16,y:by-6,'font-size':13,fill:'#2f9e44'}); t.textContent='b'; return t; })());
+
+  // static faint baseline of the triangle side (A to Btip)
+  svg.appendChild(svgEl('line',{x1:ax,y1:ay,x2:bx,y2:by,stroke:'#c3c8d0','stroke-width':1.6,'stroke-dasharray':'4,4'}));
+
+  // moving highlighted arrow for b - a
+  addArrowMarker(svg,'arr-simB-diff','#d6336c');
+  simB_line = svgEl('line',{x1:ax,y1:ay,x2:bx,y2:by,stroke:'#d6336c','stroke-width':3});
+  simB_line.setAttribute('marker-end','url(#arr-simB-diff)');
+  svg.appendChild(simB_line);
+  simB_label = svgEl('text',{x:(ax+bx)/2,y:(ay+by)/2-8,'font-size':13,fill:'#d6336c'});
+  simB_label.textContent = 'b − a';
+  svg.appendChild(simB_label);
+
+  document.getElementById('simB-slider').addEventListener('input', function(){
+    updateSimB(parseFloat(this.value));
+  });
+}
+
+function updateSimB(t){
+  const startX = VEC_A[0]*(1-t), startY = VEC_A[1]*(1-t);
+  const diff = [VEC_B[0]-VEC_A[0], VEC_B[1]-VEC_A[1]];
+  const endX = startX+diff[0], endY = startY+diff[1];
+  const [sx,sy] = simBPt(startX,startY);
+  const [ex,ey] = simBPt(endX,endY);
+  simB_line.setAttribute('x1',sx); simB_line.setAttribute('y1',sy);
+  simB_line.setAttribute('x2',ex); simB_line.setAttribute('y2',ey);
+  simB_label.setAttribute('x',(sx+ex)/2 - 14);
+  simB_label.setAttribute('y',(sy+ey)/2 - 8);
+
+  document.getElementById('simB-t-val').textContent = t.toFixed(2);
+  const len = Math.hypot(diff[0],diff[1]);
+  document.getElementById('simB-len-val').textContent = len.toFixed(2);
+  document.getElementById('simB-slider').value = t;
+}
+
+document.addEventListener('DOMContentLoaded', ()=>{
+  renderAllStatic();
+  drawIntroSvg();
+  initSimA();
+  initSimB();
+  updateSimA(0);
+  updateSimB(0);
+});
+</script>
+</body>
+</html>

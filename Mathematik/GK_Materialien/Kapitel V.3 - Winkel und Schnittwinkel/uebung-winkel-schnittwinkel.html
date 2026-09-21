@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>V.3 Winkel und Schnittwinkel – Übung</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Source+Sans+3:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --gold:#e8a800;
+    --gold-deep:#b98300;
+    --blue:#2b6cb0;
+    --green:#2f9e44;
+    --orange:#e8720c;
+    --purple:#8a4fd1;
+    --pink:#d6336c;
+    --ink:#22262e;
+    --ink-soft:#565d68;
+    --paper:#ffffff;
+    --bg:#f4f5f7;
+    --line:#dde1e6;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    font-family:'Source Sans 3', system-ui, sans-serif;
+    background:var(--bg);
+    color:var(--ink);
+    line-height:1.55;
+    padding-bottom:60px;
+  }
+  h1,h2,h3{ font-family:'Fraunces', Georgia, serif; font-weight:600; margin:0 0 6px 0; }
+  header{
+    background:linear-gradient(135deg, var(--gold) 0%, var(--gold-deep) 100%);
+    color:#2a1d00;
+    padding:22px clamp(16px,4vw,48px);
+  }
+  header .eyebrow{ font-size:0.85rem; font-weight:600; color:#4a3400; margin-bottom:2px; }
+  header h1{ font-size:clamp(1.3rem, 3vw, 1.9rem); color:#221800; }
+  main{ max-width:920px; margin:0 auto; padding:22px clamp(14px,4vw,32px); }
+  section{margin-bottom:38px;}
+  .card{ background:var(--paper); border:1px solid var(--line); border-radius:10px; padding:18px 20px; }
+  .lead{ color:var(--ink-soft); font-size:0.98rem; }
+
+  #intro-diagram{display:flex; align-items:center; gap:24px; flex-wrap:wrap;}
+  #intro-diagram svg{flex-shrink:0;}
+  .formula-box{
+    display:inline-block;
+    background:#f3f8fd;
+    border:1.5px solid var(--blue);
+    border-radius:8px;
+    padding:8px 14px;
+    font-size:1.02rem;
+    margin:4px 8px 4px 0;
+  }
+
+  .ref-grid{ display:grid; grid-template-columns:1fr; gap:14px; }
+  .ref-card{
+    border-left:4px solid var(--gold-deep);
+    background:#fff9ec;
+    border-radius:8px;
+    padding:14px 18px;
+  }
+  .ref-card h3{ font-size:1.02rem; margin-bottom:8px; }
+  .ref-card .steps{ font-size:0.95rem; }
+  .ref-card .steps div{ margin-bottom:4px; }
+
+  .tier-heading{ display:flex; align-items:center; gap:10px; margin-bottom:14px; }
+  .tier-chip{
+    font-weight:700; font-size:0.82rem; letter-spacing:.02em;
+    padding:4px 12px; border-radius:999px; color:#fff;
+  }
+  .tier-chip.a{ background:var(--green); }
+  .tier-chip.b{ background:var(--orange); }
+  .tier-chip.c{ background:var(--purple); }
+
+  .task{
+    background:var(--paper);
+    border:1px solid var(--line);
+    border-radius:10px;
+    padding:16px 18px;
+    margin-bottom:14px;
+  }
+  .task.a{ border-left:5px solid var(--green); }
+  .task.b{ border-left:5px solid var(--orange); }
+  .task.c{ border-left:5px solid var(--purple); }
+  .task h4{ font-family:'Fraunces', Georgia, serif; font-size:1.02rem; margin:0 0 8px 0; }
+  .task p{ margin:0 0 8px 0; }
+  .task .sub{ margin:6px 0 6px 18px; }
+
+  details{ margin-top:8px; border-top:1px dashed var(--line); padding-top:6px; }
+  details summary{
+    cursor:pointer; font-weight:600; font-size:0.9rem; color:var(--ink-soft);
+    list-style:none;
+  }
+  details summary::-webkit-details-marker{ display:none; }
+  details summary::before{ content:"▸ "; }
+  details[open] summary::before{ content:"▾ "; }
+  details.tipp summary{ color:var(--gold-deep); }
+  details.loesung summary{ color:var(--blue); }
+  details .inner{ padding:8px 4px 4px 4px; font-size:0.95rem; }
+  details .inner div{ margin-bottom:4px; }
+
+  .stu-card{
+    border:1.5px solid var(--line);
+    border-radius:8px;
+    padding:10px 14px;
+    margin-bottom:8px;
+    background:#fafbfc;
+  }
+  .stu-card .name{ font-weight:700; font-size:0.9rem; }
+
+  .checklist{ list-style:none; margin:0; padding:0; }
+  .checklist li{ display:flex; align-items:flex-start; gap:10px; padding:7px 0; border-bottom:1px solid var(--line); }
+  .checklist li:last-child{ border-bottom:none; }
+  .checklist input{ width:18px; height:18px; margin-top:2px; accent-color:var(--gold-deep); flex-shrink:0; }
+
+  footer{ text-align:center; color:var(--ink-soft); font-size:0.82rem; padding:20px; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="eyebrow">Kapitel V.3 &middot; Winkel und Schnittwinkel</div>
+  <h1>Übung: Winkel zwischen Vektoren &amp; Schnittwinkel</h1>
+</header>
+
+<main>
+
+  <section id="intro">
+    <div class="card" id="intro-diagram">
+      <svg id="intro-svg" width="220" height="190" viewBox="0 0 230 200"></svg>
+      <div>
+        <p class="lead" style="margin-top:0;">Erinnerung an das Einstiegsbeispiel: <span class="math" data-tex="\vec a=\binom{6}{3}"></span>, <span class="math" data-tex="\vec b=\binom{2}{6}"></span>, <span class="math" data-tex="\alpha=45^\circ"></span>.</p>
+        <div class="formula-box"><span class="math" data-tex="\cos(\alpha)=\dfrac{\vec a\circ\vec b}{|\vec a|\cdot|\vec b|},\ \ 0^\circ\!\le\!\alpha\!\le\!180^\circ"></span></div>
+        <div class="formula-box"><span class="math" data-tex="\cos(\alpha)=\dfrac{|\vec u\circ\vec v|}{|\vec u|\cdot|\vec v|},\ \ 0^\circ\!\le\!\alpha\!\le\!90^\circ\ \text{(Schnittwinkel)}"></span></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="reference">
+    <h2 style="font-size:1.15rem;">So löst das Buch solche Aufgaben</h2>
+    <div class="ref-grid">
+      <div class="ref-card">
+        <h3>Beispiel 1 &middot; Winkelgrößen im Dreieck</h3>
+        <p class="lead" style="margin:0 0 8px 0;">Dreieck ABC mit <span class="math" data-tex="A(1|-1|-5),\ B(4|1|-4),\ C(5|-1|-2)"></span>.</p>
+        <div class="steps">
+          <div><span class="math" data-tex="\vec{AB}=\begin{pmatrix}3\\2\\1\end{pmatrix},\ \vec{AC}=\begin{pmatrix}4\\0\\3\end{pmatrix},\ |\vec{AB}|=\sqrt{14},\ |\vec{AC}|=5"></span></div>
+          <div><span class="math" data-tex="\cos(\alpha)=\dfrac{\vec{AB}\circ\vec{AC}}{|\vec{AB}|\cdot|\vec{AC}|}=\dfrac{12+0+3}{\sqrt{14}\cdot5}=\dfrac{15}{5\sqrt{14}}\ \Rightarrow\ \alpha\approx36{,}7^\circ"></span></div>
+        </div>
+      </div>
+
+      <div class="ref-card">
+        <h3>Beispiel 2 &middot; Fehlende Koordinate bei gegebenem (auch überstumpfem) Winkel</h3>
+        <p class="lead" style="margin:0 0 8px 0;">Ist der gegebene Winkel <span class="math" data-tex="\triangleleft PQR"></span> größer als <span class="math" data-tex="180^\circ"></span>, ist der eigentliche Winkel zwischen den Vektoren <span class="math" data-tex="360^\circ"></span> minus diesem Wert.</p>
+        <div class="steps">
+          <div>Beispiel: <span class="math" data-tex="\triangleleft PQR=240^\circ\ \Rightarrow\ \text{Winkel zwischen }\vec{QP},\vec{QR}=360^\circ-240^\circ=120^\circ"></span></div>
+          <div>Dann: <span class="math" data-tex="\cos(120^\circ)=-\tfrac{1}{2}=\dfrac{\vec{QP}\circ\vec{QR}}{|\vec{QP}|\cdot|\vec{QR}|}"></span> nach der fehlenden Koordinate auflösen; beim Quadrieren entstehende Lösungen mit dem Vorzeichen der ursprünglichen Gleichung prüfen.</div>
+        </div>
+      </div>
+
+      <div class="ref-card">
+        <h3>Beispiel 3 &middot; Schnittwinkel zweier Geraden</h3>
+        <p class="lead" style="margin:0 0 8px 0;"><span class="math" data-tex="g:\vec x=\begin{pmatrix}1\\0\\1\end{pmatrix}+r\begin{pmatrix}-1\\2\\-1\end{pmatrix},\ \ h:\vec x=\begin{pmatrix}0\\1\\-3\end{pmatrix}+s\begin{pmatrix}0\\1\\3\end{pmatrix}"></span></p>
+        <div class="steps">
+          <div><span class="math" data-tex="\cos(\alpha)=\dfrac{|\vec u\circ\vec v|}{|\vec u|\cdot|\vec v|}=\dfrac{|0+2-3|}{\sqrt{6}\cdot\sqrt{10}}=\dfrac{1}{\sqrt{60}}\approx0{,}129\ \Rightarrow\ \alpha\approx82{,}6^\circ"></span></div>
+          <div class="lead">Beachte: Im Zähler stehen <strong>Betragsstriche</strong> – der Schnittwinkel ist immer der Winkel <span class="math" data-tex="\le90^\circ"></span>.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============== TIER A ============== -->
+  <section id="tier-a">
+    <div class="tier-heading">
+      <span class="tier-chip a">STUFE A &middot; GRUNDLAGEN</span>
+    </div>
+
+    <div class="task a">
+      <h4>A1 &middot; Winkel zwischen Vektoren</h4>
+      <p>Berechnen Sie die Größe des Winkels zwischen den Vektoren <span class="math" data-tex="\vec a"></span> und <span class="math" data-tex="\vec b"></span>.</p>
+      <div class="sub"><span class="math" data-tex="\text{a) }\vec a=\binom{4}{0},\ \vec b=\binom{3}{3}"></span></div>
+      <div class="sub"><span class="math" data-tex="\text{b) }\vec a=\begin{pmatrix}1\\2\\2\end{pmatrix},\ \vec b=\begin{pmatrix}2\\-1\\2\end{pmatrix}"></span></div>
+      <div class="sub"><span class="math" data-tex="\text{c) }\vec a=\begin{pmatrix}2\\-1\\3\end{pmatrix},\ \vec b=\begin{pmatrix}1\\2\\1\end{pmatrix}"></span></div>
+      <details class="tipp"><summary>Tipp</summary><div class="inner">
+        <div>Gehe wie in Beispiel 1 vor: erst <span class="math" data-tex="\vec a\circ\vec b"></span>, dann <span class="math" data-tex="|\vec a|"></span> und <span class="math" data-tex="|\vec b|"></span>, dann einsetzen.</div>
+      </div></details>
+      <details class="loesung"><summary>Lösung</summary><div class="inner">
+        <div>a) <span class="math" data-tex="\cos(\alpha)=\dfrac{12}{4\cdot\sqrt{18}}\approx0{,}707\ \Rightarrow\ \alpha=45^\circ"></span></div>
+        <div>b) <span class="math" data-tex="\cos(\alpha)=\dfrac{4}{3\cdot3}\approx0{,}444\ \Rightarrow\ \alpha\approx63{,}6^\circ"></span></div>
+        <div>c) <span class="math" data-tex="\cos(\alpha)=\dfrac{3}{\sqrt{14}\cdot\sqrt{6}}\approx0{,}327\ \Rightarrow\ \alpha\approx70{,}9^\circ"></span></div>
+      </div></details>
+    </div>
+
+    <div class="task a">
+      <h4>A2 &middot; Orthogonalität ohne vollständige Rechnung erkennen</h4>
+      <p>Prüfen Sie, ob die folgenden Vektorpaare orthogonal sind – ohne den Winkel vollständig zu berechnen.</p>
+      <div class="sub"><span class="math" data-tex="\text{a) }\vec a=\begin{pmatrix}3\\-2\\1\end{pmatrix},\ \vec b=\begin{pmatrix}1\\4\\5\end{pmatrix}"></span></div>
+      <div class="sub"><span class="math" data-tex="\text{b) }\vec a=\begin{pmatrix}2\\3\\-1\end{pmatrix},\ \vec b=\begin{pmatrix}1\\-1\\2\end{pmatrix}"></span></div>
+      <details class="tipp"><summary>Tipp</summary><div class="inner">
+        <div>Es gilt <span class="math" data-tex="\vec a\perp\vec b\ \Leftrightarrow\ \vec a\circ\vec b=0"></span>. Ist das Skalarprodukt negativ, ist der Winkel stumpf (aber nicht orthogonal).</div>
+      </div></details>
+      <details class="loesung"><summary>Lösung</summary><div class="inner">
+        <div>a) <span class="math" data-tex="\vec a\circ\vec b=3-8+5=0\ \Rightarrow"></span> orthogonal.</div>
+        <div>b) <span class="math" data-tex="\vec a\circ\vec b=2-3-2=-3\ne0"></span>, also nicht orthogonal (Winkel ist stumpf, <span class="math" data-tex="\alpha\approx109{,}1^\circ"></span>).</div>
+      </div></details>
+    </div>
+
+    <div class="task a">
+      <h4>A3 &middot; Schnittwinkel zweier Geraden</h4>
+      <p>Berechnen Sie die Größe des Schnittwinkels der Geraden g und h mit den Richtungsvektoren <span class="math" data-tex="\vec u"></span> und <span class="math" data-tex="\vec v"></span>.</p>
+      <div class="sub"><span class="math" data-tex="\text{a) }\vec u=\begin{pmatrix}1\\1\\0\end{pmatrix},\ \vec v=\begin{pmatrix}1\\-1\\0\end{pmatrix}"></span></div>
+      <div class="sub"><span class="math" data-tex="\text{b) }\vec u=\begin{pmatrix}1\\1\\0\end{pmatrix},\ \vec v=\begin{pmatrix}2\\1\\0\end{pmatrix}"></span></div>
+      <details class="tipp"><summary>Tipp</summary><div class="inner">
+        <div>Wie in Beispiel 3: Betragsstriche im Zähler nicht vergessen – der Schnittwinkel liegt immer zwischen <span class="math" data-tex="0^\circ"></span> und <span class="math" data-tex="90^\circ"></span>.</div>
+      </div></details>
+      <details class="loesung"><summary>Lösung</summary><div class="inner">
+        <div>a) <span class="math" data-tex="\cos(\alpha)=\dfrac{|1-1+0|}{\sqrt2\cdot\sqrt2}=0\ \Rightarrow\ \alpha=90^\circ"></span></div>
+        <div>b) <span class="math" data-tex="\cos(\alpha)=\dfrac{|2+1+0|}{\sqrt2\cdot\sqrt5}\approx0{,}949\ \Rightarrow\ \alpha\approx18{,}4^\circ"></span></div>
+      </div></details>
+    </div>
+  </section>
+
+  <!-- ============== TIER B ============== -->
+  <section id="tier-b">
+    <div class="tier-heading">
+      <span class="tier-chip b">STUFE B &middot; ANWENDUNG IN GEOMETRISCHEN FIGUREN</span>
+    </div>
+
+    <div class="task b">
+      <h4>B1 &middot; Innenwinkel eines Dreiecks</h4>
+      <p>Gegeben ist das Dreieck ABC mit <span class="math" data-tex="A(2|1|0),\ B(5|1|4),\ C(1|4|3)"></span>. Berechnen Sie die Größen aller drei Innenwinkel und überprüfen Sie Ihr Ergebnis mit dem Innenwinkelsummensatz.</p>
+      <details class="tipp"><summary>Tipp</summary><div class="inner">
+        <div>Berechne wie in Beispiel 1 zuerst alle drei Seitenvektoren <span class="math" data-tex="\vec{AB},\vec{AC},\vec{BC}"></span> und ihre Längen. Für den Winkel an B brauchst du <span class="math" data-tex="\vec{BA}"></span> und <span class="math" data-tex="\vec{BC}"></span>, für den Winkel an C entsprechend <span class="math" data-tex="\vec{CA}"></span> und <span class="math" data-tex="\vec{CB}"></span>.</div>
+      </div></details>
+      <details class="loesung"><summary>Lösung</summary><div class="inner">
+        <div><span class="math" data-tex="|\vec{AB}|=5,\ |\vec{AC}|\approx4{,}36,\ |\vec{BC}|\approx5{,}10"></span></div>
+        <div><span class="math" data-tex="\alpha\approx65{,}6^\circ,\ \ \beta\approx51{,}1^\circ,\ \ \gamma\approx63{,}3^\circ"></span></div>
+        <div>Summe: <span class="math" data-tex="65{,}6^\circ+51{,}1^\circ+63{,}3^\circ=180{,}0^\circ"></span> ✓</div>
+      </div></details>
+    </div>
+
+    <div class="task b">
+      <h4>B2 &middot; Winkelsumme eines räumlichen Vierecks</h4>
+      <p>Gegeben sind die Punkte <span class="math" data-tex="A(0|0|0),\ B(4|0|0),\ C(6|4|4),\ D(0|4|2)"></span>.</p>
+      <p class="sub">a) Zeichnen Sie die Punkte in ein Koordinatensystem und verbinden Sie sie der Reihe nach zu A, B, C, D, A.</p>
+      <p class="sub">b) Berechnen Sie die Größen der Winkel <span class="math" data-tex="\triangleleft DAB,\ \triangleleft ABC,\ \triangleleft BCD,\ \triangleleft CDA"></span> sowie die Winkelsumme des Vierecks ABCD. Beschreiben Sie, was Ihnen auffällt, und erklären Sie es.</p>
+      <details class="tipp"><summary>Tipp</summary><div class="inner">
+        <div>Bei einem <em>ebenen</em> Viereck ist die Winkelsumme immer <span class="math" data-tex="360^\circ"></span>. Prüfe mit dem Spatprodukt (oder einfach mit deinem Ergebnis), ob A, B, C, D wirklich in einer Ebene liegen.</div>
+      </div></details>
+      <details class="loesung"><summary>Lösung</summary><div class="inner">
+        <div><span class="math" data-tex="\triangleleft DAB=90{,}0^\circ,\ \triangleleft ABC\approx109{,}5^\circ,\ \triangleleft BCD\approx58{,}2^\circ,\ \triangleleft CDA\approx98{,}1^\circ"></span></div>
+        <div>Winkelsumme <span class="math" data-tex="\approx355{,}8^\circ\ne360^\circ"></span>.</div>
+        <div>Erklärung: A, B, C, D liegen nicht in einer gemeinsamen Ebene (das Viereck ist „windschief“). Der Satz „Winkelsumme im Viereck = 360°“ gilt nur für <em>ebene</em> Vierecke.</div>
+      </div></details>
+    </div>
+
+    <div class="task b">
+      <h4>B3 &middot; Schnittwinkel zweier Geraden in Funktionsschreibweise</h4>
+      <p>Bestimmen Sie die Größe des Schnittwinkels der Geraden <span class="math" data-tex="g(x)=x+2"></span> und <span class="math" data-tex="h(x)=-2x+5"></span>.</p>
+      <details class="tipp"><summary>Tipp</summary><div class="inner">
+        <div>Aus der Steigung <span class="math" data-tex="m"></span> einer Geraden lässt sich ein Richtungsvektor <span class="math" data-tex="\binom{1}{m}"></span> ablesen.</div>
+      </div></details>
+      <details class="loesung"><summary>Lösung</summary><div class="inner">
+        <div><span class="math" data-tex="\vec u=\binom{1}{1},\ \vec v=\binom{1}{-2}"></span></div>
+        <div><span class="math" data-tex="\cos(\alpha)=\dfrac{|1-2|}{\sqrt2\cdot\sqrt5}\approx0{,}316\ \Rightarrow\ \alpha\approx71{,}6^\circ"></span></div>
+      </div></details>
+    </div>
+
+    <div class="task b">
+      <h4>B4 &middot; Fehlende Koordinate bei gegebenem Winkel</h4>
+      <p>Der Winkel zwischen den Vektoren <span class="math" data-tex="\vec a=\begin{pmatrix}0\\4\\x\end{pmatrix}"></span> und <span class="math" data-tex="\vec b=\begin{pmatrix}0\\0\\1\end{pmatrix}"></span> beträgt <span class="math" data-tex="\alpha=45^\circ"></span>. Bestimmen Sie <span class="math" data-tex="x"></span>.</p>
+      <details class="tipp"><summary>Tipp</summary><div class="inner">
+        <div>Gehe wie in Beispiel 2 vor: Formel aufstellen, nach <span class="math" data-tex="x"></span> auflösen, quadrieren – und am Ende prüfen, ob deine Lösung zum Vorzeichen von <span class="math" data-tex="\cos(45^\circ)"></span> passt.</div>
+      </div></details>
+      <details class="loesung"><summary>Lösung</summary><div class="inner">
+        <div><span class="math" data-tex="\cos(45^\circ)=\dfrac{x}{\sqrt{16+x^2}}\ \Rightarrow\ x^2=16\ \Rightarrow\ x=\pm4"></span></div>
+        <div>Da <span class="math" data-tex="\cos(45^\circ)>0"></span> sein muss, kommt nur <span class="math" data-tex="x=4"></span> in Betracht (bei <span class="math" data-tex="x=-4"></span> ergäbe sich <span class="math" data-tex="\alpha=135^\circ"></span>).</div>
+      </div></details>
+    </div>
+  </section>
+
+  <!-- ============== TIER C ============== -->
+  <section id="tier-c">
+    <div class="tier-heading">
+      <span class="tier-chip c">STUFE C &middot; VERTIEFUNG UND BEGRÜNDUNG</span>
+    </div>
+
+    <div class="task c">
+      <h4>C1 &middot; Finden Sie den Fehler!</h4>
+      <p>Lea, Finn und Sara berechnen die Größe des Winkels zwischen <span class="math" data-tex="\vec a=\begin{pmatrix}2\\2\\1\end{pmatrix}"></span> und <span class="math" data-tex="\vec b=\begin{pmatrix}4\\0\\3\end{pmatrix}"></span>. Erklären Sie, was falsch gemacht wurde, und notieren Sie die richtige Lösung.</p>
+      <div class="stu-card"><span class="name">Finn:</span> <span class="math" data-tex="\cos(\alpha)=\dfrac{(2+2+1)+(4+0+3)}{3+5}=\dfrac{12}{8}=1{,}5"></span></div>
+      <div class="stu-card"><span class="name">Sara:</span> <span class="math" data-tex="\cos(\alpha)=\dfrac{2\cdot4+2\cdot0+1\cdot3}{3^2\cdot5^2}=\dfrac{11}{225}\approx0{,}049\ \Rightarrow\ \alpha\approx87{,}2^\circ"></span></div>
+      <div class="stu-card"><span class="name">Lea:</span> <span class="math" data-tex="\cos(\alpha)=\dfrac{2\cdot4+2\cdot0+1\cdot3}{3\cdot5}=\dfrac{11}{15}\approx0{,}733\ \Rightarrow\ \alpha\approx42{,}8^\circ"></span></div>
+      <details class="tipp"><summary>Tipp</summary><div class="inner">
+        <div>Ein Kosinuswert kann nie größer als 1 sein – das sollte sofort auffallen. Prüfe außerdem, ob im Nenner wirklich die <em>Längen</em> stehen (und nicht ihre Quadrate).</div>
+      </div></details>
+      <details class="loesung"><summary>Lösung</summary><div class="inner">
+        <div>Finn addiert statt zu multiplizieren – so entsteht gar kein Skalarprodukt, und <span class="math" data-tex="\cos(\alpha)>1"></span> ist unmöglich.</div>
+        <div>Sara nutzt im Nenner <span class="math" data-tex="|\vec a|^2\cdot|\vec b|^2"></span> statt <span class="math" data-tex="|\vec a|\cdot|\vec b|"></span> und bekommt dadurch einen viel zu kleinen Kosinuswert.</div>
+        <div>Lea rechnet richtig: <span class="math" data-tex="\alpha\approx42{,}8^\circ"></span>.</div>
+      </div></details>
+    </div>
+
+    <div class="task c">
+      <h4>C2 &middot; Fehlende Koordinate bei überstumpfem Winkel</h4>
+      <p>Die Punkte <span class="math" data-tex="P(p|\sqrt3|0),\ Q(0|0|0)\ \text{und}\ R(1|0|0)"></span> schließen den Winkel <span class="math" data-tex="\triangleleft PQR"></span> ein, der <span class="math" data-tex="300^\circ"></span> groß ist. Bestimmen Sie <span class="math" data-tex="p"></span>.</p>
+      <details class="tipp"><summary>Tipp</summary><div class="inner">
+        <div>Wie in Beispiel 2: <span class="math" data-tex="300^\circ"></span> ist der größere der beiden Winkel am Scheitelpunkt Q – der gesuchte Winkel zwischen <span class="math" data-tex="\vec{QP}"></span> und <span class="math" data-tex="\vec{QR}"></span> ist der kleinere: <span class="math" data-tex="360^\circ-300^\circ=60^\circ"></span>.</div>
+      </div></details>
+      <details class="loesung"><summary>Lösung</summary><div class="inner">
+        <div><span class="math" data-tex="\vec{QP}=\begin{pmatrix}p\\\sqrt3\\0\end{pmatrix},\ \vec{QR}=\begin{pmatrix}1\\0\\0\end{pmatrix}"></span>, gesuchter Winkel <span class="math" data-tex="=60^\circ"></span></div>
+        <div><span class="math" data-tex="\cos(60^\circ)=\dfrac12=\dfrac{p}{\sqrt{p^2+3}}\ \Rightarrow\ p^2+3=4p^2\ \Rightarrow\ p^2=1\ \Rightarrow\ p=\pm1"></span></div>
+        <div>Da der Zähler <span class="math" data-tex="p"></span> positiv sein muss (der Nenner ist stets positiv und <span class="math" data-tex="\cos(60^\circ)>0"></span>), kommt nur <span class="math" data-tex="p=1"></span> in Betracht.</div>
+      </div></details>
+    </div>
+
+    <div class="task c">
+      <h4>C3 &middot; Begründen Sie</h4>
+      <p>Die Formel <span class="math" data-tex="\cos(\alpha)=\dfrac{\vec a\circ\vec b}{|\vec a|\cdot|\vec b|}"></span> wurde für den Fall <span class="math" data-tex="0^\circ\le\alpha<90^\circ"></span> hergeleitet. Weisen Sie nach, dass sie auch für <span class="math" data-tex="90^\circ\le\alpha\le180^\circ"></span> gilt.</p>
+      <details class="tipp"><summary>Tipp</summary><div class="inner">
+        <div>Erinnert euch an den letzten Schritt in der Herleitung „Methode A“ aus der Erarbeitungsstunde: Dort mussten die Betragsstriche im Zähler weggelassen werden. Nutze die Beziehung <span class="math" data-tex="\cos(180^\circ-\alpha)=-\cos(\alpha)"></span>.</div>
+      </div></details>
+      <details class="loesung"><summary>Lösung</summary><div class="inner">
+        <div>Am einfachsten nutzt man die Herleitung über den <strong>Kosinussatz</strong> (Methode B aus der Erarbeitungsstunde): Für ein Dreieck mit den Seiten <span class="math" data-tex="|\vec a|,\ |\vec b|\ \text{und}\ |\vec b-\vec a|"></span> gilt der Kosinussatz für <em>jeden</em> Innenwinkel <span class="math" data-tex="\alpha"></span> zwischen <span class="math" data-tex="0^\circ"></span> und <span class="math" data-tex="180^\circ"></span> – er setzt an keiner Stelle voraus, dass <span class="math" data-tex="\alpha"></span> spitz ist.</div>
+        <div>Die Umformung <span class="math" data-tex="|\vec b-\vec a|^2=\vec b\circ\vec b-2(\vec a\circ\vec b)+\vec a\circ\vec a"></span> und der Vergleich mit dem Kosinussatz liefern direkt <span class="math" data-tex="\cos(\alpha)=\dfrac{\vec a\circ\vec b}{|\vec a|\cdot|\vec b|}"></span> — <em>ohne</em> Betragsstriche und ohne Fallunterscheidung, für den gesamten Bereich <span class="math" data-tex="0^\circ\le\alpha\le180^\circ"></span>.</div>
+        <div>Bei Methode A (Orthogonalprojektion) trat die Einschränkung nur deshalb auf, weil die Kosinus-Definition <span class="math" data-tex="\cos(\alpha)=\tfrac{\text{Ankathete}}{\text{Hypotenuse}}"></span> im rechtwinkligen Dreieck einen <em>spitzen</em> Winkel voraussetzt und Seitenlängen (also auch <span class="math" data-tex="|s|"></span>) nie negativ sein können – deshalb musste man dort nachträglich zeigen, dass das Weglassen der Betragsstriche auch für stumpfe <span class="math" data-tex="\alpha"></span> das richtige Vorzeichen liefert.</div>
+      </div></details>
+    </div>
+
+    <div class="task c">
+      <h4>C4 &middot; Gilt immer – gilt nie – es kommt darauf an</h4>
+      <p>Untersuchen Sie, ob die folgenden Aussagen immer gelten, nie stimmen oder nur in bestimmten Fällen richtig sind. Begründen Sie.</p>
+      <div class="sub">a) Wenn für zwei Vektoren <span class="math" data-tex="\vec u,\vec v"></span> gilt <span class="math" data-tex="\vec u\circ\vec v=0"></span>, dann stehen <span class="math" data-tex="\vec u"></span> und <span class="math" data-tex="\vec v"></span> senkrecht zueinander.</div>
+      <div class="sub">b) Für den Schnittwinkel <span class="math" data-tex="\alpha"></span> zweier Geraden mit Richtungsvektoren <span class="math" data-tex="\vec u,\vec v"></span> gilt immer <span class="math" data-tex="0^\circ\le\alpha<90^\circ"></span>.</div>
+      <div class="sub">c) Ist das Skalarprodukt zweier (vom Nullvektor verschiedener) Vektoren negativ, so ist der Winkel zwischen ihnen stumpf.</div>
+      <details class="tipp"><summary>Tipp</summary><div class="inner">
+        <div>Überlege bei b) speziell den Fall zweier <em>senkrechter</em> Geraden.</div>
+      </div></details>
+      <details class="loesung"><summary>Lösung</summary><div class="inner">
+        <div>a) Gilt immer – das ist direkt die Definition von Orthogonalität über das Skalarprodukt.</div>
+        <div>b) Stimmt nie ganz: Der Schnittwinkel kann auch genau <span class="math" data-tex="90^\circ"></span> betragen (z. B. Aufgabe A3a), richtig ist <span class="math" data-tex="0^\circ\le\alpha\le90^\circ"></span> (mit <span class="math" data-tex="\le"></span> statt <span class="math" data-tex="<"></span>).</div>
+        <div>c) Gilt immer – aus <span class="math" data-tex="\cos(\alpha)=\dfrac{\vec a\circ\vec b}{|\vec a|\cdot|\vec b|}"></span> folgt: Ist der Zähler negativ und der Nenner (als Produkt zweier Längen) stets positiv, ist auch <span class="math" data-tex="\cos(\alpha)"></span> negativ, was genau für <span class="math" data-tex="90^\circ<\alpha\le180^\circ"></span> der Fall ist.</div>
+      </div></details>
+    </div>
+  </section>
+
+  <section id="checklist-section">
+    <h2 style="font-size:1.15rem;">Das kann ich</h2>
+    <div class="card">
+      <ul class="checklist" id="checklist">
+        <li><label><input type="checkbox" data-key="c1"> Ich kann den Winkel zwischen zwei Vektoren berechnen.</label></li>
+        <li><label><input type="checkbox" data-key="c2"> Ich kann prüfen, ob zwei Vektoren orthogonal sind, ohne den Winkel vollständig zu berechnen.</label></li>
+        <li><label><input type="checkbox" data-key="c3"> Ich kann den Schnittwinkel zweier Geraden berechnen und weiß, warum dabei Betragsstriche im Zähler stehen.</label></li>
+        <li><label><input type="checkbox" data-key="c4"> Ich kann bei gegebenem Winkel eine fehlende Vektorkoordinate bestimmen.</label></li>
+        <li><label><input type="checkbox" data-key="c5"> Ich kann auch mit überstumpfen Winkeln (&gt;180°) richtig umgehen.</label></li>
+        <li><label><input type="checkbox" data-key="c6"> Ich kann typische Fehler bei der Winkelberechnung erkennen und korrigieren.</label></li>
+        <li><label><input type="checkbox" data-key="c7"> Ich kann begründen, warum die Formel <span class="math" data-tex="\cos(\alpha)=\frac{\vec a\circ\vec b}{|\vec a||\vec b|}"></span> auch für stumpfe Winkel gilt.</label></li>
+      </ul>
+    </div>
+  </section>
+
+</main>
+
+<footer>Kapitel V.3 &middot; Winkel und Schnittwinkel &middot; Übungsseite</footer>
+
+<script>
+function renderTex(el){
+  const tex = el.getAttribute('data-tex');
+  try{ katex.render(tex, el, {throwOnError:false}); }
+  catch(e){ el.textContent = tex; }
+}
+function renderAllStatic(){
+  document.querySelectorAll('.math[data-tex]').forEach(renderTex);
+}
+
+const NS = 'http://www.w3.org/2000/svg';
+function svgEl(tag, attrs){
+  const el = document.createElementNS(NS, tag);
+  for(const k in attrs){ el.setAttribute(k, attrs[k]); }
+  return el;
+}
+function addArrowMarker(svg, id, color){
+  let defs = svg.querySelector('defs');
+  if(!defs){ defs = svgEl('defs',{}); svg.appendChild(defs); }
+  const marker = svgEl('marker',{ id, markerWidth:8, markerHeight:8, refX:6, refY:3, orient:'auto' });
+  const path = svgEl('path',{ d:'M0,0 L0,6 L7,3 z', fill:color });
+  marker.appendChild(path);
+  defs.appendChild(marker);
+}
+function drawIntroSvg(){
+  const svg = document.getElementById('intro-svg');
+  const scale = 22, ox = 25, oy = 175;
+  function pt(x,y){ return [ox + x*scale, oy - y*scale]; }
+  svg.appendChild(svgEl('line',{x1:0,y1:oy,x2:210,y2:oy,stroke:'#8a8f98','stroke-width':1.2}));
+  svg.appendChild(svgEl('line',{x1:ox,y1:10,x2:ox,y2:190,stroke:'#8a8f98','stroke-width':1.2}));
+  addArrowMarker(svg,'arr-intro-a','#2b6cb0');
+  addArrowMarker(svg,'arr-intro-b','#2f9e44');
+  const [ax,ay] = pt(6,3), [bx,by] = pt(2,6);
+  const la = svgEl('line',{x1:ox,y1:oy,x2:ax,y2:ay,stroke:'#2b6cb0','stroke-width':2.6});
+  la.setAttribute('marker-end','url(#arr-intro-a)'); svg.appendChild(la);
+  const lb = svgEl('line',{x1:ox,y1:oy,x2:bx,y2:by,stroke:'#2f9e44','stroke-width':2.6});
+  lb.setAttribute('marker-end','url(#arr-intro-b)'); svg.appendChild(lb);
+  const ta = svgEl('text',{x:ax+4,y:ay-2,fill:'#2b6cb0','font-size':14}); ta.textContent='a'; svg.appendChild(ta);
+  const tb = svgEl('text',{x:bx-14,y:by-4,fill:'#2f9e44','font-size':14}); tb.textContent='b'; svg.appendChild(tb);
+  const r = 26;
+  const a1 = Math.atan2(3,6), a2 = Math.atan2(6,2);
+  const sx = ox + r*Math.cos(a1), sy = oy - r*Math.sin(a1);
+  const ex = ox + r*Math.cos(a2), ey = oy - r*Math.sin(a2);
+  svg.appendChild(svgEl('path',{ d:`M ${sx} ${sy} A ${r} ${r} 0 0 0 ${ex} ${ey}`, fill:'none', stroke:'#d6336c','stroke-width':2 }));
+  const midA = (a1+a2)/2;
+  const talpha = svgEl('text',{x:ox + (r+14)*Math.cos(midA)-5, y:oy - (r+14)*Math.sin(midA), fill:'#d6336c','font-size':15}); talpha.textContent='α'; svg.appendChild(talpha);
+  const to = svgEl('text',{x:ox-12,y:oy+14,fill:'#22262e','font-size':12}); to.textContent='O'; svg.appendChild(to);
+}
+
+function initChecklist(){
+  const boxes = document.querySelectorAll('#checklist input[type=checkbox]');
+  boxes.forEach(box=>{
+    const key = 'v3-checklist-' + box.dataset.key;
+    try{
+      if(localStorage.getItem(key) === '1') box.checked = true;
+    }catch(e){}
+    box.addEventListener('change', ()=>{
+      try{ localStorage.setItem(key, box.checked ? '1' : '0'); }catch(e){}
+    });
+  });
+}
+
+document.addEventListener('DOMContentLoaded', ()=>{
+  renderAllStatic();
+  drawIntroSvg();
+  initChecklist();
+});
+</script>
+</body>
+</html>
