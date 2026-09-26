@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Stochastik · LK Q2 · FBG Schwerte</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,400;0,600;1,400&display=swap">
+<style>
+  :root {
+    --gold:      #b87500;
+    --gold-pale: #fdf3dc;
+    --bg:        #f5f4f0;
+    --surface:   #ffffff;
+    --border:    #ddd8cc;
+    --text:      #1c1a16;
+    --muted:     #6b6456;
+    --link:      #3d6898;
+    --q1:        #2c5f8a;
+    --q1-pale:   #e5eef7;
+    --q2:        #b87500;
+    --q2-pale:   #fdf3dc;
+    --klausur:      #1a7a4c;
+    --klausur-pale: #e3f3ea;
+    --r:         6px;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --gold:      #d4a030;
+      --gold-pale: #2a2010;
+      --bg:        #1a1814;
+      --surface:   #242018;
+      --border:    #38332a;
+      --text:      #ede8de;
+      --muted:     #9e9482;
+      --link:      #6a9fd8;
+      --q1:        #6a9fd8;
+      --q1-pale:   #0f1e30;
+      --q2:        #d4a030;
+      --q2-pale:   #2a2010;
+      --klausur:      #3fbf82;
+      --klausur-pale: #0f2a1c;
+    }
+  }
+  :root[data-theme="dark"] {
+    --gold:      #d4a030;
+    --gold-pale: #2a2010;
+    --bg:        #1a1814;
+    --surface:   #242018;
+    --border:    #38332a;
+    --text:      #ede8de;
+    --muted:     #9e9482;
+    --link:      #6a9fd8;
+    --q1:        #6a9fd8;
+    --q1-pale:   #0f1e30;
+    --q2:        #d4a030;
+    --q2-pale:   #2a2010;
+    --klausur:      #3fbf82;
+    --klausur-pale: #0f2a1c;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    font-size: 16px;
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+
+  /* Topbar */
+  .topbar { background: var(--surface); border-bottom: 1px solid var(--border); padding: 0 20px; }
+  .topbar-inner {
+    max-width: 900px; margin: 0 auto;
+    height: 46px; display: flex; align-items: center;
+    gap: 6px; font-size: 0.82rem; color: var(--muted);
+  }
+  .topbar-inner a { color: var(--link); text-decoration: none; }
+  .topbar-inner a:hover { text-decoration: underline; }
+  .sep { opacity: 0.45; }
+
+  /* Header */
+  header.page-head {
+    background: var(--surface);
+    border-bottom: 3px solid var(--gold);
+    padding: 32px 20px 28px;
+    margin-bottom: 36px;
+  }
+  header.page-head .inner { max-width: 900px; margin: 0 auto; }
+  .head-eyebrow {
+    font-size: 0.78rem; font-weight: 600;
+    letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--gold); margin-bottom: 6px;
+  }
+  header.page-head h1 {
+    font-family: "Crimson Pro", Georgia, serif;
+    font-size: 2.2rem; font-weight: 600;
+    line-height: 1.15; color: var(--text);
+  }
+  header.page-head p { font-size: 0.92rem; color: var(--muted); margin-top: 6px; }
+
+  .wrap { max-width: 900px; margin: 0 auto; padding: 0 20px 80px; }
+
+  /* Kurs-Abschnitte */
+  .kurs-label {
+    font-size: 0.72rem; font-weight: 700;
+    letter-spacing: 0.1em; text-transform: uppercase;
+    padding: 4px 10px; border-radius: 20px;
+    display: inline-block; margin-bottom: 14px;
+  }
+  .kurs-q1 { background: var(--q1-pale); color: var(--q1); }
+  .kurs-q2 { background: var(--q2-pale); color: var(--q2); }
+
+  .section-block { margin-bottom: 40px; }
+  .section-divider {
+    font-size: 0.75rem; font-weight: 600;
+    letter-spacing: 0.09em; text-transform: uppercase;
+    color: var(--muted); border-bottom: 1px solid var(--border);
+    padding-bottom: 8px; margin-bottom: 16px;
+  }
+
+  /* Karten */
+  .cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 16px; }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r);
+    overflow: hidden;
+    text-decoration: none;
+    color: var(--text);
+    display: flex;
+    transition: box-shadow 0.15s, transform 0.12s;
+  }
+  .card:hover { box-shadow: 0 5px 18px rgba(0,0,0,0.09); transform: translateY(-2px); }
+  .card:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+
+  .card-stripe { width: 5px; flex-shrink: 0; }
+  .card-q1 .card-stripe { background: var(--q1); }
+  .card-q2 .card-stripe { background: var(--q2); }
+  .card-klausur .card-stripe { background: var(--klausur); }
+
+  .card-body { padding: 20px 20px 18px; flex: 1; display: flex; flex-direction: column; }
+  .card-kap {
+    font-size: 0.72rem; font-weight: 600; letter-spacing: 0.06em;
+    text-transform: uppercase; margin-bottom: 6px;
+  }
+  .card-q1 .card-kap { color: var(--q1); }
+  .card-q2 .card-kap { color: var(--q2); }
+  .card-klausur .card-kap { color: var(--klausur); }
+
+  .card h2 {
+    font-family: "Crimson Pro", Georgia, serif;
+    font-size: 1.25rem; font-weight: 600; line-height: 1.25;
+    margin-bottom: 8px;
+  }
+  .card p { font-size: 0.85rem; color: var(--muted); flex: 1; line-height: 1.5; }
+  .card-footer {
+    margin-top: 16px; display: flex;
+    align-items: center; justify-content: space-between;
+  }
+  .card-badge {
+    font-size: 0.75rem; font-weight: 600;
+    padding: 2px 9px; border-radius: 20px;
+  }
+  .card-q1 .card-badge { background: var(--q1-pale); color: var(--q1); }
+  .card-q2 .card-badge { background: var(--q2-pale); color: var(--q2); }
+  .card-klausur .card-badge { background: var(--klausur-pale); color: var(--klausur); }
+  .card-arr { font-size: 0.95rem; color: var(--muted); transition: transform 0.12s; }
+  .card:hover .card-arr { transform: translateX(3px); }
+
+  /* Platzhalter-Karte */
+  .card-placeholder {
+    background: var(--surface); border: 1px dashed var(--border);
+    border-radius: var(--r); padding: 20px;
+    color: var(--muted); font-size: 0.85rem;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .card-placeholder .ph-icon { font-size: 1.2rem; opacity: 0.5; }
+
+  /* Geplante Karte (noch nicht verlinkt) */
+  .card-geplant { border-style: dashed; cursor: default; }
+  .card-geplant:hover { box-shadow: none; transform: none; }
+  .card-geplant .card-stripe { opacity: 0.35; }
+  .card-geplant h2 { color: var(--muted); }
+  .card-geplant .card-badge { background: transparent; color: var(--muted); border: 1px solid var(--border); }
+
+  footer {
+    text-align: center; color: var(--muted); font-size: 0.82rem;
+    margin-top: 64px; padding-top: 20px; border-top: 1px solid var(--border);
+  }
+
+  @media (max-width: 600px) {
+    header.page-head h1 { font-size: 1.8rem; }
+    .cards { grid-template-columns: 1fr; }
+  }
+</style>
+<style>
+  .kap-block { margin-bottom: 44px; scroll-margin-top: 16px; }
+  .kap-head { display:flex; align-items:baseline; gap:12px; border-bottom:2px solid var(--q2); padding-bottom:8px; margin-bottom:16px; }
+  .kap-num { font-family:"Crimson Pro",Georgia,serif; font-size:1.9rem; font-weight:600; color:var(--q2); line-height:1; }
+  .kap-title { font-family:"Crimson Pro",Georgia,serif; font-size:1.45rem; font-weight:600; }
+  .kap-sub { font-size:0.85rem; color:var(--muted); margin:-6px 0 16px; }
+  .card-sim .card-stripe { background: var(--link); }
+  .card-sim .card-kap { color: var(--link); }
+  .card-sim .card-badge { background: var(--q1-pale); color: var(--link); }
+  .toc { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:36px; }
+  .toc a { font-size:0.82rem; font-weight:600; text-decoration:none; color:var(--q2); background:var(--q2-pale); padding:4px 12px; border-radius:20px; }
+  .toc a.sim { color:var(--link); background:var(--q1-pale); }
+</style>
+</head>
+<body>
+
+<nav class="topbar" aria-label="Breadcrumb">
+  <div class="topbar-inner">
+    <a href="../../../index.html">Unterrichtsmaterialien</a>
+    <span class="sep">›</span>
+    <a href="../../index.html">Mathematik</a>
+    <span class="sep">›</span>
+    <a href="../index.html">Leistungskurs</a>
+    <span class="sep">›</span>
+    <span>Stochastik</span>
+  </div>
+</nav>
+
+<header class="page-head">
+  <div class="inner">
+    <div class="head-eyebrow">Mathematik · Leistungskurs · Q2</div>
+    <h1>Stochastik</h1>
+    <p>Spielen, simulieren, Regeln entdecken – und anschließend in drei Kompetenzstufen üben.</p>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <nav class="toc" aria-label="Kapitel">
+    <a href="#kap-viii">VIII · Daten und Wahrscheinlichkeit</a>
+    <a href="#kap-ix">IX · Binomialverteilung</a>
+    <a href="#kap-x">X · Prognose- und Konfidenzintervalle</a>
+    <a class="sim" href="#simulationen">Simulationen</a>
+  </nav>
+
+  <section class="kap-block" id="kap-viii">
+    <div class="kap-head"><span class="kap-num">VIII</span><span class="kap-title">Daten und Wahrscheinlichkeit</span></div>
+    <p class="kap-sub">Einstiege über Spielsimulationen – Regeln entdecken und festhalten.</p>
+    <div class="cards">
+      <div class="card card-q2 card-geplant">
+        <div class="card-stripe"></div>
+        <div class="card-body">
+          <div class="card-kap">VIII.1</div>
+          <h2>Wiederholung: Wahrscheinlichkeit</h2>
+          <p>Ergebnismenge, Laplace-Wahrscheinlichkeit, Baumdiagramm und Pfadregeln.</p>
+          <div class="card-footer"><span class="card-badge">Geplant</span></div>
+        </div>
+      </div>
+      <div class="card card-q2 card-geplant">
+        <div class="card-stripe"></div>
+        <div class="card-body">
+          <div class="card-kap">VIII.2</div>
+          <h2>Verknüpfen von Ereignissen</h2>
+          <p>Schnitt, Vereinigung, Gegenereignis, Additionssatz, Vierfeldertafel.</p>
+          <div class="card-footer"><span class="card-badge">Geplant</span></div>
+        </div>
+      </div>
+      <div class="card card-q2 card-geplant">
+        <div class="card-stripe"></div>
+        <div class="card-body">
+          <div class="card-kap">VIII.3</div>
+          <h2>Bedingte Wahrscheinlichkeit – stochastische Unabhängigkeit</h2>
+          <p>Vierfeldertafel, umgekehrter Baum, Unabhängigkeit prüfen.</p>
+          <div class="card-footer"><span class="card-badge">Geplant</span></div>
+        </div>
+      </div>
+      <div class="card card-q2 card-geplant">
+        <div class="card-stripe"></div>
+        <div class="card-body">
+          <div class="card-kap">VIII.5</div>
+          <h2>Daten erheben und mit Kenngrößen beschreiben</h2>
+          <p>Mittelwert, Median, Quartile, Boxplot, Streuung.</p>
+          <div class="card-footer"><span class="card-badge">Geplant</span></div>
+        </div>
+      </div>
+      <div class="card card-q2 card-geplant">
+        <div class="card-stripe"></div>
+        <div class="card-body">
+          <div class="card-kap">VIII.6</div>
+          <h2>Zufallsgrößen – Erwartungswert und Standardabweichung</h2>
+          <p>Wahrscheinlichkeitsverteilung, faire Spiele, Risiko vergleichen.</p>
+          <div class="card-footer"><span class="card-badge">Geplant</span></div>
+        </div>
+      </div>
+      <div class="card card-q2 card-geplant">
+        <div class="card-stripe"></div>
+        <div class="card-body">
+          <div class="card-kap">Kapitel VIII</div>
+          <h2>Klausurtraining</h2>
+          <p>Gemischte Aufgaben zum gesamten Kapitel.</p>
+          <div class="card-footer"><span class="card-badge">Geplant</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="kap-block" id="kap-ix">
+    <div class="kap-head"><span class="kap-num">IX</span><span class="kap-title">Binomialverteilung</span></div>
+    <p class="kap-sub">Von Bernoulli-Ketten zu Erwartungswert und Streuung.</p>
+    <div class="cards">
+      <div class="card card-q2 card-geplant">
+        <div class="card-stripe"></div>
+        <div class="card-body">
+          <div class="card-kap">IX.1</div>
+          <h2>Bernoulli-Experimente, Binomialverteilung</h2>
+          <p>Bernoulli-Ketten und die Formel von Bernoulli.</p>
+          <div class="card-footer"><span class="card-badge">Geplant</span></div>
+        </div>
+      </div>
+      <div class="card card-q2 card-geplant">
+        <div class="card-stripe"></div>
+        <div class="card-body">
+          <div class="card-kap">IX.2</div>
+          <h2>Binomialkoeffizienten</h2>
+          <p>Anzahl der Pfade, Pascal'sches Dreieck.</p>
+          <div class="card-footer"><span class="card-badge">Geplant</span></div>
+        </div>
+      </div>
+      <div class="card card-q2 card-geplant">
+        <div class="card-stripe"></div>
+        <div class="card-body">
+          <div class="card-kap">IX.3</div>
+          <h2>Erwartungswert und Histogramme</h2>
+          <p>Erwartungswert n·p, Histogramme der Binomialverteilung.</p>
+          <div class="card-footer"><span class="card-badge">Geplant</span></div>
+        </div>
+      </div>
+      <div class="card card-q2 card-geplant">
+        <div class="card-stripe"></div>
+        <div class="card-body">
+          <div class="card-kap">IX.4</div>
+          <h2>Kumulierte Wahrscheinlichkeiten</h2>
+          <p>Höchstens, mindestens, zwischen – mit dem GTR.</p>
+          <div class="card-footer"><span class="card-badge">Geplant</span></div>
+        </div>
+      </div>
+      <div class="card card-q2 card-geplant">
+        <div class="card-stripe"></div>
+        <div class="card-body">
+          <div class="card-kap">IX.5</div>
+          <h2>Standardabweichung</h2>
+          <p>σ-Regeln und Streuung der Binomialverteilung.</p>
+          <div class="card-footer"><span class="card-badge">Geplant</span></div>
+        </div>
+      </div>
+      <div class="card card-q2 card-geplant">
+        <div class="card-stripe"></div>
+        <div class="card-body">
+          <div class="card-kap">IX.6</div>
+          <h2>Probleme lösen mit der Binomialverteilung</h2>
+          <p>Mindestanzahl, unbekanntes p, Modellkritik.</p>
+          <div class="card-footer"><span class="card-badge">Geplant</span></div>
+        </div>
+      </div>
+      <div class="card card-q2 card-geplant">
+        <div class="card-stripe"></div>
+        <div class="card-body">
+          <div class="card-kap">Kapitel IX</div>
+          <h2>Klausurtraining</h2>
+          <p>Gemischte Aufgaben zum gesamten Kapitel.</p>
+          <div class="card-footer"><span class="card-badge">Geplant</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="kap-block" id="kap-x">
+    <div class="kap-head"><span class="kap-num">X</span><span class="kap-title">Prognose- und Konfidenzintervalle</span></div>
+    <p class="kap-sub">Vom Modell auf die Stichprobe – und zurück.</p>
+    <div class="cards">
+      <div class="card card-q2 card-geplant">
+        <div class="card-stripe"></div>
+        <div class="card-body">
+          <div class="card-kap">X.1</div>
+          <h2>Prognoseintervalle für absolute Häufigkeiten</h2>
+          <p>Von der bekannten Wahrscheinlichkeit auf die Stichprobe schließen.</p>
+          <div class="card-footer"><span class="card-badge">Geplant</span></div>
+        </div>
+      </div>
+      <div class="card card-q2 card-geplant">
+        <div class="card-stripe"></div>
+        <div class="card-body">
+          <div class="card-kap">X.2</div>
+          <h2>Prognoseintervalle für relative Häufigkeiten</h2>
+          <p>Sicherheitswahrscheinlichkeit und √n-Gesetz.</p>
+          <div class="card-footer"><span class="card-badge">Geplant</span></div>
+        </div>
+      </div>
+      <div class="card card-q2 card-geplant">
+        <div class="card-stripe"></div>
+        <div class="card-body">
+          <div class="card-kap">X.3</div>
+          <h2>Konfidenzintervalle</h2>
+          <p>Von der Stichprobe auf die unbekannte Wahrscheinlichkeit schließen.</p>
+          <div class="card-footer"><span class="card-badge">Geplant</span></div>
+        </div>
+      </div>
+      <div class="card card-q2 card-geplant">
+        <div class="card-stripe"></div>
+        <div class="card-body">
+          <div class="card-kap">X.4</div>
+          <h2>Stichprobenumfang schätzen</h2>
+          <p>Wie groß muss eine Umfrage sein?</p>
+          <div class="card-footer"><span class="card-badge">Geplant</span></div>
+        </div>
+      </div>
+      <div class="card card-q2 card-geplant">
+        <div class="card-stripe"></div>
+        <div class="card-body">
+          <div class="card-kap">X.5</div>
+          <h2>Normalverteilung</h2>
+          <p>Gauß'sche Glockenkurve als Näherung der Binomialverteilung.</p>
+          <div class="card-footer"><span class="card-badge">Geplant</span></div>
+        </div>
+      </div>
+      <div class="card card-q2 card-geplant">
+        <div class="card-stripe"></div>
+        <div class="card-body">
+          <div class="card-kap">Exkursion</div>
+          <h2>Der rotierende Penny</h2>
+          <p>Ein echtes Experiment mit Konfidenzintervallen auswerten.</p>
+          <div class="card-footer"><span class="card-badge">Geplant</span></div>
+        </div>
+      </div>
+      <div class="card card-q2 card-geplant">
+        <div class="card-stripe"></div>
+        <div class="card-body">
+          <div class="card-kap">Kapitel X</div>
+          <h2>Klausurtraining</h2>
+          <p>Gemischte Aufgaben zum gesamten Kapitel.</p>
+          <div class="card-footer"><span class="card-badge">Geplant</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="kap-block" id="simulationen">
+    <div class="kap-head" style="border-color:var(--link)"><span class="kap-num" style="color:var(--link)">⚄</span><span class="kap-title">Simulationen</span></div>
+    <p class="kap-sub">Interaktive Spiele und Experimente – kapitelübergreifend nutzbar.</p>
+    <div class="cards">
+      <div class="card card-sim card-geplant">
+        <div class="card-stripe"></div>
+        <div class="card-body">
+          <div class="card-kap">VIII.1</div>
+          <h2>Pferderennen</h2>
+          <p>Warum gewinnt fast immer die 7? Augensummen zweier Würfel.</p>
+          <div class="card-footer"><span class="card-badge">Geplant</span></div>
+        </div>
+      </div>
+      <div class="card card-sim card-geplant">
+        <div class="card-stripe"></div>
+        <div class="card-body">
+          <div class="card-kap">VIII.3</div>
+          <h2>Ziegenproblem</h2>
+          <p>Wechseln oder bleiben? Tausende Spielshows in Sekunden.</p>
+          <div class="card-footer"><span class="card-badge">Geplant</span></div>
+        </div>
+      </div>
+      <div class="card card-sim card-geplant">
+        <div class="card-stripe"></div>
+        <div class="card-body">
+          <div class="card-kap">VIII.3</div>
+          <h2>Schnelltest</h2>
+          <p>Positiv getestet – wie wahrscheinlich ist man wirklich krank?</p>
+          <div class="card-footer"><span class="card-badge">Geplant</span></div>
+        </div>
+      </div>
+      <div class="card card-sim card-geplant">
+        <div class="card-stripe"></div>
+        <div class="card-body">
+          <div class="card-kap">VIII.6</div>
+          <h2>Glücksrad</h2>
+          <p>Ein eigenes Glücksrad entwerfen – lohnt es sich für die Stufenkasse?</p>
+          <div class="card-footer"><span class="card-badge">Geplant</span></div>
+        </div>
+      </div>
+      <div class="card card-sim card-geplant">
+        <div class="card-stripe"></div>
+        <div class="card-body">
+          <div class="card-kap">IX · X</div>
+          <h2>Galtonbrett</h2>
+          <p>Binomialverteilung entsteht Kugel für Kugel – mit einstellbarem p.</p>
+          <div class="card-footer"><span class="card-badge">Geplant</span></div>
+        </div>
+      </div>
+      <div class="card card-sim card-geplant">
+        <div class="card-stripe"></div>
+        <div class="card-body">
+          <div class="card-kap">X</div>
+          <h2>Stichproben ziehen</h2>
+          <p>100 Konfidenzintervalle – wie viele treffen das wahre p?</p>
+          <div class="card-footer"><span class="card-badge">Geplant</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<footer>
+  Unterrichtsmaterialien · Friedrich-Bährens-Gymnasium Schwerte
+</footer>
+
+</body>
+</html>

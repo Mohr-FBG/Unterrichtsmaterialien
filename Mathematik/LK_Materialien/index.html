@@ -180,6 +180,13 @@
   }
   .card-placeholder .ph-icon { font-size: 1.2rem; opacity: 0.5; }
 
+  /* Geplante Karte (noch nicht verlinkt) */
+  .card-geplant { border-style: dashed; cursor: default; }
+  .card-geplant:hover { box-shadow: none; transform: none; }
+  .card-geplant .card-stripe { opacity: 0.35; }
+  .card-geplant h2 { color: var(--muted); }
+  .card-geplant .card-badge { background: transparent; color: var(--muted); border: 1px solid var(--border); }
+
   footer {
     text-align: center; color: var(--muted); font-size: 0.82rem;
     margin-top: 64px; padding-top: 20px; border-top: 1px solid var(--border);
@@ -301,6 +308,51 @@
           </div>
         </div>
       </a>
+
+    </div>
+  </div>
+
+  <!-- Stochastik -->
+  <div class="section-block">
+    <div class="section-divider">Qualifikationsphase 2 · Stochastik</div>
+    <div class="cards">
+
+      <a class="card card-q2" href="q2-stochastik/#kap-viii">
+        <div class="card-stripe"></div>
+        <div class="card-body">
+          <div class="card-kap">Kapitel VIII</div>
+          <h2>Daten und Wahrscheinlichkeit</h2>
+          <p>Bedingte Wahrscheinlichkeit, stochastische Unabhängigkeit, Zufallsgrößen – entdeckt über Spielsimulationen.</p>
+          <div class="card-footer">
+            <span class="card-badge">◐ In Arbeit</span>
+            <span class="card-arr">→</span>
+          </div>
+        </div>
+      </a>
+
+      <div class="card card-q2 card-geplant">
+        <div class="card-stripe"></div>
+        <div class="card-body">
+          <div class="card-kap">Kapitel IX</div>
+          <h2>Binomialverteilung</h2>
+          <p>Bernoulli-Ketten, Binomialkoeffizienten, Erwartungswert und Standardabweichung, kumulierte Wahrscheinlichkeiten.</p>
+          <div class="card-footer">
+            <span class="card-badge">Geplant</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="card card-q2 card-geplant">
+        <div class="card-stripe"></div>
+        <div class="card-body">
+          <div class="card-kap">Kapitel X</div>
+          <h2>Prognose- und Konfidenzintervalle</h2>
+          <p>Prognoseintervalle, Konfidenzintervalle, Stichprobenumfang, Normalverteilung.</p>
+          <div class="card-footer">
+            <span class="card-badge">Geplant</span>
+          </div>
+        </div>
+      </div>
 
     </div>
   </div>
