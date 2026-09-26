@@ -1,0 +1,728 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pferderennen · Simulation · LK Q2 Stochastik</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,400;0,600;1,400&display=swap">
+<style>
+  :root {
+    --gold:#b87500; --gold-pale:#fdf3dc;
+    --bg:#f5f4f0; --surface:#ffffff; --surface-2:#faf9f6;
+    --border:#ddd8cc; --text:#1c1a16; --muted:#6b6456;
+    --link:#2c5f8a; --link-pale:#e5eef7;
+    --win:#1a7a4c; --win-pale:#e3f3ea;
+    --track:#efe9dc; --track-line:#d8cfbd;
+    --bar:#c98a1b; --bar-tip:#2c5f8a; --theory:#1c1a16;
+    --r:6px;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --gold:#d4a030; --gold-pale:#2a2010;
+      --bg:#1a1814; --surface:#242018; --surface-2:#2a251c;
+      --border:#38332a; --text:#ede8de; --muted:#9e9482;
+      --link:#6a9fd8; --link-pale:#0f1e30;
+      --win:#3fbf82; --win-pale:#0f2a1c;
+      --track:#2e281e; --track-line:#453d2f;
+      --bar:#d4a030; --bar-tip:#6a9fd8; --theory:#ede8de;
+    }
+  }
+  :root[data-theme="dark"] {
+    --gold:#d4a030; --gold-pale:#2a2010;
+    --bg:#1a1814; --surface:#242018; --surface-2:#2a251c;
+    --border:#38332a; --text:#ede8de; --muted:#9e9482;
+    --link:#6a9fd8; --link-pale:#0f1e30;
+    --win:#3fbf82; --win-pale:#0f2a1c;
+    --track:#2e281e; --track-line:#453d2f;
+    --bar:#d4a030; --bar-tip:#6a9fd8; --theory:#ede8de;
+  }
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;font-size:16px;line-height:1.55;min-height:100vh}
+  button,select,input{font:inherit;color:inherit}
+
+  .topbar{background:var(--surface);border-bottom:1px solid var(--border);padding:0 20px}
+  .topbar-inner{max-width:960px;margin:0 auto;min-height:46px;display:flex;flex-wrap:wrap;align-items:center;gap:6px;font-size:.82rem;color:var(--muted)}
+  .topbar-inner a{color:var(--link);text-decoration:none}
+  .topbar-inner a:hover{text-decoration:underline}
+  .sep{opacity:.45}
+
+  header.page-head{background:var(--surface);border-bottom:3px solid var(--link);padding:28px 20px 24px;margin-bottom:28px}
+  header.page-head .inner{max-width:960px;margin:0 auto}
+  .head-eyebrow{font-size:.78rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--link);margin-bottom:6px}
+  h1{font-family:"Crimson Pro",Georgia,serif;font-size:2.2rem;font-weight:600;line-height:1.15}
+  header.page-head p{font-size:.95rem;color:var(--muted);margin-top:6px;max-width:700px}
+
+  .wrap{max-width:960px;margin:0 auto;padding:0 16px 80px}
+  .panel{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:20px;margin-bottom:24px}
+  .panel-head{display:flex;align-items:baseline;gap:10px;margin-bottom:4px}
+  .step{display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:50%;background:var(--link);color:#fff;font-weight:700;font-size:.85rem;flex-shrink:0}
+  h2{font-family:"Crimson Pro",Georgia,serif;font-size:1.45rem;font-weight:600}
+  .panel-sub{color:var(--muted);font-size:.9rem;margin:0 0 16px 36px}
+
+  .rules{background:var(--gold-pale);border-left:3px solid var(--gold);border-radius:var(--r);padding:12px 16px;font-size:.92rem;margin-bottom:24px}
+  .rules b{color:var(--gold)}
+
+  /* Steuerung */
+  .controls{display:flex;flex-wrap:wrap;gap:12px 20px;align-items:center;margin-bottom:16px}
+  .ctl{display:flex;align-items:center;gap:8px;font-size:.9rem}
+  .ctl label{color:var(--muted);font-weight:600}
+  .len-val{display:inline-block;min-width:2.2em;text-align:center;font-weight:700;background:var(--gold-pale);color:var(--gold);border-radius:20px;padding:1px 8px}
+  input[type=range]{accent-color:var(--gold);width:150px}
+  select{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:5px 8px}
+  .btn{border:1px solid var(--border);background:var(--surface);border-radius:var(--r);padding:8px 14px;cursor:pointer;font-weight:600;font-size:.9rem;transition:background .12s}
+  .btn:hover{background:var(--surface-2)}
+  .btn:disabled{opacity:.45;cursor:not-allowed}
+  .btn-primary{background:var(--gold);border-color:var(--gold);color:#fff}
+  .btn-primary:hover{background:var(--gold);filter:brightness(1.07)}
+  .btn-blue{background:var(--link);border-color:var(--link);color:#fff}
+  .btn-blue:hover{background:var(--link);filter:brightness(1.1)}
+  .btn-row{display:flex;flex-wrap:wrap;gap:8px}
+
+  /* Würfel */
+  .dice-area{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:14px}
+  .die{width:52px;height:52px;border-radius:10px;background:var(--surface);border:2px solid var(--text);display:grid;grid-template:repeat(3,1fr)/repeat(3,1fr);padding:7px;gap:1px}
+  .die span{width:9px;height:9px;border-radius:50%;background:var(--text);place-self:center;visibility:hidden}
+  .die span.on{visibility:visible}
+  .die.roll{animation:roll .35s ease-out}
+  @keyframes roll{0%{transform:rotate(-25deg) scale(.85)}60%{transform:rotate(12deg) scale(1.06)}100%{transform:none}}
+  .sum-out{font-size:1.05rem}
+  .sum-out b{font-size:1.5rem;color:var(--gold)}
+  .throw-count{color:var(--muted);font-size:.85rem;margin-left:auto}
+
+  /* Rennbahn */
+  .track{border:1px solid var(--border);border-radius:var(--r);overflow:hidden}
+  .lane{display:flex;align-items:stretch;border-bottom:1px solid var(--border);cursor:pointer}
+  .lane:last-child{border-bottom:none}
+  .lane-label{width:78px;flex-shrink:0;display:flex;align-items:center;gap:6px;padding:0 8px;font-size:.82rem;font-weight:700;background:var(--surface-2);border-right:1px solid var(--border)}
+  .lane-label .tip-mark{font-size:.66rem;font-weight:700;color:#fff;background:var(--bar-tip);border-radius:10px;padding:0 5px;display:none}
+  .lane.tip .lane-label .tip-mark{display:inline-block}
+  .lane.tip .lane-label{color:var(--bar-tip)}
+  .cells{flex:1;display:flex;background:var(--track);min-height:30px}
+  .cell{flex:1;border-right:1px dashed var(--track-line);position:relative;display:flex;align-items:center;justify-content:center;font-size:1.1rem;line-height:1}
+  .cell:last-child{border-right:none;background:repeating-conic-gradient(var(--text) 0 25%,transparent 0 50%) 0 0/8px 8px;opacity:.9}
+  .cell.done{background:var(--gold-pale)}
+  .lane.tip .cell.done{background:var(--link-pale)}
+  .lane.winner .cell.done{background:var(--win-pale)}
+  .lane.winner .cell:last-child{background:var(--win);opacity:1}
+  .lane.winner .lane-label{color:var(--win)}
+  .horse{display:inline-block;transform:scaleX(-1)}
+  .lane.flash .lane-label{background:var(--gold-pale)}
+  .track-note{font-size:.8rem;color:var(--muted);margin-top:6px}
+
+  .banner{display:none;margin-top:14px;border-radius:var(--r);padding:12px 16px;background:var(--win-pale);border-left:3px solid var(--win);font-size:.95rem}
+  .banner.show{display:block}
+  .banner b{color:var(--win)}
+
+  .log{margin-top:12px;font-size:.8rem;color:var(--muted);max-height:70px;overflow:auto;font-variant-numeric:tabular-nums}
+
+  /* Statistik */
+  .stat-row{display:flex;flex-wrap:wrap;gap:10px;margin:4px 0 14px}
+  .stat{background:var(--surface-2);border:1px solid var(--border);border-radius:var(--r);padding:8px 14px;min-width:120px}
+  .stat .k{font-size:.72rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:600}
+  .stat .v{font-size:1.3rem;font-weight:700;font-variant-numeric:tabular-nums}
+  .seg{display:inline-flex;border:1px solid var(--border);border-radius:var(--r);overflow:hidden}
+  .seg button{border:none;background:var(--surface);padding:6px 12px;cursor:pointer;font-size:.85rem;font-weight:600;color:var(--muted)}
+  .seg button.on{background:var(--link);color:#fff}
+
+  .chart-wrap{position:relative;margin-top:8px}
+  svg.chart{width:100%;height:auto;display:block;overflow:visible}
+  .chart text{fill:var(--muted);font-size:11px;font-family:inherit}
+  .chart .val{fill:var(--text);font-size:10.5px;font-weight:600}
+  .chart .grid{stroke:var(--border);stroke-width:1}
+  .chart .axis{stroke:var(--muted);stroke-width:1}
+  .chart .hit{fill:transparent;cursor:default}
+  .legend{display:flex;flex-wrap:wrap;gap:16px;font-size:.8rem;color:var(--muted);margin-top:6px}
+  .legend i{display:inline-block;width:12px;height:12px;border-radius:3px;vertical-align:-1px;margin-right:5px}
+  .tooltip{position:absolute;pointer-events:none;background:var(--text);color:var(--bg);font-size:.8rem;padding:6px 9px;border-radius:5px;white-space:nowrap;transform:translate(-50%,-100%);opacity:0;transition:opacity .1s;z-index:5}
+  .tooltip.show{opacity:1}
+
+  table.cmp{border-collapse:collapse;width:100%;font-size:.88rem;margin-top:8px;font-variant-numeric:tabular-nums}
+  table.cmp th,table.cmp td{border-bottom:1px solid var(--border);padding:6px 8px;text-align:right}
+  table.cmp th:first-child,table.cmp td:first-child{text-align:left}
+  table.cmp th{white-space:nowrap;font-size:.72rem;letter-spacing:.05em;text-transform:uppercase;color:var(--muted)}
+  table.cmp tr.cur td{background:var(--gold-pale)}
+  .empty{color:var(--muted);font-size:.88rem;font-style:italic;padding:8px 0}
+
+  /* Theorie */
+  .reveal{border:1px dashed var(--border);border-radius:var(--r);padding:16px;margin-top:16px;display:none}
+  .reveal.show{display:block}
+  .theory-grid{display:flex;flex-wrap:wrap;gap:24px;align-items:flex-start}
+  .theory-grid > div{max-width:100%;overflow-x:auto}
+  table.mult{border-collapse:collapse;font-variant-numeric:tabular-nums}
+  table.mult td,table.mult th{width:38px;height:34px;text-align:center;border:1px solid var(--border);font-size:.9rem}
+  table.mult th{background:var(--surface-2);color:var(--muted);font-size:.8rem}
+  table.mult td{font-weight:600}
+  table.prob{border-collapse:collapse;font-size:.88rem;font-variant-numeric:tabular-nums}
+  table.prob th,table.prob td{border-bottom:1px solid var(--border);padding:4px 10px;text-align:center}
+  table.prob th{font-size:.72rem;letter-spacing:.05em;text-transform:uppercase;color:var(--muted)}
+  .hint{font-size:.85rem;color:var(--muted);margin-top:10px}
+
+  .sub-h{font-size:1rem;margin-bottom:8px}
+  .txt{border:1px solid var(--border);border-radius:var(--r);padding:6px 10px;background:var(--surface);width:170px}
+  textarea.code{width:100%;border:1px solid var(--border);border-radius:var(--r);padding:8px 10px;background:var(--surface-2);font-family:ui-monospace,Consolas,monospace;font-size:.8rem;resize:vertical;word-break:break-all}
+  .mini{display:inline-block;background:var(--surface-2);border:1px solid var(--border);border-radius:var(--r);padding:4px 12px;font-size:.85rem;color:var(--muted)}
+  .mini b{color:var(--text)}
+  footer{text-align:center;color:var(--muted);font-size:.82rem;margin-top:48px;padding-top:20px;border-top:1px solid var(--border)}
+
+  @media (max-width:600px){
+    h1{font-size:1.8rem}
+    .panel{padding:14px}
+    .panel-sub{margin-left:0}
+    .lane-label{width:62px;font-size:.75rem;padding:0 5px}
+    .cell{font-size:.85rem}
+    .die{width:44px;height:44px;padding:6px}
+    .die span{width:7px;height:7px}
+    table.mult td,table.mult th{width:30px;height:28px;font-size:.8rem}
+  }
+</style>
+</head>
+<body>
+
+<nav class="topbar" aria-label="Breadcrumb">
+  <div class="topbar-inner">
+    <a href="../../../../../index.html">Unterrichtsmaterialien</a><span class="sep">›</span>
+    <a href="../../../../index.html">Mathematik</a><span class="sep">›</span>
+    <a href="../../../index.html">Leistungskurs</a><span class="sep">›</span>
+    <a href="../../index.html#simulationen">Stochastik</a><span class="sep">›</span>
+    <span>Pferderennen</span>
+  </div>
+</nav>
+
+<header class="page-head">
+  <div class="inner">
+    <div class="head-eyebrow">Simulation · Kapitel VIII.1</div>
+    <h1>Das Pferderennen</h1>
+    <p>Zwölf Pferde, zwei Würfel – aber haben alle Pferde die gleichen Chancen?</p>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <div class="rules">
+    <b>Spielregeln:</b> Zwölf Pferde mit den Nummern 1 bis 12 stehen am Start. Es werden zwei Würfel geworfen und die Augensumme gebildet.
+    Das Pferd mit dieser Nummer rückt ein Feld vor. Gewonnen hat das Pferd, das als erstes die Ziellinie erreicht.
+  </div>
+
+  <!-- 1 · Einzelrennen -->
+  <section class="panel" id="rennen">
+    <div class="panel-head"><span class="step">1</span><h2>Ein Rennen spielen</h2></div>
+    <p class="panel-sub">Tippe vor dem Start auf ein Pferd (Klick auf die Bahn) und würfle dann Wurf für Wurf. Eine neue Streckenlänge startet ein neues Rennen.</p>
+
+    <div class="controls">
+      <div class="ctl">
+        <label for="len">Streckenlänge</label>
+        <input type="range" id="len" min="3" max="20" value="8">
+        <span class="len-val" id="lenVal">8</span>
+      </div>
+      <div class="ctl">
+        <label for="tip">Dein Tipp</label>
+        <select id="tip"></select>
+      </div>
+    </div>
+
+    <div class="dice-area">
+      <div class="die" id="d1" aria-label="Würfel 1"></div>
+      <div class="die" id="d2" aria-label="Würfel 2"></div>
+      <div class="sum-out" id="sumOut">Augensumme: <b>–</b></div>
+      <div class="throw-count" id="throwCount">Wurf 0</div>
+    </div>
+
+    <div class="btn-row" style="margin-bottom:14px">
+      <button class="btn btn-primary" id="btnRoll">🎲 Würfeln</button>
+      <button class="btn" id="btnAuto">▶ Automatisch</button>
+      <button class="btn" id="btnNew">↺ Neues Rennen</button>
+    </div>
+
+    <div class="track" id="track"></div>
+    <div class="track-note">Das karierte Feld ist das Ziel.</div>
+
+    <div class="banner" id="banner"></div>
+    <div class="log" id="log"></div>
+  </section>
+
+  <!-- 2 · Viele Rennen -->
+  <section class="panel" id="viele">
+    <div class="panel-head"><span class="step">2</span><h2>Viele Rennen simulieren</h2></div>
+    <p class="panel-sub">Der Computer spielt die Rennen in Sekundenbruchteilen. Deine gespielten Rennen aus Schritt 1 werden mitgezählt.</p>
+
+    <div class="btn-row" style="margin-bottom:12px">
+      <button class="btn btn-blue" data-races="10">+ 10 Rennen</button>
+      <button class="btn btn-blue" data-races="100">+ 100 Rennen</button>
+      <button class="btn btn-blue" data-races="1000">+ 1 000 Rennen</button>
+      <button class="btn" id="btnResetRaces">Statistik dieser Länge löschen</button>
+    </div>
+
+    <div class="stat-row">
+      <div class="stat"><div class="k">Streckenlänge</div><div class="v" id="sLen">8</div></div>
+      <div class="stat"><div class="k">Rennen</div><div class="v" id="sRaces">0</div></div>
+      <div class="stat"><div class="k">Häufigster Sieger</div><div class="v" id="sTop">–</div></div>
+      <div class="stat"><div class="k">⌀ Würfe pro Rennen</div><div class="v" id="sAvg">–</div></div>
+    </div>
+
+    <div class="seg" role="group" aria-label="Darstellung">
+      <button class="on" data-mode="abs">absolute Häufigkeit</button>
+      <button data-mode="rel">relative Häufigkeit</button>
+    </div>
+    <div class="chart-wrap" id="winWrap">
+      <svg class="chart" id="winChart" viewBox="0 0 720 250" role="img" aria-label="Siege pro Pferd"></svg>
+      <div class="tooltip" id="winTip"></div>
+    </div>
+    <div class="legend"><span><i style="background:var(--bar)"></i>Siege je Pferd</span><span><i style="background:var(--bar-tip)"></i>dein Tipp</span></div>
+
+    <h3 style="font-size:1rem;margin-top:22px">Vergleich der Streckenlängen</h3>
+    <p class="hint" style="margin-top:2px">Jede Streckenlänge hat ihre eigene Statistik. Wechsle die Länge oben in Schritt 1 und simuliere erneut.</p>
+    <div id="cmpWrap" style="overflow-x:auto"></div>
+  </section>
+
+  <!-- 3 · Augensummen -->
+  <section class="panel" id="summen">
+    <div class="panel-head"><span class="step">3</span><h2>Die Würfe genauer ansehen</h2></div>
+    <p class="panel-sub">Wie oft ist jede Augensumme gefallen? Gezählt werden alle Würfe aus allen Rennen – und zusätzliche Würfe.</p>
+
+    <div class="btn-row" style="margin-bottom:12px">
+      <button class="btn btn-blue" data-throws="100">+ 100 Würfe</button>
+      <button class="btn btn-blue" data-throws="1000">+ 1 000 Würfe</button>
+      <button class="btn btn-blue" data-throws="10000">+ 10 000 Würfe</button>
+      <button class="btn" id="btnResetThrows">Würfe löschen</button>
+    </div>
+    <div class="stat-row">
+      <div class="stat"><div class="k">Würfe insgesamt</div><div class="v" id="sThrows">0</div></div>
+    </div>
+
+    <div class="chart-wrap" id="sumWrap">
+      <svg class="chart" id="sumChart" viewBox="0 0 720 250" role="img" aria-label="Relative Häufigkeit der Augensummen"></svg>
+      <div class="tooltip" id="sumTip"></div>
+    </div>
+    <div class="legend"><span><i style="background:var(--bar)"></i>relative Häufigkeit</span><span id="legTheory" style="display:none"><i style="background:var(--theory);height:3px;vertical-align:3px"></i>theoretische Wahrscheinlichkeit</span></div>
+
+    <div class="btn-row" style="margin-top:16px;align-items:center" id="lockRow">
+      <input type="password" id="code" placeholder="Code" autocomplete="off" style="border:1px solid var(--border);border-radius:var(--r);padding:7px 10px;width:110px;background:var(--surface)">
+      <button class="btn" id="btnUnlock">🔒 Erklärung freischalten</button>
+      <span id="codeMsg" style="font-size:.85rem;color:var(--muted)">Erst nach der gemeinsamen Besprechung.</span>
+    </div>
+    <div style="margin-top:16px;display:none" id="revealRow">
+      <button class="btn" id="btnReveal">🔓 Erklärung einblenden</button>
+    </div>
+
+    <div class="reveal" id="reveal">
+      <div class="theory-grid">
+        <div>
+          <h3 style="font-size:1rem;margin-bottom:8px">Alle Ergebnisse zweier Würfel</h3>
+          <table class="mult" id="multTable"></table>
+          <p class="hint">36 gleich wahrscheinliche Ergebnisse (Laplace-Experiment).</p>
+        </div>
+        <div>
+          <h3 style="font-size:1rem;margin-bottom:8px">Wahrscheinlichkeit der Augensummen</h3>
+          <table class="prob" id="probTable"></table>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4 · Klassenergebnis -->
+  <section class="panel" id="klasse">
+    <div class="panel-head"><span class="step">4</span><h2>Ergebnisse der Klasse zusammenführen</h2></div>
+    <p class="panel-sub">Jede Gruppe erzeugt einen Code mit ihren Ergebnissen und schickt ihn an die Lehrkraft. Alle Codes zusammen ergeben das Klassenergebnis.</p>
+
+    <h3 class="sub-h">a) Code eurer Gruppe</h3>
+    <div class="controls" style="margin-bottom:10px">
+      <div class="ctl"><label for="gName">Gruppenname</label>
+        <input type="text" id="gName" maxlength="24" placeholder="z. B. Gruppe 3" class="txt"></div>
+      <button class="btn btn-primary" id="btnCode">Code erzeugen</button>
+    </div>
+    <div id="codeBox" style="display:none">
+      <textarea id="codeOut" class="code" rows="3" readonly></textarea>
+      <div class="btn-row" style="margin-top:8px;align-items:center">
+        <button class="btn" id="btnCopy">📋 Code kopieren</button>
+        <span id="codeInfo" class="hint" style="margin:0"></span>
+      </div>
+    </div>
+
+    <h3 class="sub-h" style="margin-top:24px">b) Alle Codes einfügen <span style="font-weight:400;color:var(--muted)">(Lehrkraft)</span></h3>
+    <textarea id="codesIn" class="code" rows="5" placeholder="Hier alle Gruppen-Codes einfügen – je einen pro Zeile (oder einfach untereinander)."></textarea>
+    <div class="btn-row" style="margin-top:8px">
+      <button class="btn btn-blue" id="btnMerge">Zusammenführen</button>
+      <button class="btn" id="btnClearMerge">Leeren</button>
+    </div>
+    <div id="mergeMsg" class="hint"></div>
+
+    <div id="mergeOut" style="display:none;margin-top:16px">
+      <div id="groupTable" style="overflow-x:auto"></div>
+
+      <h3 class="sub-h" style="margin-top:22px">Siege je Pferd – ganze Klasse</h3>
+      <div class="controls" style="margin:6px 0 4px">
+        <div class="ctl"><label for="mLen">Streckenlänge</label><select id="mLen"></select></div>
+        <span class="mini">Rennen: <b id="mRaces">0</b></span>
+      </div>
+      <div class="chart-wrap" id="mWinWrap">
+        <svg class="chart" id="mWinChart" viewBox="0 0 720 250" role="img" aria-label="Siege pro Pferd, Klasse"></svg>
+        <div class="tooltip" id="mWinTip"></div>
+      </div>
+
+      <h3 class="sub-h" style="margin-top:22px">Vergleich der Streckenlängen – ganze Klasse</h3>
+      <div id="mCmp" style="overflow-x:auto"></div>
+
+      <h3 class="sub-h" style="margin-top:22px">Augensummen – ganze Klasse</h3>
+      <span class="mini" style="margin-bottom:4px">Würfe: <b id="mThrows">0</b></span>
+      <div class="chart-wrap" id="mSumWrap">
+        <svg class="chart" id="mSumChart" viewBox="0 0 720 250" role="img" aria-label="Augensummen, Klasse"></svg>
+        <div class="tooltip" id="mSumTip"></div>
+      </div>
+      <p class="hint">Ist in Schritt 3 die Erklärung freigeschaltet, erscheinen auch hier die theoretischen Werte.</p>
+    </div>
+  </section>
+
+</div>
+
+<footer>Unterrichtsmaterialien · Friedrich-Bährens-Gymnasium Schwerte</footer>
+
+<script>
+(() => {
+  const H = 12;                       // Pferde 1..12
+  const $ = id => document.getElementById(id);
+  const fmt = n => n.toLocaleString('de-DE');
+  const pct = x => (x*100).toLocaleString('de-DE',{minimumFractionDigits:1,maximumFractionDigits:1}) + ' %';
+  const dec = (x,d=3) => x.toLocaleString('de-DE',{minimumFractionDigits:d,maximumFractionDigits:d});
+  const rollDie = () => 1 + Math.floor(Math.random()*6);
+
+  // ---------- Zustand ----------
+  let L = 8, tip = 7;
+  let pos = new Array(H+1).fill(0), throwsThisRace = 0, finished = false, autoTimer = null;
+  const stats = {};                   // je Streckenlänge: {races, wins[], throws}
+  const sumCount = new Array(13).fill(0); let sumTotal = 0;
+  let mode = 'abs', revealed = false;
+
+  const getStats = l => stats[l] || (stats[l] = {races:0, wins:new Array(H+1).fill(0), throws:0});
+
+  // ---------- Würfel ----------
+  const PIPS = {1:[4],2:[0,8],3:[0,4,8],4:[0,2,6,8],5:[0,2,4,6,8],6:[0,2,3,5,6,8]};
+  function drawDie(el, v){
+    el.innerHTML = '';
+    for (let i=0;i<9;i++){ const s=document.createElement('span'); if (v && PIPS[v].includes(i)) s.className='on'; el.appendChild(s); }
+    el.setAttribute('aria-label', v ? 'Würfel zeigt '+v : 'Würfel');
+  }
+  function animateDie(el){ el.classList.remove('roll'); void el.offsetWidth; el.classList.add('roll'); }
+
+  // ---------- Rennbahn ----------
+  function buildTip(){
+    const sel = $('tip'); sel.innerHTML='';
+    for (let h=1;h<=H;h++){ const o=document.createElement('option'); o.value=h; o.textContent='Pferd '+h; sel.appendChild(o); }
+    sel.value = tip;
+  }
+  function buildTrack(){
+    const t = $('track'); t.innerHTML='';
+    for (let h=1;h<=H;h++){
+      const lane = document.createElement('div'); lane.className='lane'; lane.id='lane'+h;
+      lane.title = 'Auf Pferd '+h+' tippen';
+      lane.innerHTML = `<div class="lane-label">${h}<span class="tip-mark">Tipp</span></div><div class="cells"></div>`;
+      const cells = lane.querySelector('.cells');
+      for (let c=0;c<=L;c++){ const d=document.createElement('div'); d.className='cell'; cells.appendChild(d); }
+      lane.addEventListener('click', () => { if (throwsThisRace===0 || finished){ tip=h; $('tip').value=h; renderTrack(); renderWins(); } });
+      t.appendChild(lane);
+    }
+    renderTrack();
+  }
+  function renderTrack(){
+    for (let h=1;h<=H;h++){
+      const lane=$('lane'+h); const cells=lane.querySelectorAll('.cell');
+      lane.classList.toggle('tip', h===tip);
+      lane.classList.toggle('winner', finished && pos[h]>=L);
+      cells.forEach((c,i)=>{ c.textContent=''; c.classList.toggle('done', i>0 && i<=pos[h] && i<L); });
+      cells[Math.min(pos[h],L)].innerHTML = '<span class="horse">🐎</span>';
+    }
+  }
+
+  function resetRace(){
+    stopAuto();
+    pos = new Array(H+1).fill(0); throwsThisRace=0; finished=false;
+    drawDie($('d1'),0); drawDie($('d2'),0);
+    $('sumOut').innerHTML='Augensumme: <b>–</b>'; $('throwCount').textContent='Wurf 0';
+    $('banner').classList.remove('show'); $('log').textContent='';
+    $('btnRoll').disabled=false; $('btnAuto').disabled=false;
+    $('tip').disabled=false;
+    renderTrack();
+  }
+
+  function doThrow(){
+    if (finished) return;
+    const a=rollDie(), b=rollDie(), s=a+b;
+    throwsThisRace++; pos[s]++;
+    sumCount[s]++; sumTotal++;
+    drawDie($('d1'),a); drawDie($('d2'),b); animateDie($('d1')); animateDie($('d2'));
+    $('sumOut').innerHTML = `Augensumme: <b>${s}</b>`;
+    $('throwCount').textContent = 'Wurf '+throwsThisRace;
+    const lg=$('log'); lg.textContent = `Wurf ${throwsThisRace}: ${a} + ${b} = ${s}` + (lg.textContent ? '  ·  '+lg.textContent : '');
+    $('tip').disabled=true;
+    const lane=$('lane'+s); lane.classList.add('flash'); setTimeout(()=>lane.classList.remove('flash'),250);
+    if (pos[s]>=L){
+      finished=true; stopAuto();
+      const st=getStats(L); st.races++; st.wins[s]++; st.throws+=throwsThisRace;
+      $('banner').innerHTML = `🏆 <b>Pferd ${s} gewinnt</b> nach ${throwsThisRace} Würfen. ` +
+        (s===tip ? 'Dein Tipp war richtig!' : `Dein Tipp war Pferd ${tip}.`) +
+        ' <span style="color:var(--muted)">– Das Rennen wurde in Schritt 2 mitgezählt.</span>';
+      $('banner').classList.add('show');
+      $('btnRoll').disabled=true; $('btnAuto').disabled=true;
+      $('tip').disabled=false;
+      renderWins();
+    }
+    renderTrack(); renderSums();
+  }
+  function stopAuto(){ if (autoTimer){ clearInterval(autoTimer); autoTimer=null; } $('btnAuto').textContent='▶ Automatisch'; }
+  function toggleAuto(){
+    if (autoTimer){ stopAuto(); return; }
+    $('btnAuto').textContent='⏸ Anhalten';
+    autoTimer=setInterval(doThrow, 220);
+  }
+
+  // ---------- Massensimulation ----------
+  function simulateRaces(n){
+    const st=getStats(L);
+    for (let r=0;r<n;r++){
+      const p=new Array(H+1).fill(0); let t=0;
+      while(true){
+        const s=rollDie()+rollDie(); t++; p[s]++; sumCount[s]++; sumTotal++;
+        if (p[s]>=L){ st.wins[s]++; break; }
+      }
+      st.races++; st.throws+=t;
+    }
+    renderWins(); renderSums();
+  }
+  function simulateThrows(n){
+    for (let i=0;i<n;i++){ sumCount[rollDie()+rollDie()]++; }
+    sumTotal+=n; renderSums();
+  }
+
+  // ---------- Balkendiagramm ----------
+  const NS='http://www.w3.org/2000/svg';
+  function el(tag, attrs, parent){ const e=document.createElementNS(NS,tag); for (const k in attrs) e.setAttribute(k,attrs[k]); if (parent) parent.appendChild(e); return e; }
+  function niceMax(v){ if (v<=0) return 1; const p=Math.pow(10,Math.floor(Math.log10(v))); for (const m of [1,2,2.5,5,10]) if (m*p>=v) return m*p; return 10*p; }
+  function barPath(x,y,w,h,r){ r=Math.min(r,w/2,h); if (h<=0) return ''; return `M${x},${y+h}V${y+r}Q${x},${y} ${x+r},${y}H${x+w-r}Q${x+w},${y} ${x+w},${y+r}V${y+h}Z`; }
+
+  // opts: values[1..12], fmtVal, fmtAxis, max, colorFor(h), theory[] optional, tipEl, wrapEl, tipText(h)
+  function drawBars(svg, o){
+    svg.innerHTML='';
+    const W=Math.max(320, Math.round(o.wrapEl.clientWidth||720)), Hh=W<560?220:250, m={l:W<560?40:52,r:6,t:18,b:34};
+    svg.setAttribute('viewBox',`0 0 ${W} ${Hh}`);
+    const iw=W-m.l-m.r, ih=Hh-m.t-m.b, n=12, band=iw/n, bw=Math.min(34, band*0.72);
+    const max=o.max;
+    const y=v=>m.t+ih-(v/max)*ih;
+    const hundred=Math.round(max*1000), nt = o.rel ? ((hundred/10)%4===0 ? 4 : 5) : (Number.isInteger(max/5) ? 5 : 4);
+    for (let i=0;i<=nt;i++){
+      const v=max*i/nt, yy=y(v);
+      el('line',{x1:m.l,x2:W-m.r,y1:yy,y2:yy,class:'grid'},svg);
+      const t=el('text',{x:m.l-8,y:yy+4,'text-anchor':'end'},svg); t.textContent=o.fmtAxis(v);
+    }
+    el('line',{x1:m.l,x2:W-m.r,y1:m.t+ih,y2:m.t+ih,class:'axis'},svg);
+    for (let h=1;h<=12;h++){
+      const cx=m.l+band*(h-0.5), x=cx-bw/2, v=o.values[h], yy=y(v), bh=m.t+ih-yy;
+      if (bh>0.5) el('path',{d:barPath(x,yy,bw,bh,4),fill:o.colorFor(h)},svg);
+      const lab=el('text',{x:cx,y:m.t+ih+16,'text-anchor':'middle'},svg); lab.textContent=h;
+      if (o.showVals && v>0 && band>=44){ const ly=Math.min(yy, o.theory ? y(o.theory[h]) : yy)-6; const tv=el('text',{x:cx,y:ly,'text-anchor':'middle',class:'val'},svg); tv.textContent=o.fmtVal(v); }
+      if (o.theory){
+        const ty=y(o.theory[h]);
+        el('line',{x1:cx-bw/2-5,x2:cx+bw/2+5,y1:ty,y2:ty,stroke:'var(--surface)','stroke-width':5,'stroke-linecap':'round'},svg);
+        el('line',{x1:cx-bw/2-5,x2:cx+bw/2+5,y1:ty,y2:ty,stroke:'var(--theory)','stroke-width':2.5,'stroke-linecap':'round'},svg);
+      }
+      const hit=el('rect',{x:cx-band/2,y:m.t,width:band,height:ih,class:'hit'},svg);
+      hit.addEventListener('mousemove',ev=>{
+        const r=o.wrapEl.getBoundingClientRect();
+        o.tipEl.innerHTML=o.tipText(h); o.tipEl.style.left=(ev.clientX-r.left)+'px'; o.tipEl.style.top=(ev.clientY-r.top-12)+'px'; o.tipEl.classList.add('show');
+      });
+      hit.addEventListener('mouseleave',()=>o.tipEl.classList.remove('show'));
+    }
+    const xl=el('text',{x:m.l+iw/2,y:Hh-2,'text-anchor':'middle'},svg); xl.textContent=o.xLabel;
+  }
+
+  function renderWins(){
+    const st=getStats(L), R=st.races;
+    $('sLen').textContent=L; $('sRaces').textContent=fmt(R);
+    let top=0; for (let h=1;h<=H;h++) if (st.wins[h]>(st.wins[top]||0)) top=h;
+    $('sTop').textContent = R ? 'Pferd '+top : '–';
+    $('sAvg').textContent = R ? dec(st.throws/R,1) : '–';
+    const rel = mode==='rel';
+    const vals = st.wins.map(w => rel ? (R? w/R : 0) : w);
+    const mx = Math.max(...vals.slice(1));
+    drawBars($('winChart'),{
+      values:vals, rel, max: rel ? Math.max(0.1, niceMax(mx)) : niceMax(Math.max(mx,4)),
+      fmtAxis: v => rel ? Math.round(v*100)+' %' : fmt(Math.round(v)),
+      fmtVal: v => rel ? pct(v) : fmt(v), showVals:true,
+      colorFor: h => h===tip ? 'var(--bar-tip)' : 'var(--bar)',
+      xLabel:'Pferd', wrapEl:$('winWrap'), tipEl:$('winTip'),
+      tipText: h => `<b>Pferd ${h}</b>${h===tip?' (dein Tipp)':''}<br>${fmt(st.wins[h])} Siege · ${R?pct(st.wins[h]/R):'–'}`
+    });
+    renderCmp();
+  }
+
+  function renderCmp(){
+    const ls=Object.keys(stats).map(Number).filter(l=>stats[l].races>0).sort((a,b)=>a-b);
+    if (!ls.length){ $('cmpWrap').innerHTML='<div class="empty">Noch keine Rennen gespielt.</div>'; return; }
+    let h='<table class="cmp"><thead><tr><th>Länge</th><th>Rennen</th><th>Häufigster Sieger</th><th>Siege Pferd 7</th><th>Siege Pferd 2 und 12</th><th>⌀ Würfe</th></tr></thead><tbody>';
+    for (const l of ls){
+      const s=stats[l]; let top=1; for (let k=1;k<=H;k++) if (s.wins[k]>s.wins[top]) top=k;
+      h+=`<tr class="${l===L?'cur':''}"><td>${l}</td><td>${fmt(s.races)}</td><td>Pferd ${top}</td><td>${pct(s.wins[7]/s.races)}</td><td>${pct((s.wins[2]+s.wins[12])/s.races)}</td><td>${dec(s.throws/s.races,1)}</td></tr>`;
+    }
+    $('cmpWrap').innerHTML=h+'</tbody></table>';
+  }
+
+  const THEORY = [0,0,1,2,3,4,5,6,5,4,3,2,1].map(k=>k/36);
+  function renderSums(){
+    $('sThrows').textContent=fmt(sumTotal);
+    const vals=sumCount.map(c=>sumTotal? c/sumTotal : 0);
+    const mx=Math.max(...vals.slice(1), revealed ? 6/36 : 0);
+    drawBars($('sumChart'),{
+      values:vals, rel:true, max: Math.max(0.1, niceMax(mx)),
+      fmtAxis: v => Math.round(v*100)+' %', fmtVal: v => pct(v), showVals: sumTotal>0,
+      colorFor: () => 'var(--bar)', theory: revealed ? THEORY : null,
+      xLabel:'Augensumme', wrapEl:$('sumWrap'), tipEl:$('sumTip'),
+      tipText: h => `<b>Augensumme ${h}</b><br>${fmt(sumCount[h])} von ${fmt(sumTotal)} Würfen · ${sumTotal?pct(sumCount[h]/sumTotal):'–'}` +
+        (revealed ? `<br>Theorie: ${Math.round(THEORY[h]*36)}/36 ≈ ${pct(THEORY[h])}` : '')
+    });
+  }
+
+  function buildTheory(){
+    let t='<tr><th>+</th>'; for (let b=1;b<=6;b++) t+=`<th>${b}</th>`; t+='</tr>';
+    for (let a=1;a<=6;a++){ t+=`<tr><th>${a}</th>`; for (let b=1;b<=6;b++){ const s=a+b, alpha=0.12+0.13*(6-Math.abs(7-s)); t+=`<td style="background:color-mix(in srgb, var(--bar) ${Math.round(alpha*100)}%, transparent)">${s}</td>`; } t+='</tr>'; }
+    $('multTable').innerHTML=t;
+    let p='<tr><th>Summe</th><th>Anzahl</th><th>P</th></tr>';
+    for (let s=1;s<=12;s++){ const k=Math.round(THEORY[s]*36); p+=`<tr><td>${s}</td><td>${k}</td><td>${k? k+'/36 ≈ '+pct(k/36) : '0'}</td></tr>`; }
+    $('probTable').innerHTML=p;
+  }
+
+  // ---------- Ereignisse ----------
+  $('len').addEventListener('input', e => { L=+e.target.value; $('lenVal').textContent=L; buildTrack(); resetRace(); renderWins(); });
+  $('tip').addEventListener('change', e => { tip=+e.target.value; renderTrack(); renderWins(); });
+  $('btnRoll').addEventListener('click', doThrow);
+  $('btnAuto').addEventListener('click', toggleAuto);
+  $('btnNew').addEventListener('click', resetRace);
+  document.querySelectorAll('[data-races]').forEach(b=>b.addEventListener('click',()=>simulateRaces(+b.dataset.races)));
+  document.querySelectorAll('[data-throws]').forEach(b=>b.addEventListener('click',()=>simulateThrows(+b.dataset.throws)));
+  $('btnResetRaces').addEventListener('click',()=>{ delete stats[L]; renderWins(); });
+  $('btnResetThrows').addEventListener('click',()=>{ sumCount.fill(0); sumTotal=0; renderSums(); });
+  document.querySelectorAll('.seg button').forEach(b=>b.addEventListener('click',()=>{
+    document.querySelectorAll('.seg button').forEach(x=>x.classList.toggle('on',x===b)); mode=b.dataset.mode; renderWins();
+  }));
+  function unlock(){
+    if ($('code').value.trim().toUpperCase()==='MATHE'){ $('lockRow').style.display='none'; $('revealRow').style.display=''; $('btnReveal').click(); }
+    else { $('codeMsg').textContent='Code nicht korrekt.'; $('codeMsg').style.color='var(--gold)'; }
+  }
+  $('btnUnlock').addEventListener('click', unlock);
+  $('code').addEventListener('keydown', e => { if (e.key==='Enter') unlock(); });
+  $('btnReveal').addEventListener('click',()=>{
+    revealed=!revealed;
+    $('reveal').classList.toggle('show',revealed);
+    $('legTheory').style.display = revealed ? '' : 'none';
+    $('btnReveal').textContent = revealed ? 'Erklärung ausblenden' : '🔓 Erklärung einblenden';
+    renderSums(); renderMerged();
+  });
+
+
+  // ---------- Codes: Gruppenergebnis ----------
+  const PREFIX='PFERD1:';
+  const b64e = str => btoa(unescape(encodeURIComponent(str)));
+  const b64d = str => decodeURIComponent(escape(atob(str)));
+  function makeCode(){
+    const name=($('gName').value.trim()||'Gruppe').slice(0,24);
+    const st={};
+    for (const l in stats) if (stats[l].races>0) st[l]=[stats[l].races, stats[l].throws, ...stats[l].wins.slice(1)];
+    const obj={g:name, id:Math.random().toString(36).slice(2,8), s:st, c:sumCount.slice(1)};
+    return PREFIX+b64e(JSON.stringify(obj));
+  }
+  $('btnCode').addEventListener('click',()=>{
+    const nR=Object.values(stats).reduce((a,x)=>a+x.races,0);
+    $('codeOut').value=makeCode(); $('codeBox').style.display='';
+    $('codeInfo').textContent=`Enthält ${fmt(nR)} Rennen und ${fmt(sumTotal)} Würfe. Wenn ihr weiter simuliert, erzeugt den Code neu.`;
+  });
+  $('btnCopy').addEventListener('click',async()=>{
+    const t=$('codeOut'); t.select();
+    try{ await navigator.clipboard.writeText(t.value); $('btnCopy').textContent='✓ Kopiert'; }
+    catch(e){ document.execCommand && document.execCommand('copy'); $('btnCopy').textContent='✓ Kopiert'; }
+    setTimeout(()=>$('btnCopy').textContent='📋 Code kopieren',1800);
+  });
+
+  // ---------- Codes: zusammenführen ----------
+  let merged=null;
+  function parseCodes(text){
+    const found=text.match(/PFERD1:[A-Za-z0-9+/=]+/g)||[];
+    const groups=[], seen=new Set(); let bad=0, dup=0;
+    for (const c of found){
+      try{
+        const o=JSON.parse(b64d(c.slice(PREFIX.length)));
+        if (!o || typeof o.s!=='object' || !Array.isArray(o.c) || o.c.length!==12) throw 0;
+        if (seen.has(o.id)){ dup++; continue; } seen.add(o.id);
+        groups.push(o);
+      }catch(e){ bad++; }
+    }
+    return {groups,bad,dup};
+  }
+  function doMerge(){
+    const {groups,bad,dup}=parseCodes($('codesIn').value);
+    let msg=[];
+    if (!groups.length){ $('mergeMsg').textContent='Keine gültigen Codes gefunden.'; $('mergeOut').style.display='none'; merged=null; return; }
+    msg.push(`${groups.length} Gruppe${groups.length>1?'n':''} zusammengeführt.`);
+    if (dup) msg.push(`${dup} doppelte${dup>1?'':'r'} Code${dup>1?'s':''} übersprungen.`);
+    if (bad) msg.push(`${bad} Code${bad>1?'s':''} unlesbar.`);
+    $('mergeMsg').textContent=msg.join(' ');
+    const S={}, C=new Array(13).fill(0); let CT=0;
+    for (const g of groups){
+      for (const l in g.s){
+        const a=g.s[l]; const m=S[l]||(S[l]={races:0,throws:0,wins:new Array(H+1).fill(0)});
+        m.races+=a[0]; m.throws+=a[1]; for (let h=1;h<=H;h++) m.wins[h]+=a[1+h]||0;
+      }
+      g.c.forEach((v,i)=>{ C[i+1]+=v; CT+=v; });
+    }
+    merged={S,C,CT,groups};
+    // Gruppentabelle
+    const lens=Object.keys(S).map(Number).sort((a,b)=>a-b);
+    let t='<table class="cmp"><thead><tr><th>Gruppe</th>'+lens.map(l=>`<th>Rennen (Länge ${l})</th>`).join('')+'<th>Würfe</th></tr></thead><tbody>';
+    for (const g of groups){
+      const w=g.c.reduce((a,b)=>a+b,0);
+      t+=`<tr><td>${g.g.replace(/[<>&]/g,'')}</td>`+lens.map(l=>`<td>${g.s[l]?fmt(g.s[l][0]):'–'}</td>`).join('')+`<td>${fmt(w)}</td></tr>`;
+    }
+    t+=`<tr class="cur"><td><b>Klasse</b></td>`+lens.map(l=>`<td><b>${fmt(S[l].races)}</b></td>`).join('')+`<td><b>${fmt(CT)}</b></td></tr></tbody></table>`;
+    $('groupTable').innerHTML=t;
+    // Längenauswahl
+    const sel=$('mLen'), prev=+sel.value; sel.innerHTML='';
+    lens.forEach(l=>{ const o=document.createElement('option'); o.value=l; o.textContent=l; sel.appendChild(o); });
+    sel.value = lens.includes(prev) ? prev : (lens.includes(8) ? 8 : lens[0]);
+    $('mergeOut').style.display='';
+    renderMerged();
+  }
+  function renderMerged(){
+    if (!merged) return;
+    const {S,C,CT}=merged;
+    const ls=Object.keys(S).map(Number).sort((a,b)=>a-b);
+    // Siege
+    const l=+$('mLen').value, st=S[l];
+    if (st){
+      $('mRaces').textContent=fmt(st.races);
+      const vals=st.wins.map(w=>st.races? w/st.races:0);
+      drawBars($('mWinChart'),{values:vals, rel:true, max:Math.max(0.1,niceMax(Math.max(...vals.slice(1)))),
+        fmtAxis:v=>Math.round(v*100)+' %', fmtVal:v=>pct(v), showVals:true, colorFor:()=> 'var(--bar)',
+        xLabel:'Pferd', wrapEl:$('mWinWrap'), tipEl:$('mWinTip'),
+        tipText:h=>`<b>Pferd ${h}</b><br>${fmt(st.wins[h])} Siege · ${pct(vals[h])}`});
+    }
+    // Vergleich
+    let h='<table class="cmp"><thead><tr><th>Länge</th><th>Rennen</th><th>Häufigster Sieger</th><th>Siege Pferd 7</th><th>Siege Pferd 2 und 12</th><th>⌀ Würfe</th></tr></thead><tbody>';
+    for (const k of ls){ const s=S[k]; if(!s.races) continue; let top=1; for (let q=1;q<=H;q++) if (s.wins[q]>s.wins[top]) top=q;
+      h+=`<tr><td>${k}</td><td>${fmt(s.races)}</td><td>Pferd ${top}</td><td>${pct(s.wins[7]/s.races)}</td><td>${pct((s.wins[2]+s.wins[12])/s.races)}</td><td>${dec(s.throws/s.races,1)}</td></tr>`; }
+    $('mCmp').innerHTML=h+'</tbody></table>';
+    // Summen
+    $('mThrows').textContent=fmt(CT);
+    const sv=C.map(c=>CT? c/CT:0);
+    drawBars($('mSumChart'),{values:sv, rel:true, max:Math.max(0.1,niceMax(Math.max(...sv.slice(1), revealed?6/36:0))),
+      fmtAxis:v=>Math.round(v*100)+' %', fmtVal:v=>pct(v), showVals:CT>0, colorFor:()=>'var(--bar)', theory: revealed?THEORY:null,
+      xLabel:'Augensumme', wrapEl:$('mSumWrap'), tipEl:$('mSumTip'),
+      tipText:q=>`<b>Augensumme ${q}</b><br>${fmt(C[q])} von ${fmt(CT)} Würfen · ${CT?pct(sv[q]):'–'}`+(revealed?`<br>Theorie: ${Math.round(THEORY[q]*36)}/36 ≈ ${pct(THEORY[q])}`:'')});
+  }
+  $('btnMerge').addEventListener('click',doMerge);
+  $('btnClearMerge').addEventListener('click',()=>{ $('codesIn').value=''; $('mergeOut').style.display='none'; $('mergeMsg').textContent=''; merged=null; });
+  $('mLen').addEventListener('change',renderMerged);
+
+  let rsT; window.addEventListener('resize',()=>{ clearTimeout(rsT); rsT=setTimeout(()=>{ renderWins(); renderSums(); renderMerged(); },120); });
+  buildTip(); buildTrack(); drawDie($('d1'),0); drawDie($('d2'),0); buildTheory(); renderWins(); renderSums();
+})();
+</script>
+</body>
+</html>
