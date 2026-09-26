@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Baumdiagramm · Simulation · LK Q2 Stochastik</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,400;0,600;1,400&display=swap">
+<style>
+  :root {
+    --gold:#b87500; --gold-pale:#fdf3dc;
+    --bg:#f5f4f0; --surface:#ffffff; --surface-2:#faf9f6;
+    --border:#ddd8cc; --text:#1c1a16; --muted:#6b6456;
+    --link:#2c5f8a; --link-pale:#e5eef7;
+    --win:#1a7a4c; --win-pale:#e3f3ea;
+    --path:#c0392b; --path-pale:#fbe9e7;
+    --edge:#8a8272;
+    --n1:#2c5f8a; --n1-pale:#dce8f4;
+    --n2:#c0392b; --n2-pale:#f8e0dc;
+    --r:6px;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --gold:#d4a030; --gold-pale:#2a2010;
+      --bg:#1a1814; --surface:#242018; --surface-2:#2a251c;
+      --border:#38332a; --text:#ede8de; --muted:#9e9482;
+      --link:#6a9fd8; --link-pale:#0f1e30;
+      --win:#3fbf82; --win-pale:#0f2a1c;
+      --path:#ef6b5b; --path-pale:#3a1c18;
+      --edge:#7d7563;
+      --n1:#6a9fd8; --n1-pale:#16283d;
+      --n2:#ef6b5b; --n2-pale:#3a1c18;
+    }
+  }
+  :root[data-theme="dark"] {
+    --gold:#d4a030; --gold-pale:#2a2010;
+    --bg:#1a1814; --surface:#242018; --surface-2:#2a251c;
+    --border:#38332a; --text:#ede8de; --muted:#9e9482;
+    --link:#6a9fd8; --link-pale:#0f1e30;
+    --win:#3fbf82; --win-pale:#0f2a1c;
+    --path:#ef6b5b; --path-pale:#3a1c18;
+    --edge:#7d7563;
+    --n1:#6a9fd8; --n1-pale:#16283d;
+    --n2:#ef6b5b; --n2-pale:#3a1c18;
+  }
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;font-size:16px;line-height:1.55;min-height:100vh}
+  button,select,input{font:inherit;color:inherit}
+
+  .topbar{background:var(--surface);border-bottom:1px solid var(--border);padding:0 20px}
+  .topbar-inner{max-width:960px;margin:0 auto;min-height:46px;display:flex;flex-wrap:wrap;align-items:center;gap:6px;font-size:.82rem;color:var(--muted)}
+  .topbar-inner a{color:var(--link);text-decoration:none}
+  .topbar-inner a:hover{text-decoration:underline}
+  .sep{opacity:.45}
+
+  header.page-head{background:var(--surface);border-bottom:3px solid var(--link);padding:28px 20px 24px;margin-bottom:28px}
+  header.page-head .inner{max-width:960px;margin:0 auto}
+  .head-eyebrow{font-size:.78rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--link);margin-bottom:6px}
+  h1{font-family:"Crimson Pro",Georgia,serif;font-size:2.2rem;font-weight:600;line-height:1.15}
+  header.page-head p{font-size:.95rem;color:var(--muted);margin-top:6px;max-width:720px}
+
+  .wrap{max-width:960px;margin:0 auto;padding:0 16px 80px}
+  .panel{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:20px;margin-bottom:24px}
+  .panel-head{display:flex;align-items:baseline;gap:10px;margin-bottom:4px}
+  .step{display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:50%;background:var(--link);color:#fff;font-weight:700;font-size:.85rem;flex-shrink:0}
+  h2{font-family:"Crimson Pro",Georgia,serif;font-size:1.45rem;font-weight:600}
+  h3{font-size:1rem;margin-bottom:8px}
+  .panel-sub{color:var(--muted);font-size:.9rem;margin:0 0 16px 36px}
+
+  .task-box{background:var(--gold-pale);border-left:3px solid var(--gold);border-radius:var(--r);padding:12px 16px;font-size:.92rem;margin:14px 0 0}
+  .task-box b{color:var(--gold)}
+  .task-box ol{margin:6px 0 0 20px}
+  .task-box li{margin:3px 0}
+
+  .exp-choice{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin-bottom:16px}
+  .exp{border:1.5px solid var(--border);border-radius:var(--r);padding:10px 14px;cursor:pointer;background:var(--surface);text-align:left}
+  .exp:hover{border-color:var(--link)}
+  .exp.on{border-color:var(--link);background:var(--link-pale)}
+  .exp .t{font-weight:700;font-size:.92rem}
+  .exp .d{font-size:.8rem;color:var(--muted)}
+
+  .btn{border:1px solid var(--border);background:var(--surface);border-radius:var(--r);padding:8px 14px;cursor:pointer;font-weight:600;font-size:.9rem}
+  .btn:hover{background:var(--surface-2)}
+  .btn-primary{background:var(--gold);border-color:var(--gold);color:#fff}
+  .btn-primary:hover{background:var(--gold);filter:brightness(1.07)}
+  .btn-blue{background:var(--link);border-color:var(--link);color:#fff}
+  .btn-blue:hover{background:var(--link);filter:brightness(1.1)}
+  .btn-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+
+  .last{display:flex;align-items:center;gap:10px;flex-wrap:wrap;min-height:48px;margin:12px 0}
+  .token{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:1rem;border:2px solid;animation:pop .35s ease-out}
+  .token.o0{background:var(--n1-pale);border-color:var(--n1);color:var(--n1)}
+  .token.o1{background:var(--n2-pale);border-color:var(--n2);color:var(--n2)}
+  @keyframes pop{0%{transform:scale(.4) rotate(-40deg);opacity:0}70%{transform:scale(1.1)}100%{transform:none;opacity:1}}
+  .last .arrow{color:var(--muted)}
+  .last .res{font-size:.95rem}
+  .last .res b{font-size:1.1rem}
+  .count-pill{margin-left:auto;font-size:.85rem;color:var(--muted)}
+  .count-pill b{color:var(--text);font-size:1.05rem}
+
+  .seg{display:inline-flex;border:1px solid var(--border);border-radius:var(--r);overflow:hidden;flex-wrap:wrap}
+  .seg button{border:none;background:var(--surface);padding:6px 12px;cursor:pointer;font-size:.85rem;font-weight:600;color:var(--muted)}
+  .seg button.on{background:var(--link);color:#fff}
+  .seg-label{font-size:.85rem;color:var(--muted);font-weight:600;margin-right:6px}
+
+  .tree-scroll{overflow-x:auto;margin-top:10px;border:1px solid var(--border);border-radius:var(--r);background:var(--surface-2)}
+  svg.tree{display:block;width:100%;min-width:640px;height:auto}
+  .tree text{font-family:inherit}
+  .tree .lvl{fill:var(--muted);font-size:12px}
+  .tree .elab{font-size:12.5px;font-weight:700}
+  .tree .elab.h{fill:var(--gold)}
+  .tree .elab.p{fill:var(--text)}
+  .tree .nlab{font-size:14px;font-weight:800}
+  .tree .ncount{font-size:11px;fill:var(--muted)}
+  .tree .leaf-hit{cursor:pointer}
+  .legend{display:flex;flex-wrap:wrap;gap:16px;font-size:.8rem;color:var(--muted);margin-top:8px}
+  .legend i{display:inline-block;width:18px;height:3px;vertical-align:4px;margin-right:5px;border-radius:2px}
+
+  table.dist{border-collapse:collapse;width:100%;font-size:.9rem;font-variant-numeric:tabular-nums;margin-top:8px}
+  table.dist th,table.dist td{border-bottom:1px solid var(--border);padding:6px 8px;text-align:center}
+  table.dist th{font-size:.72rem;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);white-space:nowrap}
+  table.dist td.e{font-weight:700;letter-spacing:.04em}
+  table.dist tr.sel td{background:var(--path-pale)}
+  table.dist tr.inE td{background:var(--win-pale)}
+  table.dist tr.inE.sel td{background:linear-gradient(90deg,var(--win-pale),var(--path-pale))}
+  table.dist tr{cursor:pointer}
+  table.dist tfoot td{font-weight:700;border-top:2px solid var(--border);border-bottom:none}
+  .scroll-x{overflow-x:auto}
+  .hide{display:none!important}
+
+  .pfad{border:1px solid var(--border);border-radius:var(--r);padding:14px 16px;margin-top:14px;background:var(--surface-2);font-size:.95rem;font-variant-numeric:tabular-nums}
+  .pfad .eq{font-size:1.05rem;margin:6px 0;line-height:2}
+  .pfad .f{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;line-height:1.1;font-size:.9em;margin:0 2px}
+  .pfad .f span:first-child{border-bottom:1.5px solid currentColor;padding:0 3px}
+  .pfad .hv{color:var(--gold);font-weight:700}
+  .pfad .pv{font-weight:700}
+  .muted{color:var(--muted)}
+
+  .ev-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:10px 0}
+  .evbox{border:1px solid var(--border);border-radius:var(--r);padding:12px 16px;background:var(--surface-2);font-size:.95rem;font-variant-numeric:tabular-nums}
+  .evbox .set{font-weight:700;word-break:break-word}
+  .evbox .big{font-size:1.05rem}
+
+  .merk{border:2px solid var(--link);border-radius:var(--r);padding:14px 18px;margin-top:14px;background:var(--link-pale);font-size:.93rem}
+  .merk b{color:var(--link)}
+  .merk p{margin:5px 0}
+
+  footer{text-align:center;color:var(--muted);font-size:.82rem;margin-top:48px;padding-top:20px;border-top:1px solid var(--border)}
+  @media (max-width:600px){
+    h1{font-size:1.8rem}
+    .panel{padding:14px}
+    .panel-sub{margin-left:0}
+    .token{width:34px;height:34px;font-size:.9rem}
+  }
+</style>
+</head>
+<body>
+
+<nav class="topbar" aria-label="Breadcrumb">
+  <div class="topbar-inner">
+    <a href="../../../../../index.html">Unterrichtsmaterialien</a><span class="sep">›</span>
+    <a href="../../../../index.html">Mathematik</a><span class="sep">›</span>
+    <a href="../../../index.html">Leistungskurs</a><span class="sep">›</span>
+    <a href="../../index.html#simulationen">Stochastik</a><span class="sep">›</span>
+    <span>Baumdiagramm</span>
+  </div>
+</nav>
+
+<header class="page-head">
+  <div class="inner">
+    <div class="head-eyebrow">Simulation · Kapitel VIII.1</div>
+    <h1>Wie ein Baumdiagramm entsteht</h1>
+    <p>Mehrstufige Zufallsexperimente Stück für Stück durchführen – und beobachten, wie sich die Häufigkeiten auf die Äste verteilen.</p>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <!-- 1 · Experiment -->
+  <section class="panel">
+    <div class="panel-head"><span class="step">1</span><h2>Experiment wählen und durchführen</h2></div>
+    <p class="panel-sub">Jede Durchführung läuft einen Pfad im Baum entlang. An jedem Knoten wird mitgezählt, wie oft er erreicht wurde.</p>
+
+    <div class="exp-choice" id="expChoice"></div>
+
+    <div class="btn-row">
+      <button class="btn btn-primary" id="btnOne">▶ Einmal durchführen</button>
+      <button class="btn btn-blue" data-n="10">+ 10</button>
+      <button class="btn btn-blue" data-n="100">+ 100</button>
+      <button class="btn btn-blue" data-n="1000">+ 1 000</button>
+      <button class="btn btn-blue" data-n="10000">+ 10 000</button>
+      <button class="btn" id="btnReset">↺ Zurücksetzen</button>
+    </div>
+
+    <div class="last" id="last">
+      <span class="muted" style="font-size:.9rem">Noch keine Durchführung.</span>
+    </div>
+
+    <div class="btn-row" style="gap:14px">
+      <div><span class="seg-label">Am Ast anzeigen:</span>
+        <div class="seg" id="segEdge">
+          <button data-m="n" class="on">Anzahl</button>
+          <button data-m="h">rel. Häufigkeit</button>
+          <button data-m="p">Wahrscheinlichkeit</button>
+          <button data-m="hp">beides</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="tree-scroll"><svg class="tree" id="tree" role="img" aria-label="Baumdiagramm"></svg></div>
+    <div class="legend">
+      <span><i style="background:var(--path)"></i>Pfad der letzten Durchführung bzw. ausgewählter Pfad</span>
+      <span>Zahl unter dem Knoten: wie oft er erreicht wurde</span>
+      <span>Klick auf ein Blatt: Pfad auswählen</span>
+    </div>
+
+    <div class="task-box">
+      <b>Arbeitsauftrag 1</b>
+      <ol>
+        <li>Führe das Experiment einige Male einzeln durch und verfolge den markierten Pfad. Was bedeutet die Zahl unter einem Knoten?</li>
+        <li>Stelle „rel. Häufigkeit“ ein und simuliere viele Durchführungen. Welche Werte stellen sich an den Ästen ein? Welche Wahrscheinlichkeiten würdest du deshalb an die Äste schreiben?</li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- 2 · Pfadregel -->
+  <section class="panel">
+    <div class="panel-head"><span class="step">2</span><h2>Vom Ast zum Ergebnis: die Pfadregel</h2></div>
+    <p class="panel-sub">Wähle ein Ergebnis in der Tabelle oder durch Klick auf ein Blatt im Baum.</p>
+
+    <div class="scroll-x"><table class="dist" id="distTable"></table></div>
+    <div class="pfad" id="pfad"></div>
+
+    <div class="task-box">
+      <b>Arbeitsauftrag 2</b>
+      <ol>
+        <li>Wähle einen Pfad aus. Multipliziere die relativen Häufigkeiten an seinen Ästen. Vergleiche mit der relativen Häufigkeit des Ergebnisses. Warum stimmt das <em>exakt</em>?</li>
+        <li>Blende die Wahrscheinlichkeiten ein. Formuliere eine Regel, wie man die Wahrscheinlichkeit eines Ergebnisses aus dem Baumdiagramm erhält.</li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- 3 · Ereignisse -->
+  <section class="panel">
+    <div class="panel-head"><span class="step">3</span><h2>Ereignisse und Summenregel</h2></div>
+    <p class="panel-sub">Ein Ereignis fasst mehrere Ergebnisse zusammen. Markiere Ergebnisse in der Tabelle über die Kästchen „zu E“ oder wähle ein vorbereitetes Ereignis.</p>
+
+    <div class="ev-row" id="evPresets"></div>
+    <div class="evbox" id="evBox"></div>
+
+    <h3 style="margin-top:20px" id="altTitle">Eine andere Ergebnismenge</h3>
+    <p class="muted" style="font-size:.88rem" id="altText"></p>
+    <div class="scroll-x"><table class="dist" id="altTable"></table></div>
+
+    <div class="task-box">
+      <b>Arbeitsauftrag 3</b>
+      <ol>
+        <li>Beschreibe das vorbereitete Ereignis in Worten und als Menge. Wie erhält man seine Wahrscheinlichkeit aus den Wahrscheinlichkeiten der Ergebnisse?</li>
+        <li>Vergleiche die beiden Ergebnismengen. Welche Ergebnisse der ersten Tabelle gehören zu einem Ergebnis der zweiten? Warum sind die Ergebnisse der zweiten Ergebnismenge nicht gleich wahrscheinlich?</li>
+        <li>Nur Urne: Vergleiche die Äste der zweiten Stufe <em>mit</em> und <em>ohne</em> Zurücklegen. Was ändert sich und warum?</li>
+      </ol>
+    </div>
+
+    <div style="margin-top:16px">
+      <button class="btn" id="btnMerk">📘 Merkwissen einblenden</button>
+    </div>
+    <div class="merk hide" id="merk">
+      <p><b>Baumdiagramm:</b> Ein mehrstufiges Zufallsexperiment wird durch ein Baumdiagramm beschrieben. Jeder Pfad gehört zu genau einem Ergebnis. Die Ergebnisse werden als Tupel notiert, z.&nbsp;B. (W,&nbsp;Z,&nbsp;Z) oder kurz WZZ.</p>
+      <p><b>Pfadregel:</b> Die Wahrscheinlichkeit eines Ergebnisses erhält man, indem man die Wahrscheinlichkeiten längs des zugehörigen Pfades <b>multipliziert</b>.</p>
+      <p><b>Ereignis:</b> Ein Ereignis E ist eine Teilmenge der Ergebnismenge S. Wenn man ein Ergebnis aus E erhält, sagt man: E ist eingetreten.</p>
+      <p><b>Summenregel:</b> Die Wahrscheinlichkeit P(E) eines Ereignisses erhält man, indem man die Wahrscheinlichkeiten der zugehörigen Ergebnisse <b>addiert</b>.</p>
+      <p><b>Wahrscheinlichkeitsverteilung:</b> Die Wahrscheinlichkeiten aller Ergebnisse liegen in [0; 1] und haben die Summe 1.</p>
+    </div>
+  </section>
+
+</div>
+
+<footer>Unterrichtsmaterialien · Friedrich-Bährens-Gymnasium Schwerte</footer>
+
+<script>
+(() => {
+  const $ = id => document.getElementById(id);
+  const fmt = n => n.toLocaleString('de-DE');
+  const dec = (x,d=3) => x.toLocaleString('de-DE',{minimumFractionDigits:d,maximumFractionDigits:d});
+  const gcd = (a,b) => { a=Math.abs(a); b=Math.abs(b); while(b){ [a,b]=[b,a%b]; } return a||1; };
+  const red = ([a,b]) => { const g=gcd(a,b); return [a/g,b/g]; };
+  const mul = (x,y) => red([x[0]*y[0], x[1]*y[1]]);
+  const add = (x,y) => red([x[0]*y[1]+y[0]*x[1], x[1]*y[1]]);
+  const fval = f => f[0]/f[1];
+  const fstr = f => f[0]===0 ? '0' : (f[1]===1 ? String(f[0]) : f[0]+'/'+f[1]);
+  const fhtml = f => f[0]===0 ? '0' : (f[1]===1 ? String(f[0]) : `<span class="f"><span>${f[0]}</span><span>${f[1]}</span></span>`);
+
+  // ---------- Experimente ----------
+  // prob(path, i) liefert Bruch [z,n] für Ausgang i nach bisherigem Pfad (Array von 0/1)
+  const EXPS = {
+    muenze: {
+      title:'Münze dreimal werfen', desc:'Wappen (W) oder Zahl (Z) · wie im Beispiel des Buches',
+      stages:3, sym:['W','Z'], stageName:k=>`${k}. Wurf`,
+      prob:(path,i)=>[1,2],
+      presets:[
+        {name:'„höchstens einmal Zahl“', test:p=>p.filter(x=>x===1).length<=1},
+        {name:'„genau zweimal Wappen“', test:p=>p.filter(x=>x===0).length===2},
+        {name:'„erster und letzter Wurf gleich“', test:p=>p[0]===p[2]}
+      ],
+      alt:{title:'Andere Ergebnismenge: Anzahl der Würfe mit Zahl', text:'Achtet man nur darauf, wie oft Zahl oben liegt, lautet die Ergebnismenge S′ = {0; 1; 2; 3}.', key:p=>p.filter(x=>x===1).length, keys:[0,1,2,3], head:'Anzahl Z'}
+    },
+    mit: {
+      title:'Urne mit Zurücklegen', desc:'3 rote, 1 blaue Kugel · zwei Kugeln ziehen, jeweils zurücklegen',
+      stages:2, sym:['r','b'], swap:true, stageName:k=>`${k}. Kugel`,
+      prob:(path,i)=> i===0 ? [3,4] : [1,4],
+      presets:[
+        {name:'„beide Kugeln haben die gleiche Farbe“', test:p=>p[0]===p[1]},
+        {name:'„mindestens eine blaue Kugel“', test:p=>p.includes(1)}
+      ],
+      alt:{title:'Andere Ergebnismenge: Anzahl der roten Kugeln', text:'Achtet man nur darauf, wie viele rote Kugeln gezogen werden, lautet die Ergebnismenge S′ = {0; 1; 2}.', key:p=>p.filter(x=>x===0).length, keys:[0,1,2], head:'Anzahl rot'}
+    },
+    ohne: {
+      title:'Urne ohne Zurücklegen', desc:'3 rote, 1 blaue Kugel · zwei Kugeln nacheinander ziehen, nicht zurücklegen',
+      stages:2, sym:['r','b'], swap:true, stageName:k=>`${k}. Kugel`,
+      prob:(path,i)=>{
+        let r=3,b=1; for (const x of path){ if (x===0) r--; else b--; }
+        return red([i===0 ? r : b, r+b]);
+      },
+      presets:[
+        {name:'„beide Kugeln haben die gleiche Farbe“', test:p=>p[0]===p[1]},
+        {name:'„mindestens eine blaue Kugel“', test:p=>p.includes(1)}
+      ],
+      alt:{title:'Andere Ergebnismenge: Anzahl der roten Kugeln', text:'Achtet man nur darauf, wie viele rote Kugeln gezogen werden, lautet die Ergebnismenge S′ = {0; 1; 2}.', key:p=>p.filter(x=>x===0).length, keys:[0,1,2], head:'Anzahl rot'}
+    }
+  };
+
+  let expKey='muenze', E=EXPS[expKey];
+  let counts={}, total=0, lastPath=null, selPath=null, edgeMode='n', inE=new Set();
+
+  const pkey = p => p.join('');
+  const allPaths = st => { let r=[[]]; for (let k=0;k<st;k++){ const n=[]; for (const p of r){ n.push([...p,0]); n.push([...p,1]); } r=n; } return r; };
+  const pathProb = p => { let f=[1,1]; for (let k=0;k<p.length;k++) f=mul(f, E.prob(p.slice(0,k), p[k])); return f; };
+  const label = p => p.map(x=>E.sym[x]).join('');
+  const tuple = p => '('+p.map(x=>E.sym[x]).join(', ')+')';
+
+  function reset(){
+    counts={}; total=0; lastPath=null;
+    if (!selPath || selPath.length!==E.stages) selPath=allPaths(E.stages)[0];
+    $('last').innerHTML='<span class="muted" style="font-size:.9rem">Noch keine Durchführung.</span>';
+    renderAll();
+  }
+  function runOnce(){
+    const p=[];
+    for (let k=0;k<E.stages;k++){ const f=E.prob(p,0); p.push(Math.random()<fval(f)?0:1); }
+    for (let k=0;k<=p.length;k++){ const key=pkey(p.slice(0,k)); counts[key]=(counts[key]||0)+1; }
+    total++;
+    return p;
+  }
+
+  // ---------- Baum zeichnen ----------
+  const NS='http://www.w3.org/2000/svg';
+  function el(tag,a,parent){ const e=document.createElementNS(NS,tag); for(const k in a) e.setAttribute(k,a[k]); if(parent) parent.appendChild(e); return e; }
+  function fracSvg(g,x,y,f,cls){
+    if (f[0]===0 || f[1]===1){ const t=el('text',{x,y:y+4,'text-anchor':'middle',class:cls},g); t.textContent=fstr(f); return; }
+    const t1=el('text',{x,y:y-3,'text-anchor':'middle',class:cls},g); t1.textContent=f[0];
+    const w=Math.max(String(f[0]).length,String(f[1]).length)*7+4;
+    el('line',{x1:x-w/2,x2:x+w/2,y1:y+1,y2:y+1,stroke:'var(--text)','stroke-width':1.2},g);
+    const t2=el('text',{x,y:y+13,'text-anchor':'middle',class:cls},g); t2.textContent=f[1];
+  }
+  function renderTree(){
+    const svg=$('tree'); svg.innerHTML='';
+    const st=E.stages, leaves=1<<st;
+    const W=Math.max(640,$('tree').parentElement.clientWidth||720), top=40, lvlH= st===3?120:150, H=top+lvlH*st+36;
+    const left=70, right=16;
+    svg.setAttribute('viewBox',`0 0 ${W} ${H}`);
+    const iw=W-left-right;
+    const pos={};
+    allPaths(st).forEach((p,i)=>{ pos[pkey(p)]={x:left+iw*(i+0.5)/leaves,y:top+lvlH*st}; });
+    for (let lv=st-1;lv>=0;lv--){
+      for (const p of allPaths(lv)){
+        const a=pos[pkey([...p,0])], b=pos[pkey([...p,1])];
+        pos[pkey(p)]={x:(a.x+b.x)/2,y:top+lvlH*lv};
+      }
+    }
+    // Stufenbeschriftung
+    for (let lv=1;lv<=st;lv++){ const t=el('text',{x:8,y:top+lvlH*lv+5,class:'lvl'},svg); t.textContent=E.stageName(lv); }
+    const hl = selPath || lastPath;
+    const onPath = key => hl && pkey(hl).startsWith(key);
+    const edgesG=el('g',{},svg), labG=el('g',{},svg), nodeG=el('g',{},svg);
+    for (let lv=0;lv<st;lv++){
+      for (const p of allPaths(lv)){
+        const from=pos[pkey(p)];
+        for (const i of [0,1]){
+          const q=[...p,i], to=pos[pkey(q)], f=E.prob(p,i), zero=f[0]===0;
+          const hot=onPath(pkey(q));
+          el('line',{x1:from.x,y1:from.y+(lv===0?4:14),x2:to.x,y2:to.y-14,stroke:hot?'var(--path)':'var(--edge)','stroke-width':hot?3:1.6,'stroke-dasharray':zero?'4 4':'none','stroke-linecap':'round'},edgesG);
+          // Label
+          const mx=from.x+(to.x-from.x)*0.5, my=from.y+(to.y-from.y)*0.5;
+          const off=(i===0?-1:1)*(st===3 && lv===2 ? 13 : 18);
+          const lx=mx+off, g=el('g',{},labG);
+          const nP=counts[pkey(p)]||0, nQ=counts[pkey(q)]||0;
+          let lines=[];
+          if (edgeMode==='n') lines=[['n', fmt(nQ)]];
+          if (edgeMode==='h') lines=[['h', nP? dec(nQ/nP,2) : '–']];
+          if (edgeMode==='p') lines=[['p', f]];
+          if (edgeMode==='hp') lines=[['h', nP? dec(nQ/nP,2) : '–'],['p', f]];
+          const bh = lines.reduce((s,l)=>s+(l[0]==='p' && f[1]!==1 && f[0]!==0 ? 30 : 17),0);
+          const bw = 36;
+          el('rect',{x:lx-bw/2,y:my-bh/2-2,width:bw,height:bh+4,rx:4,fill:'var(--surface-2)',opacity:.92},g);
+          let yy=my-bh/2;
+          for (const [kind,val] of lines){
+            if (kind==='p'){ const hgt=(f[1]!==1&&f[0]!==0)?30:17; fracSvg(g,lx,yy+hgt/2,val,'elab p'); yy+=hgt; }
+            else { const t=el('text',{x:lx,y:yy+13,'text-anchor':'middle',class:'elab '+(kind==='h'?'h':'p')},g); t.textContent=val; if(kind==='n') t.setAttribute('style','fill:var(--muted);font-weight:600'); yy+=17; }
+          }
+        }
+      }
+    }
+    // Knoten
+    for (let lv=0;lv<=st;lv++){
+      for (const p of allPaths(lv)){
+        const c=pos[pkey(p)], key=pkey(p), n=counts[key]||0, hot=onPath(key);
+        if (lv===0){ el('circle',{cx:c.x,cy:c.y,r:5,fill:'var(--text)'},nodeG); const t=el('text',{x:c.x,y:c.y-12,'text-anchor':'middle',class:'ncount'},nodeG); t.textContent='n = '+fmt(total); continue; }
+        const o=p[p.length-1]^(E.swap?1:0);
+        el('circle',{cx:c.x,cy:c.y,r:14,fill:o===0?'var(--n1-pale)':'var(--n2-pale)',stroke:hot?'var(--path)':(o===0?'var(--n1)':'var(--n2)'),'stroke-width':hot?3:1.8},nodeG);
+        const t=el('text',{x:c.x,y:c.y+5,'text-anchor':'middle',class:'nlab',fill:o===0?'var(--n1)':'var(--n2)'},nodeG); t.textContent=E.sym[p[p.length-1]];
+        if (lv<st){ const tc=el('text',{x:c.x+19,y:c.y+4,class:'ncount'},nodeG); tc.textContent=fmt(n); }
+        else {
+          const tc=el('text',{x:c.x,y:c.y+30,'text-anchor':'middle',class:'ncount'},nodeG); tc.textContent=fmt(n);
+          const hit=el('circle',{cx:c.x,cy:c.y,r:22,fill:'transparent',class:'leaf-hit'},nodeG);
+          const tt=el('title',{},hit); tt.textContent='Ergebnis '+tuple(p)+' auswählen';
+          hit.addEventListener('click',()=>{ selPath=p; renderAll(); });
+        }
+      }
+    }
+  }
+
+  // ---------- Tabelle + Pfadregel ----------
+  function renderTable(){
+    const paths=allPaths(E.stages);
+    let h='<thead><tr><th>Ergebnis</th><th>Anzahl</th><th>rel. Häufigkeit</th><th>Wahrscheinlichkeit (Pfadregel)</th><th>zu E</th></tr></thead><tbody>';
+    let sumP=[0,1];
+    for (const p of paths){
+      const n=counts[pkey(p)]||0, f=pathProb(p); sumP=add(sumP,f);
+      const cls=[pkey(p)===pkey(selPath)?'sel':'', inE.has(pkey(p))?'inE':''].join(' ');
+      h+=`<tr class="${cls}" data-k="${pkey(p)}"><td class="e">${label(p)}</td><td>${fmt(n)}</td><td>${total?dec(n/total):'–'}</td><td class="pcol">${fstr(f)}${f[0]?' ≈ '+dec(fval(f)):''}</td><td><input type="checkbox" data-e="${pkey(p)}" ${inE.has(pkey(p))?'checked':''} aria-label="zu E"></td></tr>`;
+    }
+    h+=`</tbody><tfoot><tr><td>Summe</td><td>${fmt(total)}</td><td>${total?dec(1):'–'}</td><td class="pcol">${fstr(sumP)}</td><td></td></tr></tfoot>`;
+    $('distTable').innerHTML=h;
+    $('distTable').querySelectorAll('tbody tr').forEach(tr=>tr.addEventListener('click',ev=>{
+      if (ev.target.tagName==='INPUT') return;
+      selPath=tr.dataset.k.split('').map(Number); renderAll();
+    }));
+    $('distTable').querySelectorAll('input[data-e]').forEach(cb=>cb.addEventListener('change',()=>{
+      cb.checked ? inE.add(cb.dataset.e) : inE.delete(cb.dataset.e); renderTable(); renderEvent();
+    }));
+    const showP = edgeMode==='p' || edgeMode==='hp';
+    $('distTable').querySelectorAll('.pcol').forEach(td=>{ if(!showP){ td.textContent='(einblenden: „Wahrscheinlichkeit“)'; td.classList.add('muted'); td.style.fontSize='.78rem'; } });
+  }
+
+  function renderPfad(){
+    const p=selPath, box=$('pfad');
+    const parts=[], hs=[], fs=[];
+    for (let k=0;k<p.length;k++){
+      const a=counts[pkey(p.slice(0,k))]||0, b=counts[pkey(p.slice(0,k+1))]||0;
+      hs.push([a,b]); fs.push(E.prob(p.slice(0,k),p[k]));
+    }
+    const nLeaf=counts[pkey(p)]||0;
+    let html=`<div><b>Ausgewählter Pfad:</b> Ergebnis <b>${tuple(p)}</b></div>`;
+    if (!total){ html+='<div class="muted" style="margin-top:6px">Führe das Experiment durch, um die Häufigkeiten zu sehen.</div>'; }
+    else {
+      const prodH=hs.reduce((s,[a,b])=>s*(a?b/a:0),1);
+      html+=`<div class="eq">Relative Häufigkeiten längs des Pfades: `+
+        hs.map(([a,b])=>`<span class="hv">${a?`<span class="f"><span>${fmt(b)}</span><span>${fmt(a)}</span></span>`:'–'}</span>`).join(' · ')+
+        ` = <span class="hv">${hs.every(([a])=>a)?dec(prodH):'–'}</span></div>`;
+      html+=`<div class="eq">Relative Häufigkeit des Ergebnisses: <span class="hv"><span class="f"><span>${fmt(nLeaf)}</span><span>${fmt(total)}</span></span> = ${dec(nLeaf/total)}</span></div>`;
+    }
+    if (edgeMode==='p' || edgeMode==='hp'){
+      const f=pathProb(p);
+      html+=`<div class="eq">Wahrscheinlichkeit nach der Pfadregel: P${tuple(p)} = `+fs.map(fhtml).join(' · ')+` = <span class="pv">${fhtml(f)}${f[0]?' ≈ '+dec(fval(f)):''}</span></div>`;
+    } else html+='<div class="muted" style="font-size:.85rem;margin-top:4px">Stelle oben „Wahrscheinlichkeit“ oder „beides“ ein, um die Pfadregel zu sehen.</div>';
+    box.innerHTML=html;
+  }
+
+  // ---------- Ereignisse ----------
+  function renderPresets(){
+    const r=$('evPresets'); r.innerHTML='<span class="seg-label">Vorbereitete Ereignisse:</span>';
+    E.presets.forEach(pr=>{
+      const b=document.createElement('button'); b.className='btn'; b.textContent=pr.name;
+      b.addEventListener('click',()=>{ inE=new Set(allPaths(E.stages).filter(pr.test).map(pkey)); renderTable(); renderEvent(); });
+      r.appendChild(b);
+    });
+    const c=document.createElement('button'); c.className='btn'; c.textContent='Auswahl leeren';
+    c.addEventListener('click',()=>{ inE.clear(); renderTable(); renderEvent(); }); r.appendChild(c);
+  }
+  function renderEvent(){
+    const paths=allPaths(E.stages).filter(p=>inE.has(pkey(p)));
+    const box=$('evBox');
+    if (!paths.length){ box.innerHTML='<span class="muted">Noch kein Ergebnis zu E ausgewählt. Markiere Ergebnisse in der Tabelle (Spalte „zu E“) oder wähle ein vorbereitetes Ereignis.</span>'; return; }
+    const nE=paths.reduce((s,p)=>s+(counts[pkey(p)]||0),0);
+    let h=`<div class="big">E = <span class="set">{${paths.map(label).join(', ')}}</span></div>`;
+    h+=`<div style="margin-top:6px">Relative Häufigkeit: <span class="pfad" style="all:unset"><b style="color:var(--gold)">${total? dec(nE/total) : '–'}</b></span> <span class="muted">(${fmt(nE)} von ${fmt(total)} Durchführungen)</span></div>`;
+    if (edgeMode==='p'||edgeMode==='hp'){
+      let s=[0,1]; const fs=paths.map(p=>{ const f=pathProb(p); s=add(s,f); return f; });
+      h+=`<div class="pfad" style="margin-top:8px;border:none;padding:0;background:none"><div class="eq">Summenregel: P(E) = ${paths.map(p=>'P('+label(p)+')').join(' + ')} = ${fs.map(fhtml).join(' + ')} = <b>${fhtml(s)}${s[0]?' ≈ '+dec(fval(s)):''}</b></div></div>`;
+    } else h+='<div class="muted" style="font-size:.85rem;margin-top:4px">Stelle oben „Wahrscheinlichkeit“ ein, um die Summenregel zu sehen.</div>';
+    box.innerHTML=h;
+  }
+  function renderAlt(){
+    const A=E.alt; $('altTitle').textContent=A.title; $('altText').textContent=A.text;
+    const paths=allPaths(E.stages);
+    const showP = edgeMode==='p' || edgeMode==='hp';
+    let h=`<thead><tr><th>${A.head}</th><th>zugehörige Ergebnisse</th><th>Anzahl</th><th>rel. Häufigkeit</th><th>Wahrscheinlichkeit</th></tr></thead><tbody>`;
+    for (const k of A.keys){
+      const ps=paths.filter(p=>A.key(p)===k); const n=ps.reduce((s,p)=>s+(counts[pkey(p)]||0),0);
+      let f=[0,1]; ps.forEach(p=>f=add(f,pathProb(p)));
+      h+=`<tr style="cursor:default"><td class="e">${k}</td><td>${ps.map(label).join(', ')}</td><td>${fmt(n)}</td><td>${total?dec(n/total):'–'}</td><td>${showP? fstr(f)+(f[0]?' ≈ '+dec(fval(f)):'') : '<span class="muted" style="font-size:.78rem">–</span>'}</td></tr>`;
+    }
+    $('altTable').innerHTML=h+'</tbody>';
+  }
+
+  function renderLast(p){
+    if (!p) return;
+    const box=$('last');
+    box.innerHTML = p.map((x,i)=>`<span class="token o${x^(E.swap?1:0)}" style="animation-delay:${i*0.12}s">${E.sym[x]}</span>`).join('<span class="arrow">→</span>')+
+      `<span class="res">&nbsp; Ergebnis <b>${tuple(p)}</b></span><span class="count-pill">Durchführungen: <b>${fmt(total)}</b></span>`;
+  }
+
+  function renderAll(){ renderTree(); renderTable(); renderPfad(); renderEvent(); renderAlt(); }
+
+  function buildChoice(){
+    const c=$('expChoice'); c.innerHTML='';
+    for (const k in EXPS){
+      const b=document.createElement('button'); b.className='exp'+(k===expKey?' on':'');
+      b.innerHTML=`<div class="t">${EXPS[k].title}</div><div class="d">${EXPS[k].desc}</div>`;
+      b.addEventListener('click',()=>{ expKey=k; E=EXPS[k]; selPath=null; inE.clear(); buildChoice(); renderPresets(); reset(); });
+      c.appendChild(b);
+    }
+  }
+
+  // ---------- Ereignisse ----------
+  $('btnOne').addEventListener('click',()=>{ lastPath=runOnce(); selPath=lastPath; renderLast(lastPath); renderAll(); });
+  document.querySelectorAll('[data-n]').forEach(b=>b.addEventListener('click',()=>{
+    const n=+b.dataset.n; for(let i=0;i<n;i++) lastPath=runOnce();
+    $('last').innerHTML=`<span class="res">${fmt(n)} Durchführungen ergänzt.</span><span class="count-pill">Durchführungen: <b>${fmt(total)}</b></span>`;
+    renderAll();
+  }));
+  $('btnReset').addEventListener('click',reset);
+  document.querySelectorAll('#segEdge button').forEach(b=>b.addEventListener('click',()=>{
+    document.querySelectorAll('#segEdge button').forEach(x=>x.classList.toggle('on',x===b)); edgeMode=b.dataset.m; renderAll();
+  }));
+  $('btnMerk').addEventListener('click',()=>{ const m=$('merk'); m.classList.toggle('hide'); $('btnMerk').textContent=m.classList.contains('hide')?'📘 Merkwissen einblenden':'📘 Merkwissen ausblenden'; });
+  let rs; window.addEventListener('resize',()=>{ clearTimeout(rs); rs=setTimeout(renderTree,120); });
+
+  buildChoice(); renderPresets(); reset();
+})();
+</script>
+</body>
+</html>

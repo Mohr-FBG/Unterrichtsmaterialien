@@ -1,0 +1,1324 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Übungsphase · Wiederholung: Wahrscheinlichkeit</title>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css">
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/contrib/auto-render.min.js"></script>
+
+<style>
+:root{
+  --gold:#e8a800; --gold-dark:#b58200;
+  --blue:#2c5f8a; --blue-dark:#1a3d5c;
+  --green:#1a9e5c; --orange:#d4760a; --purple:#7b3fb5;
+  --red:#c0392b;
+  --border:#dde1e7; --bg:#f4f5f7; --text:#1c1f26;
+  --muted:#5c6472;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0; background:var(--bg); color:var(--text);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  line-height:1.55; font-size:16px;
+}
+.wrap{max-width:960px; margin:0 auto; padding:0 16px 64px}
+
+/* ---------- Kopf ---------- */
+header.top{background:var(--gold); border-bottom:4px solid var(--gold-dark); color:#fff}
+header.top .inner{max-width:960px; margin:0 auto; padding:22px 16px 24px}
+header.top .kap{font-size:.78rem; font-weight:700; letter-spacing:.06em; text-transform:uppercase; opacity:.92}
+header.top h1{margin:6px 0 4px; font-size:1.7rem; line-height:1.2}
+header.top .sub{font-size:.92rem; opacity:.95}
+
+/* ---------- Steuerleiste ---------- */
+.controls{
+  background:#fff; border:1px solid var(--border); border-radius:10px;
+  padding:14px 16px; margin:18px 0 22px;
+  display:flex; flex-wrap:wrap; gap:16px; align-items:center; justify-content:space-between;
+}
+.unlock{display:flex; align-items:center; gap:8px; flex-wrap:wrap}
+.unlock label{font-size:.9rem; color:var(--muted)}
+.unlock input{border:1px solid var(--border); border-radius:6px; padding:6px 10px; font-size:.95rem; width:130px; font-family:inherit}
+.unlock button{background:var(--blue); color:#fff; border:0; border-radius:6px; padding:7px 14px; font-size:.9rem; font-weight:600; cursor:pointer; font-family:inherit}
+.unlock button:hover{background:var(--blue-dark)}
+.unlock .msg{font-size:.85rem; font-weight:600}
+.unlock .msg.ok{color:var(--green)}
+.unlock .msg.bad{color:#c0392b}
+
+.filters{display:flex; gap:6px; flex-wrap:wrap}
+.filters button{background:#fff; border:1px solid var(--border); border-radius:20px; padding:6px 14px; font-size:.85rem; cursor:pointer; color:var(--muted); font-family:inherit; font-weight:600}
+.filters button:hover{border-color:var(--muted)}
+.filters button.on{background:var(--text); border-color:var(--text); color:#fff}
+
+/* ---------- Abschnitte ---------- */
+.stufe-head{display:flex; align-items:baseline; gap:12px; flex-wrap:wrap; margin:30px 0 12px; padding-bottom:8px; border-bottom:2px solid var(--border)}
+.stufe-badge{color:#fff; border-radius:6px; padding:4px 12px; font-weight:700; font-size:.9rem; letter-spacing:.02em}
+.sA .stufe-badge{background:var(--blue)}
+.sG .stufe-badge{background:var(--text)}
+.s1 .stufe-badge{background:var(--green)}
+.s2 .stufe-badge{background:var(--orange)}
+.s3 .stufe-badge{background:var(--purple)}
+.stufe-head .desc{color:var(--muted); font-size:.9rem}
+
+/* ---------- Karten ---------- */
+.card{background:#fff; border:1px solid var(--border); border-radius:10px; margin-bottom:14px; overflow:hidden; position:relative}
+.tw,.tree-box,.katex-display{position:relative}
+.card.sA{border-top:4px solid var(--blue)}
+.card.sG{border-top:4px solid var(--text)}
+.card.s1{border-top:4px solid var(--green)}
+.card.s2{border-top:4px solid var(--orange)}
+.card.s3{border-top:4px solid var(--purple)}
+.card-head{display:flex; align-items:center; justify-content:space-between; gap:12px; padding:13px 18px; cursor:pointer; user-select:none}
+.card-head:hover{background:#fafbfc}
+.card-head h3{margin:0; font-size:1.03rem; font-weight:700}
+.chev{color:var(--muted); font-size:1.1rem; transition:transform .18s}
+.card.open .chev{transform:rotate(180deg)}
+.card-body{display:none; padding:0 18px 18px}
+.card.open .card-body{display:block}
+
+.task{background:#fbfcfd; border:1px solid var(--border); border-left:3px solid var(--blue); border-radius:6px; padding:12px 15px; margin-bottom:14px}
+.task p{margin:.5em 0}
+.task p:first-child{margin-top:0}
+.task p:last-child{margin-bottom:0}
+.task .sub-i{margin-left:1.6em}
+
+/* Merkkasten wie im Buch */
+.merk{border:2px solid var(--blue); border-radius:8px; padding:14px 18px; background:#f3f7fb}
+.merk h4{margin:0 0 6px; font-size:1rem}
+.merk p{margin:.45em 0}
+
+/* Beispiel-Lösung im Buchstil */
+.bsp{border-left:3px solid var(--blue); padding:2px 0 2px 16px}
+.bsp .lh{font-weight:700; color:var(--muted); margin:10px 0 4px}
+.bsp p{margin:.5em 0}
+
+/* Tafel-Hinweis */
+.board{border:1.5px dashed var(--text); border-radius:8px; padding:12px 15px; font-size:.92rem; color:var(--muted); display:flex; gap:10px; align-items:center}
+.board b{color:var(--text)}
+
+/* ---------- Selbsteinschätzung ---------- */
+.assess{display:flex; align-items:center; gap:7px; flex-wrap:wrap; margin-bottom:14px}
+.assess .lab{font-size:.83rem; color:var(--muted); margin-right:2px}
+.assess button{border:1px solid var(--border); background:#fff; border-radius:16px; padding:4px 12px; font-size:.8rem; cursor:pointer; color:var(--muted); font-family:inherit}
+.assess button.on[data-v="ok"]{background:var(--green); border-color:var(--green); color:#fff}
+.assess button.on[data-v="mid"]{background:var(--orange); border-color:var(--orange); color:#fff}
+.assess button.on[data-v="ask"]{background:var(--blue); border-color:var(--blue); color:#fff}
+
+/* ---------- Hilfen ---------- */
+.hints{border:1px solid var(--border); border-radius:8px; overflow:hidden; margin-bottom:14px}
+.hints .htitle{background:#f7f8fa; padding:7px 14px; font-size:.8rem; font-weight:700; color:var(--muted); text-transform:uppercase; letter-spacing:.05em; border-bottom:1px solid var(--border)}
+.htabs{display:flex; flex-wrap:wrap; gap:6px; padding:10px 14px; background:#fdfdfe}
+.htabs button{border:1px solid var(--border); background:#fff; border-radius:6px; padding:5px 11px; font-size:.82rem; cursor:pointer; color:var(--text); font-family:inherit}
+.htabs button:hover{border-color:var(--blue)}
+.htabs button.on{background:var(--blue); border-color:var(--blue); color:#fff; font-weight:600}
+.hpanel{display:none; padding:12px 15px; border-top:1px solid var(--border); font-size:.95rem}
+.hpanel.on{display:block}
+.hpanel h4{margin:0 0 8px; font-size:.92rem; color:var(--blue-dark)}
+.hpanel p{margin:.5em 0}
+
+/* ---------- Musterlösung ---------- */
+.sol-lock{background:#f7f8fa; border:1px dashed var(--border); border-radius:8px; padding:12px 15px; font-size:.9rem; color:var(--muted); text-align:center}
+.sol-lock.active{cursor:pointer; background:#eef4f9; border:1px solid var(--blue); color:var(--blue-dark); font-weight:600}
+.sol-lock.active:hover{background:#e2ecf5}
+.sol{display:none; border:1px solid var(--green); border-radius:8px; overflow:hidden}
+.sol.shown{display:block}
+.sol .sh{background:var(--green); color:#fff; padding:7px 15px; font-weight:700; font-size:.88rem}
+.sol .sb{padding:13px 15px; font-size:.95rem}
+.sol .sb p{margin:.55em 0}
+.sol .sb p:first-child{margin-top:0}
+
+/* Alternativer Lösungsweg */
+.alt-btn{margin-top:10px; background:#fff; border:1px solid var(--purple); color:var(--purple); border-radius:6px; padding:6px 12px; font-size:.85rem; font-weight:600; cursor:pointer; font-family:inherit}
+.alt-btn:hover{background:#f6f0fb}
+.alt{display:none; margin-top:10px; border:1px solid var(--purple); border-left:4px solid var(--purple); border-radius:6px; padding:10px 14px; background:#faf6fd; font-size:.93rem}
+.alt.shown{display:block}
+.alt .ah{font-weight:700; color:var(--purple); font-size:.85rem; text-transform:uppercase; letter-spacing:.04em; margin-bottom:4px}
+
+/* Verteilungstabelle im Buchstil */
+.tw{overflow-x:auto; margin:.6em 0}
+table.vt{border-collapse:collapse; font-size:.92rem}
+table.vt th, table.vt td{border:1px solid var(--border); padding:5px 10px; text-align:center; white-space:nowrap}
+table.vt th{background:#eef0f3; font-weight:600}
+table.vt td.hl{background:#e6f5ec}
+
+/* Grafiken */
+.fig{display:flex; flex-wrap:wrap; gap:18px; align-items:flex-start}
+.fig .txt{flex:1 1 320px; min-width:0}
+.fig .pic{flex:0 1 auto; overflow-x:auto; max-width:100%}
+.tree-box{overflow-x:auto; max-width:100%}
+.tree-box svg{display:block}
+.cap{font-size:.78rem; color:var(--muted); text-align:center; margin-top:2px}
+
+.res{color:#1a9e5c;font-weight:700}
+.note{background:#fdf6e3; border-left:3px solid var(--gold); border-radius:6px; padding:10px 14px; font-size:.9rem; margin:12px 0}
+.note a{color:var(--blue); font-weight:600}
+.katex{font-size:1.04em}
+.katex-display{margin:.6em 0; overflow-x:auto; overflow-y:hidden}
+footer.bot{text-align:center; color:var(--muted); font-size:.82rem; padding:26px 16px; border-top:1px solid var(--border); margin-top:34px}
+footer.bot a{color:var(--blue)}
+@media(max-width:600px){
+  header.top h1{font-size:1.32rem}
+  .controls{flex-direction:column; align-items:stretch}
+  .card-head h3{font-size:.95rem}
+  .card-body{padding:0 12px 14px}
+}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="inner">
+    <div class="kap">Kapitel VIII · Daten und Wahrscheinlichkeit · LK Mathematik Q2</div>
+    <h1>1 · Wiederholung: Wahrscheinlichkeit</h1>
+    <div class="sub">Anleitung lesen · Gemeinsam starten · Stufe wählen · Hilfen schrittweise nutzen · Musterlösungen nach Freigabe</div>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <div class="controls">
+    <div class="unlock">
+      <label for="code">🔒 Musterlösungen freischalten:</label>
+      <input id="code" type="text" autocomplete="off" placeholder="Code">
+      <button id="btn-unlock" type="button">Bestätigen</button>
+      <span class="msg" id="msg"></span>
+    </div>
+    <div class="filters">
+      <button class="on" data-f="all" type="button">Alles</button>
+      <button data-f="A" type="button">Anleitung</button>
+      <button data-f="G" type="button">Gemeinsam</button>
+      <button data-f="1" type="button">Stufe 1</button>
+      <button data-f="2" type="button">Stufe 2</button>
+      <button data-f="3" type="button">Stufe 3</button>
+    </div>
+  </div>
+
+  <div class="note">
+    <strong>Zum Ausprobieren:</strong> Die Simulationen
+    <a href="../simulationen/pferderennen/">Pferderennen</a> und
+    <a href="../simulationen/baumdiagramm/">Baumdiagramm</a>
+    zeigen, wie relative Häufigkeiten, Baumdiagramme, Pfadregel und Summenregel zusammenhängen.
+  </div>
+
+  <!-- ================= ANLEITUNG ================= -->
+  <section class="sA" data-stufe="A">
+    <div class="stufe-head">
+      <span class="stufe-badge">Anleitung</span>
+      <span class="desc">Merkwissen und vollständig vorgerechnete Beispiele – so sollen deine Lösungen aussehen</span>
+    </div>
+
+    <!-- Merkwissen -->
+    <article class="card sA">
+      <div class="card-head"><h3>Merkwissen · Wahrscheinlichkeiten bei Zufallsexperimenten</h3><span class="chev">▾</span></div>
+      <div class="card-body">
+        <div class="merk">
+          <p><strong>Zufallsexperiment und Ergebnismenge:</strong> Die möglichen Ergebnisse eines Zufallsexperiments
+          fasst man in der <strong>Ergebnismenge</strong> $S$ zusammen. Für dasselbe Experiment kann man – je nachdem,
+          worauf man achtet – verschiedene Ergebnismengen festlegen.</p>
+          <p><strong>Wahrscheinlichkeitsverteilung:</strong> Jedem Ergebnis wird eine Wahrscheinlichkeit aus dem
+          Intervall $[0;1]$ zugeordnet; alle Wahrscheinlichkeiten zusammen haben die Summe $1$. Man legt sie so fest,
+          dass sie die relativen Häufigkeiten gut vorhersagen (z. B. über Flächenanteile, Symmetrie oder lange
+          Versuchsreihen). Man notiert sie in einer Tabelle: Ergebnis $e$ und Wahrscheinlichkeit $P(e)$.</p>
+          <p><strong>Pfadregel:</strong> Bei einem mehrstufigen Zufallsexperiment erhält man die Wahrscheinlichkeit
+          eines Ergebnisses, indem man die Wahrscheinlichkeiten längs des zugehörigen Pfades im
+          <strong>Baumdiagramm multipliziert</strong>.</p>
+          <p><strong>Ereignisse:</strong> Ein Ereignis $E$ ist eine Teilmenge der Ergebnismenge, $E\subseteq S$. Es
+          kann in Worten und als Menge beschrieben werden. Erhält man ein Ergebnis aus $E$, so sagt man: $E$ ist
+          eingetreten. $S$ selbst und die leere Menge $\{\,\}$ sind auch Ereignisse.</p>
+          <p><strong>Summenregel:</strong> Die Wahrscheinlichkeit $P(E)$ eines Ereignisses erhält man, indem man die
+          Wahrscheinlichkeiten der zugehörigen Ergebnisse <strong>addiert</strong>.</p>
+          <p><strong>Vorhersage:</strong> Wird ein Experiment $n$-mal durchgeführt, so tritt ein Ergebnis mit der
+          Wahrscheinlichkeit $p$ <em>etwa</em> $n\cdot p$-mal ein.</p>
+        </div>
+      </div>
+    </article>
+
+    <!-- Beispiel 1 -->
+    <article class="card sA">
+      <div class="card-head"><h3>Beispiel 1 · Ergebnismenge festlegen – Teil des Modellierens</h3><span class="chev">▾</span></div>
+      <div class="card-body">
+        <div class="task">
+          <p>Ein Glücksrad mit zwei gleich großen Feldern Rot (R) und Blau (B) wird dreimal gedreht.</p>
+          <p><strong>a)</strong> Bestimmen Sie die zugehörige Wahrscheinlichkeitsverteilung, wenn man als Ergebnismenge
+          <i>S</i>&nbsp;=&nbsp;{RRR, RRB, RBR, RBB, BRR, BRB, BBR, BBB} festlegt. Notiert ist jeweils die Farbe, auf der der Zeiger
+          stehen bleibt. Bestimmen Sie die Wahrscheinlichkeit $P(E)$ für das Ereignis
+          <i>E</i>&nbsp;=&nbsp;{RRR, RRB, RBR, BRR} und beschreiben Sie das Ereignis in Worten.</p>
+          <p><strong>b)</strong> Bestimmen Sie die zugehörige Wahrscheinlichkeitsverteilung, wenn man als Ergebnismenge
+          $S'=\{0;1;2;3\}$ festlegt. Dabei geben die Zahlen an, wie oft Blau erscheint. Geben Sie ein Ereignis $E'$ an,
+          das dem Ereignis $E$ aus Teilaufgabe a) entspricht.</p>
+        </div>
+        <div class="bsp">
+          <div class="lh">Lösung</div>
+          <p>Man geht davon aus, dass Rot bzw. Blau jeweils mit einer Wahrscheinlichkeit von $\frac12$ erscheint, da
+          beide Felder gleich groß sind.</p>
+          <div class="fig">
+            <div class="txt">
+              <p><strong>a)</strong> Man erhält mit dem Baumdiagramm (Pfadregel) für alle Ergebnisse die
+              Wahrscheinlichkeit $\frac12\cdot\frac12\cdot\frac12=\frac18$ und somit die Wahrscheinlichkeitsverteilung
+              unter dem Baumdiagramm.</p>
+              <p>Nach der Summenregel gilt
+              $$P(E)=\tfrac18+\tfrac18+\tfrac18+\tfrac18=\tfrac12.$$</p>
+              <p>$E$: „Es erscheint höchstens einmal Blau.“</p>
+            </div>
+            <div class="pic"><div class="tree-box" data-tree='{"levels":["1. Drehung","2. Drehung","3. Drehung"],"stages":[[["R","1/2"],["B","1/2"]],[["R","1/2"],["B","1/2"]],[["R","1/2"],["B","1/2"]]],"col":{"R":"#c0392b","B":"#2c5f8a"},"hl":["B","R","R"],"leaf":"concat","dx":46}'></div></div>
+          </div>
+          <div class="tw"><table class="vt">
+            <tr><th>$e$</th><td>RRR</td><td>RRB</td><td>RBR</td><td>RBB</td><td>BRR</td><td>BRB</td><td>BBR</td><td>BBB</td></tr>
+            <tr><th>$P(e)$</th><td>$\frac18$</td><td>$\frac18$</td><td>$\frac18$</td><td>$\frac18$</td><td>$\frac18$</td><td>$\frac18$</td><td>$\frac18$</td><td>$\frac18$</td></tr>
+          </table></div>
+          <p><strong>b)</strong> Beispielsweise gehören zum Ergebnis $1$ die Ergebnisse RRB, RBR und BRR der Verteilung
+          von Teilaufgabe a). Daher ergibt sich mit der Summenregel $P(1)=\frac18+\frac18+\frac18=\frac38$. Insgesamt
+          lautet die Wahrscheinlichkeitsverteilung:</p>
+          <div class="tw"><table class="vt">
+            <tr><th>$e$</th><td>$0$</td><td>$1$</td><td>$2$</td><td>$3$</td></tr>
+            <tr><th>$P(e)$</th><td>$\frac18$</td><td>$\frac38$</td><td>$\frac38$</td><td>$\frac18$</td></tr>
+          </table></div>
+          <p>$E'=\{0;1\}$ entspricht dem Ereignis $E$ von Teilaufgabe a).</p>
+        </div>
+      </div>
+    </article>
+
+    <!-- Beispiel 2 -->
+    <article class="card sA">
+      <div class="card-head"><h3>Beispiel 2 · Wahrscheinlichkeiten bei einer Modellierung berechnen</h3><span class="chev">▾</span></div>
+      <div class="card-body">
+        <div class="task">
+          <p>Eine Basketballspielerin wirft drei Freiwürfe. Bei jedem Wurf wird notiert, ob sie trifft ($1$) oder nicht
+          trifft ($0$). Das kann man als dreistufiges Zufallsexperiment auffassen und durch ein Baumdiagramm beschreiben.
+          Die Ergebnisse werden dann in Tupeln wie $(0,1,1)$ notiert.<br>
+          Es wird angenommen, dass sie bei jedem Wurf mit einer Wahrscheinlichkeit von $0{,}7$ trifft.</p>
+          <p><strong>a)</strong> Bestimmen Sie die Wahrscheinlichkeitsverteilung.</p>
+          <p><strong>b)</strong> Bestimmen Sie die Wahrscheinlichkeit für die Ereignisse<br>
+          <span class="sub-i">$E$: „Sie trifft genau zweimal.“,</span><br>
+          <span class="sub-i">$F$: „Sie trifft mindestens zweimal.“</span></p>
+          <p><strong>c)</strong> Deuten Sie das Ereignis <i>G</i>&nbsp;=&nbsp;{(0,&nbsp;0,&nbsp;0), (1,&nbsp;0,&nbsp;0), (0,&nbsp;1,&nbsp;0), (0,&nbsp;0,&nbsp;1)} im Sachzusammenhang
+          und bestimmen Sie $P(G)$.</p>
+        </div>
+        <div class="bsp">
+          <div class="lh">Lösung</div>
+          <div class="tree-box" data-tree='{"levels":["1. Wurf","2. Wurf","3. Wurf"],"stages":[[["0","0,3"],["1","0,7"]],[["0","0,3"],["1","0,7"]],[["0","0,3"],["1","0,7"]]],"hl":["0","1","1"],"leaf":"tuple","dx":64}'></div>
+          <p><strong>a)</strong> Die Wahrscheinlichkeiten werden für alle Ergebnisse mit der Pfadregel bestimmt. So ergibt
+          sich z. B. $P(0,1,1)=0{,}3\cdot0{,}7\cdot0{,}7=0{,}147$.</p>
+          <div class="tw"><table class="vt">
+            <tr><th>Ergebnis</th><td>$(0,0,0)$</td><td>$(0,0,1)$</td><td>$(0,1,0)$</td><td>$(0,1,1)$</td><td>$(1,0,0)$</td><td>$(1,0,1)$</td><td>$(1,1,0)$</td><td>$(1,1,1)$</td></tr>
+            <tr><th>Wahrscheinlichkeit</th><td>$0{,}027$</td><td>$0{,}063$</td><td>$0{,}063$</td><td>$0{,}147$</td><td>$0{,}063$</td><td>$0{,}147$</td><td>$0{,}147$</td><td>$0{,}343$</td></tr>
+          </table></div>
+          <p><strong>b)</strong> <i>E</i>&nbsp;=&nbsp;{(0,&nbsp;1,&nbsp;1), (1,&nbsp;0,&nbsp;1), (1,&nbsp;1,&nbsp;0)} und <i>F</i>&nbsp;=&nbsp;{(0,&nbsp;1,&nbsp;1), (1,&nbsp;0,&nbsp;1), (1,&nbsp;1,&nbsp;0), (1,&nbsp;1,&nbsp;1)}; mit der
+          Summenregel ergibt sich</p>
+          <p>$$P(E)=0{,}147+0{,}147+0{,}147=0{,}441\quad\text{und}\quad P(F)=0{,}147+0{,}147+0{,}147+0{,}343=0{,}784.$$</p>
+          <p><strong>c)</strong> Sachzusammenhang: „Sie trifft höchstens einmal.“ Nach der Summenregel ergibt sich</p>
+          <p>$$P(G)=0{,}027+0{,}063+0{,}063+0{,}063=0{,}216.$$</p>
+        </div>
+      </div>
+    </article>
+
+    <!-- Beispiel 3 -->
+    <article class="card sA">
+      <div class="card-head"><h3>Beispiel 3 · Wahrscheinlichkeiten aus Daten festlegen und Anzahlen vorhersagen</h3><span class="chev">▾</span></div>
+      <div class="card-body">
+        <div class="task">
+          <p>Für einen Kronkorken soll festgelegt werden, mit welcher Wahrscheinlichkeit er beim Werfen mit der
+          Öffnung nach oben („Oben“) bzw. nach unten („Unten“) liegen bleibt. Zwei Versuchsreihen ergeben:</p>
+          <div class="tw"><table class="vt">
+            <tr><th>100 × Werfen</th><th colspan="2">1. Durchgang</th><th colspan="2">2. Durchgang</th></tr>
+            <tr><th>Ergebnis</th><td>Oben</td><td>Unten</td><td>Oben</td><td>Unten</td></tr>
+            <tr><th>absolute Häufigkeit</th><td>$64$</td><td>$36$</td><td>$60$</td><td>$40$</td></tr>
+          </table></div>
+          <p><strong>a)</strong> Legen Sie eine Wahrscheinlichkeitsverteilung für das Zufallsexperiment „Werfen eines
+          solchen Kronkorkens“ fest. Erläutern Sie Ihr Vorgehen.</p>
+          <p><strong>b)</strong> Geben Sie an, wie oft der Kronkorken bei $50$ Würfen etwa „Oben“ liegen bleibt.</p>
+        </div>
+        <div class="bsp">
+          <div class="lh">Lösung</div>
+          <p><strong>a)</strong> Für einen Kronkorken lassen sich die Wahrscheinlichkeiten nicht über Symmetrie
+          bestimmen. Man legt sie deshalb über die relativen Häufigkeiten fest. Da die relativen Häufigkeiten bei
+          vielen Versuchen stabiler sind, fasst man beide Durchgänge zusammen: Bei $200$ Würfen lag der Kronkorken
+          $64+60=124$-mal oben.</p>
+          <p>$$h(\text{Oben})=\frac{124}{200}=0{,}62\qquad h(\text{Unten})=\frac{76}{200}=0{,}38$$</p>
+          <div class="tw"><table class="vt">
+            <tr><th>$e$</th><td>Oben</td><td>Unten</td></tr>
+            <tr><th>$P(e)$</th><td>$0{,}62$</td><td>$0{,}38$</td></tr>
+          </table></div>
+          <p>Kontrolle: Beide Werte liegen in $[0;1]$ und haben die Summe $1$.</p>
+          <p><strong>b)</strong> $50\cdot0{,}62=31$. Der Kronkorken bleibt bei $50$ Würfen etwa $31$-mal „Oben“ liegen.</p>
+        </div>
+      </div>
+    </article>
+  </section>
+
+  <!-- ================= GEMEINSAM ================= -->
+  <section class="sG" data-stufe="G">
+    <div class="stufe-head">
+      <span class="stufe-badge">Gemeinsam im Unterricht</span>
+      <span class="desc">Diese Aufgaben lösen wir zusammen – die Lösung wird an der Tafel gesichert</span>
+    </div>
+
+    <article class="card sG">
+      <div class="card-head"><h3>Aufgabe A · Glücksrad</h3><span class="chev">▾</span></div>
+      <div class="card-body">
+        <div class="task">
+          <div class="fig">
+            <div class="txt">
+              <p>Das abgebildete Glücksrad wird einmal gedreht.</p>
+              <p><strong>a)</strong> Geben Sie eine passende Ergebnismenge an.</p>
+              <p><strong>b)</strong> Bestimmen Sie die Wahrscheinlichkeitsverteilung und erstellen Sie dazu ein
+              Säulendiagramm.</p>
+              <p><strong>c)</strong> Geben Sie an, wie oft Sie das Ergebnis „Blau“ in etwa erwarten können, wenn Sie das
+              Glücksrad $200$-mal drehen.</p>
+            </div>
+            <div class="pic"><div data-wheel='{"s":[[0.5,"#f3c9c4","Rot"],[0.25,"#fbeab0","Gelb"],[0.125,"#c9e7d4","Grün"],[0.125,"#c8daea","Blau"]],"size":170}'></div></div>
+          </div>
+        </div>
+        <div class="board">✏️ <span><b>Tafelsicherung:</b> Ergebnismenge, Verteilungstabelle, Säulendiagramm, Vorhersage.</span></div>
+      </div>
+    </article>
+
+    <article class="card sG">
+      <div class="card-head"><h3>Aufgabe B · Wahrscheinlichkeiten aus Versuchsreihen festlegen</h3><span class="chev">▾</span></div>
+      <div class="card-body">
+        <div class="task">
+          <p>Ein Spielwürfel aus Holz ist nicht ganz gleichmäßig gearbeitet. Drei Gruppen haben ihn geworfen und notiert,
+          ob eine Sechs fällt:</p>
+          <div class="tw"><table class="vt">
+            <tr><th></th><th>Gruppe 1</th><th>Gruppe 2</th><th>Gruppe 3</th></tr>
+            <tr><th>Anzahl der Würfe</th><td>$50$</td><td>$200$</td><td>$250$</td></tr>
+            <tr><th>davon Sechsen</th><td>$14$</td><td>$42$</td><td>$54$</td></tr>
+          </table></div>
+          <p><strong>a)</strong> Berechnen Sie die relativen Häufigkeiten für „Sechs“ in den drei Gruppen und
+          insgesamt.</p>
+          <p><strong>b)</strong> Legen Sie eine Wahrscheinlichkeitsverteilung für die Ergebnismenge
+          $S=\{\text{Sechs};\ \text{keine Sechs}\}$ fest. Erläutern Sie, warum Sie nicht die Werte von Gruppe 1
+          verwenden.</p>
+          <p><strong>c)</strong> Beurteilen Sie, ob der Würfel eher zu Gunsten oder zu Lasten der Sechs „gezinkt“ ist.</p>
+        </div>
+        <div class="board">✏️ <span><b>Tafelsicherung:</b> Warum legt man Wahrscheinlichkeiten über möglichst lange Versuchsreihen fest?</span></div>
+      </div>
+    </article>
+
+    <article class="card sG">
+      <div class="card-head"><h3>Aufgabe C · Ziehen mit und ohne Zurücklegen</h3><span class="chev">▾</span></div>
+      <div class="card-body">
+        <div class="task">
+          <p>In einer Dose liegen fünf rote (r) und drei weiße (w) Kugeln. Sie ziehen zwei Kugeln <strong>mit
+          Zurücklegen</strong>. Als Ergebnismenge wird <i>S</i>&nbsp;=&nbsp;{rr, rw, wr, ww} festgelegt.</p>
+          <p><strong>a)</strong> Zeichnen Sie ein Baumdiagramm und bestimmen Sie die Wahrscheinlichkeitsverteilung.</p>
+          <p><strong>b)</strong> Lea beschreibt das Ergebnis $rw$: „Es wird eine rote und eine weiße Kugel gezogen.“
+          Nehmen Sie zu ihrer Beschreibung Stellung.</p>
+          <p><strong>c)</strong> Beschreiben Sie das Ereignis $E$: „Es wird mindestens eine weiße Kugel gezogen.“ als
+          Menge und bestimmen Sie $P(E)$.</p>
+          <p><strong>d)</strong> Beschreiben Sie das Ereignis <i>F</i>&nbsp;=&nbsp;{rr, wr} in Worten und bestimmen Sie $P(F)$.</p>
+          <p><strong>e)</strong> Untersuchen Sie, was sich in den Teilaufgaben a) bis d) ändert, wenn Sie
+          <strong>ohne Zurücklegen</strong> ziehen.</p>
+        </div>
+        <div class="board">✏️ <span><b>Tafelsicherung:</b> Baumdiagramm mit und ohne Zurücklegen nebeneinander, Pfadregel und Summenregel.</span></div>
+      </div>
+    </article>
+  </section>
+
+  <!-- ================= STUFE 1 ================= -->
+  <section class="s1" data-stufe="1">
+    <div class="stufe-head">
+      <span class="stufe-badge">Stufe 1</span>
+      <span class="desc">Grundaufgaben · Ergebnismenge, Verteilung, Pfad- und Summenregel</span>
+    </div>
+
+    <!-- Aufgabe 1 -->
+    <article class="card s1">
+      <div class="card-head"><h3>Aufgabe 1 · Ein Glücksrad – zwei Ergebnismengen</h3><span class="chev">▾</span></div>
+      <div class="card-body">
+        <div class="task">
+          <div class="fig">
+            <div class="txt">
+              <p>Das Glücksrad hat acht gleich große Felder. Die Felder 1 bis 3 sind rot, die Felder 4 und 5 gelb,
+              die Felder 6 bis 8 blau. Es wird einmal gedreht.</p>
+              <p><strong>a)</strong> Geben Sie jeweils die Ergebnismenge und die dazugehörige
+              Wahrscheinlichkeitsverteilung an, wenn man<br>
+              <span class="sub-i">(1) auf die Zahlen achtet,</span><br>
+              <span class="sub-i">(2) auf die Farben achtet.</span></p>
+              <p><strong>b)</strong> Stellen Sie die Verteilung aus a) (2) in einem Säulendiagramm dar.</p>
+              <p><strong>c)</strong> Erklären Sie, wie oft etwa eine Zahl vorkommen wird, die kleiner als 3 ist, wenn
+              man $400$-mal dreht.</p>
+            </div>
+            <div class="pic"><div data-wheel='{"s":[[0.125,"#f3c9c4","1"],[0.125,"#f3c9c4","2"],[0.125,"#f3c9c4","3"],[0.125,"#fbeab0","4"],[0.125,"#fbeab0","5"],[0.125,"#c8daea","6"],[0.125,"#c8daea","7"],[0.125,"#c8daea","8"]],"size":170,"lines":true}'></div></div>
+          </div>
+        </div>
+
+        <div class="assess"><span class="lab">Einschätzung:</span>
+          <button data-v="ok" type="button">✓ Fertig &amp; verstanden</button>
+          <button data-v="mid" type="button">~ Noch unsicher</button>
+          <button data-v="ask" type="button">? Frage an Lehrer</button>
+        </div>
+
+        <div class="hints">
+          <div class="htitle">Hilfen</div>
+          <div class="htabs">
+            <button type="button">Hilfe 1 · Ergebnismenge</button>
+            <button type="button">Hilfe 2 · Wahrscheinlichkeiten</button>
+            <button type="button">Hilfe 3 · Zu b) und c)</button>
+          </div>
+          <div class="hpanel">
+            <h4>Hilfe 1 · Was sind die möglichen Ergebnisse?</h4>
+            <p>Bei (1) notierst du, auf welcher <em>Zahl</em> der Zeiger stehen bleibt – das sind acht mögliche
+            Ergebnisse. Bei (2) notierst du nur die <em>Farbe</em> – wie viele verschiedene Ergebnisse gibt es dann?</p>
+          </div>
+          <div class="hpanel">
+            <h4>Hilfe 2 · Flächenanteile</h4>
+            <p>Die Wahrscheinlichkeiten entsprechen den Flächenanteilen. Jedes der acht Felder hat den Anteil
+            $\frac18$. Die Farbe Rot umfasst drei Felder – sie hat also den Anteil $3\cdot\frac18$. Schreibe die
+            Verteilung jeweils als Tabelle mit $e$ und $P(e)$ und kontrolliere, dass die Summe $1$ ergibt.</p>
+          </div>
+          <div class="hpanel">
+            <h4>Hilfe 3 · Säulendiagramm und Vorhersage</h4>
+            <p>Im Säulendiagramm stehen auf der Rechtsachse die Ergebnisse (rot, gelb, blau), die Höhe jeder Säule ist
+            ihre Wahrscheinlichkeit. Wähle z. B. $1\,\text{cm}$ für $0{,}1$.</p>
+            <p>c) „Kleiner als 3“ bedeutet die Zahlen $1$ und $2$. Bestimme zuerst die Wahrscheinlichkeit dieses
+            Ereignisses mit der Summenregel. Bei $n$ Drehungen erwartet man etwa $n\cdot P$ Treffer.</p>
+          </div>
+        </div>
+
+        <div class="sol-lock">🔒 Musterlösung – nach Freigabe durch den Lehrer sichtbar.</div>
+        <div class="sol">
+          <div class="sh">✓ Musterlösung · Aufgabe 1</div>
+          <div class="sb">
+            <p>Die Wahrscheinlichkeiten werden über die Flächenanteile festgelegt: Jedes der acht gleich großen Felder
+            hat die Wahrscheinlichkeit $\frac18$.</p>
+            <p><strong>a) (1)</strong> <span class="res"><i>S</i><sub>1</sub>&nbsp;=&nbsp;{1;&nbsp;2;&nbsp;3;&nbsp;4;&nbsp;5;&nbsp;6;&nbsp;7;&nbsp;8}</span></p>
+            <div class="tw"><table class="vt">
+              <tr><th>$e$</th><td>1</td><td>2</td><td>3</td><td>4</td><td>5</td><td>6</td><td>7</td><td>8</td></tr>
+              <tr><th>$P(e)$</th><td>$\frac18$</td><td>$\frac18$</td><td>$\frac18$</td><td>$\frac18$</td><td>$\frac18$</td><td>$\frac18$</td><td>$\frac18$</td><td>$\frac18$</td></tr>
+            </table></div>
+            <p><strong>(2)</strong> <span class="res"><i>S</i><sub>2</sub>&nbsp;=&nbsp;{rot;&nbsp;gelb;&nbsp;blau}</span>.
+            Rot umfasst drei Felder, gelb zwei, blau drei:</p>
+            <div class="tw"><table class="vt">
+              <tr><th>$e$</th><td>rot</td><td>gelb</td><td>blau</td></tr>
+              <tr><th>$P(e)$</th><td>$\frac38$</td><td>$\frac28=\frac14$</td><td>$\frac38$</td></tr>
+            </table></div>
+            <p>Kontrolle: $\frac38+\frac28+\frac38=1$ ✓</p>
+            <p><strong>b)</strong> Säulendiagramm zur Verteilung (2): Die Säulenhöhen entsprechen den Wahrscheinlichkeiten
+            $\frac38=0{,}375$, $\frac14=0{,}25$ und $\frac38=0{,}375$.</p>
+            <div class="pic" style="margin:6px 0"><svg width="260" height="170" viewBox="0 0 260 170" role="img" aria-label="Säulendiagramm">
+              <g font-size="11" fill="#5c6472" font-family="inherit">
+                <line x1="46" y1="140" x2="250" y2="140" stroke="#1c1f26"/><line x1="46" y1="140" x2="46" y2="12" stroke="#1c1f26"/>
+                <line x1="42" y1="140" x2="46" y2="140" stroke="#1c1f26"/><text x="38" y="144" text-anchor="end">0</text>
+                <line x1="46" y1="92" x2="250" y2="92" stroke="#dde1e7"/><text x="38" y="96" text-anchor="end">0,125</text>
+                <line x1="46" y1="68" x2="250" y2="68" stroke="#dde1e7"/><text x="38" y="72" text-anchor="end">0,25</text>
+                <line x1="46" y1="44" x2="250" y2="44" stroke="#dde1e7"/><text x="38" y="48" text-anchor="end">0,375</text>
+                <line x1="46" y1="20" x2="250" y2="20" stroke="#dde1e7"/><text x="38" y="24" text-anchor="end">0,5</text>
+                <rect x="66" y="44" width="36" height="96" fill="#f3c9c4" stroke="#c0392b"/><rect x="130" y="92" width="36" height="48" fill="#fbeab0" stroke="#b58200"/><rect x="194" y="44" width="36" height="96" fill="#c8daea" stroke="#2c5f8a"/>
+                <text x="84" y="156" text-anchor="middle">rot</text><text x="148" y="156" text-anchor="middle">gelb</text><text x="212" y="156" text-anchor="middle">blau</text>
+              </g></svg></div>
+            <p><strong>c)</strong> Das Ereignis „Zahl kleiner als 3“ ist $E=\{1;2\}$. Summenregel:
+            $P(E)=\frac18+\frac18=\frac14$.</p>
+            <p>$$400\cdot\frac14=100$$</p>
+            <p>Bei $400$ Drehungen wird etwa ${\color{#1a9e5c}\boldsymbol{100\text{-mal}}}$ eine Zahl kleiner als 3 vorkommen.
+            (Genau 100-mal ist nicht sicher – die relative Häufigkeit schwankt um $\frac14$.)</p>
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <!-- Aufgabe 2 -->
+    <article class="card s1">
+      <div class="card-head"><h3>Aufgabe 2 · Zweimal würfeln – Sechs oder keine Sechs?</h3><span class="chev">▾</span></div>
+      <div class="card-body">
+        <div class="task">
+          <p>Ein fairer Würfel wird zweimal geworfen. Beachtet wird nur, ob eine Sechs ($6$) oder keine Sechs ($n$)
+          fällt. Als Ergebnismenge wird $S=\{66,\ 6n,\ n6,\ nn\}$ festgelegt.</p>
+          <p><strong>a)</strong> Zeichnen Sie ein Baumdiagramm und bestimmen Sie die Wahrscheinlichkeitsverteilung.</p>
+          <p><strong>b)</strong> Geben Sie das Ereignis $E$: „Es fällt genau eine Sechs.“ als Menge an und bestimmen
+          Sie $P(E)$.</p>
+          <p><strong>c)</strong> Beschreiben Sie das Ereignis $F=\{66,\ 6n,\ n6\}$ in Worten und bestimmen Sie $P(F)$.</p>
+        </div>
+
+        <div class="assess"><span class="lab">Einschätzung:</span>
+          <button data-v="ok" type="button">✓ Fertig &amp; verstanden</button>
+          <button data-v="mid" type="button">~ Noch unsicher</button>
+          <button data-v="ask" type="button">? Frage an Lehrer</button>
+        </div>
+
+        <div class="hints">
+          <div class="htitle">Hilfen</div>
+          <div class="htabs">
+            <button type="button">Hilfe 1 · Baumdiagramm</button>
+            <button type="button">Hilfe 2 · Pfadregel</button>
+            <button type="button">Hilfe 3 · Ereignisse</button>
+          </div>
+          <div class="hpanel">
+            <h4>Hilfe 1 · Das Baumdiagramm aufbauen</h4>
+            <p>Das Experiment hat zwei Stufen (1. Wurf, 2. Wurf). Auf jeder Stufe gibt es zwei Äste: $6$ mit
+            $P=\frac16$ und $n$ mit $P=\frac56$. Insgesamt entstehen $2\cdot2=4$ Pfade – einer für jedes Ergebnis.</p>
+          </div>
+          <div class="hpanel">
+            <h4>Hilfe 2 · Wahrscheinlichkeit eines Ergebnisses</h4>
+            <p>Multipliziere die Wahrscheinlichkeiten längs des Pfades, z. B. $P(6n)=\frac16\cdot\frac56$.
+            Kontrolliere am Ende: Die vier Wahrscheinlichkeiten müssen zusammen $1$ ergeben.</p>
+          </div>
+          <div class="hpanel">
+            <h4>Hilfe 3 · Ereignisse beschreiben</h4>
+            <p>„Genau eine Sechs“ – bei welchen Ergebnissen kommt genau ein Zeichen $6$ vor? Für c): Was haben die drei
+            Ergebnisse in $F$ gemeinsam, was hat $nn$ nicht? Addiere dann die Wahrscheinlichkeiten (Summenregel).</p>
+          </div>
+        </div>
+
+        <div class="sol-lock">🔒 Musterlösung – nach Freigabe durch den Lehrer sichtbar.</div>
+        <div class="sol">
+          <div class="sh">✓ Musterlösung · Aufgabe 2</div>
+          <div class="sb">
+            <p><strong>a)</strong> Bei einem fairen Würfel gilt $P(6)=\frac16$ und $P(n)=\frac56$.</p>
+            <div class="tree-box" data-tree='{"levels":["1. Wurf","2. Wurf"],"stages":[[["6","1/6"],["n","5/6"]],[["6","1/6"],["n","5/6"]]],"leaf":"concat","dx":80}'></div>
+            <p>Die Wahrscheinlichkeiten werden mit der Pfadregel bestimmt, z. B. $P(6n)=\frac16\cdot\frac56=\frac{5}{36}$:</p>
+            <div class="tw"><table class="vt">
+              <tr><th>$e$</th><td>66</td><td>6n</td><td>n6</td><td>nn</td></tr>
+              <tr><th>$P(e)$</th><td>$\frac1{36}$</td><td>$\frac5{36}$</td><td>$\frac5{36}$</td><td>$\frac{25}{36}$</td></tr>
+            </table></div>
+            <p>Kontrolle: $\frac{1+5+5+25}{36}=1$ ✓</p>
+            <p><strong>b)</strong> ${\color{#1a9e5c}\boldsymbol{E=\{6n,\ n6\}}}$. Summenregel:
+            $$P(E)=\frac5{36}+\frac5{36}=\frac{10}{36}={\color{#1a9e5c}\boldsymbol{\frac5{18}\approx0{,}278}}$$</p>
+            <p><strong>c)</strong> $F$: <span class="res">„Es fällt mindestens eine Sechs.“</span> Summenregel:
+            $$P(F)=\frac1{36}+\frac5{36}+\frac5{36}={\color{#1a9e5c}\boldsymbol{\frac{11}{36}\approx0{,}306}}$$</p>
+            <button class="alt-btn" type="button">➕ Alternativer Lösungsweg zu c)</button>
+            <div class="alt">
+              <div class="ah">Alternative · über das Gegenereignis</div>
+              <p>$F$ tritt genau dann <em>nicht</em> ein, wenn $nn$ eintritt. Da alle Wahrscheinlichkeiten zusammen $1$
+              ergeben, gilt $P(F)=1-P(nn)=1-\frac{25}{36}=\frac{11}{36}$. Dieser Weg wird in Abschnitt 2
+              („Verknüpfen von Ereignissen“) genauer behandelt.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <!-- Aufgabe 3 -->
+    <article class="card s1">
+      <div class="card-head"><h3>Aufgabe 3 · Wahr oder falsch?</h3><span class="chev">▾</span></div>
+      <div class="card-body">
+        <div class="task">
+          <p>Beurteilen Sie, ob die Aussage wahr oder falsch ist. Begründen Sie jeweils.</p>
+          <p><strong>a)</strong> Bei einem Zufallsexperiment kann die Summe der Wahrscheinlichkeiten aller Ergebnisse
+          größer als $1$ sein.</p>
+          <p><strong>b)</strong> Wirft man zwei Würfel, so ist die Augensumme 2 genauso wahrscheinlich wie die
+          Augensumme 7.</p>
+          <p><strong>c)</strong> Die Ergebnismenge $S$ eines Zufallsexperiments ist auch ein Ereignis, und es gilt
+          $P(S)=1$.</p>
+          <p><strong>d)</strong> Wirft man eine Münze dreimal, so sind die Ergebnisse „0-mal Zahl“, „1-mal Zahl“,
+          „2-mal Zahl“ und „3-mal Zahl“ gleich wahrscheinlich.</p>
+          <p><strong>e)</strong> Hat eine faire Münze zehnmal hintereinander Wappen gezeigt, so ist beim nächsten Wurf
+          Zahl wahrscheinlicher als Wappen.</p>
+          <p><strong>f)</strong> Beim Wurf zweier Würfel ist „Die Augensumme beträgt 13.“ kein Ereignis, weil es kein
+          passendes Ergebnis gibt.</p>
+        </div>
+
+        <div class="assess"><span class="lab">Einschätzung:</span>
+          <button data-v="ok" type="button">✓ Fertig &amp; verstanden</button>
+          <button data-v="mid" type="button">~ Noch unsicher</button>
+          <button data-v="ask" type="button">? Frage an Lehrer</button>
+        </div>
+
+        <div class="hints">
+          <div class="htitle">Hilfen</div>
+          <div class="htabs">
+            <button type="button">Hilfe 1 · Zu a) und c)</button>
+            <button type="button">Hilfe 2 · Zu b) und d)</button>
+            <button type="button">Hilfe 3 · Zu e)</button>
+          </div>
+          <div class="hpanel">
+            <h4>Hilfe 1 · Das Merkwissen nutzen</h4>
+            <p>Lies im Merkwissen nach: Welche Eigenschaften hat eine Wahrscheinlichkeitsverteilung? Und was ist ein
+            Ereignis – darf es auch <em>alle</em> Ergebnisse enthalten?</p>
+          </div>
+          <div class="hpanel">
+            <h4>Hilfe 2 · An das Pferderennen und Beispiel 1 denken</h4>
+            <p>Wie viele der 36 gleich wahrscheinlichen Ergebnisse zweier Würfel liefern die Augensumme 2, wie viele die
+            Augensumme 7? Zu d): Beispiel 1 b) hat dieselbe Struktur – schau dir die Verteilung auf $S'$ an.</p>
+          </div>
+          <div class="hpanel">
+            <h4>Hilfe 3 · Hat die Münze ein Gedächtnis?</h4>
+            <p>Überlege, ob sich an der Münze durch die bisherigen Würfe etwas verändert hat. Welche Wahrscheinlichkeit
+            steht im Baumdiagramm an jedem Ast – unabhängig davon, was vorher passiert ist?</p>
+            <p>Zu f): Ein Ereignis ist eine <em>Teilmenge</em> von $S$. Ist die leere Menge $\{\,\}$ eine Teilmenge?</p>
+          </div>
+        </div>
+
+        <div class="sol-lock">🔒 Musterlösung – nach Freigabe durch den Lehrer sichtbar.</div>
+        <div class="sol">
+          <div class="sh">✓ Musterlösung · Aufgabe 3</div>
+          <div class="sb">
+            <p><strong>a) ${\color{#1a9e5c}\boldsymbol{\text{Falsch.}}}$</strong> Die Wahrscheinlichkeiten einer
+            Wahrscheinlichkeitsverteilung haben immer genau die Summe $1$.</p>
+            <p><strong>b) ${\color{#1a9e5c}\boldsymbol{\text{Falsch.}}}$</strong> Von den 36 gleich wahrscheinlichen
+            Ergebnissen (Tupel wie $(1,6)$) gehört zur Augensumme 2 nur $(1,1)$, zur Augensumme 7 dagegen
+            $(1,6),(2,5),(3,4),(4,3),(5,2),(6,1)$. Summenregel: $P(\text{Summe }2)=\frac1{36}$, aber
+            $P(\text{Summe }7)=\frac6{36}=\frac16$.</p>
+            <p><strong>c) ${\color{#1a9e5c}\boldsymbol{\text{Wahr.}}}$</strong> $S$ ist eine Teilmenge von sich selbst,
+            also ein Ereignis. Nach der Summenregel ist $P(S)$ die Summe aller Wahrscheinlichkeiten, also $1$.</p>
+            <p><strong>d) ${\color{#1a9e5c}\boldsymbol{\text{Falsch.}}}$</strong> Zu „1-mal Zahl“ gehören die drei
+            Ergebnisse $WWZ, WZW, ZWW$, zu „0-mal Zahl“ nur $WWW$. Mit Pfad- und Summenregel:
+            $P(0)=\frac18$, $P(1)=\frac38$, $P(2)=\frac38$, $P(3)=\frac18$.</p>
+            <p><strong>e) ${\color{#1a9e5c}\boldsymbol{\text{Falsch.}}}$</strong> Die Münze hat kein „Gedächtnis“. Bei
+            jedem Wurf gilt wieder $P(W)=P(Z)=\frac12$ – im Baumdiagramm stehen an jedem Ast dieselben
+            Wahrscheinlichkeiten, egal was vorher geworfen wurde.</p>
+            <p><strong>f) ${\color{#1a9e5c}\boldsymbol{\text{Falsch.}}}$</strong> Zu „Augensumme 13“ gehört kein Ergebnis,
+            das Ereignis ist also die leere Menge $\{\,\}$. Die leere Menge ist eine Teilmenge jeder Ergebnismenge und damit
+            ein Ereignis – ein <em>unmögliches</em> Ereignis mit der Wahrscheinlichkeit $0$.</p>
+          </div>
+        </div>
+      </div>
+    </article>
+  </section>
+
+  <!-- ================= STUFE 2 ================= -->
+  <section class="s2" data-stufe="2">
+    <div class="stufe-head">
+      <span class="stufe-badge">Stufe 2</span>
+      <span class="desc">Erweiterung · ungleiche Äste, Ziehen ohne Zurücklegen, Modellieren</span>
+    </div>
+
+    <!-- Aufgabe 4 -->
+    <article class="card s2">
+      <div class="card-head"><h3>Aufgabe 4 · Ein besonderer Würfel</h3><span class="chev">▾</span></div>
+      <div class="card-body">
+        <div class="task">
+          <p>Bei einem Spielwürfel sind drei Seiten mit „1“, zwei Seiten mit „2“ und eine Seite mit „3“ beschriftet.
+          Der Würfel wird zweimal geworfen. Die Ergebnisse werden als Tupel notiert, z. B. $(1,3)$.</p>
+          <p><strong>a)</strong> Zeichnen Sie ein Baumdiagramm und bestimmen Sie die Wahrscheinlichkeitsverteilung.</p>
+          <p><strong>b)</strong> Geben Sie das Ereignis $F$: „Die Augensumme beträgt 4.“ als Menge an und bestimmen
+          Sie $P(F)$.</p>
+          <p><strong>c)</strong> Bestimmen Sie die Wahrscheinlichkeit für das Ereignis $G$: „Die Augensumme beträgt
+          höchstens 3.“</p>
+        </div>
+
+        <div class="assess"><span class="lab">Einschätzung:</span>
+          <button data-v="ok" type="button">✓ Fertig &amp; verstanden</button>
+          <button data-v="mid" type="button">~ Noch unsicher</button>
+          <button data-v="ask" type="button">? Frage an Lehrer</button>
+        </div>
+
+        <div class="hints">
+          <div class="htitle">Hilfen</div>
+          <div class="htabs">
+            <button type="button">Hilfe 1 · Äste</button>
+            <button type="button">Hilfe 2 · Neun Pfade</button>
+            <button type="button">Hilfe 3 · Ereignisse</button>
+          </div>
+          <div class="hpanel">
+            <h4>Hilfe 1 · Wahrscheinlichkeiten eines Wurfs</h4>
+            <p>Alle sechs Seiten sind gleich wahrscheinlich. „1“ steht auf drei Seiten: $P(1)=\frac36=\frac12$.
+            Bestimme ebenso $P(2)$ und $P(3)$. An jedem Knoten gehen drei Äste ab.</p>
+          </div>
+          <div class="hpanel">
+            <h4>Hilfe 2 · Die Verteilung</h4>
+            <p>Es gibt $3\cdot3=9$ Pfade. Berechne jede Pfadwahrscheinlichkeit mit der Pfadregel, z. B.
+            $P(1,2)=\frac12\cdot\frac13=\frac16$. Kontrolle: Die Summe aller neun Werte ist $1$.</p>
+          </div>
+          <div class="hpanel">
+            <h4>Hilfe 3 · Welche Tupel gehören dazu?</h4>
+            <p>Augensumme 4: $1+3$, $3+1$ und $2+2$. Achte darauf, dass $(1,3)$ und $(3,1)$ verschiedene Ergebnisse
+            sind. Höchstens 3 heißt: Augensumme 2 oder 3.</p>
+          </div>
+        </div>
+
+        <div class="sol-lock">🔒 Musterlösung – nach Freigabe durch den Lehrer sichtbar.</div>
+        <div class="sol">
+          <div class="sh">✓ Musterlösung · Aufgabe 4</div>
+          <div class="sb">
+            <p><strong>a)</strong> Da alle Seiten gleich wahrscheinlich sind: $P(1)=\frac36=\frac12$,
+            $P(2)=\frac26=\frac13$, $P(3)=\frac16$.</p>
+            <div class="tree-box" data-tree='{"levels":["1. Wurf","2. Wurf"],"stages":[[["1","1/2"],["2","1/3"],["3","1/6"]],[["1","1/2"],["2","1/3"],["3","1/6"]]],"leaf":"tuple","dx":58}'></div>
+            <p>Die Wahrscheinlichkeiten werden mit der Pfadregel bestimmt, z. B. $P(2,3)=\frac13\cdot\frac16=\frac1{18}$:</p>
+            <div class="tw"><table class="vt">
+              <tr><th>$e$</th><td>$(1,1)$</td><td>$(1,2)$</td><td>$(1,3)$</td><td>$(2,1)$</td><td>$(2,2)$</td><td>$(2,3)$</td><td>$(3,1)$</td><td>$(3,2)$</td><td>$(3,3)$</td></tr>
+              <tr><th>$P(e)$</th><td>$\frac14$</td><td>$\frac16$</td><td>$\frac1{12}$</td><td>$\frac16$</td><td>$\frac19$</td><td>$\frac1{18}$</td><td>$\frac1{12}$</td><td>$\frac1{18}$</td><td>$\frac1{36}$</td></tr>
+            </table></div>
+            <p>Kontrolle (Hauptnenner 36): $\frac{9+6+3+6+4+2+3+2+1}{36}=\frac{36}{36}=1$ ✓</p>
+            <p><strong>b)</strong> ${\color{#1a9e5c}\boldsymbol{F=\{(1,3),(2,2),(3,1)\}}}$. Summenregel:
+            $$P(F)=\frac1{12}+\frac19+\frac1{12}=\frac3{36}+\frac4{36}+\frac3{36}=\frac{10}{36}={\color{#1a9e5c}\boldsymbol{\frac5{18}\approx0{,}278}}$$</p>
+            <p><strong>c)</strong> $G=\{(1,1),(1,2),(2,1)\}$. Summenregel:
+            $$P(G)=\frac14+\frac16+\frac16=\frac3{12}+\frac2{12}+\frac2{12}={\color{#1a9e5c}\boldsymbol{\frac7{12}\approx0{,}583}}$$</p>
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <!-- Aufgabe 5 -->
+    <article class="card s2">
+      <div class="card-head"><h3>Aufgabe 5 · Riegel ziehen ohne Zurücklegen</h3><span class="chev">▾</span></div>
+      <div class="card-body">
+        <div class="task">
+          <p>In einer Schale liegen drei Schokoriegel ($S$) und zwei Müsliriegel ($M$). Tim nimmt nacheinander ohne
+          hinzusehen drei Riegel heraus (ohne Zurücklegen).</p>
+          <p><strong>a)</strong> Zeichnen Sie ein Baumdiagramm und geben Sie eine passende Ergebnismenge an.</p>
+          <p><strong>b)</strong> Stellen Sie die Ereignisse als Teilmenge der Ergebnismenge dar und bestimmen Sie ihre
+          Wahrscheinlichkeit:<br>
+          <span class="sub-i">$E$: „Tim bekommt nur Schokoriegel.“</span><br>
+          <span class="sub-i">$F$: „Tim bekommt zwei Müsliriegel und einen Schokoriegel.“</span><br>
+          <span class="sub-i">$G$: „Tim bekommt genau zwei Schokoriegel.“</span></p>
+          <p><strong>c)</strong> Begründen Sie, warum das Ergebnis $MMM$ nicht in der Ergebnismenge vorkommt.</p>
+        </div>
+
+        <div class="assess"><span class="lab">Einschätzung:</span>
+          <button data-v="ok" type="button">✓ Fertig &amp; verstanden</button>
+          <button data-v="mid" type="button">~ Noch unsicher</button>
+          <button data-v="ask" type="button">? Frage an Lehrer</button>
+        </div>
+
+        <div class="hints">
+          <div class="htitle">Hilfen</div>
+          <div class="htabs">
+            <button type="button">Hilfe 1 · Ohne Zurücklegen</button>
+            <button type="button">Hilfe 2 · Der Baum</button>
+            <button type="button">Hilfe 3 · Ereignisse</button>
+          </div>
+          <div class="hpanel">
+            <h4>Hilfe 1 · Was ändert sich von Zug zu Zug?</h4>
+            <p>Beim ersten Zug liegen 5 Riegel in der Schale: $P(S)=\frac35$, $P(M)=\frac25$. Wurde ein Schokoriegel
+            genommen, liegen nur noch 2 Schokoriegel und 2 Müsliriegel darin – die Wahrscheinlichkeiten auf der
+            zweiten Stufe hängen also vom ersten Zug ab.</p>
+          </div>
+          <div class="hpanel">
+            <h4>Hilfe 2 · Den Baum Stufe für Stufe aufbauen</h4>
+            <p>Notiere dir an jedem Knoten, wie viele $S$ und $M$ noch in der Schale liegen. Ist keine Sorte mehr
+            vorhanden, entfällt der Ast. Die Pfadregel gilt genauso wie beim Ziehen mit Zurücklegen, z. B.
+            $P(SMS)=\frac35\cdot\frac24\cdot\frac23$.</p>
+          </div>
+          <div class="hpanel">
+            <h4>Hilfe 3 · Mehrere Pfade für ein Ereignis</h4>
+            <p>„Genau zwei Schokoriegel“ kann auf drei Arten passieren – je nachdem, beim wievielten Zug der Müsliriegel
+            kommt. Bestimme alle drei Pfadwahrscheinlichkeiten und addiere sie (Summenregel).</p>
+          </div>
+        </div>
+
+        <div class="sol-lock">🔒 Musterlösung – nach Freigabe durch den Lehrer sichtbar.</div>
+        <div class="sol">
+          <div class="sh">✓ Musterlösung · Aufgabe 5</div>
+          <div class="sb">
+            <p><strong>a)</strong> Die Wahrscheinlichkeiten ändern sich nach jedem Zug, weil der Riegel nicht
+            zurückgelegt wird:</p>
+            <div class="tree-box" data-tree='{"levels":["1. Zug","2. Zug","3. Zug"],"root":{"c":[{"l":"S","p":"3/5","c":[{"l":"S","p":"2/4","c":[{"l":"S","p":"1/3"},{"l":"M","p":"2/3"}]},{"l":"M","p":"2/4","c":[{"l":"S","p":"2/3"},{"l":"M","p":"1/3"}]}]},{"l":"M","p":"2/5","c":[{"l":"S","p":"3/4","c":[{"l":"S","p":"2/3"},{"l":"M","p":"1/3"}]},{"l":"M","p":"1/4","c":[{"l":"S","p":"3/3"}]}]}]},"leaf":"concat","dx":62,"col":{"S":"#8a5a2b","M":"#1a9e5c"}}'></div>
+            <p><span class="res"><i>S</i>&nbsp;=&nbsp;{SSS, SSM, SMS, SMM, MSS, MSM, MMS}</span></p>
+            <p>Pfadregel für alle Ergebnisse:</p>
+            <div class="tw"><table class="vt">
+              <tr><th>$e$</th><td>SSS</td><td>SSM</td><td>SMS</td><td>SMM</td><td>MSS</td><td>MSM</td><td>MMS</td></tr>
+              <tr><th>Pfad</th><td>$\frac35\cdot\frac24\cdot\frac13$</td><td>$\frac35\cdot\frac24\cdot\frac23$</td><td>$\frac35\cdot\frac24\cdot\frac23$</td><td>$\frac35\cdot\frac24\cdot\frac13$</td><td>$\frac25\cdot\frac34\cdot\frac23$</td><td>$\frac25\cdot\frac34\cdot\frac13$</td><td>$\frac25\cdot\frac14\cdot\frac33$</td></tr>
+              <tr><th>$P(e)$</th><td>$\frac1{10}$</td><td>$\frac15$</td><td>$\frac15$</td><td>$\frac1{10}$</td><td>$\frac15$</td><td>$\frac1{10}$</td><td>$\frac1{10}$</td></tr>
+            </table></div>
+            <p>Kontrolle: $4\cdot\frac1{10}+3\cdot\frac15=\frac4{10}+\frac6{10}=1$ ✓</p>
+            <p><strong>b)</strong> $E=\{SSS\}$: $\quad P(E)={\color{#1a9e5c}\boldsymbol{\frac1{10}}}$</p>
+            <p>$F=\{SMM,\ MSM,\ MMS\}$: $\quad P(F)=\frac1{10}+\frac1{10}+\frac1{10}={\color{#1a9e5c}\boldsymbol{\frac3{10}}}$</p>
+            <p>$G=\{SSM,\ SMS,\ MSS\}$: $\quad P(G)=\frac15+\frac15+\frac15={\color{#1a9e5c}\boldsymbol{\frac35}}$</p>
+            <p><strong>c)</strong> Es gibt nur zwei Müsliriegel. Nach zwei gezogenen Müsliriegeln liegen nur noch
+            Schokoriegel in der Schale – der dritte Riegel ist sicher ein Schokoriegel ($P=\frac33=1$). Drei Müsliriegel
+            sind unmöglich.</p>
+            <button class="alt-btn" type="button">➕ Alternativer Lösungsweg zu G</button>
+            <div class="alt">
+              <div class="ah">Alternative · Rest zu 1</div>
+              <p>Jedes Ergebnis gehört zu genau einem der Ereignisse $E$, $F$ oder $G$ (Tim hat 3, 1 oder 2
+              Schokoriegel – 0 ist unmöglich). Daher gilt $P(E)+P(F)+P(G)=1$ und
+              $P(G)=1-\frac1{10}-\frac3{10}=\frac6{10}=\frac35$. Der Weg über alle drei Pfade ist aber die Vorgehensweise
+              aus dem Buch – und gleichzeitig eine gute Probe.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <!-- Aufgabe 6 -->
+    <article class="card s2">
+      <div class="card-head"><h3>Aufgabe 6 · Drei Ampeln auf dem Schulweg</h3><span class="chev">▾</span></div>
+      <div class="card-body">
+        <div class="task">
+          <p>Auf ihrem Schulweg passiert Mia drei Ampeln. Aus Beobachtungen weiß sie: Die erste Ampel zeigt bei ihrer
+          Ankunft mit einer Wahrscheinlichkeit von $0{,}6$ Grün, die zweite mit $0{,}5$ und die dritte mit $0{,}4$.
+          Die Ampeln sind nicht aufeinander abgestimmt. Notiert wird für jede Ampel Grün ($g$) oder Rot ($r$).</p>
+          <p><strong>a)</strong> Zeichnen Sie ein Baumdiagramm und bestimmen Sie die Wahrscheinlichkeitsverteilung.</p>
+          <p><strong>b)</strong> Bestimmen Sie die Wahrscheinlichkeit für die Ereignisse<br>
+          <span class="sub-i">$E$: „Mia muss genau einmal an einer roten Ampel halten.“,</span><br>
+          <span class="sub-i">$F$: „Mia muss höchstens einmal halten.“</span></p>
+          <p><strong>c)</strong> Deuten Sie das Ereignis $H=\{grr,\ rgr,\ rrg,\ rrr\}$ im Sachzusammenhang und bestimmen
+          Sie $P(H)$. Erklären Sie, warum $P(F)+P(H)=1$ gelten muss.</p>
+        </div>
+
+        <div class="assess"><span class="lab">Einschätzung:</span>
+          <button data-v="ok" type="button">✓ Fertig &amp; verstanden</button>
+          <button data-v="mid" type="button">~ Noch unsicher</button>
+          <button data-v="ask" type="button">? Frage an Lehrer</button>
+        </div>
+
+        <div class="hints">
+          <div class="htitle">Hilfen</div>
+          <div class="htabs">
+            <button type="button">Hilfe 1 · Äste</button>
+            <button type="button">Hilfe 2 · Pfadregel</button>
+            <button type="button">Hilfe 3 · Zu c)</button>
+          </div>
+          <div class="hpanel">
+            <h4>Hilfe 1 · Jede Stufe hat eigene Wahrscheinlichkeiten</h4>
+            <p>Anders als in Beispiel 2 sind die Wahrscheinlichkeiten auf den drei Stufen verschieden. Auf Stufe 1 steht
+            an $g$ die $0{,}6$ und an $r$ die $1-0{,}6=0{,}4$. Ergänze die Stufen 2 und 3 genauso.</p>
+          </div>
+          <div class="hpanel">
+            <h4>Hilfe 2 · Ein Pfad als Beispiel</h4>
+            <p>$P(grg)=0{,}6\cdot0{,}5\cdot0{,}4=0{,}12$. Berechne so alle acht Ergebnisse und prüfe, dass die Summe $1$
+            ist. Bei $E$ gehören die Pfade mit genau einem $r$ dazu, bei $F$ die mit keinem oder einem $r$.</p>
+          </div>
+          <div class="hpanel">
+            <h4>Hilfe 3 · Was haben die Ergebnisse von H gemeinsam?</h4>
+            <p>Zähle bei jedem Ergebnis in $H$ die roten Ampeln. Vergleiche danach die Ergebnisse von $F$ mit denen von
+            $H$: Gibt es ein Ergebnis, das in beiden oder in keinem vorkommt?</p>
+          </div>
+        </div>
+
+        <div class="sol-lock">🔒 Musterlösung – nach Freigabe durch den Lehrer sichtbar.</div>
+        <div class="sol">
+          <div class="sh">✓ Musterlösung · Aufgabe 6</div>
+          <div class="sb">
+            <p><strong>a)</strong></p>
+            <div class="tree-box" data-tree='{"levels":["1. Ampel","2. Ampel","3. Ampel"],"stages":[[["g","0,6"],["r","0,4"]],[["g","0,5"],["r","0,5"]],[["g","0,4"],["r","0,6"]]],"leaf":"concat","dx":58,"col":{"g":"#1a9e5c","r":"#c0392b"}}'></div>
+            <p>Die Wahrscheinlichkeiten werden für alle Ergebnisse mit der Pfadregel bestimmt, z. B.
+            $P(ggr)=0{,}6\cdot0{,}5\cdot0{,}6=0{,}18$:</p>
+            <div class="tw"><table class="vt">
+              <tr><th>$e$</th><td>ggg</td><td>ggr</td><td>grg</td><td>grr</td><td>rgg</td><td>rgr</td><td>rrg</td><td>rrr</td></tr>
+              <tr><th>$P(e)$</th><td>$0{,}12$</td><td>$0{,}18$</td><td>$0{,}12$</td><td>$0{,}18$</td><td>$0{,}08$</td><td>$0{,}12$</td><td>$0{,}08$</td><td>$0{,}12$</td></tr>
+            </table></div>
+            <p>Kontrolle: Summe $=1$ ✓</p>
+            <p><strong>b)</strong> $E=\{ggr,\ grg,\ rgg\}$ und $F=\{ggg,\ ggr,\ grg,\ rgg\}$. Summenregel:</p>
+            <p>$$P(E)=0{,}18+0{,}12+0{,}08={\color{#1a9e5c}\boldsymbol{0{,}38}}\qquad P(F)=0{,}12+0{,}18+0{,}12+0{,}08={\color{#1a9e5c}\boldsymbol{0{,}50}}$$</p>
+            <p><strong>c)</strong> $H$: <span class="res">„Mia muss mindestens zweimal halten.“</span></p>
+            <p>$$P(H)=0{,}18+0{,}12+0{,}08+0{,}12={\color{#1a9e5c}\boldsymbol{0{,}50}}$$</p>
+            <p>Jedes der acht Ergebnisse liegt in genau einem der beiden Ereignisse: entweder hält Mia höchstens einmal
+            ($F$) oder mindestens zweimal ($H$). $F$ und $H$ zusammen ergeben also $S$, und nach der Summenregel gilt
+            $P(F)+P(H)=P(S)=1$.</p>
+          </div>
+        </div>
+      </div>
+    </article>
+  </section>
+
+  <!-- ================= STUFE 3 ================= -->
+  <section class="s3" data-stufe="3">
+    <div class="stufe-head">
+      <span class="stufe-badge">Stufe 3</span>
+      <span class="desc">Vertiefung · Daten beurteilen, mehrstufig modellieren, Experimente entwerfen</span>
+    </div>
+
+    <!-- Aufgabe 7 -->
+    <article class="card s3">
+      <div class="card-head"><h3>Aufgabe 7 · Der Quader-Würfel</h3><span class="chev">▾</span></div>
+      <div class="card-body">
+        <div class="task">
+          <p>Ein Quader hat die Kantenlängen $3\,\text{cm}$, $2\,\text{cm}$ und $1\,\text{cm}$. Seine Seiten sind wie bei
+          einem Spielwürfel so beschriftet, dass die Summe gegenüberliegender Zahlen jeweils 7 ergibt: Die beiden
+          größten Flächen tragen die 1 und die 6, die mittleren die 2 und die 5, die kleinsten die 3 und die 4.</p>
+          <p><strong>a)</strong> Begründen Sie, dass die Wahrscheinlichkeit für eine „3“ kleiner ist als bei einem
+          normalen Spielwürfel.</p>
+          <p><strong>b)</strong> Tom würfelt $200$-mal mit dem Quader:</p>
+          <div class="tw"><table class="vt">
+            <tr><th>Augenzahl</th><td>1</td><td>2</td><td>3</td><td>4</td><td>5</td><td>6</td></tr>
+            <tr><th>absolute Häufigkeit</th><td>$52$</td><td>$30$</td><td>$17$</td><td>$21$</td><td>$36$</td><td>$44$</td></tr>
+          </table></div>
+          <p>Er behauptet, die Wahrscheinlichkeit für eine „1“ sei demnach $26\,\%$, für eine „2“ $15\,\%$ usw. Nehmen Sie
+          hierzu Stellung und verbessern Sie ggf. die Festlegung von Tom.</p>
+        </div>
+
+        <div class="assess"><span class="lab">Einschätzung:</span>
+          <button data-v="ok" type="button">✓ Fertig &amp; verstanden</button>
+          <button data-v="mid" type="button">~ Noch unsicher</button>
+          <button data-v="ask" type="button">? Frage an Lehrer</button>
+        </div>
+
+        <div class="hints">
+          <div class="htitle">Hilfen</div>
+          <div class="htabs">
+            <button type="button">Hilfe 1 · Zu a)</button>
+            <button type="button">Hilfe 2 · Was stört an Toms Werten?</button>
+            <button type="button">Hilfe 3 · Symmetrie nutzen</button>
+          </div>
+          <div class="hpanel">
+            <h4>Hilfe 1 · Wann bleibt der Quader auf der „3“ liegen?</h4>
+            <p>Liegt die „3“ oben, liegt der Quader auf der gegenüberliegenden Fläche, der „4“. Wie groß ist diese
+            Fläche im Vergleich zu den anderen? Bei einem Spielwürfel sind alle Flächen gleich groß.</p>
+          </div>
+          <div class="hpanel">
+            <h4>Hilfe 2 · Vergleiche die 1 und die 6</h4>
+            <p>Die „1“ und die „6“ liegen auf gleich großen, gegenüberliegenden Flächen. Welche Beziehung sollte daher
+            zwischen $P(1)$ und $P(6)$ gelten? Stimmen Toms Werte ($26\,\%$ und $22\,\%$) damit überein?</p>
+          </div>
+          <div class="hpanel">
+            <h4>Hilfe 3 · Daten zusammenfassen</h4>
+            <p>Aus Symmetriegründen setzt man $P(1)=P(6)$. Die Würfe mit „1“ und „6“ zusammen ($52+44$) verteilen sich
+            dann gleichmäßig auf beide Zahlen: $P(1)=P(6)=\frac{52+44}{2\cdot200}$. Verfahre mit 2/5 und 3/4 genauso.</p>
+          </div>
+        </div>
+
+        <div class="sol-lock">🔒 Musterlösung – nach Freigabe durch den Lehrer sichtbar.</div>
+        <div class="sol">
+          <div class="sh">✓ Musterlösung · Aufgabe 7</div>
+          <div class="sb">
+            <p><strong>a)</strong> Wenn die „3“ oben liegt, liegt der Quader auf der „4“ – einer der beiden
+            <em>kleinsten</em> Flächen ($2\,\text{cm}\times1\,\text{cm}$). Auf einer so kleinen Fläche bleibt er seltener
+            liegen als auf den großen Flächen ($3\,\text{cm}\times2\,\text{cm}$). Bei einem Spielwürfel sind dagegen alle
+            Flächen gleich groß, dort gilt $P(3)=\frac16$. Beim Quader ist also ${\color{#1a9e5c}\boldsymbol{P(3)<\frac16}}$.</p>
+            <p><strong>b)</strong> Toms Werte sind die relativen Häufigkeiten:
+            $h(1)=\frac{52}{200}=0{,}26$, $h(2)=0{,}15$, $h(3)=0{,}085$, $h(4)=0{,}105$, $h(5)=0{,}18$, $h(6)=0{,}22$.</p>
+            <p><strong>Stellungnahme:</strong> Die Festlegung ist nicht gut. Die „1“ und die „6“ liegen auf gleich großen
+            Flächen; aus Symmetriegründen muss $P(1)=P(6)$ gelten, ebenso $P(2)=P(5)$ und $P(3)=P(4)$. Die Unterschiede
+            in Toms Daten (z. B. $52$ gegenüber $44$) sind zufällige Schwankungen, weil $200$ Würfe nicht sehr viele sind.</p>
+            <p><strong>Verbesserung:</strong> Man fasst die Daten gleich großer Flächen zusammen:</p>
+            <p>$$P(1)=P(6)=\frac{52+44}{400}=0{,}24\qquad P(2)=P(5)=\frac{30+36}{400}=0{,}165\qquad P(3)=P(4)=\frac{17+21}{400}=0{,}095$$</p>
+            <div class="tw"><table class="vt">
+              <tr><th>$e$</th><td>1</td><td>2</td><td>3</td><td>4</td><td>5</td><td>6</td></tr>
+              <tr><th>$P(e)$</th><td class="hl">$0{,}24$</td><td class="hl">$0{,}165$</td><td class="hl">$0{,}095$</td><td class="hl">$0{,}095$</td><td class="hl">$0{,}165$</td><td class="hl">$0{,}24$</td></tr>
+            </table></div>
+            <p>Kontrolle: $2\cdot(0{,}24+0{,}165+0{,}095)=2\cdot0{,}5=1$ ✓ &nbsp;Die Werte bestätigen a): $P(3)=0{,}095<\frac16\approx0{,}167$.</p>
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <!-- Aufgabe 8 -->
+    <article class="card s3">
+      <div class="card-head"><h3>Aufgabe 8 · Erst die Urne, dann die Kugel</h3><span class="chev">▾</span></div>
+      <div class="card-body">
+        <div class="task">
+          <p>Es gibt drei Urnen: Urne I enthält 2 rote und 3 grüne Kugeln, Urne II enthält 1 rote und 1 grüne Kugel,
+          Urne III enthält 4 rote Kugeln. Sie wählen eine der Urnen zufällig aus (jede mit derselben Wahrscheinlichkeit)
+          und ziehen daraus eine Kugel.</p>
+          <p><strong>a)</strong> Zeichnen Sie ein Baumdiagramm. Bestimmen Sie die Wahrscheinlichkeit, dass die gezogene
+          Kugel rot ist.</p>
+          <p><strong>b)</strong> Bestimmen Sie die Wahrscheinlichkeit, dass die gezogene Kugel grün ist.</p>
+          <p><strong>c)</strong> Die Urne wird nun mit einem Würfel ausgewählt: Bei 1, 2, 3 nimmt man Urne I, bei 4, 5
+          Urne II, bei 6 Urne III. Bestimmen Sie erneut die Wahrscheinlichkeit für eine rote Kugel und begründen Sie,
+          warum sie sich gegenüber a) verändert.</p>
+        </div>
+
+        <div class="assess"><span class="lab">Einschätzung:</span>
+          <button data-v="ok" type="button">✓ Fertig &amp; verstanden</button>
+          <button data-v="mid" type="button">~ Noch unsicher</button>
+          <button data-v="ask" type="button">? Frage an Lehrer</button>
+        </div>
+
+        <div class="hints">
+          <div class="htitle">Hilfen</div>
+          <div class="htabs">
+            <button type="button">Hilfe 1 · Zwei Stufen</button>
+            <button type="button">Hilfe 2 · Äste der 2. Stufe</button>
+            <button type="button">Hilfe 3 · Zu c)</button>
+          </div>
+          <div class="hpanel">
+            <h4>Hilfe 1 · Welche Stufen hat das Experiment?</h4>
+            <p>Stufe 1: Auswahl der Urne (drei Äste I, II, III mit je $\frac13$). Stufe 2: Farbe der Kugel. Die
+            Äste der zweiten Stufe sind je nach Urne verschieden – bei Urne III gibt es nur einen Ast.</p>
+          </div>
+          <div class="hpanel">
+            <h4>Hilfe 2 · Wahrscheinlichkeiten in der jeweiligen Urne</h4>
+            <p>In Urne I sind 5 Kugeln, davon 2 rot: $P(r)=\frac25$. Bestimme ebenso die Werte für Urne II und III. Die
+            Ergebnisse notierst du z. B. als $(I,r)$. „Rot“ gehört zu drei Pfaden – Pfadregel, dann Summenregel.</p>
+          </div>
+          <div class="hpanel">
+            <h4>Hilfe 3 · Nur die erste Stufe ändert sich</h4>
+            <p>Die Äste der ersten Stufe haben jetzt die Wahrscheinlichkeiten $\frac36$, $\frac26$ und $\frac16$. Die
+            zweite Stufe bleibt gleich. Überlege: Welche Urne wird jetzt häufiger gewählt – und wie viele rote Kugeln
+            enthält sie im Verhältnis?</p>
+          </div>
+        </div>
+
+        <div class="sol-lock">🔒 Musterlösung – nach Freigabe durch den Lehrer sichtbar.</div>
+        <div class="sol">
+          <div class="sh">✓ Musterlösung · Aufgabe 8</div>
+          <div class="sb">
+            <p><strong>a)</strong></p>
+            <div class="tree-box" data-tree='{"levels":["Urne","Kugel"],"root":{"c":[{"l":"I","p":"1/3","c":[{"l":"r","p":"2/5"},{"l":"g","p":"3/5"}]},{"l":"II","p":"1/3","c":[{"l":"r","p":"1/2"},{"l":"g","p":"1/2"}]},{"l":"III","p":"1/3","c":[{"l":"r","p":"1"}]}]},"leaf":"tuple","dx":78,"col":{"r":"#c0392b","g":"#1a9e5c"}}'></div>
+            <p>Das Ereignis „rote Kugel“ ist $R=\{(I,r),(II,r),(III,r)\}$. Pfadregel und Summenregel:</p>
+            <p>$$P(R)=\frac13\cdot\frac25+\frac13\cdot\frac12+\frac13\cdot1=\frac2{15}+\frac16+\frac13=\frac4{30}+\frac5{30}+\frac{10}{30}={\color{#1a9e5c}\boldsymbol{\frac{19}{30}\approx0{,}633}}$$</p>
+            <p><strong>b)</strong> „Grüne Kugel“: $\{(I,g),(II,g)\}$.</p>
+            <p>$$P=\frac13\cdot\frac35+\frac13\cdot\frac12=\frac15+\frac16=\frac6{30}+\frac5{30}={\color{#1a9e5c}\boldsymbol{\frac{11}{30}\approx0{,}367}}$$</p>
+            <p>Probe: $\frac{19}{30}+\frac{11}{30}=1$ ✓</p>
+            <p><strong>c)</strong> Nur die Äste der ersten Stufe ändern sich zu $\frac36=\frac12$, $\frac26=\frac13$ und $\frac16$:</p>
+            <p>$$P(R)=\frac12\cdot\frac25+\frac13\cdot\frac12+\frac16\cdot1=\frac15+\frac16+\frac16=\frac6{30}+\frac5{30}+\frac5{30}={\color{#1a9e5c}\boldsymbol{\frac{8}{15}\approx0{,}533}}$$</p>
+            <p>Die Wahrscheinlichkeit sinkt, weil jetzt Urne I (nur $40\,\%$ rote Kugeln) am häufigsten gewählt wird und
+            Urne III (nur rote Kugeln) am seltensten.</p>
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <!-- Aufgabe 9 -->
+    <article class="card s3">
+      <div class="card-head"><h3>Aufgabe 9 · Zufallsexperimente entwerfen und Spiele vergleichen</h3><span class="chev">▾</span></div>
+      <div class="card-body">
+        <div class="task">
+          <p><strong>a)</strong> Beschreiben Sie ein mögliches Zufallsexperiment zur Wahrscheinlichkeitsverteilung</p>
+          <div class="tw"><table class="vt">
+            <tr><th>Ergebnis</th><td>rot</td><td>grün</td><td>blau</td></tr>
+            <tr><th>Wahrscheinlichkeit</th><td>$0{,}5$</td><td>$0{,}3$</td><td>$0{,}2$</td></tr>
+          </table></div>
+          <p><strong>b)</strong> Beschreiben Sie ein <em>zweistufiges</em> Zufallsexperiment, das zu folgender Verteilung
+          passt, und begründen Sie mit einem Baumdiagramm:</p>
+          <div class="tw"><table class="vt">
+            <tr><th>Ergebnis</th><td>$0$</td><td>$1$</td><td>$2$</td></tr>
+            <tr><th>Wahrscheinlichkeit</th><td>$\frac49$</td><td>$\frac49$</td><td>$\frac19$</td></tr>
+          </table></div>
+          <p><strong>c)</strong> Untersuchen Sie, bei welchem Spiel die Gewinnwahrscheinlichkeit höher ist:<br>
+          <span class="sub-i"><em>Spiel 1:</em> Ein Glücksrad, bei dem ein Viertel der Fläche rot ist, wird zweimal
+          gedreht. Man gewinnt, wenn mindestens einmal Rot erscheint.</span><br>
+          <span class="sub-i"><em>Spiel 2:</em> Zwei Würfel werden geworfen. Man gewinnt, wenn die Augensumme mindestens 8
+          beträgt.</span></p>
+        </div>
+
+        <div class="assess"><span class="lab">Einschätzung:</span>
+          <button data-v="ok" type="button">✓ Fertig &amp; verstanden</button>
+          <button data-v="mid" type="button">~ Noch unsicher</button>
+          <button data-v="ask" type="button">? Frage an Lehrer</button>
+        </div>
+
+        <div class="hints">
+          <div class="htitle">Hilfen</div>
+          <div class="htabs">
+            <button type="button">Hilfe 1 · Zu a)</button>
+            <button type="button">Hilfe 2 · Zu b)</button>
+            <button type="button">Hilfe 3 · Zu c)</button>
+          </div>
+          <div class="hpanel">
+            <h4>Hilfe 1 · Flächen oder Kugeln</h4>
+            <p>Wie kannst du $0{,}5$, $0{,}3$ und $0{,}2$ als Anteile darstellen? Denke an ein Glücksrad mit
+            Flächenanteilen oder an eine Urne mit 10 Kugeln.</p>
+          </div>
+          <div class="hpanel">
+            <h4>Hilfe 2 · Neuntel</h4>
+            <p>$\frac19=\frac13\cdot\frac13$. Stell dir ein Experiment vor, bei dem zweimal ein „Treffer“ mit der
+            Wahrscheinlichkeit $\frac13$ eintreten kann, und zähle die Treffer. Prüfe mit dem Baumdiagramm, ob $0$ und $1$
+            Treffer dann wirklich je $\frac49$ ergeben.</p>
+          </div>
+          <div class="hpanel">
+            <h4>Hilfe 3 · Zwei verschiedene Werkzeuge</h4>
+            <p>Spiel 1: Baumdiagramm mit $r$ ($\frac14$) und $n$ ($\frac34$); „mindestens einmal Rot“ umfasst drei Pfade.
+            Spiel 2: Zwei Würfel haben 36 gleich wahrscheinliche Ergebnisse (Tupel). Zähle die Tupel mit Augensumme 8,
+            9, 10, 11, 12.</p>
+          </div>
+        </div>
+
+        <div class="sol-lock">🔒 Musterlösung – nach Freigabe durch den Lehrer sichtbar.</div>
+        <div class="sol">
+          <div class="sh">✓ Musterlösung · Aufgabe 9</div>
+          <div class="sb">
+            <p><strong>a)</strong> Beispielsweise: Ein Glücksrad wird einmal gedreht, bei dem die Hälfte der Fläche rot,
+            $30\,\%$ grün und $20\,\%$ blau ist (Mittelpunktswinkel $180^\circ$, $108^\circ$, $72^\circ$). Ebenso möglich:
+            Aus einer Urne mit 5 roten, 3 grünen und 2 blauen Kugeln wird eine Kugel gezogen.
+            (Viele weitere Lösungen sind möglich.)</p>
+            <p><strong>b)</strong> Beispielsweise: Ein Glücksrad, bei dem ein Drittel der Fläche rot ist, wird zweimal
+            gedreht. Das Ergebnis gibt an, wie oft Rot ($r$) erscheint; $n$ steht für „nicht rot“.</p>
+            <div class="tree-box" data-tree='{"levels":["1. Drehung","2. Drehung"],"stages":[[["r","1/3"],["n","2/3"]],[["r","1/3"],["n","2/3"]]],"leaf":"concat","dx":80,"col":{"r":"#c0392b"}}'></div>
+            <p>Pfadregel: $P(rr)=\frac19$, $P(rn)=P(nr)=\frac13\cdot\frac23=\frac29$, $P(nn)=\frac49$. Summenregel:</p>
+            <p>$$P(0)=P(nn)=\frac49\qquad P(1)=P(rn)+P(nr)=\frac29+\frac29=\frac49\qquad P(2)=P(rr)=\frac19\ \ ✓$$</p>
+            <p><strong>c) Spiel 1:</strong> Gewinnereignis $\{rr,\ rn,\ nr\}$ mit $P(r)=\frac14$, $P(n)=\frac34$.
+            Pfadregel und Summenregel:</p>
+            <p>$$P(\text{Gewinn}_1)=\frac14\cdot\frac14+\frac14\cdot\frac34+\frac34\cdot\frac14=\frac1{16}+\frac3{16}+\frac3{16}=\frac7{16}={\color{#1a9e5c}\boldsymbol{0{,}4375}}$$</p>
+            <p><strong>Spiel 2:</strong> Alle 36 Tupel sind gleich wahrscheinlich ($\frac1{36}$ nach der Pfadregel). Zur
+            Augensumme mindestens 8 gehören: Summe 8: 5 Tupel, 9: 4, 10: 3, 11: 2, 12: 1, zusammen 15 Tupel.</p>
+            <p>$$P(\text{Gewinn}_2)=15\cdot\frac1{36}=\frac{15}{36}=\frac5{12}\approx{\color{#1a9e5c}\boldsymbol{0{,}4167}}$$</p>
+            <p>Die Gewinnwahrscheinlichkeit ist bei ${\color{#1a9e5c}\boldsymbol{\text{Spiel 1}}}$ etwas höher.</p>
+            <button class="alt-btn" type="button">➕ Alternativer Lösungsweg zu Spiel 1</button>
+            <div class="alt">
+              <div class="ah">Alternative · über das Gegenereignis</div>
+              <p>Man verliert nur bei $nn$: $P(nn)=\frac34\cdot\frac34=\frac9{16}$. Also
+              $P(\text{Gewinn}_1)=1-\frac9{16}=\frac7{16}$. Kürzer – das Gegenereignis wird in Abschnitt 2 behandelt.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </article>
+  </section>
+
+</div>
+
+<footer class="bot">
+  Mathematik Oberstufe LK · Q2 · Kapitel VIII · Daten und Wahrscheinlichkeit<br>
+  <a href="../">← Zurück zur Stochastik-Übersicht</a>
+</footer>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+
+  /* ---------- Baumdiagramme (SVG) ---------- */
+  var NS='http://www.w3.org/2000/svg';
+  function mk(tag,a,p){ var e=document.createElementNS(NS,tag); for(var k in a) e.setAttribute(k,a[k]); if(p) p.appendChild(e); return e; }
+  function txt(p,x,y,s,a){ var t=mk('text',Object.assign({x:x,y:y,'text-anchor':'middle','font-family':'inherit'},a||{}),p); t.textContent=s; return t; }
+  function probLabel(g,x,y,s){
+    if (s.indexOf('/')>0){
+      var q=s.split('/'); var w=Math.max(q[0].length,q[1].length)*7+4;
+      mk('rect',{x:x-w/2-2,y:y-14,width:w+4,height:29,fill:'#fff',opacity:.9},g);
+      txt(g,x,y-3,q[0],{'font-size':12});
+      mk('line',{x1:x-w/2,x2:x+w/2,y1:y+1,y2:y+1,stroke:'#1c1f26','stroke-width':1.1},g);
+      txt(g,x,y+13,q[1],{'font-size':12});
+    } else {
+      var w2=s.length*7+6; mk('rect',{x:x-w2/2,y:y-9,width:w2,height:17,fill:'#fff',opacity:.9},g);
+      txt(g,x,y+4,s,{'font-size':12});
+    }
+  }
+  function buildFromStages(st,lv){
+    if (lv>=st.length) return [];
+    return st[lv].map(function(b){ return {l:b[0],p:b[1],c:buildFromStages(st,lv+1)}; });
+  }
+  document.querySelectorAll('[data-tree]').forEach(function(box){
+    var s=JSON.parse(box.getAttribute('data-tree'));
+    var root = s.root ? s.root : {c:buildFromStages(s.stages,0)};
+    var depth=0, leaves=[];
+    (function walk(n,d,path){ n.d=d; n.path=path; if(!n.c||!n.c.length){ leaves.push(n); depth=Math.max(depth,d); } else n.c.forEach(function(c){ walk(c,d+1,path.concat([c.l])); }); })(root,0,[]);
+    var dx=s.dx||60, dy=s.dy||78, left=78, top=18;
+    var tupleLabels = s.leaf==='tuple';
+    var W=left+leaves.length*dx+10, H=top+depth*dy+44;
+    var svg=mk('svg',{width:W,height:H,viewBox:'0 0 '+W+' '+H,role:'img','aria-label':'Baumdiagramm'},null);
+    leaves.forEach(function(n,i){ n.x=left+dx*(i+0.5); });
+    (function place(n){ if(n.c&&n.c.length){ n.c.forEach(place); n.x=(n.c[0].x+n.c[n.c.length-1].x)/2; } n.y=top+n.d*dy; })(root);
+    for (var lv=1; lv<=depth; lv++){ if (s.levels && s.levels[lv-1]) txt(svg,4,top+lv*dy+4,s.levels[lv-1],{'text-anchor':'start','font-size':12,fill:'#5c6472'}); }
+    var hl=s.hl||[];
+    var gE=mk('g',{},svg), gL=mk('g',{},svg), gN=mk('g',{},svg);
+    var col=s.col||{};
+    (function draw(n){
+      if(!n.c) return;
+      n.c.forEach(function(c,idx){
+        var on = hl.length && c.path.length<=hl.length && c.path.every(function(v,k){ return v===hl[k]; });
+        var y1=n.y+(n.d===0?3:12), y2=c.y-12;
+        mk('line',{x1:n.x,y1:y1,x2:c.x,y2:y2,stroke:on?'#c0392b':'#2c5f8a','stroke-width':on?2.6:1.5},gE);
+        var mx=(n.x+c.x)/2, my=(y1+y2)/2;
+        var side = n.c.length===1 ? 1 : (idx < (n.c.length-1)/2 ? -1 : (idx > (n.c.length-1)/2 ? 1 : 0));
+        var off = side===0 ? 0 : side*Math.min(20, Math.abs(c.x-n.x)*0.35+10);
+        probLabel(gL,mx+off,my,c.p);
+        draw(c);
+      });
+    })(root);
+    (function nodes(n){
+      if (n.d===0){ mk('circle',{cx:n.x,cy:n.y,r:3.5,fill:'#1c1f26'},gN); }
+      else {
+        var c=col[n.l]||'#1c1f26';
+        mk('circle',{cx:n.x,cy:n.y,r:11.5,fill:'#fff',stroke:c,'stroke-width':1.6},gN);
+        txt(gN,n.x,n.y+4.5,n.l,{'font-size':n.l.length>2?10:13,'font-weight':700,fill:c});
+      }
+      if (n.c && n.c.length) n.c.forEach(nodes);
+      else if (n.d>0){
+        var lab = tupleLabels ? '('+n.path.join(', ')+')' : n.path.join('');
+        txt(gN,n.x,n.y+30,lab,{'font-size':tupleLabels&&n.path.length>2?10.5:12,fill:'#1c1f26'});
+      }
+    })(root);
+    box.appendChild(svg);
+  });
+
+  /* ---------- Glücksräder ---------- */
+  document.querySelectorAll('[data-wheel]').forEach(function(box){
+    var s=JSON.parse(box.getAttribute('data-wheel')), R=(s.size||160)/2, c=R+6, W=2*c;
+    var svg=mk('svg',{width:W,height:W,viewBox:'0 0 '+W+' '+W,role:'img','aria-label':'Glücksrad'},null);
+    var a=-Math.PI/2;
+    s.s.forEach(function(sec){
+      var a2=a+sec[0]*2*Math.PI, large=sec[0]>0.5?1:0;
+      var x1=c+R*Math.cos(a), y1=c+R*Math.sin(a), x2=c+R*Math.cos(a2), y2=c+R*Math.sin(a2);
+      mk('path',{d:'M'+c+','+c+' L'+x1+','+y1+' A'+R+','+R+' 0 '+large+' 1 '+x2+','+y2+' Z',fill:sec[1],stroke:'#1c1f26','stroke-width':s.lines?1:1.2},svg);
+      var am=(a+a2)/2, rr=R*(sec[0]<0.2?0.68:0.55);
+      txt(svg,c+rr*Math.cos(am),c+rr*Math.sin(am)+4,sec[2],{'font-size':sec[2].length>2?11:13,'font-weight':700,fill:'#1c1f26'});
+      a=a2;
+    });
+    mk('circle',{cx:c,cy:c,r:R,fill:'none',stroke:'#1c1f26','stroke-width':1.6},svg);
+    mk('line',{x1:c,y1:c,x2:c+R*0.45,y2:c-R*0.45,stroke:'#1c1f26','stroke-width':3,'stroke-linecap':'round'},svg);
+    mk('circle',{cx:c,cy:c,r:4,fill:'#1c1f26'},svg);
+    box.appendChild(svg);
+  });
+
+  /* ---------- KaTeX ---------- */
+  function render(){
+    if (window.renderMathInElement) {
+      renderMathInElement(document.body, {
+        delimiters: [ {left:'$$', right:'$$', display:true}, {left:'$', right:'$', display:false} ],
+        throwOnError:false
+      });
+    }
+  }
+  if (window.renderMathInElement) render(); else window.addEventListener('load', render);
+
+  /* ---------- Karten auf/zu ---------- */
+  document.querySelectorAll('.card-head').forEach(function(h){
+    h.addEventListener('click', function(){ h.parentElement.classList.toggle('open'); });
+  });
+
+  /* ---------- Hilfe-Reiter ---------- */
+  document.querySelectorAll('.hints').forEach(function(box){
+    var tabs=box.querySelectorAll('.htabs button'), panels=box.querySelectorAll('.hpanel');
+    tabs.forEach(function(tab,i){
+      tab.addEventListener('click', function(){
+        var wasOn=tab.classList.contains('on');
+        tabs.forEach(function(t){ t.classList.remove('on'); });
+        panels.forEach(function(p){ p.classList.remove('on'); });
+        if (!wasOn){ tab.classList.add('on'); if (panels[i]) panels[i].classList.add('on'); }
+      });
+    });
+  });
+
+  /* ---------- Selbsteinschätzung ---------- */
+  document.querySelectorAll('.assess').forEach(function(box){
+    var btns=box.querySelectorAll('button');
+    btns.forEach(function(b){
+      b.addEventListener('click', function(){
+        var wasOn=b.classList.contains('on');
+        btns.forEach(function(x){ x.classList.remove('on'); });
+        if (!wasOn) b.classList.add('on');
+      });
+    });
+  });
+
+  /* ---------- Filter ---------- */
+  document.querySelectorAll('.filters button').forEach(function(b){
+    b.addEventListener('click', function(){
+      document.querySelectorAll('.filters button').forEach(function(x){ x.classList.remove('on'); });
+      b.classList.add('on');
+      var f=b.dataset.f;
+      document.querySelectorAll('section[data-stufe]').forEach(function(sec){
+        sec.style.display=(f==='all' || sec.dataset.stufe===f) ? '' : 'none';
+      });
+    });
+  });
+
+  /* ---------- Alternative Lösungswege ---------- */
+  document.querySelectorAll('.alt-btn').forEach(function(b){
+    var label=b.textContent;
+    b.addEventListener('click', function(){
+      var alt=b.nextElementSibling; var on=alt.classList.toggle('shown');
+      b.textContent = on ? '➖ Alternativen Weg ausblenden' : label;
+    });
+  });
+
+  /* ---------- Musterlösungen freischalten (pro Aufgabe einzeln) ---------- */
+  var CODE='MATHE', input=document.getElementById('code'), msg=document.getElementById('msg');
+  function activateLocks(){
+    document.querySelectorAll('.sol-lock').forEach(function(lock){ lock.classList.add('active'); lock.textContent='👁 Musterlösung anzeigen'; });
+  }
+  function tryUnlock(){
+    var val=(input.value||'').trim().toUpperCase();
+    if (val===CODE){
+      document.body.classList.add('unlocked');
+      msg.textContent='✓ freigeschaltet – Musterlösungen jetzt einzeln aufklappbar'; msg.className='msg ok';
+      activateLocks();
+    } else { msg.textContent='✗ Code stimmt nicht'; msg.className='msg bad'; }
+  }
+  document.getElementById('btn-unlock').addEventListener('click', tryUnlock);
+  input.addEventListener('keydown', function(e){ if (e.key==='Enter') tryUnlock(); });
+  document.querySelectorAll('.sol-lock').forEach(function(lock){
+    lock.addEventListener('click', function(){
+      if (!document.body.classList.contains('unlocked')) return;
+      var sol=lock.nextElementSibling;
+      if (!sol || !sol.classList.contains('sol')) return;
+      var showing=sol.classList.toggle('shown');
+      lock.textContent = showing ? '🙈 Musterlösung wieder ausblenden' : '👁 Musterlösung anzeigen';
+      if (showing) sol.scrollIntoView({behavior:'smooth', block:'nearest'});
+    });
+  });
+
+  /* Erste Karte jedes Abschnitts geöffnet starten */
+  document.querySelectorAll('section[data-stufe]').forEach(function(sec){
+    var first=sec.querySelector('.card'); if (first) first.classList.add('open');
+  });
+});
+</script>
+
+</body>
+</html>
