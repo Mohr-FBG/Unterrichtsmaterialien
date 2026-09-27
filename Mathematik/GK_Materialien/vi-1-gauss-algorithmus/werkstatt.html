@@ -1,0 +1,833 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Gauß-Werkstatt</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<style>
+  :root{
+    --gold:#e8a800; --gold-deep:#b98600; --gold-soft:#fff6dc;
+    --ink:#1f2933; --ink-soft:#5b6770; --line:#e3e6ea; --bg:#f7f7f4; --card:#fff;
+    --green:#2e9e4f; --orange:#e67e22; --purple:#8e44ad; --blue:#2c6fbb; --red:#d62828;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;background:var(--bg);color:var(--ink);line-height:1.5;font-size:17px}
+  header{background:var(--gold);color:#fff;padding:18px 20px 16px}
+  header .eyebrow{font-size:.82rem;letter-spacing:.06em;text-transform:uppercase;opacity:.92}
+  header h1{margin:4px 0 0;font-size:1.6rem;line-height:1.2}
+  header nav{margin-top:8px;font-size:.9rem}
+  header nav a{color:#fff;text-decoration:underline;margin-right:14px}
+  .wrap{max-width:1100px;margin:0 auto;padding:16px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 18px;margin-bottom:14px}
+  .card h2{margin:0 0 8px;font-size:1.2rem}
+  .card h3{margin:14px 0 6px;font-size:1.05rem}
+  .intro{background:var(--gold-soft);border-color:#f1dc9c}
+  /* Stationen-Navigation */
+  .stations{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 14px}
+  .stations button{flex:1 1 140px;border:2px solid var(--line);background:#fff;border-radius:12px;padding:8px 10px;cursor:pointer;text-align:left;font-size:.92rem;color:var(--ink)}
+  .stations button b{display:block;color:var(--gold-deep);font-size:.8rem;letter-spacing:.05em}
+  .stations button.active{border-color:var(--gold);background:var(--gold-soft)}
+  .station{display:none}
+  .station.active{display:block}
+  /* Modus */
+  .modebar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;background:#fff;border:1px solid var(--line);border-radius:12px;padding:10px 14px;margin-bottom:14px}
+  .seg{display:inline-flex;border:1px solid var(--gold);border-radius:10px;overflow:hidden}
+  .seg button{border:0;background:#fff;padding:7px 14px;cursor:pointer;font-size:.92rem;color:var(--ink)}
+  .seg button.on{background:var(--gold);color:#fff;font-weight:600}
+  .modebar .muted{flex:1 1 260px}
+  /* Aufgaben-Tabs */
+  .tasks{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0}
+  .tasks button{border:1px solid var(--line);background:#fff;border-radius:999px;padding:5px 12px;cursor:pointer;font-size:.88rem;display:inline-flex;align-items:center;gap:6px}
+  .tasks button.active{border-color:var(--gold);background:var(--gold-soft);font-weight:600}
+  .tasks button.done::after{content:"✓";color:var(--green);font-weight:700}
+  .dot{width:10px;height:10px;border-radius:50%;display:inline-block}
+  .dA{background:var(--green)} .dB{background:var(--orange)} .dC{background:var(--purple)}
+  .btn{border:1px solid var(--line);background:#fff;border-radius:8px;padding:6px 12px;font-size:.92rem;cursor:pointer;color:var(--ink)}
+  .btn:hover{border-color:var(--gold)}
+  .btn.primary{background:var(--gold);border-color:var(--gold);color:#fff;font-weight:600}
+  .btn.small{padding:3px 9px;font-size:.84rem}
+  .btn:disabled{opacity:.45;cursor:default}
+  .task{background:#f4f8fc;border-left:4px solid var(--blue);padding:8px 12px;border-radius:6px;margin:10px 0}
+  .rule{background:#eef4fb;border:1px solid #bcd3ec;border-radius:10px;padding:10px 14px;margin:10px 0}
+  .rule strong{color:#1d4f8c}
+  .muted{color:var(--ink-soft);font-size:.9rem}
+  .fb{margin-top:8px;padding:8px 10px;border-radius:8px;font-size:.95rem}
+  .fb:empty{display:none}
+  .fb.ok{background:#e8f6ec;color:#1e6b35;border:1px solid #b9e2c5}
+  .fb.no{background:#fdeeee;color:#8a1f1f;border:1px solid #f1c0c0}
+  .fb.info{background:#f4f8fc;color:#234;border:1px solid #cfe0f1}
+  details{margin:8px 0;border:1px solid var(--line);border-radius:8px;padding:6px 10px;background:#fcfcfc}
+  details summary{cursor:pointer;font-weight:600;color:var(--gold-deep)}
+  .hidden{display:none!important}
+  /* Engine */
+  .eng{border:1px solid var(--line);border-radius:12px;padding:12px;background:#fdfdfb;margin-top:8px}
+  .eng-top{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:6px}
+  .eng-top .sp{flex:1}
+  .hist{overflow-x:auto}
+  .block{padding:6px 4px;border-top:1px solid #e6e2d6}
+  .block:first-child{border-top:0}
+  .block.last{background:#fffaea;border-radius:8px}
+  .block .note{font-size:.82rem;color:var(--ink-soft);margin-left:6px}
+  .ops{border-top:2px dashed #eadfbf;margin-top:10px;padding-top:10px}
+  .ops .row{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:6px 0}
+  .ops select,.ops input,.calc input,.bs input,.mat-in input,.rref input{font-size:1rem;padding:5px 6px;border:1px solid #c9ced4;border-radius:6px}
+  .ops input{width:58px;text-align:center}
+  .ops .lbl{font-weight:600;color:var(--ink-soft);min-width:92px}
+  .calc{background:#fff8e6;border:1px solid #f0d890;border-radius:10px;padding:10px;margin-top:10px}
+  .calc .grid{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:6px 0}
+  .calc input{width:62px;text-align:center}
+  input.good{border-color:var(--green)!important;background:#eefaf1}
+  input.bad{border-color:var(--red)!important;background:#fff1f1}
+  .bs{background:#f3f8f3;border:1px solid #cfe2cf;border-radius:10px;padding:10px;margin-top:10px}
+  .bs .step{margin:8px 0;display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+  .bs input{width:80px;text-align:center}
+  .mc{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0}
+  /* Einstieg Ty/Michi/Ami */
+  .notes3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:10px 0}
+  @media (max-width:760px){.notes3{grid-template-columns:1fr}}
+  .note3{border-radius:6px;padding:10px 10px 12px;box-shadow:0 2px 6px rgba(0,0,0,.08);overflow-x:auto}
+  .note3 .who{font-weight:700;margin-bottom:4px}
+  .n1{background:#cfe6f7;transform:rotate(-1deg)} .n2{background:#f8c9bd;transform:rotate(.8deg)} .n3{background:#fbe7a6;transform:rotate(-.5deg)}
+  /* Fehlerdetektiv */
+  .fd-line{display:flex;gap:10px;align-items:center;border:1px solid var(--line);border-radius:8px;padding:6px 10px;margin:6px 0;cursor:pointer;background:#fff;overflow-x:auto}
+  .fd-line:hover{border-color:var(--gold)}
+  .fd-line.sel-ok{border-color:var(--green);background:#eefaf1}
+  .fd-line.sel-no{border-color:var(--red);background:#fff1f1}
+  .fd-line .lab{min-width:130px;font-size:.9rem;color:var(--ink-soft)}
+  .wordlist{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}
+  /* Matrix-Übersetzen */
+  .mat-in{display:inline-grid;grid-template-columns:repeat(3,58px) 12px 58px;gap:5px;align-items:center;padding:6px 10px;border-left:2px solid #333;border-right:2px solid #333;border-radius:10px}
+  .mat-in input{width:58px;text-align:center}
+  .mat-in .bar{width:2px;height:30px;background:#333;justify-self:center}
+  .rref input{width:70px;text-align:center}
+  .ti{background:#f3f6f3;border:1px solid #cfdccf;border-radius:8px;padding:10px 12px;font-size:.95rem}
+  .ti code{background:#fff;border:1px solid #dde5dd;border-radius:4px;padding:1px 5px}
+  .checklist{list-style:none;padding:0;margin:0}
+  .checklist li{display:flex;gap:10px;align-items:flex-start;padding:7px 0;border-bottom:1px solid var(--line)}
+  .checklist li:last-child{border-bottom:none}
+  .checklist input{width:18px;height:18px;margin-top:3px;accent-color:var(--gold-deep);flex-shrink:0}
+  .next{display:inline-block;background:var(--gold);color:#fff;text-decoration:none;font-weight:700;padding:10px 16px;border-radius:10px;margin-top:8px}
+  @media (max-width:520px){ .katex{font-size:.95em} body{font-size:16px} .wrap{padding:10px} .card{padding:12px} }
+  footer{text-align:center;color:var(--ink-soft);font-size:.82rem;padding:20px}
+</style>
+</head>
+<body>
+<header>
+  <div class="eyebrow">Kapitel VI.1 · Der Gauß-Algorithmus · Werkstatt</div>
+  <h1>Gauß-Werkstatt: Lineare Gleichungssysteme von Hand lösen</h1>
+  <nav><a href="../index.html">← Übersicht GK</a><a href="../simulationen/ebenen-explorer/index.html">← Ebenen-Explorer (Dach &amp; Strahl)</a></nav>
+</header>
+
+<div class="wrap">
+
+  <div class="card intro">
+    <p style="margin:0">Im Ebenen-Explorer hat der Taschenrechner das Dach-LGS gelöst. In dieser Werkstatt lernst du, wie das <strong>ohne Rechner</strong> geht – mit dem Verfahren von Carl Friedrich Gauß (1777–1855). Arbeite die Stationen der Reihe nach durch. Am Ende löst du das Dach-LGS selbst.</p>
+  </div>
+
+  <div class="stations" id="stations">
+    <button data-st="g1"><b>STATION 1</b>Stufenform</button>
+    <button data-st="g2"><b>STATION 2</b>Umformen</button>
+    <button data-st="g3"><b>STATION 3</b>Matrix &amp; MMS</button>
+    <button data-st="g4"><b>STATION 4</b>Sonderfälle</button>
+    <button data-st="g5"><b>STATION 5</b>Fehlerdetektiv</button>
+    <button data-st="g6"><b>FINALE</b>Das Dach-LGS</button>
+  </div>
+
+  <div class="modebar" id="modebar">
+    <div class="seg"><button data-mode="strategie" class="on">Strategie-Modus</button><button data-mode="rechnen">Rechen-Modus</button></div>
+    <div class="muted" id="modeText"></div>
+  </div>
+
+  <!-- ================= STATION 1 ================= -->
+  <section class="station" id="g1">
+    <div class="card">
+      <h2>Station 1 · Die Stufenform</h2>
+      <div class="task"><strong>Einstieg (Buch S. 184):</strong> Ty, Michi und Ami lösen die drei linearen Gleichungssysteme. Wer ist vermutlich am schnellsten fertig? Begründe.</div>
+      <div class="notes3">
+        <div class="note3 n1"><div class="who">Ty</div><div class="m" data-tex="\begin{array}{rcrcrcr}x_1&+&x_2&-&x_3&=&1\\2x_1&+&3x_2&-&3x_3&=&8\\-x_1&-&2x_2&+&2x_3&=&-7\end{array}"></div></div>
+        <div class="note3 n2"><div class="who">Michi</div><div class="m" data-tex="\begin{array}{rcrcrcr}6x_1&+&6x_2&-&12x_3&=&42\\&&24x_2&-&42x_3&=&114\\&&&-&258x_3&=&258\end{array}"></div></div>
+        <div class="note3 n3"><div class="who">Ami</div><div class="m" data-tex="\begin{array}{rcrcrcr}2x_1&+&3x_2&-&x_3&=&4\\&-&14x_2&-&8x_3&=&-4\\x_1&+&7x_2&+&2x_3&=&1\end{array}"></div></div>
+      </div>
+      <div class="mc" id="tmaPoll">
+        <button class="btn" data-a="Ty">Ty</button><button class="btn" data-a="Michi">Michi</button><button class="btn" data-a="Ami">Ami</button>
+      </div>
+      <div class="fb" id="tmaFb"></div>
+
+      <div class="rule"><strong>Stufenform:</strong> In der zweiten Gleichung kommt <span class="m" data-tex="x_1"></span> nicht mehr vor, in der dritten Gleichung kommen <span class="m" data-tex="x_1"></span> und <span class="m" data-tex="x_2"></span> nicht mehr vor. Dann kann man die Lösung <strong>von unten nach oben</strong> bestimmen: erst <span class="m" data-tex="x_3"></span>, dann <span class="m" data-tex="x_2"></span>, dann <span class="m" data-tex="x_1"></span>.</div>
+
+      <h3>Von unten nach oben lösen</h3>
+      <div class="tasks" id="g1tasks"></div>
+      <div id="g1eng"></div>
+    </div>
+  </section>
+
+  <!-- ================= STATION 2 ================= -->
+  <section class="station" id="g2">
+    <div class="card">
+      <h2>Station 2 · Umformen in die Stufenform</h2>
+      <div class="rule"><strong>Äquivalenzumformungen</strong> – diese Umformungen ändern die Lösungsmenge nicht:<br>
+        (1) Man darf zwei Gleichungen miteinander vertauschen.<br>
+        (2) Man darf eine Gleichung mit einer Zahl <span class="m" data-tex="c\neq0"></span> multiplizieren.<br>
+        (3) Man darf eine Gleichung durch die Summe aus einem Vielfachen von ihr und einer anderen Gleichung ersetzen.<br>
+        <span class="muted">Schreibweise wie im Buch: <span class="m" data-tex="\text{II}_a=5\cdot\text{I}-\text{II}"></span> bedeutet: Die neue Gleichung <span class="m" data-tex="\text{II}_a"></span> ist 5-mal Gleichung I minus Gleichung II.</span></div>
+      <div class="task"><strong>So arbeitest du:</strong> Wähle die Zeile, die du ersetzen willst, und stelle die Faktoren ein. Ziel: Unter dem ersten Koeffizienten sollen Nullen stehen, dann unter dem zweiten. Der Knopf <em>Tipp</em> schlägt einen sinnvollen nächsten Schritt vor – bei den Buchbeispielen genau den Buchweg.</div>
+      <div class="tasks" id="g2tasks"></div>
+      <div id="g2eng"></div>
+    </div>
+  </section>
+
+  <!-- ================= STATION 3 ================= -->
+  <section class="station" id="g3">
+    <div class="card">
+      <h2>Station 3 · Matrixschreibweise und MMS</h2>
+      <div class="rule"><strong>Matrixschreibweise:</strong> Um Schreibarbeit zu sparen, notiert man nur die Koeffizienten vor den Unbekannten und die Zahl rechts vom Gleichheitszeichen – zeilenweise. Kommt eine Unbekannte in einer Gleichung nicht vor, ist ihr Koeffizient 0. Die Unbekannten müssen in jeder Gleichung in derselben Reihenfolge stehen.</div>
+
+      <h3>a) Übersetzen</h3>
+      <div class="task">Schreibe das LGS in Matrixschreibweise.</div>
+      <div class="tasks" id="g3mtasks"></div>
+      <div id="g3m"></div>
+
+      <h3>b) Mit dem Gauß-Algorithmus in Matrixschreibweise</h3>
+      <div class="task">Die Umformungen sind dieselben. Du notierst nur weniger. Mit dem Häkchen <em>Matrixschreibweise</em> kannst du jederzeit umschalten.</div>
+      <div class="tasks" id="g3tasks"></div>
+      <div id="g3eng"></div>
+
+      <h3>c) Kontrolle mit dem MMS (TI-Nspire CAS)</h3>
+      <div class="ti">
+        <strong>Weg 1 – Matrix:</strong> Matrix über die Vorlage eingeben (<code>menu</code> ▸ Matrix und Vektor ▸ Erstellen ▸ Matrix, 3 Zeilen × 4 Spalten) und unter einem Namen speichern, z. B. <code>a:=</code>. Dann <code>menu</code> ▸ Matrix und Vektor ▸ Reduzierte Diagonalform: <code>rref(a)</code>.<br>
+        <strong>Weg 2 – Gleichungen:</strong> <code>menu</code> ▸ Algebra ▸ Gleichungssystem lösen ▸ Lineares Gleichungssystem lösen → <code>linSolve({…},{x1,x2,x3})</code>.
+      </div>
+      <div class="task">Das MMS liefert mit <code>rref</code> diese Matrizen. Gib jeweils die Lösung des zugehörigen LGS an.</div>
+      <div id="rrefQuiz"></div>
+    </div>
+  </section>
+
+  <!-- ================= STATION 4 ================= -->
+  <section class="station" id="g4">
+    <div class="card">
+      <h2>Station 4 · Sonderfälle: keine oder unendlich viele Lösungen</h2>
+      <div class="task">Bringe das LGS in Stufenform. Schau dir dann die letzte Zeile genau an: Wie viele Lösungen hat das LGS?</div>
+      <div class="tasks" id="g4tasks"></div>
+      <div id="g4eng"></div>
+      <details><summary>Merkwissen (erst nach den Aufgaben öffnen)</summary>
+        <p>Entsteht beim Umformen eine Zeile der Form <span class="m" data-tex="0=c"></span> mit <span class="m" data-tex="c\neq0"></span> (z. B. <span class="m" data-tex="0=2"></span>), ist das ein Widerspruch: Das LGS hat <strong>keine Lösung</strong>, <span class="m" data-tex="L=\{\,\}"></span>.</p>
+        <p>Entsteht eine Zeile <span class="m" data-tex="0=0"></span> und kein Widerspruch, hat das LGS <strong>unendlich viele Lösungen</strong>: Eine Unbekannte kann frei gewählt werden.</p>
+        <p>Geometrisch (Ebenen-Explorer, Schritt 6): Strahl parallel zum Dach ↔ keine Lösung; Strahl liegt im Dach ↔ unendlich viele Lösungen.</p>
+      </details>
+    </div>
+  </section>
+
+  <!-- ================= STATION 5 ================= -->
+  <section class="station" id="g5">
+    <div class="card">
+      <h2>Station 5 · Fehlerdetektiv</h2>
+      <div class="task">In jeder Rechnung steckt genau ein Fehler. <strong>Tippe die fehlerhafte Zeile an.</strong> Wähle dann aus der Wortliste, was falsch gemacht wurde.</div>
+      <div class="tasks" id="g5tasks"></div>
+      <div id="g5box"></div>
+    </div>
+  </section>
+
+  <!-- ================= FINALE ================= -->
+  <section class="station" id="g6">
+    <div class="card">
+      <h2>Finale · Das Dach-LGS ohne Taschenrechner</h2>
+      <p style="margin-top:0">Im Ebenen-Explorer hat das Gleichsetzen von Strahl und Dach dieses LGS ergeben. Löse es jetzt selbst mit dem Gauß-Algorithmus – am besten im <strong>Rechen-Modus</strong> und parallel im Heft.</p>
+      <div id="g6eng"></div>
+      <div class="fb" id="g6fb"></div>
+    </div>
+
+    <div class="card">
+      <h2>Selbsteinschätzung</h2>
+      <ul class="checklist">
+        <li><input type="checkbox"><span>Ich erkenne, ob ein LGS in Stufenform ist, und kann es von unten nach oben lösen.</span></li>
+        <li><input type="checkbox"><span>Ich kenne die drei Äquivalenzumformungen und notiere sie wie im Buch, z. B. <span class="m" data-tex="\text{II}_a=5\cdot\text{I}-\text{II}"></span>.</span></li>
+        <li><input type="checkbox"><span>Ich wähle die Faktoren so, dass unter dem ersten und dann unter dem zweiten Koeffizienten Nullen entstehen.</span></li>
+        <li><input type="checkbox"><span>Ich kann ein LGS in Matrixschreibweise notieren (auch mit Nullen für fehlende Unbekannte).</span></li>
+        <li><input type="checkbox"><span>Ich kann mein Ergebnis mit dem TI-Nspire (<code>rref</code> oder <code>linSolve</code>) kontrollieren.</span></li>
+        <li><input type="checkbox"><span>Ich erkenne an <span class="m" data-tex="0=c"></span> bzw. <span class="m" data-tex="0=0"></span>, dass es keine bzw. unendlich viele Lösungen gibt.</span></li>
+        <li><input type="checkbox"><span>Ich mache zum Schluss eine Probe durch Einsetzen in alle drei Ausgangsgleichungen.</span></li>
+      </ul>
+    </div>
+  </section>
+
+</div>
+<footer>FBG Schwerte · Mathematik GK · Kapitel VI.1 Der Gauß-Algorithmus · Aufgaben orientiert an Buch S. 184–187</footer>
+
+<script type="module">
+/* =====================================================================
+   Brüche
+   ===================================================================== */
+function gcd(a,b){a=Math.abs(a);b=Math.abs(b);while(b){[a,b]=[b,a%b];}return a||1;}
+class F{
+  constructor(n,d=1){ if(d===0) throw new Error('div0'); if(d<0){n=-n;d=-d;} const g=gcd(n,d); this.n=n/g; this.d=d/g; }
+  static of(x){ if(x instanceof F) return x; if(Number.isInteger(x)) return new F(x,1); let d=1; while(Math.abs(Math.round(x*d)-x*d)>1e-9 && d<1e6) d*=10; return new F(Math.round(x*d),d); }
+  static parse(s){
+    s=String(s??'').trim().replace(/−/g,'-').replace(/\s+/g,'').replace(',', '.');
+    if(s==='') return new F(0);
+    if(s==='-') return null;
+    if(/^[+-]?\d+\/\d+$/.test(s)){ const [a,b]=s.split('/'); if(+b===0) return null; return new F(parseInt(a,10),parseInt(b,10)); }
+    if(/^[+-]?(\d+\.?\d*|\.\d+)$/.test(s)) return F.of(parseFloat(s));
+    return null;
+  }
+  add(o){o=F.of(o);return new F(this.n*o.d+o.n*this.d,this.d*o.d);}
+  sub(o){o=F.of(o);return new F(this.n*o.d-o.n*this.d,this.d*o.d);}
+  mul(o){o=F.of(o);return new F(this.n*o.n,this.d*o.d);}
+  div(o){o=F.of(o);return new F(this.n*o.d,this.d*o.n);}
+  neg(){return new F(-this.n,this.d);}
+  abs(){return new F(Math.abs(this.n),this.d);}
+  isZero(){return this.n===0;} isOne(){return this.n===1&&this.d===1;}
+  eq(o){o=F.of(o);return this.n===o.n&&this.d===o.d;}
+  sign(){return Math.sign(this.n);}
+  decimalOK(){ let d=this.d; while(d%2===0)d/=2; while(d%5===0)d/=5; return d===1 && this.d<=1000; }
+  toStr(){ if(this.d===1) return String(this.n).replace('-','−'); if(this.decimalOK()) return String(this.n/this.d).replace('.',',').replace('-','−'); return `${this.n}/${this.d}`.replace('-','−'); }
+  toTex(){ if(this.d===1) return String(this.n); if(this.decimalOK()) return String(this.n/this.d).replace('.','{,}'); return `${this.n<0?'-':''}\\tfrac{${Math.abs(this.n)}}{${this.d}}`; }
+}
+const Fr=a=>a.map(x=>F.of(x));
+
+/* =====================================================================
+   Hilfen
+   ===================================================================== */
+const $=id=>document.getElementById(id);
+function tex(el,s,display=false){ if(window.katex) katex.render(s,el,{throwOnError:false,displayMode:display}); else el.textContent=s; }
+function tx(s){ try{return katex.renderToString(s,{throwOnError:false});}catch(e){return s;} }
+function renderMath(root=document){ root.querySelectorAll('.m[data-tex]').forEach(el=>tex(el,el.dataset.tex)); }
+function h(tag,attrs={},html=''){ const e=document.createElement(tag); for(const k in attrs){ if(k==='class') e.className=attrs[k]; else if(k.startsWith('on')) e.addEventListener(k.slice(2),attrs[k]); else e.setAttribute(k,attrs[k]); } if(html) e.innerHTML=html; return e; }
+const labTex=l=>`\\text{${l.base}}${l.sub?`_${l.sub}`:''}`;
+const labStr=l=>`${l.base}${l.sub?'_'+l.sub:''}`;
+const NEXTSUB={'':'a','a':'b','b':'c','c':'d','d':'e','e':'f','f':'g'};
+
+// Term in Buchschreibweise: Koeffizient c, Variable v
+function coefTex(c,v){ const a=c.abs(); return (a.isOne()?'':a.toTex())+v; }
+
+// Eine Zeile als Zellen für array{rcrcrcr}
+function rowCells(coef,vars){
+  const cells=[]; let first=true;
+  for(let j=0;j<3;j++){
+    const c=coef[j];
+    if(c.isZero()){ cells.push('',''); continue; }
+    const sign=c.sign()<0?'-':'+';
+    if(first){ cells.push('', (sign==='-'?'-':'')+coefTex(c,vars[j])); first=false; }
+    else cells.push(sign, coefTex(c,vars[j]));
+  }
+  if(first){ cells[1]='0'; }
+  // cells: [s0,t0,s1,t1,s2,t2] -> erstes Vorzeichen nie anzeigen
+  return cells.slice(1);
+}
+function sysTex(rows,vars,opts={}){
+  // rows: [{lab, c:[F×4]}]
+  if(opts.matrix){
+    const labs=rows.map((r,i)=>i===opts.changed&&opts.opTex?opts.opTex:labTex(r.lab));
+    const body=rows.map((r,i)=>{ const cells=r.c.map(x=>x.toTex()); const s=`${cells[0]} & ${cells[1]} & ${cells[2]} & ${cells[3]}`; return i===opts.changed?`\\textcolor{#b35c00}{${cells[0]}} & \\textcolor{#b35c00}{${cells[1]}} & \\textcolor{#b35c00}{${cells[2]}} & \\textcolor{#b35c00}{${cells[3]}}`:s; }).join('\\\\');
+    return `\\begin{array}{l}${labs.join('\\\\')}\\end{array}\\quad\\left(\\begin{array}{rrr|r}${body}\\end{array}\\right)`;
+  }
+  const lines=rows.map((r,i)=>{
+    const cells=rowCells(r.c,vars);
+    let lab=labTex(r.lab);
+    if(i===opts.changed&&opts.opTex) lab=opts.opTex;
+    let line=`${lab} & ${cells.join(' & ')} & = & ${r.c[3].toTex()}`;
+    if(i===opts.changed) line=`${lab} & ${cells.map(c=>c?`\\textcolor{#b35c00}{${c}}`:'').join(' & ')} & \\textcolor{#b35c00}{=} & \\textcolor{#b35c00}{${r.c[3].toTex()}}`;
+    return line;
+  });
+  return `\\begin{array}{l|rcrcrcr}${lines.join('\\\\')}\\end{array}`;
+}
+function lead(c){ for(let j=0;j<3;j++) if(!c[j].isZero()) return j; return 3; }
+function isEchelon(rows){
+  let last=-1, zeroSeen=false;
+  for(const r of rows){ const l=lead(r.c); if(l===3){ zeroSeen=true; continue; } if(zeroSeen) return false; if(l<=last) return false; last=l; }
+  return true;
+}
+function classify(rows){
+  let rank=0; for(const r of rows){ if(lead(r.c)===3){ if(!r.c[3].isZero()) return 'none'; } else rank++; }
+  return rank===3?'unique':'inf';
+}
+// Kombination: neue Zielzeile = a·Y + b·X
+function combine(Y,X,a,b){ return Y.map((y,j)=>a.mul(y).add(b.mul(X[j]))); }
+function opTexOf(op,rows,newLab){
+  if(op.type==='swap') return null;
+  const Y=labTex(rows[op.other].lab), X=labTex(rows[op.target].lab);
+  let s='', first=true;
+  const term=(k,L)=>{ if(k.isZero()) return; const a=k.abs(); const coef=a.isOne()?'':a.toTex()+'\\cdot '; if(first){ s+=(k.sign()<0?'-':'')+coef+L; first=false;} else s+=(k.sign()<0?'-':'+')+coef+L; };
+  term(op.a,Y); term(op.b,X);
+  return `${labTex(newLab)}=${s}`;
+}
+function niceFactors(pc,tc){ // a·pc + b·tc = 0 -> a=tc, b=-pc, ganzzahlig und klein
+  let a=tc, b=pc.neg();
+  const L=a.d*b.d/gcd(a.d,b.d); a=a.mul(L); b=b.mul(L);
+  const g=gcd(a.n,b.n); a=a.div(g); b=b.div(g);
+  if(a.sign()<0){a=a.neg();b=b.neg();}
+  return [a,b];
+}
+function autoSuggest(rows){
+  let p=0;
+  for(let c=0;c<3&&p<3;c++){
+    if(rows[p].c[c].isZero()){
+      let k=-1; for(let i=p+1;i<3;i++) if(!rows[i].c[c].isZero()){ if(k<0) k=i; else if(rows[i].c[c].abs().isOne()&&!rows[k].c[c].abs().isOne()) k=i; }
+      if(k<0) continue;
+      return {type:'swap',i:p,j:k};
+    }
+    for(let i=p+1;i<3;i++){
+      if(!rows[i].c[c].isZero()){ const [a,b]=niceFactors(rows[p].c[c],rows[i].c[c]); return {type:'comb',target:i,other:p,a,b}; }
+    }
+    p++;
+  }
+  return null;
+}
+function sameOp(x,y){ if(!x||!y||x.type!==y.type) return false; if(x.type==='swap') return (x.i===y.i&&x.j===y.j)||(x.i===y.j&&x.j===y.i); return x.target===y.target&&x.other===y.other&&x.a.eq(y.a)&&x.b.eq(y.b); }
+
+/* =====================================================================
+   Modus
+   ===================================================================== */
+let MODE='strategie'; const engines=new Set();
+const MODETXT={strategie:'<strong>Strategie-Modus:</strong> Du wählst die Umformung, die Seite rechnet. So übst du, <em>welche</em> Umformung sinnvoll ist.',
+               rechnen:'<strong>Rechen-Modus:</strong> Du wählst die Umformung und rechnest die neue Zeile selbst aus – genau wie in der Klausur.'};
+document.querySelectorAll('#modebar [data-mode]').forEach(b=>b.onclick=()=>{ MODE=b.dataset.mode; document.querySelectorAll('#modebar [data-mode]').forEach(x=>x.classList.toggle('on',x===b)); $('modeText').innerHTML=MODETXT[MODE]; engines.forEach(e=>e.modeChanged()); });
+$('modeText').innerHTML=MODETXT[MODE];
+
+/* =====================================================================
+   Gauß-Engine
+   ===================================================================== */
+class Engine{
+  constructor(root,cfg){
+    this.root=root; this.cfg=cfg; this.vars=cfg.vars||['x_1','x_2','x_3'];
+    this.matrix=!!cfg.matrix; engines.forEach(e=>{ if(!document.body.contains(e.root)||e.root===root) engines.delete(e); }); engines.add(this);
+    this.reset();
+  }
+  reset(){
+    const labs=['I','II','III'];
+    this.rows=this.cfg.rows.map((r,i)=>({lab:{base:labs[i],sub:''},c:Fr(r)}));
+    this.orig=this.rows.map(r=>r.c.slice());
+    this.hist=[{rows:this.clone(),changed:null,opTex:null,note:''}];
+    this.opCount=0; this.onScript=true; this.pending=null; this.phase=null; this.bsIdx=0; this.known={};
+    this.build();
+  }
+  clone(){ return this.rows.map(r=>({lab:{...r.lab},c:r.c.slice()})); }
+  build(){
+    const R=this.root; R.innerHTML='';
+    const eng=h('div',{class:'eng'});
+    const top=h('div',{class:'eng-top'});
+    const mxl=h('label',{class:'muted'}); const mx=h('input',{type:'checkbox'}); mx.checked=this.matrix; mx.onchange=()=>{this.matrix=mx.checked;this.drawHist();};
+    mxl.append(mx,' Matrixschreibweise');
+    const undo=h('button',{class:'btn small'},'↶ Rückgängig'); undo.onclick=()=>this.undo(); this.undoBtn=undo;
+    const rst=h('button',{class:'btn small'},'Neu starten'); rst.onclick=()=>this.reset();
+    top.append(mxl,h('span',{class:'sp'}),undo,rst);
+    if(this.cfg.intro){ const it=h('div',{class:'task'},this.cfg.intro); eng.append(it); }
+    this.histEl=h('div',{class:'hist'});
+    this.opsEl=h('div',{class:'ops'});
+    this.calcEl=h('div',{class:'calc hidden'});
+    this.fbEl=h('div',{class:'fb'});
+    this.afterEl=h('div');
+    eng.append(top,this.histEl,this.opsEl,this.calcEl,this.fbEl,this.afterEl);
+    R.append(eng); renderMath(eng);
+    this.drawHist(); this.buildOps(); this.checkState();
+  }
+  drawHist(){
+    this.histEl.innerHTML='';
+    this.hist.forEach((st,k)=>{
+      const b=h('div',{class:'block'+(k===this.hist.length-1?' last':'')});
+      const m=h('span'); tex(m,sysTex(st.rows,this.vars,{matrix:this.matrix,changed:st.changed,opTex:st.opTex}),false);
+      b.append(m); if(st.note) b.append(h('span',{class:'note'},st.note));
+      this.histEl.append(b);
+    });
+    this.undoBtn.disabled=this.hist.length<=1;
+  }
+  buildOps(){
+    const O=this.opsEl; O.innerHTML='';
+    if(this.cfg.backsubOnly){ O.classList.add('hidden'); return; }
+    O.classList.remove('hidden');
+    const opt=(sel)=>this.rows.map((r,i)=>`<option value="${i}" ${i===sel?'selected':''}>${labStr(r.lab)}</option>`).join('');
+    const r1=h('div',{class:'row'});
+    r1.innerHTML=`<span class="lbl">Ersetze</span><select class="tg">${opt(1)}</select><span>durch</span>
+      <input class="fa" value="" aria-label="Faktor der anderen Zeile"> <span>·</span> <select class="ot">${opt(0)}</select>
+      <span>+</span> <input class="fb2" value="" aria-label="Faktor der Zielzeile"> <span>·</span> <span class="tgname" style="font-weight:600"></span>`;
+    const r2=h('div',{class:'row'});
+    r2.innerHTML=`<button class="btn primary go">${MODE==='strategie'?'Umformung ausführen':'Umformung festlegen'}</button>
+      <button class="btn tip">Tipp: nächster Schritt</button>
+      <span class="sp" style="flex:1"></span>
+      <span class="lbl" style="min-width:0">Vertausche</span><select class="s1">${opt(0)}</select><span>↔</span><select class="s2">${opt(2)}</select><button class="btn sw">Tauschen</button>`;
+    O.append(r1,r2);
+    const tg=r1.querySelector('.tg'), ot=r1.querySelector('.ot'), tn=r1.querySelector('.tgname');
+    const upd=()=>{ tn.textContent=labStr(this.rows[+tg.value].lab); };
+    tg.onchange=upd; upd();
+    this.ui={tg,ot,fa:r1.querySelector('.fa'),fb:r1.querySelector('.fb2'),s1:r2.querySelector('.s1'),s2:r2.querySelector('.s2'),upd};
+    r2.querySelector('.go').onclick=()=>this.tryComb();
+    r2.querySelector('.sw').onclick=()=>this.doOp({type:'swap',i:+this.ui.s1.value,j:+this.ui.s2.value});
+    r2.querySelector('.tip').onclick=()=>this.tip();
+  }
+  modeChanged(){ if(this.phase===null){ this.pending=null; this.calcEl.classList.add('hidden'); this.buildOps(); } }
+  say(msg,cls='info'){ this.fbEl.className='fb '+cls; this.fbEl.innerHTML=msg; renderMath(this.fbEl); }
+  tip(){
+    const script=this.cfg.script; let op=null, src='';
+    if(script&&this.onScript&&this.opCount<script.length){ op=script[this.opCount]; src='Buchweg: '; }
+    else { op=autoSuggest(this.rows); src='Vorschlag: '; }
+    if(!op){ this.say('Das LGS ist schon in Stufenform.'); return; }
+    if(op.type==='swap'){ this.ui.s1.value=op.i; this.ui.s2.value=op.j; this.say(`${src}Vertausche ${labStr(this.rows[op.i].lab)} und ${labStr(this.rows[op.j].lab)}, damit oben eine Gleichung mit <span class="m" data-tex="${this.vars[lead(this.rows[op.j].c)]}"></span> steht (die Einstellung ist schon vorbereitet – tippe auf „Tauschen“).`); return; }
+    this.ui.tg.value=op.target; this.ui.upd(); this.ui.ot.value=op.other; this.ui.fa.value=op.a.toStr(); this.ui.fb.value=op.b.toStr();
+    const nl={base:this.rows[op.target].lab.base,sub:NEXTSUB[this.rows[op.target].lab.sub]};
+    const col=lead(this.rows[op.other].c);
+    this.say(`${src}<span class="m" data-tex="${opTexOf(op,this.rows,nl)}"></span> – damit fällt <span class="m" data-tex="${this.vars[col]}"></span> in ${labStr(this.rows[op.target].lab)} weg. (Die Felder sind ausgefüllt.)`);
+  }
+  readComb(){
+    const a=F.parse(this.ui.fa.value), b=F.parse(this.ui.fb.value);
+    const target=+this.ui.tg.value, other=+this.ui.ot.value;
+    if(a===null||b===null){ this.say('Bitte gültige Zahlen als Faktoren eingeben (z. B. 5, −2, 1,5 oder 3/2).','no'); return null; }
+    if(target===other){ this.say('Die andere Zeile muss verschieden von der Zielzeile sein.','no'); return null; }
+    if(b.isZero()){ this.say(`Der Faktor vor ${labStr(this.rows[target].lab)} darf nicht 0 sein – sonst ginge die Information aus dieser Gleichung verloren (Regel 3).`,'no'); return null; }
+    if(a.isZero()&&b.isOne()){ this.say('Diese Umformung ändert nichts.','no'); return null; }
+    return {type:'comb',target,other,a,b};
+  }
+  tryComb(){
+    const op=this.readComb(); if(!op) return;
+    if(MODE==='strategie') this.doOp(op); else this.startCalc(op);
+  }
+  startCalc(op){
+    this.pending=op; const C=this.calcEl; C.classList.remove('hidden'); C.innerHTML='';
+    const nl={base:this.rows[op.target].lab.base,sub:NEXTSUB[this.rows[op.target].lab.sub]};
+    const head=h('div'); head.innerHTML=`Berechne die neue Zeile <span class="m" data-tex="${opTexOf(op,this.rows,nl)}"></span>:`;
+    const grid=h('div',{class:'grid'});
+    const ins=[];
+    for(let j=0;j<4;j++){
+      const inp=h('input',{inputmode:'decimal','aria-label':j<3?`Koeffizient ${this.vars[j]}`:'rechte Seite'}); ins.push(inp);
+      grid.append(inp);
+      if(j<3){ const s=h('span'); tex(s,this.vars[j]+(j<2?'\\;+':'')); grid.append(s); }
+      if(j===2){ const s=h('span'); tex(s,'='); grid.append(s); }
+    }
+    const btns=h('div',{class:'row'}); btns.style.display='flex'; btns.style.gap='6px'; btns.style.flexWrap='wrap';
+    const chk=h('button',{class:'btn primary'},'Prüfen'), hlp=h('button',{class:'btn'},'Hilfe'), skip=h('button',{class:'btn'},'Berechnen lassen'), cancel=h('button',{class:'btn'},'Abbrechen');
+    btns.append(chk,hlp,skip,cancel);
+    const hb=h('div',{class:'muted'});
+    C.append(head,grid,btns,hb); renderMath(C);
+    const exp=combine(this.rows[op.other].c,this.rows[op.target].c,op.a,op.b);
+    chk.onclick=()=>{
+      let ok=true;
+      ins.forEach((inp,j)=>{ const v=F.parse(inp.value); const good=v!==null&&v.eq(exp[j]); inp.className=good?'good':'bad'; ok=ok&&good; });
+      if(ok){ this.say('Richtig gerechnet!','ok'); C.classList.add('hidden'); this.doOp(op,true); }
+      else this.say('Noch nicht ganz – rot markierte Werte prüfen. Leere Felder zählen als 0. Tipp: „Hilfe“ zeigt die Rechnung für jede Spalte.','no');
+    };
+    hlp.onclick=()=>{
+      const Y=this.rows[op.other].c, X=this.rows[op.target].c;
+      const p=v=>v.sign()<0?`(${v.toTex()})`:v.toTex();
+      const lines=[0,1,2,3].map(j=>`${j<3?this.vars[j]:'\\text{rechts}'}:\\ ${p(op.a)}\\cdot ${p(Y[j])}+${p(op.b)}\\cdot ${p(X[j])}=\\,?`);
+      hb.innerHTML=lines.map(l=>`<div>${tx(l)}</div>`).join('');
+    };
+    skip.onclick=()=>{ C.classList.add('hidden'); this.doOp(op); };
+    cancel.onclick=()=>{ C.classList.add('hidden'); this.pending=null; };
+  }
+  doOp(op,silent=false){
+    if(op.type==='swap'&&op.i===op.j){ this.say('Wähle zwei verschiedene Zeilen.','no'); return; }
+    const script=this.cfg.script;
+    if(script&&this.onScript){ if(!sameOp(op,script[this.opCount])) this.onScript=false; }
+    let changed=null, opT=null, note='';
+    if(op.type==='swap'){
+      const a=this.rows[op.i], b=this.rows[op.j];
+      note=`${labStr(a.lab)} und ${labStr(b.lab)} vertauscht`;
+      this.rows[op.i]=b; this.rows[op.j]=a;
+      // Bezeichnungen folgen der Position (wie im Buch: I, II, III bleiben oben/mitte/unten)
+      const la=this.rows[op.i].lab, lb=this.rows[op.j].lab; this.rows[op.i].lab=lb; this.rows[op.j].lab=la;
+    } else {
+      const nl={base:this.rows[op.target].lab.base,sub:NEXTSUB[this.rows[op.target].lab.sub]};
+      opT=opTexOf(op,this.rows,nl);
+      this.rows[op.target]={lab:nl,c:combine(this.rows[op.other].c,this.rows[op.target].c,op.a,op.b)};
+      changed=op.target;
+    }
+    this.opCount++;
+    this.hist.push({rows:this.clone(),changed,opTex:opT,note,op});
+    this.drawHist(); this.buildOps();
+    if(!silent) this.fbEl.className='fb', this.fbEl.innerHTML='';
+    this.checkState();
+  }
+  undo(){
+    if(this.hist.length<=1) return;
+    this.hist.pop(); const st=this.hist[this.hist.length-1];
+    this.rows=st.rows.map(r=>({lab:{...r.lab},c:r.c.slice()})); this.opCount=Math.max(0,this.opCount-1);
+    // Buchweg-Status neu bestimmen
+    const s=this.cfg.script; this.onScript=!!s && this.hist.slice(1).every((x,k)=>sameOp(x.op,s[k]));
+    this.phase=null; this.afterEl.innerHTML=''; this.fbEl.className='fb'; this.fbEl.innerHTML='';
+    this.calcEl.classList.add('hidden'); this.drawHist(); this.buildOps(); this.checkState();
+  }
+  checkState(){
+    if(!isEchelon(this.rows)) return;
+    this.opsEl.classList.add('hidden'); this.calcEl.classList.add('hidden');
+    const type=classify(this.rows); this.phase='after';
+    const A=this.afterEl; A.innerHTML='';
+    const box=h('div',{class:'bs'});
+    if(!this.cfg.backsubOnly) box.append(h('div',{},'<strong>Stufenform erreicht!</strong> '+(this.cfg.askType||type!=='unique'?'Wie viele Lösungen hat das LGS?':'Jetzt wird von unten nach oben gelöst.')));
+    A.append(box);
+    if(this.cfg.askType||type!=='unique'){
+      const mc=h('div',{class:'mc'}); const fb=h('div',{class:'fb'});
+      [['unique','genau eine'],['none','keine'],['inf','unendlich viele']].forEach(([k,t])=>{
+        const b=h('button',{class:'btn'},t); b.onclick=()=>{
+          if(k!==type){ fb.className='fb no'; fb.innerHTML='Schau dir die letzte Zeile noch einmal genau an: Welche Aussage steht dort, wenn man sie ausschreibt?'; return; }
+          fb.className='fb ok'; fb.innerHTML=this.typeExplain(type); renderMath(fb);
+          if(type==='unique') this.startBacksub(box);
+          else this.finish(type);
+        }; mc.append(b); });
+      box.append(mc,fb);
+    } else this.startBacksub(box);
+  }
+  typeExplain(type){
+    const last=this.rows[2].c;
+    if(type==='none') return `Richtig! Die letzte Zeile lautet ausgeschrieben <span class="m" data-tex="0\\cdot ${this.vars[0]}+0\\cdot ${this.vars[1]}+0\\cdot ${this.vars[2]}=${last[3].toTex()}"></span>, also <span class="m" data-tex="0=${last[3].toTex()}"></span> – ein Widerspruch. Es gibt <strong>keine Lösung</strong>: <span class="m" data-tex="L=\\{\\,\\}"></span>.`;
+    if(type==='inf') return `Richtig! Die letzte Zeile lautet <span class="m" data-tex="0=0"></span> – das ist immer wahr und liefert keine Information. Eine Unbekannte kann frei gewählt werden: Es gibt <strong>unendlich viele Lösungen</strong>.`+this.infSolution();
+    return 'Richtig! Die letzte Zeile enthält nur noch eine Unbekannte – es gibt genau eine Lösung. Löse jetzt von unten nach oben.';
+  }
+  infSolution(){
+    const [r0,r1]=this.rows; if(lead(r0.c)!==0||lead(r1.c)!==1) return '';
+    const v=this.vars, k='k';
+    // x3 = k ; x2 = (d2 - c2 k)/b2 ; x1 = (d1 - b1 x2 - c1 k)/a1  (affin: [konst, k-Faktor])
+    const x3=[new F(0),new F(1)];
+    const x2=[r1.c[3].div(r1.c[1]), r1.c[2].neg().div(r1.c[1])];
+    const x1=[r0.c[3].sub(r0.c[1].mul(x2[0])).div(r0.c[0]), r0.c[1].mul(x2[1]).neg().sub(r0.c[2]).div(r0.c[0])];
+    const aff=([c,f])=>{ let s=''; if(!c.isZero()) s=c.toTex(); if(!f.isZero()){ const a=f.abs(); const t=(a.isOne()?'':a.toTex())+k; s+= s? (f.sign()<0?'-':'+')+t : (f.sign()<0?'-':'')+t; } return s||'0'; };
+    return `<br>Wählt man z. B. <span class="m" data-tex="${v[2]}=k"></span>, erhält man <span class="m" data-tex="L=\\{(${aff(x1)};\\ ${aff(x2)};\\ k)\\mid k\\in\\mathbb R\\}"></span>.`;
+  }
+  finish(type){
+    if(this.cfg.note){ const n=h('div',{class:'fb info'},this.cfg.note); this.afterEl.append(n); renderMath(n); }
+    if(this.cfg.onDone) this.cfg.onDone(type);
+  }
+  startBacksub(box){
+    const v=this.vars; this.known={};
+    const order=[2,1,0].map(i=>({i,var:lead(this.rows[i].c)}));
+    let idx=0;
+    const next=()=>{
+      if(idx>=order.length){ this.bsDone(box); return; }
+      const {i,var:vj}=order[idx]; const row=this.rows[i];
+      const st=h('div',{class:'step'});
+      const lab=h('span'); tex(lab,`\\text{aus } ${labTex(row.lab)}:\\quad ${v[vj]}=`);
+      const inp=h('input',{inputmode:'decimal','aria-label':v[vj]});
+      const chk=h('button',{class:'btn primary small'},'Prüfen');
+      const tip=h('button',{class:'btn small'},'Tipp');
+      const fb=h('div',{class:'fb'}); fb.style.flexBasis='100%';
+      st.append(lab,inp,chk,tip,fb); box.append(st); inp.focus({preventScroll:true});
+      // exakter Wert
+      let rest=row.c[3]; for(let j=vj+1;j<3;j++) rest=rest.sub(row.c[j].mul(this.known[j]));
+      const val=rest.div(row.c[vj]);
+      let tipLevel=0;
+      tip.onclick=()=>{
+        tipLevel++;
+        const p=x=>x.sign()<0?`(${x.toTex()})`:x.toTex();
+        let lhs=`${row.c[vj].isOne()?'':row.c[vj].eq(-1)?'-':row.c[vj].toTex()}${v[vj]}`;
+        for(let j=vj+1;j<3;j++) if(!row.c[j].isZero()) lhs+=`${row.c[j].sign()<0?'-':'+'}${row.c[j].abs().isOne()?'':row.c[j].abs().toTex()+'\\cdot '}${p(this.known[j])}`;
+        const l1=Object.keys(this.known).length?`\\text{Einsetzen in } ${labTex(row.lab)}:\\ ${lhs}=${row.c[3].toTex()}`:`${labTex(row.lab)}:\\ ${lhs}=${row.c[3].toTex()}`;
+        const l2=`${row.c[vj].isOne()?'':row.c[vj].eq(-1)?'-':row.c[vj].toTex()}${v[vj]}=${rest.toTex()}\\quad\\Rightarrow\\quad ${v[vj]}=\\,?`;
+        fb.className='fb info'; fb.innerHTML=`<div>${tx(l1)}</div>`+(tipLevel>1?`<div>${tx(l2)}</div>`:'<div class="muted">Noch ein Tipp? Nochmal tippen.</div>');
+      };
+      const check=()=>{
+        const x=F.parse(inp.value);
+        if(x!==null&&inp.value.trim()!==''&&x.eq(val)){
+          inp.className='good'; inp.disabled=true; chk.disabled=true; tip.disabled=true;
+          fb.className='fb ok'; fb.innerHTML=`${tx(`${v[vj]}=${val.toTex()}`)} ✓`;
+          this.known[vj]=val; idx++; next();
+        } else { inp.className='bad'; fb.className='fb no'; fb.innerHTML='Noch nicht richtig. Brüche kannst du als 3/4 oder als Dezimalzahl mit Komma eingeben.'; }
+      };
+      chk.onclick=check; inp.addEventListener('keydown',e=>{ if(e.key==='Enter') check(); });
+    };
+    next();
+  }
+  bsDone(box){
+    const v=this.vars, s=[0,1,2].map(j=>this.known[j]);
+    const res=h('div',{class:'fb ok'});
+    res.innerHTML=`Lösungsmenge: ${tx(`L=\\{(${s.map(x=>x.toTex()).join(';\\ ')})\\}`)}`;
+    const pr=h('button',{class:'btn small'},'Probe anzeigen'); pr.style.marginLeft='10px';
+    const prBox=h('div',{class:'muted'});
+    pr.onclick=()=>{
+      const p=x=>x.sign()<0?`(${x.toTex()})`:x.toTex();
+      prBox.innerHTML=this.orig.map((c,i)=>{
+        let lhs='', first=true; for(let j=0;j<3;j++){ if(c[j].isZero()) continue; const a=c[j].abs(); const t=(a.isOne()?'':a.toTex()+'\\cdot ')+p(s[j]); lhs+= first?(c[j].sign()<0?'-':'')+t:(c[j].sign()<0?'-':'+')+t; first=false; }
+        const val=c.slice(0,3).reduce((acc,cc,j)=>acc.add(cc.mul(s[j])),new F(0));
+        return `<div>${tx(`\\text{${['I','II','III'][i]}}:\\ ${lhs}=${val.toTex()}\\ ${val.eq(c[3])?'\\checkmark':'\\times'}`)}</div>`;
+      }).join('');
+    };
+    res.append(pr); box.append(res,prBox);
+    this.finish('unique');
+  }
+}
+
+/* =====================================================================
+   Aufgaben-Tabs
+   ===================================================================== */
+function taskTabs(tabsEl,mountEl,tasks,factory){
+  tabsEl.innerHTML='';
+  tasks.forEach((t,k)=>{
+    const b=h('button',{},`<span class="dot d${t.lvl||'A'}"></span>${t.name}`);
+    b.onclick=()=>{ [...tabsEl.children].forEach(x=>x.classList.remove('active')); b.classList.add('active'); mountEl.innerHTML=''; factory(t,()=>b.classList.add('done')); };
+    tabsEl.append(b);
+  });
+  tabsEl.firstChild.click();
+}
+function engFactory(mount,extra={}){ return (t,done)=>new Engine(mount,{...extra,...t,onDone:(type)=>{ done(); t.onDone&&t.onDone(type); }}); }
+
+/* ---------------- Station 1 ---------------- */
+document.querySelectorAll('#tmaPoll button').forEach(b=>b.onclick=()=>{
+  const a=b.dataset.a, fb=$('tmaFb');
+  const T={
+    Michi:'Richtig vermutet! Michis LGS hat schon <strong>Stufenform</strong>: In der letzten Gleichung steht nur noch <span class="m" data-tex="x_3"></span>, in der mittleren nur noch <span class="m" data-tex="x_2"></span> und <span class="m" data-tex="x_3"></span>. Die Zahlen sind zwar groß, aber man kann sofort von unten nach oben lösen: <span class="m" data-tex="x_3=-1"></span>, dann <span class="m" data-tex="x_2"></span>, dann <span class="m" data-tex="x_1"></span>.',
+    Ami:'Amis LGS sieht fast fertig aus – aber in der dritten Gleichung kommen noch alle drei Unbekannten vor. Es fehlt also noch Arbeit. Vergleiche mit Michi.',
+    Ty:'Tys Zahlen sind klein und angenehm. Aber in jeder Gleichung kommen alle drei Unbekannten vor – Ty muss erst noch umformen. Wer muss das nicht?'
+  };
+  fb.className='fb '+(a==='Michi'?'ok':'info'); fb.innerHTML=T[a]; renderMath(fb);
+});
+const G1=[
+  {name:'Buch S. 184',lvl:'A',backsubOnly:true,rows:[[2,-3,1,-8],[0,2,5,-6],[0,0,-2,4]],intro:'Das Beispiel aus dem Buchtext. Starte unten mit der dritten Gleichung.'},
+  {name:'Michis LGS',lvl:'A',backsubOnly:true,rows:[[6,6,-12,42],[0,24,-42,114],[0,0,-258,258]],intro:'Jetzt Michis LGS aus dem Einstieg.'},
+  {name:'Aufgabe 3',lvl:'A',backsubOnly:true,rows:[[1,2,-1,3],[0,3,1,5],[0,0,2,4]]},
+  {name:'Aufgabe 4',lvl:'B',backsubOnly:true,rows:[[2,1,3,4],[0,4,-1,3],[0,0,5,-5]],intro:'Hier treten Dezimalzahlen oder Brüche auf. Eingabe z. B. als 0,5 oder 1/2.'},
+];
+taskTabs($('g1tasks'),$('g1eng'),G1,engFactory($('g1eng')));
+
+/* ---------------- Station 2 ---------------- */
+const op=(target,other,a,b)=>({type:'comb',target,other,a:F.of(a),b:F.of(b)});
+const G2=[
+  {name:'Buch S. 184',lvl:'A',rows:[[0,1,3,10],[5,-3,1,5],[1,-2,2,-1]],
+   script:[{type:'swap',i:0,j:2},op(1,0,5,-1),op(2,1,1,7)],
+   intro:'Das Beispiel aus dem Buch. In Gleichung I fehlt <span class="m" data-tex="x_1"></span>. Das Buch vertauscht deshalb zuerst I und III. Nutze „Tipp“, um den Buchweg Schritt für Schritt nachzuvollziehen.'},
+  {name:'Buch S. 185, Beispiel',lvl:'A',rows:[[3,6,-2,-4],[3,2,1,0],[1.5,5,-5,-9]],
+   script:[op(1,0,1,-1),op(2,0,1,-2),op(2,1,1,1)],
+   intro:'Das Beispiel a) aus dem Buch. Beachte: Das Buch bildet <span class="m" data-tex="\\text{III}_a=\\text{I}-2\\cdot\\text{III}"></span>, damit keine Dezimalzahlen entstehen.'},
+  {name:'Aufgabe 3',lvl:'A',rows:[[1,1,1,6],[2,-1,1,3],[1,2,-1,2]]},
+  {name:'Aufgabe 4',lvl:'B',rows:[[2,3,-1,5],[4,1,2,13],[-2,5,1,3]]},
+  {name:'Aufgabe 5',lvl:'B',rows:[[3,-2,4,1],[2,3,-2,9],[5,1,3,11]],intro:'Hier ist kein Koeffizient 1 vorhanden – überlege, mit welchen Faktoren du beide Zeilen multiplizieren musst.'},
+  {name:'Aufgabe 6',lvl:'C',rows:[[0,2,-1,1],[2,0,1,5],[3,1,0,5]],intro:'Hier fehlt in jeder Gleichung eine Unbekannte. Überlege vorher, welche Umformungen am geschicktesten sind (vgl. Buch Aufgabe 8).'},
+];
+taskTabs($('g2tasks'),$('g2eng'),G2,engFactory($('g2eng')));
+
+/* ---------------- Station 3 ---------------- */
+const G3M=[
+  {name:'Übersetzen 1',lvl:'A',tex:'\\begin{array}{rcrcrcr}2x_1&&&+&x_3&=&5\\\\&&x_2&-&x_3&=&1\\\\x_1&+&x_2&&&=&4\\end{array}',M:[[2,0,1,5],[0,1,-1,1],[1,1,0,4]]},
+  {name:'Übersetzen 2',lvl:'B',tex:'\\begin{array}{l}3x_2-x_1=2\\\\x_3+4=2x_1\\\\x_1+x_2+x_3=0\\end{array}',M:[[-1,3,0,2],[-2,0,1,-4],[1,1,1,0]],hint:'Ordne erst: Alle Unbekannten nach links in der Reihenfolge x₁, x₂, x₃, Zahlen nach rechts.'},
+];
+function matFactory(t,done){
+  const box=$('g3m'); box.innerHTML='';
+  const q=h('div'); tex(q,t.tex,true);
+  const grid=h('div',{class:'mat-in'}); const ins=[];
+  for(let i=0;i<3;i++){ for(let j=0;j<4;j++){ if(j===3) grid.append(h('span',{class:'bar'})); const inp=h('input',{inputmode:'decimal'}); ins.push(inp); grid.append(inp);} }
+  const row=h('div'); row.style.marginTop='8px';
+  const chk=h('button',{class:'btn primary'},'Prüfen'), show=h('button',{class:'btn'},'Lösung zeigen'); row.append(chk,' ',show);
+  const fb=h('div',{class:'fb'});
+  box.append(q,grid,row,fb);
+  if(t.hint){ const d=h('details',{},`<summary>Tipp</summary>${t.hint}`); box.append(d); }
+  const check=()=>{ let ok=true; ins.forEach((inp,k)=>{ const v=F.parse(inp.value); const g=v!==null&&inp.value.trim()!==''&&v.eq(t.M[Math.floor(k/4)][k%4]); inp.className=g?'good':'bad'; ok=ok&&g; });
+    fb.className='fb '+(ok?'ok':'no'); fb.innerHTML=ok?'Richtig übersetzt!':'Noch nicht ganz. Denk an die Nullen für fehlende Unbekannte und an die Vorzeichen.'; if(ok) done(); };
+  chk.onclick=check; show.onclick=()=>{ ins.forEach((inp,k)=>inp.value=F.of(t.M[Math.floor(k/4)][k%4]).toStr()); check(); };
+}
+taskTabs($('g3mtasks'),$('g3m'),G3M,matFactory);
+const G3=[
+  {name:'Buch S. 184 als Matrix',lvl:'A',matrix:true,rows:[[0,1,3,10],[5,-3,1,5],[1,-2,2,-1]],script:[{type:'swap',i:0,j:2},op(1,0,5,-1),op(2,1,1,7)]},
+  {name:'Aufgabe 2',lvl:'A',matrix:true,rows:[[1,-1,2,5],[2,1,-1,2],[3,-2,1,9]]},
+  {name:'Aufgabe 3',lvl:'B',matrix:true,rows:[[4,-2,1,-1],[-2,3,2,2],[6,1,-3,11]]},
+];
+taskTabs($('g3tasks'),$('g3eng'),G3,engFactory($('g3eng')));
+(function(){
+  const Q=[
+    {M:[[1,0,0,3],[0,1,0,-1],[0,0,1,2]],s:[3,-1,2]},
+    {M:[[1,0,0,-2],[0,1,0,0.5],[0,0,1,1]],s:[-2,0.5,1]},
+    {M:[[1,0,0,0],[0,1,0,0],[0,0,1,-4]],s:[0,0,-4]},
+  ];
+  const root=$('rrefQuiz');
+  Q.forEach((q,k)=>{
+    const d=h('div',{class:'rref'}); d.style.margin='10px 0'; d.style.display='flex'; d.style.flexWrap='wrap'; d.style.alignItems='center'; d.style.gap='8px';
+    const m=h('span'); tex(m,`${'abc'[k]})\\quad\\texttt{rref(a)}\\to\\begin{bmatrix}${q.M.map(r=>r.map(x=>F.of(x).toTex()).join('&')).join('\\\\')}\\end{bmatrix}`);
+    const ins=[0,1,2].map(()=>h('input',{inputmode:'decimal'}));
+    const L=h('span'); tex(L,'L=\\{(');
+    const chk=h('button',{class:'btn small primary'},'Prüfen');
+    const fb=h('span',{class:'muted'});
+    d.append(m,L,ins[0],';',ins[1],';',ins[2]); const e=h('span'); tex(e,')\\}'); d.append(e,chk,fb);
+    chk.onclick=()=>{ let ok=true; ins.forEach((inp,j)=>{ const v=F.parse(inp.value); const g=v!==null&&inp.value.trim()!==''&&v.eq(q.s[j]); inp.className=g?'good':'bad'; ok=ok&&g; }); fb.innerHTML=ok?'✓ Richtig – die letzte Spalte enthält die Lösung.':'Tipp: Jede Zeile ist eine Gleichung, z. B. 1·x₁ + 0·x₂ + 0·x₃ = …'; };
+    root.append(d);
+  });
+})();
+
+/* ---------------- Station 4 ---------------- */
+const G4=[
+  {name:'LGS A',lvl:'B',askType:true,rows:[[1,1,1,2],[2,3,1,5],[3,4,2,9]]},
+  {name:'LGS B',lvl:'B',askType:true,rows:[[1,-1,2,1],[2,1,1,5],[3,0,3,6]]},
+  {name:'LGS C',lvl:'A',askType:true,rows:[[1,2,-1,3],[2,1,1,6],[1,-1,3,4]]},
+  {name:'Strahl 2 (Explorer)',lvl:'C',askType:true,vars:['t','r','s'],rows:[[1,-1,2,2],[-3,-2,-1,-7],[-1,0,-1,-5]],
+   intro:'Dieses LGS entsteht im Ebenen-Explorer für Strahl 2.',
+   note:'<strong>Geometrisch:</strong> Strahl 2 verläuft parallel zum Dach. Er trifft das Dach nie – deshalb hat das LGS keine Lösung.'},
+  {name:'Strahl 3 (Explorer)',lvl:'C',askType:true,vars:['t','r','s'],rows:[[1,-1,2,2],[2,-2,-1,-1],[0,0,-1,-1]],
+   intro:'Dieses LGS entsteht im Ebenen-Explorer für Strahl 3.',
+   note:'<strong>Geometrisch:</strong> Strahl 3 liegt im Dach. Jeder Punkt des Strahls ist ein gemeinsamer Punkt – deshalb gibt es unendlich viele Lösungen.'},
+];
+taskTabs($('g4tasks'),$('g4eng'),G4,engFactory($('g4eng')));
+
+/* ---------------- Station 5: Fehlerdetektiv ---------------- */
+const WORDS=['die Äquivalenzumformung','die Subtraktion','die Addition','das Zweifache','das Dreifache'];
+const G5=[
+  {name:'Fall 1',lvl:'B',
+   lgs:['x_1+2x_2-x_3=2','2x_1+3x_2+x_3=9','x_1-x_2+2x_3=5'],
+   lines:[
+     {lab:'\\text{II}_a=2\\cdot\\text{I}-\\text{II}',t:'x_2-3x_3=-5'},
+     {lab:'\\text{III}_a=\\text{I}-\\text{III}',t:'3x_2-3x_3=7',err:true},
+     {lab:'\\text{III}_b=3\\cdot\\text{II}_a-\\text{III}_a',t:'-6x_3=-22'},
+     {lab:'\\text{Ergebnis}',t:'x_3=\\tfrac{11}{3},\\ \\ldots'}],
+   word:'die Subtraktion',
+   expl:'Auf der rechten Seite wurde falsch subtrahiert: <span class="m" data-tex="2-5=-3"></span>, nicht 7. Richtig ist <span class="m" data-tex="\\text{III}_a:\\ 3x_2-3x_3=-3"></span>. Dann folgt <span class="m" data-tex="\\text{III}_b=3\\cdot\\text{II}_a-\\text{III}_a:\\ -6x_3=-12"></span>, also <span class="m" data-tex="x_3=2,\\ x_2=1,\\ x_1=2"></span> und <span class="m" data-tex="L=\\{(2;\\,1;\\,2)\\}"></span>.'},
+  {name:'Fall 2',lvl:'C',
+   lgs:['x_1+x_2+x_3=6','2x_1+x_2-x_3=1','3x_1-x_2+x_3=4'],
+   lines:[
+     {lab:'\\text{II}_a=2\\cdot\\text{I}-\\text{II}',t:'x_2+3x_3=11'},
+     {lab:'\\text{III}_a=2\\cdot\\text{I}-\\text{II}',t:'x_2+3x_3=11',err:true},
+     {lab:'\\text{III}_b=\\text{II}_a-\\text{III}_a',t:'0=0'},
+     {lab:'\\text{Ergebnis}',t:'\\text{„unendlich viele Lösungen“}'}],
+   word:'die Äquivalenzumformung',
+   expl:'<span class="m" data-tex="\\text{III}_a=2\\cdot\\text{I}-\\text{II}"></span> ist <strong>keine Äquivalenzumformung</strong>: Gleichung III kommt darin gar nicht vor, ihre Information geht verloren. Richtig ist z. B. <span class="m" data-tex="\\text{III}_a=3\\cdot\\text{I}-\\text{III}:\\ 4x_2+2x_3=14"></span>. Mit <span class="m" data-tex="\\text{III}_b=4\\cdot\\text{II}_a-\\text{III}_a:\\ 10x_3=30"></span> folgt <span class="m" data-tex="L=\\{(1;\\,2;\\,3)\\}"></span>.'},
+  {name:'Fall 3',lvl:'A',
+   lgs:['x_1-x_2+2x_3=1','3x_1+x_2-x_3=4','2x_1-2x_2+x_3=-1'],
+   lines:[
+     {lab:'\\text{II}_a=3\\cdot\\text{I}-\\text{II}',t:'-4x_2+7x_3=-1'},
+     {lab:'\\text{III}_a=2\\cdot\\text{I}-\\text{III}',t:'3x_3=3'},
+     {lab:'\\text{aus III}_a',t:'x_3=1'},
+     {lab:'x_3=1\\text{ in II}_a',t:'-4x_2+7=-1\\ \\Rightarrow\\ -4x_2=6',err:true},
+     {lab:'',t:'x_2=-1{,}5'},
+     {lab:'\\text{in I}',t:'x_1-(-1{,}5)+2=1\\ \\Rightarrow\\ x_1=-2{,}5'}],
+   word:'die Subtraktion',
+   expl:'Beim Herüberbringen der 7 muss man <strong>subtrahieren</strong>: <span class="m" data-tex="-4x_2=-1-7=-8"></span>, also <span class="m" data-tex="x_2=2"></span>. Eingesetzt in I: <span class="m" data-tex="x_1-2+2=1"></span>, also <span class="m" data-tex="x_1=1"></span> und <span class="m" data-tex="L=\\{(1;\\,2;\\,1)\\}"></span>.'}
+];
+function fdFactory(t,done){
+  const box=$('g5box'); box.innerHTML='';
+  const l=h('div'); tex(l,`\\begin{array}{ll}\\text{I}&${t.lgs[0]}\\\\\\text{II}&${t.lgs[1]}\\\\\\text{III}&${t.lgs[2]}\\end{array}`,true);
+  box.append(l);
+  const fb=h('div',{class:'fb'}); const wl=h('div',{class:'wordlist hidden'});
+  let found=false;
+  t.lines.forEach(line=>{
+    const d=h('div',{class:'fd-line'}); const a=h('span',{class:'lab'}); tex(a,line.lab||'\\phantom{x}'); const b=h('span'); tex(b,line.t); d.append(a,b);
+    d.onclick=()=>{ if(found) return;
+      if(line.err){ found=true; d.classList.add('sel-ok'); fb.className='fb info'; fb.innerHTML='Gefunden! Was wurde hier falsch gemacht? Wähle aus der Wortliste.'; wl.classList.remove('hidden'); }
+      else { d.classList.add('sel-no'); fb.className='fb no'; fb.innerHTML='Diese Zeile stimmt. Rechne sie nach – der Fehler steckt woanders.'; setTimeout(()=>d.classList.remove('sel-no'),1400); }
+    };
+    box.append(d);
+  });
+  WORDS.forEach(w=>{ const b=h('button',{class:'btn small'},w); b.onclick=()=>{
+    if(w===t.word){ fb.className='fb ok'; fb.innerHTML=`Genau – Stichwort: <strong>${w}</strong>. `+t.expl; renderMath(fb); done(); }
+    else { fb.className='fb no'; fb.innerHTML='Passt nicht ganz. Rechne die markierte Zeile selbst nach und vergleiche.'; }
+  }; wl.append(b); });
+  const wlh=h('div',{class:'muted'},'Wortliste:'); box.append(wl,fb); wl.prepend(wlh);
+}
+taskTabs($('g5tasks'),$('g5box'),G5,fdFactory);
+
+/* ---------------- Finale ---------------- */
+function startFinale(){
+  new Engine($('g6eng'),{vars:['t','r','s'],rows:[[1,-1,2,2],[1,2,1,7],[2,0,1,5]],
+    intro:'Dach-LGS aus dem Ebenen-Explorer (Schritt 4). Unbekannte: <span class="m" data-tex="t,\\ r,\\ s"></span>.',
+    onDone:()=>{ const fb=$('g6fb'); fb.className='fb ok'; fb.innerHTML='Geschafft! Mit <span class="m" data-tex="t=2"></span> folgt aus der Geradengleichung <span class="m" data-tex="\\vec{OS}=\\begin{pmatrix}3\\\\3\\\\5\\end{pmatrix}+2\\cdot\\begin{pmatrix}1\\\\-1\\\\-2\\end{pmatrix}=\\begin{pmatrix}5\\\\1\\\\1\\end{pmatrix}"></span>. Der Strahl trifft das Dach in <span class="m" data-tex="S(5|1|1)"></span> – genau wie der Taschenrechner. <a href="../simulationen/ebenen-explorer/index.html">Zurück zum Explorer</a>'; renderMath(fb); }});
+}
+
+/* ---------------- Stationen ---------------- */
+function showStation(id){
+  document.querySelectorAll('.station').forEach(s=>s.classList.toggle('active',s.id===id));
+  document.querySelectorAll('#stations button').forEach(b=>b.classList.toggle('active',b.dataset.st===id));
+  $('modebar').classList.toggle('hidden',id==='g1'||id==='g5');
+  if(id==='g6'&&!$('g6eng').children.length) startFinale();
+  try{ history.replaceState(null,'','#'+id); }catch(e){}
+}
+document.querySelectorAll('#stations button').forEach(b=>b.onclick=()=>showStation(b.dataset.st));
+
+renderMath();
+(()=>{
+  const id=(location.hash||'#g1').slice(1); showStation(['g1','g2','g3','g4','g5','g6'].includes(id)?id:'g1');
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ebenen-Explorer</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<style>
+  :root{
+    --gold:#e8a800; --gold-deep:#b98600; --gold-soft:#fff6dc;
+    --ink:#1f2933; --ink-soft:#5b6770; --line:#e3e6ea; --bg:#f7f7f4; --card:#ffffff;
+    --blue:#2c6fbb; --green:#2e9e4f; --purple:#8e44ad; --orange:#e67e22; --red:#d62828;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;background:var(--bg);color:var(--ink);line-height:1.5;font-size:17px}
+  header{background:var(--gold);color:#fff;padding:18px 20px 16px}
+  header .eyebrow{font-size:.82rem;letter-spacing:.06em;text-transform:uppercase;opacity:.92}
+  header h1{margin:4px 0 0;font-size:1.6rem;line-height:1.2}
+  header nav{margin-top:8px;font-size:.9rem}
+  header nav a{color:#fff;text-decoration:underline;margin-right:14px}
+  .wrap{max-width:1280px;margin:0 auto;padding:16px}
+  .layout{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:18px;align-items:start}
+  @media (max-width:900px){.layout{grid-template-columns:1fr}}
+  .stage{position:sticky;top:10px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:10px}
+  @media (max-width:900px){.stage{position:sticky;top:0;z-index:5;padding:6px;box-shadow:0 4px 10px rgba(0,0,0,.08)} #scene{max-height:40vh} .stage .legend{display:none}}
+  #scene{width:100%;height:auto;display:block;touch-action:none;cursor:grab;background:linear-gradient(#eef4fb,#fbfcfd);border-radius:10px}
+  #scene:active{cursor:grabbing}
+  .stage-bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:8px;font-size:.88rem;color:var(--ink-soft)}
+  .btn{border:1px solid var(--line);background:#fff;border-radius:8px;padding:6px 12px;font-size:.92rem;cursor:pointer;color:var(--ink)}
+  .btn:hover{border-color:var(--gold)}
+  .btn.primary{background:var(--gold);border-color:var(--gold);color:#fff;font-weight:600}
+  .btn.small{padding:3px 9px;font-size:.84rem}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 18px;margin-bottom:14px}
+  .card h2{margin:0 0 8px;font-size:1.15rem;display:flex;align-items:center;gap:10px}
+  .num{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:50%;background:var(--gold);color:#fff;font-size:.95rem;flex-shrink:0}
+  .intro{background:var(--gold-soft);border-color:#f1dc9c}
+  .task{background:#f4f8fc;border-left:4px solid var(--blue);padding:8px 12px;border-radius:6px;margin:10px 0}
+  .lead-q{background:#fff0f0;border-left:4px solid var(--red);padding:10px 12px;border-radius:6px;margin:10px 0;font-weight:600}
+  .formula{background:#fafafa;border:1px solid var(--line);border-radius:8px;padding:8px 10px;margin:8px 0;overflow-x:auto}
+  .formula .katex-display{margin:.3em 0}
+  .formula .katex{font-size:1.05em}
+  .slider-row{display:grid;grid-template-columns:34px 1fr 56px;gap:10px;align-items:center;margin:6px 0}
+  .slider-row input[type=range]{width:100%}
+  .slider-row .val{font-variant-numeric:tabular-nums;text-align:right;font-weight:600}
+  .fb{margin-top:8px;padding:8px 10px;border-radius:8px;font-size:.95rem;display:none}
+  .fb.ok{display:block;background:#e8f6ec;color:#1e6b35;border:1px solid #b9e2c5}
+  .fb.no{display:block;background:#fdeeee;color:#8a1f1f;border:1px solid #f1c0c0}
+  .fb.info{display:block;background:#f4f8fc;color:#234;border:1px solid #cfe0f1}
+  details{margin:8px 0;border:1px solid var(--line);border-radius:8px;padding:6px 10px;background:#fcfcfc}
+  details summary{cursor:pointer;font-weight:600;color:var(--gold-deep)}
+  .lgs-grid{display:grid;grid-template-columns:auto repeat(3,auto) auto auto;gap:6px 6px;align-items:center;justify-content:start;margin:8px 0}
+  .lgs-grid input{width:52px;padding:5px;font-size:1rem;text-align:center;border:1px solid #c9ced4;border-radius:6px}
+  .lgs-grid input.good{border-color:var(--green);background:#eefaf1}
+  .lgs-grid input.bad{border-color:var(--red);background:#fff1f1}
+  .lgs-grid .lab{font-weight:600;color:var(--ink-soft);padding-right:6px}
+  .pt-inputs input{width:60px;padding:5px;font-size:1rem;text-align:center;border:1px solid #c9ced4;border-radius:6px}
+  .radio-row{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0}
+  .radio-row label{border:1px solid var(--line);border-radius:8px;padding:6px 10px;cursor:pointer;background:#fff}
+  .radio-row input{margin-right:6px}
+  .legend{display:flex;flex-wrap:wrap;gap:10px;font-size:.84rem;color:var(--ink-soft)}
+  .legend > span::before{content:"";display:inline-block;width:12px;height:4px;border-radius:2px;margin-right:5px;vertical-align:middle;background:var(--c)}
+  .ti{background:#f3f6f3;border:1px solid #cfdccf;border-radius:8px;padding:10px 12px;font-size:.95rem}
+  .ti code{background:#fff;border:1px solid #dde5dd;border-radius:4px;padding:1px 5px}
+  .next{display:block;text-align:center;background:var(--gold);color:#fff;text-decoration:none;font-weight:700;padding:12px;border-radius:10px;margin-top:10px}
+  .muted{color:var(--ink-soft);font-size:.9rem}
+  .hidden{display:none}
+  @media (max-width:520px){ .katex{font-size:.95em} body{font-size:16px} .wrap{padding:10px} .card{padding:12px} }
+  footer{text-align:center;color:var(--ink-soft);font-size:.82rem;padding:20px}
+</style>
+</head>
+<body>
+<header>
+  <div class="eyebrow">Kapitel VI · Ebenen · Simulation</div>
+  <h1>Ebenen-Explorer – Szene 0: Wo trifft der Strahl das Dach?</h1>
+  <nav><a href="../../index.html">← Übersicht GK</a><a href="../../vi-1-gauss-algorithmus/werkstatt.html">Zur Gauß-Werkstatt →</a></nav>
+</header>
+
+<div class="wrap">
+<div class="layout">
+
+  <!-- ===== 3D-Bühne ===== -->
+  <div class="stage">
+    <svg id="scene" viewBox="0 0 640 520" aria-label="3D-Ansicht: Dach und Lichtstrahl"></svg>
+    <div class="stage-bar">
+      <button class="btn small" id="resetView">Ansicht zurücksetzen</button>
+      <button class="btn small" id="zoomIn">＋</button>
+      <button class="btn small" id="zoomOut">－</button>
+      <span>Wischen/Ziehen dreht die Ansicht.</span>
+    </div>
+    <div class="stage-bar legend">
+      <span style="--c:var(--blue)">Ortsvektoren</span>
+      <span style="--c:var(--green)">Vielfache von \(\vec{AB}\)</span>
+      <span style="--c:var(--purple)">Vielfache von \(\vec{AC}\)</span>
+      <span style="--c:var(--orange)">Lichtstrahl</span>
+    </div>
+  </div>
+
+  <!-- ===== Arbeitsschritte ===== -->
+  <div>
+
+    <div class="card intro">
+      <h2>Einstieg</h2>
+      <p style="margin-top:0"><strong>Warum kippelt ein Tisch mit drei Beinen nie, ein Tisch mit vier Beinen aber manchmal schon?</strong> (vgl. Buch S. 188)</p>
+      <p>Das Dach der Oper in Oslo ist begehbar: eine riesige, schräge Fläche aus rechteckigen Marmorplatten. Bei einer Lichtshow steht ein Scheinwerfer im Punkt <span class="m" data-tex="L(3|3|5)"></span> und strahlt in Richtung <span class="m" data-tex="\vec u=\begin{pmatrix}1\\-1\\-2\end{pmatrix}"></span>.</p>
+      <p>Von einer Dachplatte kennen wir drei Ecken:
+        <span class="m" data-tex="A(5|-4|0),\ B(6|-2|0),\ C(3|-3|1)"></span>. Alle anderen Platten sind genauso groß und liegen lückenlos daneben.</p>
+      <div class="lead-q">Wo genau trifft der Lichtstrahl das Dach?</div>
+    </div>
+
+    <div class="card">
+      <h2><span class="num">1</span>Beobachten und schätzen</h2>
+      <div class="task">Drehe die Ansicht. Der rote Kreis markiert die Stelle, an der der Strahl auf das Dach trifft.<br>
+        a) Auf welcher Platte liegt der Punkt ungefähr?<br>
+        b) Warum kann man die Koordinaten aus dem Bild nicht sicher ablesen?</div>
+      <details><summary>Tipp zu b)</summary>Ein Bildschirm ist zweidimensional. Ein Punkt im Bild kann zu vielen Punkten im Raum gehören, die hintereinander liegen. Dreh die Ansicht und beobachte, wie sich die Lage des roten Kreises scheinbar verändert.</details>
+    </div>
+
+    <div class="card">
+      <h2><span class="num">2</span>Jeden Dachpunkt erreichen</h2>
+      <p style="margin-top:0">Vom Ursprung aus gelangt man zu jedem Punkt des Dachs, indem man erst nach <span class="m" data-tex="A"></span> geht und dann Vielfache von <span class="m" data-tex="\vec{AB}"></span> und <span class="m" data-tex="\vec{AC}"></span> anhängt – wie beim Zählen der Platten.</p>
+      <label class="muted"><input type="checkbox" id="showChain" checked> Vektorkette im Bild anzeigen</label>
+      <div class="slider-row"><span class="m" data-tex="r"></span><input type="range" id="rS" min="0" max="4" step="0.1" value="0"><span class="val" id="rV">0</span></div>
+      <div class="slider-row"><span class="m" data-tex="s"></span><input type="range" id="sS" min="0" max="3" step="0.1" value="0"><span class="val" id="sV">0</span></div>
+      <div class="formula" id="chainF"></div>
+      <div class="task">Stelle <span class="m" data-tex="r"></span> und <span class="m" data-tex="s"></span> so ein, dass der Punkt <span class="m" data-tex="X"></span> genau auf der Auftreffstelle liegt.</div>
+      <div class="fb" id="chainFb"></div>
+      <details><summary>Nachgedacht</summary>Hier klappt das Ausprobieren, weil der Strahl zufällig eine Plattenecke trifft. Was wäre, wenn er irgendwo mitten auf einer Platte auftrifft? Dann brauchen wir ein Rechenverfahren.</details>
+    </div>
+
+    <div class="card">
+      <h2><span class="num">3</span>Jeden Punkt des Strahls erreichen</h2>
+      <p style="margin-top:0">Den Strahl kennt ihr aus Kapitel V als Gerade:
+        <span class="m" data-tex="g:\ \vec x=\vec{OL}+t\cdot\vec u"></span>.</p>
+      <label class="muted"><input type="checkbox" id="showRay" checked> Punkt auf dem Strahl anzeigen</label>
+      <div class="slider-row"><span class="m" data-tex="t"></span><input type="range" id="tS" min="0" max="3" step="0.1" value="0"><span class="val" id="tV">0</span></div>
+      <div class="formula" id="rayF"></div>
+      <div class="task">Für welches <span class="m" data-tex="t"></span> erreicht der Punkt <span class="m" data-tex="Y"></span> das Dach?</div>
+      <div class="fb" id="rayFb"></div>
+    </div>
+
+    <div class="card">
+      <h2><span class="num">4</span>Gleichsetzen: ein LGS entsteht</h2>
+      <p style="margin-top:0">Der Auftreffpunkt liegt auf dem Strahl <em>und</em> auf dem Dach. Also muss gelten:</p>
+      <div class="formula"><span class="m" data-tex="\begin{pmatrix}3\\3\\5\end{pmatrix}+t\cdot\begin{pmatrix}1\\-1\\-2\end{pmatrix}=\begin{pmatrix}5\\-4\\0\end{pmatrix}+r\cdot\begin{pmatrix}1\\2\\0\end{pmatrix}+s\cdot\begin{pmatrix}-2\\1\\1\end{pmatrix}"></span></div>
+      <div class="task">Schreibe die Vektorgleichung zeilenweise auf. Bringe alle Unbekannten <span class="m" data-tex="t,\,r,\,s"></span> nach links und alle Zahlen nach rechts. Trage die Koeffizienten ein. Leere Felder zählen als 0.</div>
+      <div class="lgs-grid" id="lgsGrid"></div>
+      <button class="btn primary" id="lgsCheck">Prüfen</button>
+      <button class="btn" id="lgsHint">Tipp</button>
+      <button class="btn" id="lgsShow">Lösung zeigen</button>
+      <div class="fb" id="lgsFb"></div>
+      <div class="formula hidden" id="lgsHintBox"></div>
+    </div>
+
+    <div class="card">
+      <h2><span class="num">5</span>Lösen mit dem TI-Nspire CAS</h2>
+      <div class="ti">
+        <strong>So geht's:</strong> <code>menu</code> ▸ Algebra ▸ Gleichungssystem lösen ▸ Lineares Gleichungssystem lösen …<br>
+        Anzahl der Gleichungen: <code>3</code>, Variablen: <code>t,r,s</code>. Dann die drei Gleichungen aus Schritt 4 eingeben.<br>
+        Der Rechner zeigt dann <code>linSolve({…},{t,r,s})</code> und die Lösung in der Reihenfolge <span class="m" data-tex="t,\,r,\,s"></span>.
+      </div>
+      <div class="task">Setze das Ergebnis für <span class="m" data-tex="t"></span> in die Geradengleichung ein. Wie lauten die Koordinaten des Auftreffpunkts <span class="m" data-tex="S"></span>?</div>
+      <div class="pt-inputs"><span class="m" data-tex="S\big("></span> <input id="S1" inputmode="decimal"> | <input id="S2" inputmode="decimal"> | <input id="S3" inputmode="decimal"> <span class="m" data-tex="\big)"></span>
+        <button class="btn primary" id="SCheck">Prüfen</button></div>
+      <div class="fb" id="SFb"></div>
+      <div class="lead-q">Leitfrage: In der Klausur gibt es keinen Taschenrechner. Wie löst man ein LGS mit drei Gleichungen und drei Unbekannten von Hand?</div>
+      <a class="next" href="../../vi-1-gauss-algorithmus/werkstatt.html">Zur Gauß-Werkstatt →</a>
+    </div>
+
+    <div class="card">
+      <h2><span class="num">6</span>Experimentieren: andere Strahlen</h2>
+      <div class="radio-row" id="rayChoice">
+        <label><input type="radio" name="ray" value="1" checked>Strahl 1</label>
+        <label><input type="radio" name="ray" value="2">Strahl 2</label>
+        <label><input type="radio" name="ray" value="3">Strahl 3</label>
+        <label><input type="radio" name="ray" value="free">Eigener Strahl</label>
+      </div>
+      <div id="freeCtl" class="hidden">
+        <p class="muted" style="margin:4px 0">Der Scheinwerfer bleibt in <span class="m" data-tex="L(3|3|5)"></span>. Verändere die Richtung.</p>
+        <div class="slider-row"><span class="m" data-tex="u_1"></span><input type="range" id="u1S" min="-3" max="3" step="0.5" value="1"><span class="val" id="u1V">1</span></div>
+        <div class="slider-row"><span class="m" data-tex="u_2"></span><input type="range" id="u2S" min="-3" max="3" step="0.5" value="-1"><span class="val" id="u2V">-1</span></div>
+        <div class="slider-row"><span class="m" data-tex="u_3"></span><input type="range" id="u3S" min="-3" max="3" step="0.5" value="-2"><span class="val" id="u3V">-2</span></div>
+        <label class="muted"><input type="checkbox" id="showPlane"> ganze Ebene anzeigen (nicht nur das Dach)</label>
+      </div>
+      <div class="formula" id="expLGS"></div>
+      <div class="fb info" id="expInfo" style="display:block"></div>
+      <details id="expQ"><summary>Frage zum Nachdenken</summary><div id="expQText"></div></details>
+    </div>
+
+  </div>
+</div>
+</div>
+<footer>FBG Schwerte · Mathematik GK · Kapitel VI Ebenen</footer>
+
+<script>
+/* ---------- Hilfsfunktionen ---------- */
+const $ = id => document.getElementById(id);
+const fmt = (x, d=2) => { let v = Math.round(x*10**d)/10**d; if (Object.is(v,-0)) v = 0; return String(v).replace('.', ',').replace('-', '−'); };
+const texNum = (x, d=2) => { let v = Math.round(x*10**d)/10**d; if (Object.is(v,-0)) v = 0; return String(v).replace('.', '{,}'); };
+function tex(el, s, display=false){ if (window.katex) katex.render(s, el, {throwOnError:false, displayMode:display}); else el.textContent = s; }
+const add = (a,b)=>a.map((v,i)=>v+b[i]), mul=(k,a)=>a.map(v=>k*v), sub=(a,b)=>a.map((v,i)=>v-b[i]);
+const dot=(a,b)=>a[0]*b[0]+a[1]*b[1]+a[2]*b[2];
+const cross=(a,b)=>[a[1]*b[2]-a[2]*b[1], a[2]*b[0]-a[0]*b[2], a[0]*b[1]-a[1]*b[0]];
+const col = v => `\\begin{pmatrix}${v.map(x=>texNum(x)).join('\\\\')}\\end{pmatrix}`;
+
+/* ---------- Szene ---------- */
+const A=[5,-4,0], AB=[1,2,0], AC=[-2,1,1];
+const B=add(A,AB), C=add(A,AC);
+const N=cross(AB,AC), dN=dot(N,A);          // Ebene: 2x1 - x2 + 5x3 = 14
+const RMAX=4, SMAX=3;
+const RAYS={
+  '1':{L:[3,3,5], u:[1,-1,-2]},
+  '2':{L:[3,3,5], u:[1,-3,-1]},
+  '3':{L:[3,-3,1], u:[1,2,0]},
+  'free':{L:[3,3,5], u:[1,-1,-2]}
+};
+const state={phi:0.62, theta:0.38, scale:36, r:0, s:0, t:0, ray:'1', showChain:true, showRay:true, showPlane:false, solved:false};
+
+function solveHit(L,u){ // L + t u = A + r AB + s AC
+  const M=[[u[0],-AB[0],-AC[0]],[u[1],-AB[1],-AC[1]],[u[2],-AB[2],-AC[2]]];
+  const b=sub(A,L);
+  const det3=m=>m[0][0]*(m[1][1]*m[2][2]-m[1][2]*m[2][1])-m[0][1]*(m[1][0]*m[2][2]-m[1][2]*m[2][0])+m[0][2]*(m[1][0]*m[2][1]-m[1][1]*m[2][0]);
+  const D=det3(M);
+  if (Math.abs(D)<1e-9){ return {type: Math.abs(dot(N,L)-dN)<1e-9 ? 'inplane':'parallel'}; }
+  const rep=(k)=>M.map((row,i)=>row.map((v,j)=>j===k?b[i]:v));
+  return {type:'point', t:det3(rep(0))/D, r:det3(rep(1))/D, s:det3(rep(2))/D};
+}
+
+/* ---------- Projektion ---------- */
+const CENTER=[3.5,1.5,1.8], W=640, H=520;
+function P(p){
+  const q=sub(p,CENTER);
+  const sp=Math.sin(state.phi), cp=Math.cos(state.phi);
+  const h=-q[0]*sp+q[1]*cp, d=q[0]*cp+q[1]*sp;
+  const v=q[2]*Math.cos(state.theta)-d*Math.sin(state.theta);
+  return [W/2+state.scale*h, H/2+10-state.scale*v];
+}
+const pt=p=>P(p).map(v=>v.toFixed(1)).join(',');
+
+function line(a,b,color,w=2,dash=''){ const [x1,y1]=P(a),[x2,y2]=P(b); return `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${color}" stroke-width="${w}" ${dash?`stroke-dasharray="${dash}"`:''} stroke-linecap="round"/>`; }
+function arrow(a,b,color,w=3,dash=''){
+  const [x1,y1]=P(a),[x2,y2]=P(b); const dx=x2-x1, dy=y2-y1, L=Math.hypot(dx,dy);
+  if (L<2) return '';
+  const ux=dx/L, uy=dy/L, hl=Math.min(13,L*0.45), hw=hl*0.5;
+  const bx=x2-ux*hl, by=y2-uy*hl;
+  return `<line x1="${x1}" y1="${y1}" x2="${bx}" y2="${by}" stroke="${color}" stroke-width="${w}" ${dash?`stroke-dasharray="${dash}"`:''} stroke-linecap="round"/>`+
+   `<polygon points="${x2},${y2} ${bx-uy*hw},${by+ux*hw} ${bx+uy*hw},${by-ux*hw}" fill="${color}"/>`;
+}
+function label(p,text,color='#1f2933',dx=6,dy=-6,size=15,weight=600){ const [x,y]=P(p); return `<text x="${x+dx}" y="${y+dy}" fill="${color}" font-size="${size}" font-weight="${weight}" font-family="Georgia,serif" paint-order="stroke" stroke="#fff" stroke-width="3">${text}</text>`; }
+function dotAt(p,color,r=5,fill=null){ const [x,y]=P(p); return `<circle cx="${x}" cy="${y}" r="${r}" fill="${fill??color}" stroke="${color}" stroke-width="2"/>`; }
+const roofPt=(r,s)=>add(A,add(mul(r,AB),mul(s,AC)));
+
+function render(){
+  let g='';
+  // Bodenraster (x1x2-Ebene)
+  for(let i=-2;i<=10;i++) g+=line([i,-6,0],[i,8,0],'#dfe6ee',1);
+  for(let j=-6;j<=8;j++) g+=line([-2,j,0],[10,j,0],'#dfe6ee',1);
+  // Achsen
+  const O=[0,0,0];
+  g+=arrow(O,[11,0,0],'#555',1.6)+arrow(O,[0,9,0],'#555',1.6)+arrow(O,[0,0,7],'#555',1.6);
+  g+=label([11,0,0],'x₁','#333',4,14,15)+label([0,9,0],'x₂','#333',4,-4,15)+label([0,0,7],'x₃','#333',6,4,15);
+  for(let k=2;k<=10;k+=2) g+=label([k,0,0],k,'#888',-4,16,11,400);
+  for(let k=2;k<=8;k+=2) g+=label([0,k,0],k,'#888',-3,16,11,400);
+  for(let k=2;k<=6;k+=2) g+=label([0,0,k],k,'#888',-18,4,11,400);
+
+  const ray=RAYS[state.ray];
+  const hit=solveHit(ray.L,ray.u);
+  // Strahlbereich
+  let tEnd=3.5; if (ray.u[2]<0) tEnd=Math.min(tEnd,ray.L[2]/(-ray.u[2]));
+  if (state.ray==='3') tEnd=3;
+  const tHit=(hit.type==='point'&&hit.t>0)?hit.t:null;
+
+  // Ebene (optional)
+  if (state.showPlane){
+    const c=[[-3,-3],[7,-3],[7,6],[-3,6]].map(([r,s])=>pt(roofPt(r,s))).join(' ');
+    g+=`<polygon points="${c}" fill="rgba(232,168,0,0.10)" stroke="rgba(185,134,0,0.5)" stroke-dasharray="6 5"/>`;
+  }
+  // verdeckter Strahlteil (hinter/unter dem Dach) zuerst
+  if (tHit!==null && tHit<tEnd) g+=line(add(ray.L,mul(tHit,ray.u)),add(ray.L,mul(tEnd,ray.u)),'#e67e22',2.5,'5 6');
+  // Dachplatten
+  for(let i=0;i<RMAX;i++) for(let j=0;j<SMAX;j++){
+    const poly=[roofPt(i,j),roofPt(i+1,j),roofPt(i+1,j+1),roofPt(i,j+1)].map(pt).join(' ');
+    const f=(i+j)%2? 'rgba(206,218,230,0.82)':'rgba(236,241,246,0.82)';
+    g+=`<polygon points="${poly}" fill="${f}" stroke="#8fa3b8" stroke-width="1"/>`;
+  }
+  // erste Platte hervorheben
+  g+=`<polygon points="${[roofPt(0,0),roofPt(1,0),roofPt(1,1),roofPt(0,1)].map(pt).join(' ')}" fill="rgba(232,168,0,0.18)" stroke="#e8a800" stroke-width="2.5"/>`;
+  g+=dotAt(A,'#1f2933',3.5)+dotAt(B,'#1f2933',3.5)+dotAt(C,'#1f2933',3.5);
+  g+=label(A,'A','#1f2933',-16,14)+label(B,'B','#1f2933',4,16)+label(C,'C','#1f2933',-16,-4);
+
+  // Vektorkette (Schritt 2)
+  if (state.showChain && state.ray!=='free'){
+    const pA=A, pR=roofPt(state.r,0), pX=roofPt(state.r,state.s);
+    g+=arrow(O,pA,'#2c6fbb',3);
+    if (state.r>0) g+=arrow(pA,pR,'#2e9e4f',3.5);
+    if (state.s>0) g+=arrow(pR,pX,'#8e44ad',3.5);
+    g+=dotAt(pX,'#1f2933',5,'#fff')+label(pX,'X','#1f2933',8,-8);
+  }
+  // Strahl sichtbarer Teil
+  const tVis=tHit!==null?Math.min(tHit,tEnd):tEnd;
+  g+=line(ray.L,add(ray.L,mul(tVis,ray.u)),'#e67e22',4);
+  // Scheinwerfer
+  g+=dotAt(ray.L,'#e67e22',7,'#ffe3b3')+label(ray.L,'L','#b35c00',10,-8);
+  // Strahlpunkt (Schritt 3)
+  if (state.showRay && state.ray==='1'){
+    g+=arrow(O,ray.L,'#2c6fbb',2,'4 4');
+    const pY=add(ray.L,mul(state.t,ray.u));
+    if (state.t>0) g+=arrow(ray.L,pY,'#e67e22',3.5);
+    g+=dotAt(pY,'#b35c00',5,'#fff')+label(pY,'Y','#b35c00',8,14);
+  }
+  // Auftreffpunkt
+  if (hit.type==='point' && hit.t>0){
+    const S=add(ray.L,mul(hit.t,ray.u));
+    const inside= hit.r>=-1e-9&&hit.r<=RMAX+1e-9&&hit.s>=-1e-9&&hit.s<=SMAX+1e-9;
+    g+=`<circle cx="${P(S)[0]}" cy="${P(S)[1]}" r="9" fill="none" stroke="#d62828" stroke-width="3"/>`;
+    if (state.ray==='1') g+=label(S, state.solved?'S(5|1|1)':'S(?|?|?)','#d62828',12,-10,15);
+    else if (state.ray==='free') g+=label(S, inside?'S':'S (außerhalb des Dachs)','#d62828',12,-10,14);
+  }
+  $('scene').innerHTML=g;
+}
+
+/* ---------- Drehen ---------- */
+(function(){
+  const svg=$('scene'); let drag=null;
+  svg.addEventListener('pointerdown',e=>{drag={x:e.clientX,y:e.clientY,phi:state.phi,theta:state.theta}; svg.setPointerCapture(e.pointerId);});
+  svg.addEventListener('pointermove',e=>{ if(!drag) return;
+    state.phi=drag.phi-(e.clientX-drag.x)*0.008;
+    state.theta=Math.max(-0.15,Math.min(1.45,drag.theta+(e.clientY-drag.y)*0.008)); render(); });
+  const end=()=>drag=null; svg.addEventListener('pointerup',end); svg.addEventListener('pointercancel',end);
+  $('resetView').onclick=()=>{state.phi=0.62;state.theta=0.38;state.scale=36;render();};
+  $('zoomIn').onclick=()=>{state.scale=Math.min(60,state.scale*1.15);render();};
+  $('zoomOut').onclick=()=>{state.scale=Math.max(14,state.scale/1.15);render();};
+})();
+
+/* ---------- Schritt 2: Vektorkette ---------- */
+function updChain(){
+  state.r=+$('rS').value; state.s=+$('sS').value;
+  $('rV').textContent=fmt(state.r,1); $('sV').textContent=fmt(state.s,1);
+  const X=roofPt(state.r,state.s);
+  tex($('chainF'),`\\begin{aligned}\\vec{OX}&=\\vec{OA}+r\\cdot\\vec{AB}+s\\cdot\\vec{AC}\\\\&=${col(A)}+${texNum(state.r,1)}\\cdot${col(AB)}+${texNum(state.s,1)}\\cdot${col(AC)}=${col(X)}\\end{aligned}`,true);
+  const fb=$('chainFb');
+  if (Math.abs(state.r-2)<0.05&&Math.abs(state.s-1)<0.05){ fb.className='fb ok'; fb.innerHTML='Treffer! Mit r = 2 und s = 1 liegt X genau auf der Auftreffstelle: zwei Platten in Richtung AB, eine Platte in Richtung AC.'; }
+  else { fb.className='fb'; }
+  render();
+}
+['rS','sS'].forEach(id=>$(id).addEventListener('input',updChain));
+$('showChain').addEventListener('change',e=>{state.showChain=e.target.checked;render();});
+
+/* ---------- Schritt 3: Strahl ---------- */
+function updRay(){
+  state.t=+$('tS').value; $('tV').textContent=fmt(state.t,1);
+  const L=RAYS['1'].L,u=RAYS['1'].u, Y=add(L,mul(state.t,u));
+  tex($('rayF'),`\\vec{OY}=${col(L)}+${texNum(state.t,1)}\\cdot${col(u)}=${col(Y)}`,true);
+  const fb=$('rayFb');
+  if (Math.abs(state.t-2)<0.05){ fb.className='fb ok'; fb.innerHTML='Genau! Für t = 2 erreicht der Strahl das Dach.'; }
+  else if (state.t>2.05){ fb.className='fb info'; fb.innerHTML='Jetzt ist Y schon unter dem Dach. Der Strahl ist dort gar nicht mehr sichtbar (gestrichelt).'; }
+  else fb.className='fb';
+  render();
+}
+$('tS').addEventListener('input',updRay);
+$('showRay').addEventListener('change',e=>{state.showRay=e.target.checked;render();});
+
+/* ---------- Schritt 4: LGS ---------- */
+const LGS=[[1,-1,2,2],[1,2,1,7],[2,0,1,5]];
+const HINTS=[
+  'x_1:\\quad 3+1\\cdot t = 5+1\\cdot r+(-2)\\cdot s \\;\\Rightarrow\\; t-r+2s=2',
+  'x_2:\\quad 3+(-1)\\cdot t = -4+2\\cdot r+1\\cdot s \\;\\Rightarrow\\; -t-2r-s=-7\\ \\text{bzw.}\\ t+2r+s=7',
+  'x_3:\\quad 5+(-2)\\cdot t = 0+0\\cdot r+1\\cdot s \\;\\Rightarrow\\; -2t-s=-5\\ \\text{bzw.}\\ 2t+s=5'
+];
+(function(){
+  const g=$('lgsGrid'); const names=['I','II','III'];
+  let h='';
+  names.forEach((n,i)=>{
+    h+=`<span class="lab">${n}</span>`;
+    ['t','r','s'].forEach((v,j)=>{ h+=`<span><input id="c${i}${j}" inputmode="numeric" aria-label="Koeffizient ${v} in ${n}"> <span class="m" data-tex="${j>0?'':''}${v}"></span>${j<2?' +':''}</span>`; });
+    h+=`<span class="m" data-tex="="></span><span><input id="c${i}3" inputmode="numeric" aria-label="rechte Seite ${n}"></span>`;
+  });
+  g.innerHTML=h;
+})();
+function readNum(s){ s=(s||'').trim().replace(',', '.').replace('−','-'); if(s===''||s==='+') return 0; if(s==='-') return -1; const v=Number(s); return isNaN(v)?null:v; }
+function rowMatches(inp,ref){ // Vielfaches erlaubt
+  let k=null;
+  for(let j=0;j<4;j++){ if(ref[j]!==0){ k=inp[j]/ref[j]; break; } }
+  if (k===null||!isFinite(k)||Math.abs(k)<1e-12) return false;
+  return ref.every((v,j)=>Math.abs(inp[j]-k*v)<1e-9);
+}
+let hintLevel=0;
+$('lgsCheck').onclick=()=>{
+  let allOk=true;
+  for(let i=0;i<3;i++){
+    const inp=[0,1,2,3].map(j=>readNum($(`c${i}${j}`).value));
+    const ok=!inp.includes(null)&&rowMatches(inp,LGS[i]);
+    for(let j=0;j<4;j++) $(`c${i}${j}`).className= ok?'good':'bad';
+    allOk=allOk&&ok;
+  }
+  const fb=$('lgsFb');
+  if(allOk){ fb.className='fb ok'; fb.innerHTML='Richtig! Das ist ein <strong>lineares Gleichungssystem (LGS)</strong> mit drei Gleichungen und drei Unbekannten.'; }
+  else { fb.className='fb no'; fb.innerHTML='Noch nicht ganz. Rot markierte Zeilen prüfen. Achte auf die Vorzeichen beim Herüberbringen und denke daran: Fehlt eine Unbekannte, ist ihr Koeffizient 0.'; }
+};
+$('lgsHint').onclick=()=>{
+  const box=$('lgsHintBox'); box.classList.remove('hidden');
+  hintLevel=Math.min(hintLevel+1,3);
+  box.innerHTML=HINTS.slice(0,hintLevel).map(()=>'<div></div>').join('');
+  [...box.children].forEach((d,i)=>tex(d,HINTS[i]));
+};
+$('lgsShow').onclick=()=>{
+  LGS.forEach((row,i)=>row.forEach((v,j)=>{ $(`c${i}${j}`).value= v===0?'0':String(v).replace('-','−'); }));
+  $('lgsCheck').onclick();
+};
+
+/* ---------- Schritt 5 ---------- */
+$('SCheck').onclick=()=>{
+  const v=['S1','S2','S3'].map(id=>readNum($(id).value)); const fb=$('SFb');
+  if (v[0]===5&&v[1]===1&&v[2]===1){ state.solved=true; fb.className='fb ok'; fb.innerHTML='Richtig: t = 2, r = 2, s = 1 und damit S(5|1|1). Probe mit dem Dach: A + 2·AB + 1·AC = (5|−4|0) + (2|4|0) + (−2|1|1) = (5|1|1) ✓'; render(); }
+  else { fb.className='fb no'; fb.innerHTML='Noch nicht. Der Rechner liefert t = 2 (sowie r = 2, s = 1). Setze t = 2 in die Geradengleichung ein: OL + 2·u.'; }
+};
+
+/* ---------- Schritt 6: Experimente ---------- */
+const QTEXT={
+  '1':'Strahl 1 trifft das Dach in genau einem Punkt: Das LGS hat <strong>genau eine Lösung</strong>.',
+  '2':'Welche Lage hat Strahl 2 zum Dach? Vergleiche <span class="m" data-tex="\\vec u=\\begin{pmatrix}1\\\\-3\\\\-1\\end{pmatrix}"></span> mit <span class="m" data-tex="-\\vec{AB}-\\vec{AC}"></span>. Was sagt der Taschenrechner zum LGS? <br><em>Antwort:</em> Der Strahl verläuft parallel zum Dach und trifft es nie. Das LGS hat <strong>keine Lösung</strong>.',
+  '3':'Strahl 3 startet auf dem Dach und läuft in Richtung <span class="m" data-tex="\\vec{AB}"></span>. Wie viele gemeinsame Punkte gibt es? <br><em>Antwort:</em> Unendlich viele – der Strahl liegt im Dach. Das LGS hat <strong>unendlich viele Lösungen</strong>.',
+  'free':'Finde eine Richtung, bei der der Strahl das Dach verfehlt, aber die (unbegrenzte) Ebene trotzdem trifft. Schalte dazu „ganze Ebene anzeigen“ ein. Finde auch eine Richtung, bei der es gar keinen Treffpunkt gibt.'
+};
+function sgnTerm(c,v,first){ if(c===0) return ''; const a=Math.abs(c); const s=c<0?'-':(first?'':'+'); return `${s}${a===1?'':texNum(a)}${v}`; }
+function lgsTex(L,u){
+  const rows=[0,1,2].map(i=>{ const cs=[u[i],-AB[i],-AC[i]], rhs=A[i]-L[i];
+    let t='',first=true; ['t','r','s'].forEach((v,j)=>{ const term=sgnTerm(cs[j],v,first); if(term){t+=term;first=false;} });
+    if(!t) t='0'; return `${['\\text{I}','\\text{II}','\\text{III}'][i]}: & ${t} = ${texNum(rhs)}`; });
+  return `\\begin{array}{rl}${rows.join('\\\\')}\\end{array}`;
+}
+function updExp(){
+  state.ray=document.querySelector('input[name=ray]:checked').value;
+  $('freeCtl').classList.toggle('hidden',state.ray!=='free');
+  if(state.ray==='free'){ const u=['u1S','u2S','u3S'].map(id=>+$(id).value); RAYS.free.u=u; ['u1','u2','u3'].forEach((n,i)=>$(n+'V').textContent=fmt(u[i],1)); }
+  const R=RAYS[state.ray];
+  tex($('expLGS'),`${col(R.L)}+t\\cdot${col(R.u)}=${col(A)}+r\\cdot${col(AB)}+s\\cdot${col(AC)}\\\\[4pt]\\Longrightarrow\\quad ${lgsTex(R.L,R.u)}`,true);
+  const h=solveHit(R.L,R.u), info=$('expInfo');
+  if(h.type==='point'){
+    const S=add(R.L,mul(h.t,R.u)); const inside=h.r>=-1e-9&&h.r<=RMAX+1e-9&&h.s>=-1e-9&&h.s<=SMAX+1e-9;
+    if(h.t<0) info.innerHTML=`Der Scheinwerfer zeigt vom Dach weg. Die Gerade (in Gegenrichtung verlängert) träfe die Ebene bei t = ${fmt(h.t)}.`;
+    else info.innerHTML=`Genau eine Lösung: t = ${fmt(h.t)}, r = ${fmt(h.r)}, s = ${fmt(h.s)} ⟹ Treffpunkt (${fmt(S[0])} | ${fmt(S[1])} | ${fmt(S[2])})`+(inside?' – auf dem Dach.':' – <strong>außerhalb des Dachs</strong>, aber in der Ebene.');
+    if(state.ray==='1' && !state.solved) info.innerHTML='Genau eine Lösung – die Werte hast du in Schritt 5 bestimmt.';
+  } else if(h.type==='parallel') info.innerHTML='Keine Lösung: Der Strahl verläuft parallel zum Dach.';
+  else info.innerHTML='Unendlich viele Lösungen: Der Strahl liegt im Dach.';
+  $('expQText').innerHTML=QTEXT[state.ray]; renderMath($('expQText'));
+  render();
+}
+document.querySelectorAll('input[name=ray]').forEach(r=>r.addEventListener('change',updExp));
+['u1S','u2S','u3S'].forEach(id=>$(id).addEventListener('input',updExp));
+$('showPlane').addEventListener('change',e=>{state.showPlane=e.target.checked;render();});
+
+/* ---------- Start ---------- */
+function renderMath(root=document){
+  root.querySelectorAll('.m[data-tex]').forEach(el=>tex(el,el.dataset.tex));
+  // Inline \( \) in Legenden
+  root.querySelectorAll('.legend span').forEach(el=>{ if(el.dataset.done) return; el.dataset.done=1; el.innerHTML=el.innerHTML.replace(/\\\((.+?)\\\)/g,(m,t)=>{ try{return katex.renderToString(t);}catch(e){return t;} }); });
+}
+window.addEventListener('load',()=>{ renderMath(); updChain(); updRay(); updExp(); render(); });
+</script>
+</body>
+</html>
