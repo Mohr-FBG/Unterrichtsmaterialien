@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Klausurtraining – Prüfungsteil 1 (ohne Hilfsmittel)</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Source+Sans+3:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --gold:#e8a800; --gold-deep:#b98300; --blue:#2b6cb0; --green:#2f9e44;
+    --orange:#e8720c; --purple:#8a4fd1; --pink:#d6336c;
+    --ink:#22262e; --ink-soft:#565d68; --paper:#ffffff; --bg:#f4f5f7; --line:#dde1e6;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{ font-family:'Source Sans 3', system-ui, sans-serif; background:var(--bg); color:var(--ink); line-height:1.55; padding-bottom:60px; }
+  h1,h2,h3{ font-family:'Fraunces', Georgia, serif; font-weight:600; margin:0 0 6px 0; }
+  header{ background:linear-gradient(135deg, var(--gold) 0%, var(--gold-deep) 100%); color:#2a1d00; padding:22px clamp(16px,4vw,48px); }
+  header .eyebrow{ font-size:0.85rem; font-weight:600; color:#4a3400; margin-bottom:2px; }
+  header h1{ font-size:clamp(1.3rem, 3vw, 1.9rem); color:#221800; }
+  main{ max-width:920px; margin:0 auto; padding:22px clamp(14px,4vw,32px); }
+  a.back{ display:inline-block; margin-bottom:14px; color:var(--blue); text-decoration:none; font-weight:600; font-size:0.92rem; }
+  section{margin-bottom:38px;}
+  .card{ background:var(--paper); border:1px solid var(--line); border-radius:10px; padding:18px 20px; }
+  .lead{ color:var(--ink-soft); font-size:0.98rem; }
+  .formula-box{ display:inline-block; background:#f3f8fd; border:1.5px solid var(--blue); border-radius:8px; padding:8px 14px; font-size:1.02rem; margin:4px 8px 4px 0; }
+  .ref-grid{ display:grid; grid-template-columns:1fr; gap:14px; }
+  .ref-card{ border-left:4px solid var(--gold-deep); background:#fff9ec; border-radius:8px; padding:14px 18px; }
+  .ref-card h3{ font-size:1.02rem; margin-bottom:8px; }
+  .ref-card ul{ margin:4px 0 4px 18px; padding:0; }
+  .ref-card li{ margin-bottom:3px; }
+  .tier-heading{ display:flex; align-items:center; gap:10px; margin-bottom:14px; flex-wrap:wrap; }
+  .tier-chip{ font-weight:700; font-size:0.82rem; letter-spacing:.02em; padding:4px 12px; border-radius:999px; color:#fff; }
+  .tier-chip.a{ background:var(--green); } .tier-chip.b{ background:var(--orange); } .tier-chip.c{ background:var(--purple); }
+  .tier-note{ color:var(--ink-soft); font-size:0.9rem; }
+  .task{ background:var(--paper); border:1px solid var(--line); border-radius:10px; padding:16px 18px; margin-bottom:14px; }
+  .task.a{ border-left:5px solid var(--green); } .task.b{ border-left:5px solid var(--orange); } .task.c{ border-left:5px solid var(--purple); }
+  .task h4{ font-family:'Fraunces', Georgia, serif; font-size:1.02rem; margin:0 0 8px 0; display:flex; justify-content:space-between; gap:10px; flex-wrap:wrap; }
+  .task h4 .time{ font-family:'Source Sans 3', sans-serif; font-weight:600; font-size:0.8rem; color:var(--ink-soft); background:#eef0f3; border-radius:999px; padding:2px 10px; white-space:nowrap; }
+  .task p{ margin:0 0 8px 0; }
+  .task .sub{ margin:6px 0 6px 18px; }
+  .task .sub b{ display:inline-block; min-width:1.4em; }
+  .disp{ overflow-x:auto; overflow-y:hidden; padding:2px 0; }
+  details{ margin-top:8px; border-top:1px dashed var(--line); padding-top:6px; }
+  details summary{ cursor:pointer; font-weight:600; font-size:0.9rem; color:var(--ink-soft); list-style:none; }
+  details summary::-webkit-details-marker{ display:none; }
+  details summary::before{ content:"▸ "; }
+  details[open] summary::before{ content:"▾ "; }
+  details.tipp summary{ color:var(--gold-deep); }
+  details.loesung summary{ color:var(--blue); }
+  details .inner{ padding:8px 4px 4px 4px; font-size:0.95rem; overflow-x:auto; }
+  details .inner div, details .inner p{ margin:0 0 5px 0; }
+  .ti{ background:#f1f3f5; border-left:3px solid #6b7280; border-radius:6px; padding:6px 10px; font-size:0.9rem; margin:6px 0; }
+  .ti code{ font-family:ui-monospace, Menlo, Consolas, monospace; font-size:0.86rem; background:#e6e9ed; padding:1px 4px; border-radius:4px; }
+  .ok{ color:var(--green); font-weight:700; }
+  figure{ margin:8px 0; text-align:center; }
+  figure svg{ max-width:100%; height:auto; }
+  figcaption{ font-size:0.82rem; color:var(--ink-soft); font-style:italic; }
+  .checklist{ list-style:none; margin:0; padding:0; }
+  .checklist li{ display:flex; align-items:flex-start; gap:10px; padding:7px 0; border-bottom:1px solid var(--line); }
+  .checklist li:last-child{ border-bottom:none; }
+  .checklist label{ display:block; flex:1; position:relative; padding-left:28px; }
+  .checklist input{ position:absolute; left:0; top:3px; width:18px; height:18px; margin:0; accent-color:var(--gold-deep); }
+  .checklist .ref{ margin-left:auto; font-size:0.8rem; color:var(--ink-soft); white-space:nowrap; padding-left:8px; }
+  table.plan{ border-collapse:collapse; width:100%; font-size:0.94rem; }
+  table.plan th, table.plan td{ border-bottom:1px solid var(--line); padding:6px 8px; text-align:left; vertical-align:top; }
+  table.plan th{ background:#fff4d6; }
+  .page-grid{ display:grid; grid-template-columns:1fr; gap:16px; }
+  a.page-card{ display:block; background:var(--paper); border:1px solid var(--line); border-left:5px solid var(--blue); border-radius:10px; padding:18px 20px; text-decoration:none; color:var(--ink); transition:transform .1s, box-shadow .15s; }
+  a.page-card:hover{ transform:translateY(-1px); box-shadow:0 6px 16px rgba(0,0,0,0.08); }
+  a.page-card .tag{ display:inline-block; font-size:0.75rem; font-weight:700; letter-spacing:.02em; padding:2px 10px; border-radius:999px; margin-bottom:8px; background:#e7f0fa; color:var(--blue); }
+  a.page-card.einstieg{ border-left-color:var(--green); } a.page-card.einstieg .tag{ background:#e6f5ea; color:var(--green); }
+  a.page-card.uebung{ border-left-color:var(--orange); } a.page-card.uebung .tag{ background:#fdefe3; color:var(--orange); }
+  a.page-card.cas{ border-left-color:var(--purple); } a.page-card.cas .tag{ background:#f1e9fb; color:var(--purple); }
+  a.page-card h2{ font-size:1.15rem; margin-bottom:4px; }
+  a.page-card p{ margin:0; color:var(--ink-soft); font-size:0.95rem; }
+  .topic h3{ font-size:1.08rem; margin-bottom:6px; }
+  .topic{ margin-bottom:16px; }
+  .notexam{ border-left:4px solid #b8bec7; background:#f6f7f9; border-radius:8px; padding:10px 14px; color:var(--ink-soft); font-size:0.94rem; }
+  footer{ text-align:center; color:var(--ink-soft); font-size:0.82rem; padding:20px; }
+  @media print{ details{ display:block; } header{ -webkit-print-color-adjust:exact; print-color-adjust:exact; } }
+</style>
+</head>
+<body>
+<header>
+  <div class="eyebrow">Klausurvorbereitung &middot; Klausur am 16.10.2026</div>
+  <h1>Training Prüfungsteil 1: Rechnen ohne Hilfsmittel</h1>
+</header>
+<main>
+<a class="back" href="index.html">&larr; Klausurvorbereitung</a>
+
+<section id="intro">
+  <div class="card">
+    <p class="lead" style="margin-top:0;">Im ersten Prüfungsteil (30 Minuten) arbeitest du <strong>ohne Taschenrechner und ohne Formelsammlung</strong>. Die Zahlen sind so gewählt, dass alles im Kopf oder schriftlich aufgeht. Hier trainierst du genau das. Bearbeitungszeit für alle Aufgaben: <strong>ca. 100 Minuten</strong>.</p>
+    <p class="lead">So arbeitest du am besten: Leg den Taschenrechner weg, schreib deine Rechnung vollständig auf und öffne Tipp und Lösung erst, wenn du es selbst versucht hast. Die Zeitangabe an jeder Aufgabe zeigt dir, wie schnell du in der Klausur ungefähr sein solltest.</p>
+    <div class="formula-box"><span class="math" data-tex="|\vec{AB}|=\sqrt{(b_1-a_1)^2+(b_2-a_2)^2+(b_3-a_3)^2}"></span></div>
+    <div class="formula-box"><span class="math" data-tex="\vec a\perp\vec b\iff\vec a\circ\vec b=0"></span></div>
+    <div class="formula-box"><span class="math" data-tex="\cos(\alpha)=\dfrac{\vec a\circ\vec b}{|\vec a|\cdot|\vec b|}"></span></div>
+  </div>
+</section>
+
+<section id="werte">
+  <div class="ref-card">
+    <h3>Diese Kosinuswerte solltest du ohne Taschenrechner kennen</h3>
+    <div class="disp"><span class="math display" data-tex="\begin{array}{c|ccccccc}\alpha &amp; 0^\circ &amp; 30^\circ &amp; 45^\circ &amp; 60^\circ &amp; 90^\circ &amp; 120^\circ &amp; 135^\circ\\\hline \cos(\alpha) &amp; 1 &amp; \tfrac12\sqrt3 &amp; \tfrac12\sqrt2 &amp; \tfrac12 &amp; 0 &amp; -\tfrac12 &amp; -\tfrac12\sqrt2\end{array}"></span></div>
+    <p class="lead" style="margin:4px 0 0 0;">Merkhilfe: <span class="math" data-tex="\tfrac12\sqrt2=\tfrac{1}{\sqrt2}"></span>. Bringe Ergebnisse wie <span class="math" data-tex="\tfrac{3}{3\sqrt2}"></span> zuerst in diese Form.</p>
+  </div>
+</section>
+
+<!-- ============== STUFE A ============== -->
+<section id="tier-a">
+  <div class="tier-heading"><span class="tier-chip a">STUFE A &middot; GRUNDLAGEN</span><span class="tier-note">So sehen die Pflichtaufgaben aus.</span></div>
+
+  <div class="task a">
+    <h4><span>H1 &middot; Punkte, Abstände, Parallelogramm</span><span class="time">⏱ ca. 10 min</span></h4>
+    <p>Gegeben sind die Punkte <span class="math" data-tex="P(2\mid-3\mid1)"></span>, <span class="math" data-tex="Q(4\mid3\mid-2)"></span> und <span class="math" data-tex="R(1\mid5\mid0)"></span>.</p>
+    <div class="sub"><b>a)</b> Berechnen Sie den Vektor <span class="math" data-tex="\vec{PQ}"></span> und den Abstand der Punkte <span class="math" data-tex="P"></span> und <span class="math" data-tex="Q"></span>.</div>
+    <div class="sub"><b>b)</b> Bestimmen Sie die Koordinaten des Mittelpunktes <span class="math" data-tex="M"></span> der Strecke <span class="math" data-tex="\overline{PQ}"></span>.</div>
+    <div class="sub"><b>c)</b> Ermitteln Sie die Koordinaten eines Punktes <span class="math" data-tex="S"></span>, sodass das Viereck <span class="math" data-tex="PQRS"></span> ein Parallelogramm ist.</div>
+    <details class="tipp"><summary>Tipp</summary><div class="inner">
+      <div>a) „Spitze minus Fuß“: <span class="math" data-tex="\vec{PQ}=\vec{OQ}-\vec{OP}"></span>. Der Abstand ist der Betrag dieses Vektors.</div>
+      <div>b) <span class="math" data-tex="\vec{OM}=\tfrac12\left(\vec{OP}+\vec{OQ}\right)"></span>.</div>
+      <div>c) Skizziere das Parallelogramm <span class="math" data-tex="PQRS"></span> (Ecken der Reihe nach!). Gegenüberliegende Seiten sind gleiche Vektoren: <span class="math" data-tex="\vec{PS}=\vec{QR}"></span>, also <span class="math" data-tex="\vec{OS}=\vec{OP}+\vec{QR}"></span>.</div>
+    </div></details>
+    <details class="loesung"><summary>Lösung</summary><div class="inner">
+      <div>a) <span class="math" data-tex="\vec{PQ}=\begin{pmatrix}4-2\\3-(-3)\\-2-1\end{pmatrix}=\begin{pmatrix}2\\6\\-3\end{pmatrix}"></span>, <span class="math" data-tex="\;|\vec{PQ}|=\sqrt{4+36+9}=\sqrt{49}=7"></span> [LE]</div>
+      <div>b) <span class="math" data-tex="\vec{OM}=\tfrac12\begin{pmatrix}2+4\\-3+3\\1-2\end{pmatrix}=\begin{pmatrix}3\\0\\-0{,}5\end{pmatrix}\Rightarrow M(3\mid0\mid-0{,}5)"></span></div>
+      <div>c) <span class="math" data-tex="\vec{QR}=\begin{pmatrix}-3\\2\\2\end{pmatrix}"></span>, <span class="math" data-tex="\;\vec{OS}=\begin{pmatrix}2\\-3\\1\end{pmatrix}+\begin{pmatrix}-3\\2\\2\end{pmatrix}=\begin{pmatrix}-1\\-1\\3\end{pmatrix}\Rightarrow S(-1\mid-1\mid3)"></span></div>
+    </div></details>
+  </div>
+
+  <div class="task a">
+    <h4><span>H2 &middot; Gerade, Punktprobe und Strecke</span><span class="time">⏱ ca. 10 min</span></h4>
+    <p>Die Gerade <span class="math" data-tex="g"></span> verläuft durch die Punkte <span class="math" data-tex="A(2\mid1\mid5)"></span> und <span class="math" data-tex="B(4\mid-1\mid3)"></span>.</p>
+    <div class="sub"><b>a)</b> Geben Sie eine Gleichung von <span class="math" data-tex="g"></span> in Parameterform an.</div>
+    <div class="sub"><b>b)</b> Prüfen Sie, ob der Punkt <span class="math" data-tex="C(6\mid-3\mid1)"></span> auf <span class="math" data-tex="g"></span> liegt. Liegt <span class="math" data-tex="C"></span> sogar auf der Strecke <span class="math" data-tex="\overline{AB}"></span>?</div>
+    <div class="sub"><b>c)</b> Bestimmen Sie den Punkt von <span class="math" data-tex="g"></span>, dessen <span class="math" data-tex="x_3"></span>-Koordinate null ist.</div>
+    <details class="tipp"><summary>Tipp</summary><div class="inner">
+      <div>a) Stützvektor <span class="math" data-tex="\vec{OA}"></span>, Richtungsvektor <span class="math" data-tex="\vec{AB}"></span>.</div>
+      <div>b) Punktprobe: drei Gleichungen, ein Parameter. Wenn du <span class="math" data-tex="\vec{AB}"></span> als Richtungsvektor nimmst, gehören genau die Parameterwerte <span class="math" data-tex="0\le r\le1"></span> zur Strecke <span class="math" data-tex="\overline{AB}"></span>.</div>
+      <div>c) Setze nur die dritte Zeile gleich null, berechne <span class="math" data-tex="r"></span> und setze <span class="math" data-tex="r"></span> in die Geradengleichung ein.</div>
+    </div></details>
+    <details class="loesung"><summary>Lösung</summary><div class="inner">
+      <div>a) <span class="math" data-tex="g\colon\vec x=\begin{pmatrix}2\\1\\5\end{pmatrix}+r\cdot\begin{pmatrix}2\\-2\\-2\end{pmatrix},\ r\in\mathbb R"></span></div>
+      <div>b) I: <span class="math" data-tex="2+2r=6\Rightarrow r=2"></span>; II: <span class="math" data-tex="1-2r=-3\Rightarrow r=2"></span>; III: <span class="math" data-tex="5-2r=1\Rightarrow r=2"></span>. Alle Zeilen liefern <span class="math" data-tex="r=2"></span>, also <span class="ok">liegt <span class="math" data-tex="C"></span> auf <span class="math" data-tex="g"></span></span>. Wegen <span class="math" data-tex="r=2&gt;1"></span> liegt <span class="math" data-tex="C"></span> aber <strong>nicht</strong> auf der Strecke <span class="math" data-tex="\overline{AB}"></span> – <span class="math" data-tex="C"></span> liegt hinter <span class="math" data-tex="B"></span>.</div>
+      <div>c) <span class="math" data-tex="5-2r=0\Rightarrow r=2{,}5"></span>: <span class="math" data-tex="\;\vec x=\begin{pmatrix}2+5\\1-5\\5-5\end{pmatrix}\Rightarrow (7\mid-4\mid0)"></span></div>
+    </div></details>
+  </div>
+
+  <div class="task a">
+    <h4><span>H3 &middot; Skalarprodukt und Orthogonalität</span><span class="time">⏱ ca. 10 min</span></h4>
+    <div class="sub"><b>a)</b> Gegeben sind <span class="math" data-tex="\vec u=\begin{pmatrix}3\\-2\\1\end{pmatrix}"></span>, <span class="math" data-tex="\vec v=\begin{pmatrix}2\\4\\2\end{pmatrix}"></span> und <span class="math" data-tex="\vec w=\begin{pmatrix}1\\1\\-1\end{pmatrix}"></span>. Welche dieser Vektoren stehen paarweise senkrecht aufeinander?</div>
+    <div class="sub"><b>b)</b> Für welche Werte von <span class="math" data-tex="k"></span> stehen die Vektoren <span class="math" data-tex="\begin{pmatrix}k\\2\\k\end{pmatrix}"></span> und <span class="math" data-tex="\begin{pmatrix}k\\-3\\1\end{pmatrix}"></span> senkrecht aufeinander?</div>
+    <div class="sub"><b>c)</b> Geben Sie einen Vektor an, der sowohl zu <span class="math" data-tex="\begin{pmatrix}1\\2\\0\end{pmatrix}"></span> als auch zu <span class="math" data-tex="\begin{pmatrix}0\\1\\3\end{pmatrix}"></span> orthogonal ist.</div>
+    <details class="tipp"><summary>Tipp</summary><div class="inner">
+      <div>a) Es gibt drei Paare: <span class="math" data-tex="\vec u,\vec v"></span> – <span class="math" data-tex="\vec u,\vec w"></span> – <span class="math" data-tex="\vec v,\vec w"></span>.</div>
+      <div>b) Das Skalarprodukt führt hier auf eine <strong>quadratische</strong> Gleichung. Löse sie mit der <span class="math" data-tex="pq"></span>-Formel oder durch Faktorisieren.</div>
+      <div>c) Wie in Kapitel V.2: Für <span class="math" data-tex="\vec n=\begin{pmatrix}n_1\\n_2\\n_3\end{pmatrix}"></span> zwei Gleichungen aufstellen. Eine Koordinate darfst du frei wählen, z. B. <span class="math" data-tex="n_3=1"></span>.</div>
+    </div></details>
+    <details class="loesung"><summary>Lösung</summary><div class="inner">
+      <div>a) <span class="math" data-tex="\vec u\circ\vec v=6-8+2=0"></span> ✓, <span class="math" data-tex="\;\vec u\circ\vec w=3-2-1=0"></span> ✓, <span class="math" data-tex="\;\vec v\circ\vec w=2+4-2=4\neq0"></span>. Also gilt <span class="math" data-tex="\vec u\perp\vec v"></span> und <span class="math" data-tex="\vec u\perp\vec w"></span>, aber <span class="math" data-tex="\vec v"></span> und <span class="math" data-tex="\vec w"></span> sind nicht orthogonal.</div>
+      <div>b) <span class="math" data-tex="k^2-6+k=0\iff k^2+k-6=0\iff(k+3)(k-2)=0\Rightarrow k=2"></span> oder <span class="math" data-tex="k=-3"></span>.</div>
+      <div>c) I: <span class="math" data-tex="n_1+2n_2=0"></span>, II: <span class="math" data-tex="n_2+3n_3=0"></span>. Mit <span class="math" data-tex="n_3=1"></span>: <span class="math" data-tex="n_2=-3"></span>, <span class="math" data-tex="n_1=6"></span>, also z. B. <span class="math" data-tex="\vec n=\begin{pmatrix}6\\-3\\1\end{pmatrix}"></span>. Probe: <span class="math" data-tex="6-6+0=0"></span> ✓ und <span class="math" data-tex="0-3+3=0"></span> ✓ (jedes Vielfache ist ebenfalls richtig).</div>
+    </div></details>
+  </div>
+</section>
+
+<!-- ============== STUFE B ============== -->
+<section id="tier-b">
+  <div class="tier-heading"><span class="tier-chip b">STUFE B &middot; ANWENDEN</span><span class="tier-note">So sehen typische Wahlaufgaben aus.</span></div>
+
+  <div class="task b">
+    <h4><span>H4 &middot; Lagebeziehungen ohne Taschenrechner</span><span class="time">⏱ ca. 12 min</span></h4>
+    <p>Untersuchen Sie jeweils die gegenseitige Lage der Geraden <span class="math" data-tex="g"></span> und <span class="math" data-tex="h"></span>. Bestimmen Sie gegebenenfalls den Schnittpunkt.</p>
+    <div class="sub"><b>a)</b> <span class="math" data-tex="g\colon\vec x=\begin{pmatrix}1\\0\\2\end{pmatrix}+r\begin{pmatrix}2\\1\\-1\end{pmatrix},\quad h\colon\vec x=\begin{pmatrix}5\\2\\0\end{pmatrix}+s\begin{pmatrix}-4\\-2\\2\end{pmatrix}"></span></div>
+    <div class="sub"><b>b)</b> <span class="math" data-tex="g\colon\vec x=\begin{pmatrix}0\\1\\1\end{pmatrix}+r\begin{pmatrix}1\\2\\0\end{pmatrix},\quad h\colon\vec x=\begin{pmatrix}2\\2\\3\end{pmatrix}+s\begin{pmatrix}1\\-1\\2\end{pmatrix}"></span></div>
+    <div class="sub"><b>c)</b> <span class="math" data-tex="g\colon\vec x=\begin{pmatrix}1\\1\\0\end{pmatrix}+r\begin{pmatrix}0\\1\\1\end{pmatrix},\quad h\colon\vec x=\begin{pmatrix}2\\0\\1\end{pmatrix}+s\begin{pmatrix}1\\0\\-1\end{pmatrix}"></span></div>
+    <details class="tipp"><summary>Tipp 1 – Ablauf</summary><div class="inner">
+      <div><strong>Schritt 1:</strong> Sind die Richtungsvektoren Vielfache voneinander? Ja → parallel oder identisch (Punktprobe entscheidet).</div>
+      <div><strong>Schritt 2:</strong> Nein → Gleichsetzen. Das LGS hat eine Lösung → Schnittpunkt; das LGS hat keine Lösung → windschief.</div>
+    </div></details>
+    <details class="tipp"><summary>Tipp 2 – geschickt rechnen</summary><div class="inner">
+      <div>Suche beim Gleichsetzen zuerst eine Zeile, in der nur <em>ein</em> Parameter vorkommt (bei b) die dritte, bei c) die erste und die zweite). Die übrige Zeile dient als Probe.</div>
+    </div></details>
+    <details class="loesung"><summary>Lösung</summary><div class="inner">
+      <div>a) <span class="math" data-tex="\begin{pmatrix}-4\\-2\\2\end{pmatrix}=-2\cdot\begin{pmatrix}2\\1\\-1\end{pmatrix}"></span> → parallel oder identisch. Punktprobe <span class="math" data-tex="(5\mid2\mid0)"></span> in <span class="math" data-tex="g"></span>: I: <span class="math" data-tex="1+2r=5\Rightarrow r=2"></span>; II: <span class="math" data-tex="0+r=2\Rightarrow r=2"></span>; III: <span class="math" data-tex="2-r=0\Rightarrow r=2"></span> ✓. <span class="ok"><span class="math" data-tex="g"></span> und <span class="math" data-tex="h"></span> sind identisch.</span></div>
+      <div>b) Nicht kollinear. I: <span class="math" data-tex="r=2+s"></span>, II: <span class="math" data-tex="1+2r=2-s"></span>, III: <span class="math" data-tex="1=3+2s\Rightarrow s=-1"></span>, also <span class="math" data-tex="r=1"></span>. Probe II: <span class="math" data-tex="1+2=3"></span> und <span class="math" data-tex="2+1=3"></span> ✓. <span class="ok">Schnittpunkt <span class="math" data-tex="S(1\mid3\mid1)"></span>.</span></div>
+      <div>c) Nicht kollinear. I: <span class="math" data-tex="1=2+s\Rightarrow s=-1"></span>; II: <span class="math" data-tex="1+r=0\Rightarrow r=-1"></span>; III: <span class="math" data-tex="r=1-s\Rightarrow -1=2"></span> – Widerspruch. <span class="ok"><span class="math" data-tex="g"></span> und <span class="math" data-tex="h"></span> sind windschief.</span></div>
+    </div></details>
+  </div>
+
+  <div class="task b">
+    <h4><span>H5 &middot; Winkel exakt bestimmen</span><span class="time">⏱ ca. 8 min</span></h4>
+    <div class="sub"><b>a)</b> Bestimmen Sie den Winkel zwischen <span class="math" data-tex="\vec a=\begin{pmatrix}0\\3\\0\end{pmatrix}"></span> und <span class="math" data-tex="\vec b=\begin{pmatrix}0\\2\\2\end{pmatrix}"></span>.</div>
+    <div class="sub"><b>b)</b> Bestimmen Sie den Winkel zwischen <span class="math" data-tex="\vec c=\begin{pmatrix}1\\1\\0\end{pmatrix}"></span> und <span class="math" data-tex="\vec d=\begin{pmatrix}-1\\0\\1\end{pmatrix}"></span>.</div>
+    <div class="sub"><b>c)</b> Die Geraden <span class="math" data-tex="g\colon\vec x=r\cdot\vec c"></span> und <span class="math" data-tex="h\colon\vec x=s\cdot\vec d"></span> schneiden sich im Ursprung. Geben Sie ihren Schnittwinkel an und erläutern Sie, warum er sich vom Ergebnis aus b) unterscheidet.</div>
+    <details class="tipp"><summary>Tipp</summary><div class="inner">
+      <div>Berechne <span class="math" data-tex="\cos(\alpha)"></span> als Bruch und vergleiche mit der Tabelle oben. Bei b) ist das Skalarprodukt negativ – was bedeutet das für den Winkel?</div>
+      <div>c) Beim Schnittwinkel stehen im Zähler Betragsstriche.</div>
+    </div></details>
+    <details class="loesung"><summary>Lösung</summary><div class="inner">
+      <div>a) <span class="math" data-tex="\cos(\alpha)=\dfrac{0+6+0}{3\cdot\sqrt8}=\dfrac{6}{3\cdot2\sqrt2}=\dfrac{1}{\sqrt2}=\tfrac12\sqrt2\Rightarrow\alpha=45^\circ"></span></div>
+      <div>b) <span class="math" data-tex="\cos(\beta)=\dfrac{-1+0+0}{\sqrt2\cdot\sqrt2}=-\tfrac12\Rightarrow\beta=120^\circ"></span></div>
+      <div>c) <span class="math" data-tex="\cos(\gamma)=\dfrac{|-1|}{\sqrt2\cdot\sqrt2}=\tfrac12\Rightarrow\gamma=60^\circ"></span>. Zwei sich schneidende Geraden bilden zwei Winkelpaare (<span class="math" data-tex="60^\circ"></span> und <span class="math" data-tex="120^\circ"></span>). Als Schnittwinkel gibt man immer den Winkel <span class="math" data-tex="\le90^\circ"></span> an, also <span class="math" data-tex="180^\circ-120^\circ=60^\circ"></span>.</div>
+    </div></details>
+  </div>
+
+  <div class="task b">
+    <h4><span>H6 &middot; Ein besonderes Dreieck</span><span class="time">⏱ ca. 10 min</span></h4>
+    <p>Gegeben sind die Punkte <span class="math" data-tex="A(1\mid2\mid0)"></span>, <span class="math" data-tex="B(3\mid1\mid2)"></span> und <span class="math" data-tex="C(5\mid3\mid1)"></span>.</p>
+    <div class="sub"><b>a)</b> Weisen Sie nach, dass das Dreieck <span class="math" data-tex="ABC"></span> gleichschenklig ist und bei <span class="math" data-tex="B"></span> einen rechten Winkel hat.</div>
+    <div class="sub"><b>b)</b> Berechnen Sie den Flächeninhalt des Dreiecks.</div>
+    <div class="sub"><b>c)</b> Begründen Sie ohne weitere Rechnung, dass der Innenwinkel bei <span class="math" data-tex="A"></span> genau <span class="math" data-tex="45^\circ"></span> beträgt.</div>
+    <div class="sub"><b>d)</b> Bestimmen Sie einen Punkt <span class="math" data-tex="D"></span>, sodass <span class="math" data-tex="ABCD"></span> ein Quadrat ist.</div>
+    <details class="tipp"><summary>Tipp</summary><div class="inner">
+      <div>a) Bilde die beiden Vektoren, die von <span class="math" data-tex="B"></span> ausgehen. Gleichschenklig heißt: zwei Seiten gleich lang.</div>
+      <div>b) Im rechtwinkligen Dreieck sind die beiden Katheten Grundseite und Höhe.</div>
+      <div>c) Winkelsumme im Dreieck und Basiswinkel im gleichschenkligen Dreieck.</div>
+      <div>d) Wie bei H1 c): <span class="math" data-tex="\vec{AD}=\vec{BC}"></span>.</div>
+    </div></details>
+    <details class="loesung"><summary>Lösung</summary><div class="inner">
+      <div>a) <span class="math" data-tex="\vec{BA}=\begin{pmatrix}-2\\1\\-2\end{pmatrix}"></span>, <span class="math" data-tex="\vec{BC}=\begin{pmatrix}2\\2\\-1\end{pmatrix}"></span>, <span class="math" data-tex="\vec{BA}\circ\vec{BC}=-4+2+2=0"></span> → rechter Winkel bei <span class="math" data-tex="B"></span>. <span class="math" data-tex="|\vec{BA}|=\sqrt{4+1+4}=3=\sqrt{4+4+1}=|\vec{BC}|"></span> → gleichschenklig.</div>
+      <div>b) <span class="math" data-tex="A_\triangle=\tfrac12\cdot3\cdot3=4{,}5"></span> FE</div>
+      <div>c) Die Basiswinkel bei <span class="math" data-tex="A"></span> und <span class="math" data-tex="C"></span> sind gleich groß und ergänzen sich mit dem rechten Winkel zu <span class="math" data-tex="180^\circ"></span>: <span class="math" data-tex="2\alpha=90^\circ\Rightarrow\alpha=45^\circ"></span>.</div>
+      <div>d) <span class="math" data-tex="\vec{OD}=\vec{OA}+\vec{BC}=\begin{pmatrix}1\\2\\0\end{pmatrix}+\begin{pmatrix}2\\2\\-1\end{pmatrix}\Rightarrow D(3\mid4\mid-1)"></span>. Parallelogramm mit rechtem Winkel und gleich langen Nachbarseiten → Quadrat.</div>
+    </div></details>
+  </div>
+
+  <div class="task b">
+    <h4><span>H7 &middot; Gauß-Verfahren: eindeutige Lösung</span><span class="time">⏱ ca. 8 min</span></h4>
+    <p>Lösen Sie das lineare Gleichungssystem mit dem Gauß-Verfahren.</p>
+    <div class="disp"><span class="math display" data-tex="\left|\begin{array}{rcrcrcr}2x_1&amp;+&amp;x_2&amp;-&amp;x_3&amp;=&amp;0\\x_1&amp;-&amp;x_2&amp;+&amp;2x_3&amp;=&amp;9\\3x_1&amp;+&amp;2x_2&amp;+&amp;x_3&amp;=&amp;7\end{array}\right|"></span></div>
+    <details class="tipp"><summary>Tipp</summary><div class="inner">
+      <div>Tausche zuerst die Zeilen so, dass eine Zeile mit <span class="math" data-tex="x_1"></span> (Vorfaktor 1) oben steht. Dann <span class="math" data-tex="x_1"></span> aus den beiden anderen Zeilen eliminieren, danach <span class="math" data-tex="x_2"></span> aus der letzten Zeile. Am Ende von unten nach oben einsetzen.</div>
+    </div></details>
+    <details class="loesung"><summary>Lösung</summary><div class="inner">
+      <div>Neu geordnet: I: <span class="math" data-tex="x_1-x_2+2x_3=9"></span>, II: <span class="math" data-tex="2x_1+x_2-x_3=0"></span>, III: <span class="math" data-tex="3x_1+2x_2+x_3=7"></span></div>
+      <div>II<span class="math" data-tex="-2\cdot"></span>I: <span class="math" data-tex="3x_2-5x_3=-18"></span> (II'), III<span class="math" data-tex="-3\cdot"></span>I: <span class="math" data-tex="5x_2-5x_3=-20"></span> (III')</div>
+      <div><span class="math" data-tex="3\cdot"></span>III'<span class="math" data-tex="-5\cdot"></span>II': <span class="math" data-tex="-15x_3+25x_3=-60+90\Rightarrow10x_3=30\Rightarrow x_3=3"></span></div>
+      <div>In II': <span class="math" data-tex="3x_2-15=-18\Rightarrow x_2=-1"></span>. In I: <span class="math" data-tex="x_1+1+6=9\Rightarrow x_1=2"></span>.</div>
+      <div><span class="ok"><span class="math" data-tex="\mathbb L=\{(2\mid-1\mid3)\}"></span></span>. Probe in der ursprünglichen ersten Zeile: <span class="math" data-tex="4-1-3=0"></span> ✓</div>
+    </div></details>
+  </div>
+
+  <div class="task b">
+    <h4><span>H8 &middot; Gauß-Verfahren: keine oder unendlich viele Lösungen</span><span class="time">⏱ ca. 10 min</span></h4>
+    <p>Gegeben ist das Gleichungssystem</p>
+    <div class="disp"><span class="math display" data-tex="\left|\begin{array}{rcrcrcr}x_1&amp;+&amp;2x_2&amp;-&amp;x_3&amp;=&amp;3\\2x_1&amp;+&amp;x_2&amp;+&amp;x_3&amp;=&amp;3\\3x_1&amp;+&amp;3x_2&amp;&amp;&amp;=&amp;c\end{array}\right|"></span></div>
+    <div class="sub"><b>a)</b> Zeigen Sie, dass das System für <span class="math" data-tex="c=7"></span> keine Lösung besitzt.</div>
+    <div class="sub"><b>b)</b> Für <span class="math" data-tex="c=6"></span> hat das System unendlich viele Lösungen. Geben Sie die Lösungsmenge in Abhängigkeit von <span class="math" data-tex="x_3=t"></span> an.</div>
+    <div class="sub"><b>c)</b> Geben Sie eine konkrete Lösung aus b) an und führen Sie die Probe durch.</div>
+    <details class="tipp"><summary>Tipp</summary><div class="inner">
+      <div>Rechne die Stufenform einmal mit dem Buchstaben <span class="math" data-tex="c"></span> auf der rechten Seite. Entscheidend ist die letzte Zeile: <span class="math" data-tex="0=0"></span> (unendlich viele Lösungen) oder <span class="math" data-tex="0="></span> Zahl <span class="math" data-tex="\neq0"></span> (keine Lösung).</div>
+      <div>b) Setze <span class="math" data-tex="x_3=t"></span> und löse die mittlere Zeile nach <span class="math" data-tex="x_2"></span>, die erste nach <span class="math" data-tex="x_1"></span> auf.</div>
+    </div></details>
+    <details class="loesung"><summary>Lösung</summary><div class="inner">
+      <div>II<span class="math" data-tex="-2\cdot"></span>I: <span class="math" data-tex="-3x_2+3x_3=-3"></span>; III<span class="math" data-tex="-3\cdot"></span>I: <span class="math" data-tex="-3x_2+3x_3=c-9"></span>; III'<span class="math" data-tex="-"></span>II': <span class="math" data-tex="0=c-6"></span>.</div>
+      <div>a) <span class="math" data-tex="c=7"></span>: <span class="math" data-tex="0=1"></span> – Widerspruch, <span class="ok">keine Lösung</span>.</div>
+      <div>b) <span class="math" data-tex="c=6"></span>: <span class="math" data-tex="0=0"></span>. Mit <span class="math" data-tex="x_3=t"></span>: <span class="math" data-tex="-3x_2+3t=-3\Rightarrow x_2=1+t"></span>; <span class="math" data-tex="x_1=3-2(1+t)+t=1-t"></span>. <span class="ok"><span class="math" data-tex="\mathbb L=\{(1-t\mid1+t\mid t)\mid t\in\mathbb R\}"></span></span></div>
+      <div>c) z. B. <span class="math" data-tex="t=0"></span>: <span class="math" data-tex="(1\mid1\mid0)"></span>. Probe: <span class="math" data-tex="1+2-0=3"></span> ✓, <span class="math" data-tex="2+1+0=3"></span> ✓, <span class="math" data-tex="3+3=6"></span> ✓</div>
+    </div></details>
+  </div>
+</section>
+
+<!-- ============== STUFE C ============== -->
+<section id="tier-c">
+  <div class="tier-heading"><span class="tier-chip c">STUFE C &middot; BEGRÜNDEN &amp; VERTIEFEN</span><span class="tier-note">Diese Aufgabentypen bringen die Punkte im Anforderungsbereich III.</span></div>
+
+  <div class="task c">
+    <h4><span>H9 &middot; Richtig oder falsch?</span><span class="time">⏱ ca. 8 min</span></h4>
+    <p>Entscheiden Sie, ob die Aussage wahr oder falsch ist. Begründen Sie Ihre Entscheidung oder geben Sie ein Gegenbeispiel an.</p>
+    <div class="sub"><b>(1)</b> Zwei Geraden im Raum, die keinen gemeinsamen Punkt haben, sind parallel.</div>
+    <div class="sub"><b>(2)</b> Ist <span class="math" data-tex="\vec u\circ\vec v&lt;0"></span> (mit <span class="math" data-tex="\vec u,\vec v\neq\vec o"></span>), dann schließen <span class="math" data-tex="\vec u"></span> und <span class="math" data-tex="\vec v"></span> einen stumpfen Winkel ein.</div>
+    <div class="sub"><b>(3)</b> Der Schnittwinkel zweier Geraden kann <span class="math" data-tex="120^\circ"></span> betragen.</div>
+    <div class="sub"><b>(4)</b> Steht in der Stufenform eines Gleichungssystems die Zeile <span class="math" data-tex="0x_1+0x_2+0x_3=5"></span>, so hat das System genau eine Lösung.</div>
+    <div class="sub"><b>(5)</b> Sind <span class="math" data-tex="\vec a"></span> und <span class="math" data-tex="\vec b"></span> orthogonal, dann sind auch <span class="math" data-tex="2\vec a"></span> und <span class="math" data-tex="-3\vec b"></span> orthogonal.</div>
+    <details class="tipp"><summary>Tipp</summary><div class="inner">
+      <div>Für „falsch“ genügt ein einziges Gegenbeispiel oder ein klarer Hinweis auf den fehlenden Fall. Für „wahr“ brauchst du eine allgemeine Begründung – z. B. über die Formel für <span class="math" data-tex="\cos(\alpha)"></span> oder eine Rechenregel des Skalarprodukts.</div>
+    </div></details>
+    <details class="loesung"><summary>Lösung</summary><div class="inner">
+      <div>(1) <strong>Falsch.</strong> Im Raum gibt es auch windschiefe Geraden (nicht parallel, kein Schnittpunkt), z. B. H4 c).</div>
+      <div>(2) <strong>Wahr.</strong> Im Nenner von <span class="math" data-tex="\cos(\alpha)=\frac{\vec u\circ\vec v}{|\vec u||\vec v|}"></span> steht eine positive Zahl, also ist <span class="math" data-tex="\cos(\alpha)&lt;0"></span> und damit <span class="math" data-tex="90^\circ&lt;\alpha\le180^\circ"></span>.</div>
+      <div>(3) <strong>Falsch.</strong> Als Schnittwinkel wird immer der kleinere Winkel angegeben, er liegt zwischen <span class="math" data-tex="0^\circ"></span> und <span class="math" data-tex="90^\circ"></span> (Betragsstriche im Zähler). Zu <span class="math" data-tex="120^\circ"></span> gehört der Schnittwinkel <span class="math" data-tex="60^\circ"></span>.</div>
+      <div>(4) <strong>Falsch.</strong> Die Zeile bedeutet <span class="math" data-tex="0=5"></span>, ein Widerspruch. Das System hat <em>keine</em> Lösung.</div>
+      <div>(5) <strong>Wahr.</strong> <span class="math" data-tex="(2\vec a)\circ(-3\vec b)=-6\cdot(\vec a\circ\vec b)=-6\cdot0=0"></span>.</div>
+    </div></details>
+  </div>
+
+  <div class="task c">
+    <h4><span>H10 &middot; Geraden selbst konstruieren</span><span class="time">⏱ ca. 8 min</span></h4>
+    <p>Gegeben ist die Gerade <span class="math" data-tex="g\colon\vec x=\begin{pmatrix}1\\2\\3\end{pmatrix}+r\cdot\begin{pmatrix}1\\0\\2\end{pmatrix},\ r\in\mathbb R"></span>. Geben Sie jeweils eine Gleichung einer Geraden an, die …</p>
+    <div class="sub"><b>a)</b> … durch <span class="math" data-tex="P(0\mid0\mid1)"></span> verläuft und zu <span class="math" data-tex="g"></span> parallel, aber nicht identisch ist,</div>
+    <div class="sub"><b>b)</b> … <span class="math" data-tex="g"></span> im Punkt <span class="math" data-tex="(1\mid2\mid3)"></span> senkrecht schneidet,</div>
+    <div class="sub"><b>c)</b> … zu <span class="math" data-tex="g"></span> windschief ist.</div>
+    <p>Weisen Sie jeweils nach, dass Ihre Gerade die geforderte Eigenschaft hat.</p>
+    <details class="tipp"><summary>Tipp</summary><div class="inner">
+      <div>a) Gleicher Richtungsvektor. Zeige mit einer Punktprobe, dass <span class="math" data-tex="P"></span> nicht auf <span class="math" data-tex="g"></span> liegt.</div>
+      <div>b) Stützpunkt <span class="math" data-tex="(1\mid2\mid3)"></span>, Richtungsvektor mit Skalarprodukt <span class="math" data-tex="0"></span> zum Richtungsvektor von <span class="math" data-tex="g"></span> – rate geschickt (z. B. eine Koordinate null setzen).</div>
+      <div>c) Richtungsvektor <em>kein</em> Vielfaches, Stützpunkt nicht auf <span class="math" data-tex="g"></span>. Danach mit dem Gleichungssystem zeigen, dass es keinen Schnittpunkt gibt.</div>
+    </div></details>
+    <details class="loesung"><summary>Lösung (eine von vielen Möglichkeiten)</summary><div class="inner">
+      <div>a) <span class="math" data-tex="h\colon\vec x=\begin{pmatrix}0\\0\\1\end{pmatrix}+s\begin{pmatrix}1\\0\\2\end{pmatrix}"></span>. Punktprobe <span class="math" data-tex="P"></span> in <span class="math" data-tex="g"></span>: II: <span class="math" data-tex="2+0\cdot r=0"></span> – unmöglich, also <span class="math" data-tex="P\notin g"></span> → echt parallel.</div>
+      <div>b) <span class="math" data-tex="k\colon\vec x=\begin{pmatrix}1\\2\\3\end{pmatrix}+t\begin{pmatrix}2\\0\\-1\end{pmatrix}"></span>, denn <span class="math" data-tex="\begin{pmatrix}1\\0\\2\end{pmatrix}\circ\begin{pmatrix}2\\0\\-1\end{pmatrix}=2+0-2=0"></span> und <span class="math" data-tex="(1\mid2\mid3)"></span> liegt auf beiden Geraden.</div>
+      <div>c) <span class="math" data-tex="w\colon\vec x=t\cdot\begin{pmatrix}0\\1\\0\end{pmatrix}"></span> (die <span class="math" data-tex="x_2"></span>-Achse). Richtungsvektoren nicht kollinear. Gleichsetzen: I: <span class="math" data-tex="1+r=0\Rightarrow r=-1"></span>; III: <span class="math" data-tex="3+2r=0\Rightarrow r=-1{,}5"></span> – Widerspruch → kein Schnittpunkt → windschief.</div>
+    </div></details>
+  </div>
+
+  <div class="task c">
+    <h4><span>H11 &middot; Geraden mit Parameter</span><span class="time">⏱ ca. 8 min</span></h4>
+    <p>Gegeben sind <span class="math" data-tex="g\colon\vec x=\begin{pmatrix}1\\0\\2\end{pmatrix}+r\begin{pmatrix}1\\1\\0\end{pmatrix}"></span> und für jedes <span class="math" data-tex="a\in\mathbb R"></span> die Gerade <span class="math" data-tex="h_a\colon\vec x=\begin{pmatrix}3\\a\\0\end{pmatrix}+s\begin{pmatrix}0\\1\\2\end{pmatrix}"></span>.</p>
+    <div class="sub"><b>a)</b> Bestimmen Sie <span class="math" data-tex="a"></span> so, dass sich <span class="math" data-tex="g"></span> und <span class="math" data-tex="h_a"></span> schneiden, und geben Sie den Schnittpunkt an.</div>
+    <div class="sub"><b>b)</b> Beschreiben Sie die Lage von <span class="math" data-tex="g"></span> und <span class="math" data-tex="h_a"></span> für alle anderen Werte von <span class="math" data-tex="a"></span>.</div>
+    <div class="sub"><b>c)</b> Zeigen Sie, dass sich <span class="math" data-tex="g"></span> und <span class="math" data-tex="h_a"></span> für keinen Wert von <span class="math" data-tex="a"></span> senkrecht schneiden.</div>
+    <details class="tipp"><summary>Tipp</summary><div class="inner">
+      <div>a) Gleichsetzen. Die erste und die dritte Zeile enthalten kein <span class="math" data-tex="a"></span> – daraus bekommst du <span class="math" data-tex="r"></span> und <span class="math" data-tex="s"></span>. Die zweite Zeile liefert dann eine Bedingung für <span class="math" data-tex="a"></span>.</div>
+      <div>c) Für Orthogonalität zählen nur die Richtungsvektoren – und die hängen nicht von <span class="math" data-tex="a"></span> ab.</div>
+    </div></details>
+    <details class="loesung"><summary>Lösung</summary><div class="inner">
+      <div>a) I: <span class="math" data-tex="1+r=3\Rightarrow r=2"></span>; III: <span class="math" data-tex="2=2s\Rightarrow s=1"></span>; II: <span class="math" data-tex="r=a+s\Rightarrow2=a+1\Rightarrow a=1"></span>. Schnittpunkt: <span class="math" data-tex="\vec x=\begin{pmatrix}1\\0\\2\end{pmatrix}+2\begin{pmatrix}1\\1\\0\end{pmatrix}\Rightarrow S(3\mid2\mid2)"></span>.</div>
+      <div>b) Die Richtungsvektoren sind nie kollinear, also sind <span class="math" data-tex="g"></span> und <span class="math" data-tex="h_a"></span> nie parallel. Für <span class="math" data-tex="a\neq1"></span> gibt es keinen Schnittpunkt → <strong>windschief</strong>.</div>
+      <div>c) <span class="math" data-tex="\begin{pmatrix}1\\1\\0\end{pmatrix}\circ\begin{pmatrix}0\\1\\2\end{pmatrix}=1\neq0"></span> – unabhängig von <span class="math" data-tex="a"></span>. Die Geraden sind also nie orthogonal, auch nicht für <span class="math" data-tex="a=1"></span>.</div>
+    </div></details>
+  </div>
+</section>
+
+<section id="selbst">
+  <div class="card">
+    <h2 style="font-size:1.1rem;">Checkliste Prüfungsteil 1</h2>
+    <ul class="checklist">
+      <li><label><input type="checkbox" data-key="c1"> Ich berechne Verbindungsvektoren, Abstände und Mittelpunkte sicher im Kopf.</label><span class="ref">H1</span></li>
+      <li><label><input type="checkbox" data-key="c2"> Ich ergänze ein Parallelogramm oder Quadrat um den fehlenden Punkt.</label><span class="ref">H1, H6</span></li>
+      <li><label><input type="checkbox" data-key="c3"> Ich stelle Geradengleichungen auf, mache Punktproben und erkenne, ob ein Punkt auf einer Strecke liegt.</label><span class="ref">H2</span></li>
+      <li><label><input type="checkbox" data-key="c4"> Ich nutze das Skalarprodukt für rechte Winkel – auch wenn ein Parameter (quadratisch) vorkommt.</label><span class="ref">H3, H6</span></li>
+      <li><label><input type="checkbox" data-key="c5"> Ich bestimme die Lagebeziehung zweier Geraden systematisch.</label><span class="ref">H4, H11</span></li>
+      <li><label><input type="checkbox" data-key="c6"> Ich berechne Winkel exakt mithilfe der Kosinus-Tabelle und unterscheide Vektorwinkel und Schnittwinkel.</label><span class="ref">H5</span></li>
+      <li><label><input type="checkbox" data-key="c7"> Ich löse 3×3-Gleichungssysteme von Hand mit dem Gauß-Verfahren und erkenne die Sonderfälle.</label><span class="ref">H7, H8</span></li>
+      <li><label><input type="checkbox" data-key="c8"> Ich kann Aussagen begründet beurteilen und passende Geraden selbst konstruieren.</label><span class="ref">H9, H10</span></li>
+    </ul>
+  </div>
+</section>
+
+</main>
+<footer>Klausurvorbereitung Kapitel V &middot; Training Prüfungsteil 1 &middot; Friedrich-Bährens-Gymnasium Schwerte &middot; M.&nbsp;Mohr</footer>
+
+<script>
+const KATEX_OPTS = { throwOnError:false, macros:{ "\\vec":"\\overrightarrow{#1}" } };
+function renderAllStatic(){
+  document.querySelectorAll('.math[data-tex]').forEach(el=>{
+    const disp = el.classList.contains('display');
+    try{ katex.render(el.getAttribute('data-tex'), el, Object.assign({displayMode:disp}, KATEX_OPTS)); }
+    catch(e){ el.textContent = el.getAttribute('data-tex'); }
+  });
+}
+function initChecklist(prefix){
+  document.querySelectorAll('.checklist input[type=checkbox]').forEach(box=>{
+    const key = prefix + box.dataset.key;
+    try{ if(localStorage.getItem(key)==='1') box.checked = true; }catch(e){}
+    box.addEventListener('change', ()=>{ try{ localStorage.setItem(key, box.checked?'1':'0'); }catch(e){} });
+  });
+}
+document.addEventListener('DOMContentLoaded', ()=>{ renderAllStatic(); initChecklist('kv-t1-'); });
+</script>
+</body>
+</html>
