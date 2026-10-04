@@ -1,0 +1,728 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Übungsphase · Fallbewegungen</title>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css">
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/contrib/auto-render.min.js"></script>
+
+<style>
+:root{
+  --teal:#0f6e56; --teal-dark:#085041;
+  --blue:#2c5f8a; --blue-dark:#1a3d5c;
+  --green:#1a9e5c; --orange:#d4760a; --purple:#7b3fb5;
+  --border:#dde1e7; --bg:#f4f5f7; --text:#1c1f26;
+  --muted:#5c6472;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0; background:var(--bg); color:var(--text);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  line-height:1.55; font-size:16px;
+}
+.wrap{max-width:960px; margin:0 auto; padding:0 16px 64px}
+
+/* ---------- Kopf ---------- */
+header.top{background:var(--teal); border-bottom:4px solid var(--teal-dark); color:#fff}
+header.top .inner{max-width:960px; margin:0 auto; padding:22px 16px 24px}
+header.top .kap{font-size:.78rem; font-weight:700; letter-spacing:.06em; text-transform:uppercase; opacity:.92}
+header.top h1{margin:6px 0 4px; font-size:1.7rem; line-height:1.2}
+header.top .sub{font-size:.92rem; opacity:.95}
+
+/* ---------- Steuerleiste ---------- */
+.controls{
+  background:#fff; border:1px solid var(--border); border-radius:10px;
+  padding:14px 16px; margin:18px 0 22px;
+  display:flex; flex-wrap:wrap; gap:16px; align-items:center; justify-content:space-between;
+}
+.unlock{display:flex; align-items:center; gap:8px; flex-wrap:wrap}
+.unlock label{font-size:.9rem; color:var(--muted)}
+.unlock input{
+  border:1px solid var(--border); border-radius:6px; padding:6px 10px;
+  font-size:.95rem; width:130px; font-family:inherit;
+}
+.unlock button{
+  background:var(--blue); color:#fff; border:0; border-radius:6px;
+  padding:7px 14px; font-size:.9rem; font-weight:600; cursor:pointer; font-family:inherit;
+}
+.unlock button:hover{background:var(--blue-dark)}
+.unlock .msg{font-size:.85rem; font-weight:600}
+.unlock .msg.ok{color:var(--green)}
+.unlock .msg.bad{color:#c0392b}
+
+.filters{display:flex; gap:6px; flex-wrap:wrap}
+.filters button{
+  background:#fff; border:1px solid var(--border); border-radius:20px;
+  padding:6px 14px; font-size:.85rem; cursor:pointer; color:var(--muted);
+  font-family:inherit; font-weight:600;
+}
+.filters button:hover{border-color:var(--muted)}
+.filters button.on{background:var(--text); border-color:var(--text); color:#fff}
+
+/* ---------- Stufenabschnitte ---------- */
+.stufe-head{
+  display:flex; align-items:baseline; gap:12px; flex-wrap:wrap;
+  margin:30px 0 12px; padding-bottom:8px; border-bottom:2px solid var(--border);
+}
+.stufe-badge{
+  color:#fff; border-radius:6px; padding:4px 12px;
+  font-weight:700; font-size:.9rem; letter-spacing:.02em;
+}
+.s1 .stufe-badge{background:var(--green)}
+.s2 .stufe-badge{background:var(--orange)}
+.s3 .stufe-badge{background:var(--purple)}
+.stufe-head .desc{color:var(--muted); font-size:.9rem}
+
+/* ---------- Aufgabenkarte ---------- */
+.card{
+  background:#fff; border:1px solid var(--border); border-radius:10px;
+  margin-bottom:14px; overflow:hidden;
+}
+.card.s1{border-top:4px solid var(--green)}
+.card.s2{border-top:4px solid var(--orange)}
+.card.s3{border-top:4px solid var(--purple)}
+.card-head{
+  display:flex; align-items:center; justify-content:space-between; gap:12px;
+  padding:13px 18px; cursor:pointer; user-select:none;
+}
+.card-head:hover{background:#fafbfc}
+.card-head h3{margin:0; font-size:1.03rem; font-weight:700}
+.chev{color:var(--muted); font-size:1.1rem; transition:transform .18s}
+.card.open .chev{transform:rotate(180deg)}
+.card-body{display:none; padding:0 18px 18px}
+.card.open .card-body{display:block}
+
+.task{
+  background:#fbfcfd; border:1px solid var(--border); border-left:3px solid var(--blue);
+  border-radius:6px; padding:12px 15px; margin-bottom:14px;
+}
+.task p{margin:.5em 0}
+.task p:first-child{margin-top:0}
+.task p:last-child{margin-bottom:0}
+.task svg{display:block; margin:10px auto; max-width:100%; height:auto}
+.task table{border-collapse:collapse; margin:10px auto}
+.task td,.task th{border:1px solid var(--border); padding:5px 10px; font-size:.92rem; text-align:center}
+
+/* ---------- Selbsteinschätzung ---------- */
+.assess{display:flex; align-items:center; gap:7px; flex-wrap:wrap; margin-bottom:14px}
+.assess .lab{font-size:.83rem; color:var(--muted); margin-right:2px}
+.assess button{
+  border:1px solid var(--border); background:#fff; border-radius:16px;
+  padding:4px 12px; font-size:.8rem; cursor:pointer; color:var(--muted); font-family:inherit;
+}
+.assess button.on[data-v="ok"]{background:var(--green); border-color:var(--green); color:#fff}
+.assess button.on[data-v="mid"]{background:var(--orange); border-color:var(--orange); color:#fff}
+.assess button.on[data-v="ask"]{background:var(--blue); border-color:var(--blue); color:#fff}
+
+/* ---------- Hilfen ---------- */
+.hints{border:1px solid var(--border); border-radius:8px; overflow:hidden; margin-bottom:14px}
+.hints .htitle{
+  background:#f7f8fa; padding:7px 14px; font-size:.8rem; font-weight:700;
+  color:var(--muted); text-transform:uppercase; letter-spacing:.05em;
+  border-bottom:1px solid var(--border);
+}
+.htabs{display:flex; flex-wrap:wrap; gap:6px; padding:10px 14px; background:#fdfdfe}
+.htabs button{
+  border:1px solid var(--border); background:#fff; border-radius:6px;
+  padding:5px 11px; font-size:.82rem; cursor:pointer; color:var(--text); font-family:inherit;
+}
+.htabs button:hover{border-color:var(--teal)}
+.htabs button.on{background:var(--teal); border-color:var(--teal); color:#fff; font-weight:600}
+.hpanel{display:none; padding:12px 15px; border-top:1px solid var(--border); font-size:.95rem}
+.hpanel.on{display:block}
+.hpanel h4{margin:0 0 8px; font-size:.92rem; color:var(--teal-dark)}
+.hpanel p{margin:.5em 0}
+
+/* ---------- Musterlösung ---------- */
+.sol-lock{
+  background:#f7f8fa; border:1px dashed var(--border); border-radius:8px;
+  padding:12px 15px; font-size:.9rem; color:var(--muted); text-align:center;
+}
+.sol{
+  display:none; border:1px solid var(--green); border-radius:8px; overflow:hidden;
+}
+.sol .sh{
+  background:var(--green); color:#fff; padding:7px 15px;
+  font-weight:700; font-size:.88rem;
+}
+.sol .sb{padding:13px 15px; font-size:.95rem}
+.sol .sb p{margin:.55em 0}
+.sol .sb p:first-child{margin-top:0}
+body.unlocked .sol{display:block}
+body.unlocked .sol-lock{display:none}
+
+.note{
+  background:#eaf4f0; border-left:3px solid var(--teal); border-radius:6px;
+  padding:10px 14px; font-size:.9rem; margin:12px 0;
+}
+.katex{font-size:1.04em}
+.katex-display{margin:.6em 0; overflow-x:auto; overflow-y:hidden}
+.backnav{margin:18px 0 4px}
+.backnav a{
+  display:inline-flex; align-items:center; gap:6px;
+  font-size:.86rem; font-weight:600; color:var(--muted);
+  text-decoration:none; border:1px solid var(--border); border-radius:20px;
+  padding:5px 13px; background:#fff;
+}
+.backnav a:hover{border-color:var(--muted); color:var(--text)}
+
+footer.bot{
+  text-align:center; color:var(--muted); font-size:.82rem;
+  padding:26px 16px; border-top:1px solid var(--border); margin-top:34px;
+}
+footer.bot a{color:var(--blue)}
+@media(max-width:600px){
+  header.top h1{font-size:1.32rem}
+  .controls{flex-direction:column; align-items:stretch}
+  .card-head h3{font-size:.95rem}
+}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="inner">
+    <div class="kap">Kapitel 1.4 · Bewegungen beschreiben · Physik EP</div>
+    <h1>Übungsphase: Fallbewegungen</h1>
+    <div class="sub">Wähle deine Stufe · Nutze die Hilfen schrittweise · Musterlösungen nach Lehrerfreigabe</div>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <div class="backnav"><a href="../">← Zurück zu EP Materialien</a></div>
+
+  <div class="controls">
+    <div class="unlock">
+      <label for="code">🔒 Musterlösungen freischalten:</label>
+      <input id="code" type="text" autocomplete="off" placeholder="Code">
+      <button id="btn-unlock" type="button">Bestätigen</button>
+      <span class="msg" id="msg"></span>
+    </div>
+    <div class="filters">
+      <button class="on" data-f="all" type="button">Alle Stufen</button>
+      <button data-f="1" type="button">Stufe 1</button>
+      <button data-f="2" type="button">Stufe 2</button>
+      <button data-f="3" type="button">Stufe 3</button>
+    </div>
+  </div>
+
+  <div class="note">
+    <strong>Formeln im Überblick:</strong> Der freie Fall ist eine gleichmäßig beschleunigte Bewegung mit der Fallbeschleunigung
+    $g=9{,}81\,\tfrac{\text{m}}{\text{s}^2}$ (auf der Erde). Für einen Körper, der aus der Ruhe frei fällt, gilt:
+    Zeit-Geschwindigkeit-Gesetz $v(t)=g\cdot t$ · Zeit-Ort-Gesetz $s(t)=\dfrac{1}{2}\,g\cdot t^2$ ·
+    Fallzeit für die Höhe $h$: $t=\sqrt{\dfrac{2h}{g}}$. Die Fallstrecke wird dabei nach unten positiv gezählt.
+  </div>
+
+  <!-- ================= STUFE 1 ================= -->
+  <section class="s1" data-stufe="1">
+    <div class="stufe-head">
+      <span class="stufe-badge">Stufe 1</span>
+      <span class="desc">Grundaufgaben · Fallgesetze anwenden, Fallbeschleunigung bestimmen</span>
+    </div>
+
+    <!-- ---------- Aufgabe 1 ---------- -->
+    <article class="card s1" data-stufe="1">
+      <div class="card-head"><h3>Aufgabe 1 · Ein Stein fällt von der Brücke</h3><span class="chev">▾</span></div>
+      <div class="card-body">
+        <div class="task">
+          <p>Ein Stein wird von einer $20\,\text{m}$ hohen Brücke aus der Ruhe fallen gelassen. Der Luftwiderstand wird vernachlässigt.</p>
+          <p><strong>a)</strong> Berechnen Sie, nach welcher Zeit der Stein auf der Wasseroberfläche auftrifft.</p>
+          <p><strong>b)</strong> Berechnen Sie die Auftreffgeschwindigkeit in $\tfrac{\text{m}}{\text{s}}$ und in $\tfrac{\text{km}}{\text{h}}$.</p>
+          <p><strong>c)</strong> Welche Strecke hat der Stein nach der Hälfte der Fallzeit zurückgelegt? Ist das die Hälfte der Brückenhöhe?</p>
+        </div>
+
+        <div class="assess">
+          <span class="lab">Einschätzung:</span>
+          <button data-v="ok" type="button">✓ Fertig &amp; verstanden</button>
+          <button data-v="mid" type="button">~ Noch unsicher</button>
+          <button data-v="ask" type="button">? Frage an Lehrer</button>
+        </div>
+
+        <div class="hints">
+          <div class="htitle">Hilfen</div>
+          <div class="htabs">
+            <button type="button">Hilfe 1 · Ansatz</button>
+            <button type="button">Hilfe 2 · Nach $t$ auflösen</button>
+            <button type="button">Hilfe 3 · Halbe Fallzeit</button>
+          </div>
+          <div class="hpanel">
+            <h4>Hilfe 1 · Welches Gesetz?</h4>
+            <p>Gegeben ist die Fallstrecke $s=20\,\text{m}$, gesucht ist die Zeit. Nutze das Zeit-Ort-Gesetz $s(t)=\tfrac12 g\cdot t^2$.</p>
+          </div>
+          <div class="hpanel">
+            <h4>Hilfe 2 · Gleichung umstellen</h4>
+            <p>$$20\,\text{m}=\tfrac12\cdot 9{,}81\,\tfrac{\text{m}}{\text{s}^2}\cdot t^2 \;\Rightarrow\; t=\sqrt{\frac{2\cdot 20\,\text{m}}{9{,}81\,\tfrac{\text{m}}{\text{s}^2}}}$$</p>
+            <p>Die Geschwindigkeit erhältst du danach mit $v=g\cdot t$. Zur Umrechnung: $1\,\tfrac{\text{m}}{\text{s}}=3{,}6\,\tfrac{\text{km}}{\text{h}}$.</p>
+          </div>
+          <div class="hpanel">
+            <h4>Hilfe 3 · Halbe Fallzeit</h4>
+            <p>Setze $t=\tfrac12\cdot 2{,}02\,\text{s}$ in $s(t)=\tfrac12 g\cdot t^2$ ein. Achte darauf, dass $t$ quadriert wird.</p>
+          </div>
+        </div>
+
+        <div class="sol-lock">🔒 Musterlösung – nach Freigabe durch den Lehrer sichtbar.</div>
+        <div class="sol">
+          <div class="sh">✓ Musterlösung · Aufgabe 1</div>
+          <div class="sb">
+            <p><strong>a)</strong> $$t=\sqrt{\frac{2s}{g}}=\sqrt{\frac{2\cdot 20\,\text{m}}{9{,}81\,\tfrac{\text{m}}{\text{s}^2}}}\approx{\color{#1a9e5c}\boldsymbol{2{,}0\,\text{s}}}$$</p>
+            <p><strong>b)</strong> $$v=g\cdot t=9{,}81\,\tfrac{\text{m}}{\text{s}^2}\cdot 2{,}02\,\text{s}\approx{\color{#1a9e5c}\boldsymbol{19{,}8\,\tfrac{\text{m}}{\text{s}}}}\approx 71\,\tfrac{\text{km}}{\text{h}}$$</p>
+            <p><strong>c)</strong> $$s(1{,}01\,\text{s})=\tfrac12\cdot 9{,}81\,\tfrac{\text{m}}{\text{s}^2}\cdot(1{,}01\,\text{s})^2\approx{\color{#1a9e5c}\boldsymbol{5{,}0\,\text{m}}}$$</p>
+            <p>Das ist nur ein Viertel der Brückenhöhe, nicht die Hälfte: Halbiert man die Zeit, wird die Strecke wegen $s\sim t^2$ auf $\left(\tfrac12\right)^2=\tfrac14$ verkleinert. Die restlichen $15\,\text{m}$ legt der Stein in der zweiten Hälfte der Fallzeit zurück, weil er dann schneller ist.</p>
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <!-- ---------- Aufgabe 2 ---------- -->
+    <article class="card s1" data-stufe="1">
+      <div class="card-head"><h3>Aufgabe 2 · Fallbeschleunigung aus einer Videoanalyse</h3><span class="chev">▾</span></div>
+      <div class="card-body">
+        <div class="task">
+          <p>Bei der Videoanalyse einer fallenden Stahlkugel (Start aus der Ruhe) wurden folgende Messwerte ermittelt:</p>
+          <p>
+            $$
+            \begin{array}{c|c|c|c|c|c}
+            t \text{ in s} & 0{,}1 & 0{,}2 & 0{,}3 & 0{,}4 & 0{,}5\\\hline
+            s \text{ in m} & 0{,}049 & 0{,}196 & 0{,}441 & 0{,}785 & 1{,}226
+            \end{array}
+            $$
+          </p>
+          <svg viewBox="0 0 380 220" xmlns="http://www.w3.org/2000/svg" style="max-width:480px">
+            <line x1="50" y1="190" x2="355" y2="190" stroke="#1c1f26" stroke-width="1.2"/>
+            <line x1="50" y1="190" x2="50" y2="15" stroke="#1c1f26" stroke-width="1.2"/>
+            <g stroke="#c7ccd3" stroke-width="1">
+              <line x1="110" y1="20" x2="110" y2="190"/>
+              <line x1="170" y1="20" x2="170" y2="190"/>
+              <line x1="230" y1="20" x2="230" y2="190"/>
+              <line x1="290" y1="20" x2="290" y2="190"/>
+              <line x1="350" y1="20" x2="350" y2="190"/>
+              <line x1="50" y1="156" x2="350" y2="156"/>
+              <line x1="50" y1="122" x2="350" y2="122"/>
+              <line x1="50" y1="88" x2="350" y2="88"/>
+              <line x1="50" y1="54" x2="350" y2="54"/>
+              <line x1="50" y1="20" x2="350" y2="20"/>
+            </g>
+            <g font-size="11" fill="#5c6472" font-family="inherit">
+              <text x="50" y="205" text-anchor="middle">0</text>
+              <text x="110" y="205" text-anchor="middle">0,1</text>
+              <text x="170" y="205" text-anchor="middle">0,2</text>
+              <text x="230" y="205" text-anchor="middle">0,3</text>
+              <text x="290" y="205" text-anchor="middle">0,4</text>
+              <text x="350" y="205" text-anchor="middle">0,5</text>
+              <text x="368" y="194" text-anchor="middle">t in s</text>
+              <text x="42" y="194" text-anchor="end">0</text>
+              <text x="42" y="160" text-anchor="end">0,25</text>
+              <text x="42" y="126" text-anchor="end">0,50</text>
+              <text x="42" y="92" text-anchor="end">0,75</text>
+              <text x="42" y="58" text-anchor="end">1,00</text>
+              <text x="42" y="24" text-anchor="end">1,25</text>
+              <text x="58" y="13">s in m</text>
+            </g>
+            <polyline fill="none" stroke="#d4760a" stroke-width="2" stroke-opacity=".55" points="50.0,190.0 56.0,189.9 62.0,189.7 68.0,189.4 74.0,188.9 80.0,188.3 86.0,187.6 92.0,186.7 98.0,185.7 104.0,184.6 110.0,183.3 116.0,181.9 122.0,180.4 128.0,178.7 134.0,176.9 140.0,175.0 146.0,172.9 152.0,170.7 158.0,168.4 164.0,165.9 170.0,163.3 176.0,160.6 182.0,157.7 188.0,154.7 194.0,151.6 200.0,148.3 206.0,145.0 212.0,141.4 218.0,137.8 224.0,134.0 230.0,130.0 236.0,126.0 242.0,121.8 248.0,117.4 254.0,113.0 260.0,108.4 266.0,103.6 272.0,98.8 278.0,93.8 284.0,88.6 290.0,83.4 296.0,78.0 302.0,72.4 308.0,66.8 314.0,61.0 320.0,55.1 326.0,49.0 332.0,42.8 338.0,36.5 344.0,30.0 350.0,23.4"/>
+            <g fill="#d4760a">
+              <circle cx="110" cy="183.3" r="3.4"/>
+              <circle cx="170" cy="163.3" r="3.4"/>
+              <circle cx="230" cy="130.0" r="3.4"/>
+              <circle cx="290" cy="83.2" r="3.4"/>
+              <circle cx="350" cy="23.3" r="3.4"/>
+            </g>
+          </svg>
+          <p><strong>a)</strong> Zeigen Sie, dass die Messwerte durch einen Zusammenhang der Form $s=k\cdot t^2$ beschrieben werden, und bestimmen Sie $k$.</p>
+          <p><strong>b)</strong> Bestimmen Sie daraus die Fallbeschleunigung $g$ und vergleichen Sie mit dem Literaturwert $9{,}81\,\tfrac{\text{m}}{\text{s}^2}$.</p>
+          <p><strong>c)</strong> Geben Sie das Zeit-Geschwindigkeit-Gesetz an und berechnen Sie die Geschwindigkeit der Kugel bei $t=0{,}5\,\text{s}$.</p>
+        </div>
+
+        <div class="assess">
+          <span class="lab">Einschätzung:</span>
+          <button data-v="ok" type="button">✓ Fertig &amp; verstanden</button>
+          <button data-v="mid" type="button">~ Noch unsicher</button>
+          <button data-v="ask" type="button">? Frage an Lehrer</button>
+        </div>
+
+        <div class="hints">
+          <div class="htitle">Hilfen</div>
+          <div class="htabs">
+            <button type="button">Hilfe 1 · Quotient bilden</button>
+            <button type="button">Hilfe 2 · Von $k$ zu $g$</button>
+            <button type="button">Hilfe 3 · Geschwindigkeit</button>
+          </div>
+          <div class="hpanel">
+            <h4>Hilfe 1 · Ist $s/t^2$ konstant?</h4>
+            <p>Ergänze die Tabelle um eine dritte Zeile und berechne für jeden Messpunkt $k=\dfrac{s}{t^2}$. Sind alle Werte (nahezu) gleich, gilt $s=k\cdot t^2$.</p>
+          </div>
+          <div class="hpanel">
+            <h4>Hilfe 2 · Vergleich mit dem Fallgesetz</h4>
+            <p>Vergleiche $s=k\cdot t^2$ mit $s=\tfrac12 g\cdot t^2$. Welcher Zusammenhang besteht also zwischen $k$ und $g$?</p>
+          </div>
+          <div class="hpanel">
+            <h4>Hilfe 3 · Geschwindigkeit</h4>
+            <p>Mit $g=2k$ lautet das Gesetz $v(t)=g\cdot t$. Setze $t=0{,}5\,\text{s}$ ein.</p>
+          </div>
+        </div>
+
+        <div class="sol-lock">🔒 Musterlösung – nach Freigabe durch den Lehrer sichtbar.</div>
+        <div class="sol">
+          <div class="sh">✓ Musterlösung · Aufgabe 2</div>
+          <div class="sb">
+            <p><strong>a)</strong> $\dfrac{s}{t^2}$ ergibt $4{,}90$; $4{,}90$; $4{,}90$; $4{,}91$; $4{,}90$ (jeweils in $\tfrac{\text{m}}{\text{s}^2}$). Der Quotient ist konstant, also gilt $s=k\cdot t^2$ mit $k\approx 4{,}90\,\tfrac{\text{m}}{\text{s}^2}$.</p>
+            <p><strong>b)</strong> Aus $k=\tfrac12 g$ folgt $$g=2k=2\cdot 4{,}90\,\tfrac{\text{m}}{\text{s}^2}={\color{#1a9e5c}\boldsymbol{9{,}8\,\tfrac{\text{m}}{\text{s}^2}}}$$</p>
+            <p>Das stimmt sehr gut mit dem Literaturwert $9{,}81\,\tfrac{\text{m}}{\text{s}^2}$ überein (Abweichung unter $0{,}2\,\%$).</p>
+            <p><strong>c)</strong> $$v(t)=9{,}8\,\tfrac{\text{m}}{\text{s}^2}\cdot t \qquad v(0{,}5\,\text{s})={\color{#1a9e5c}\boldsymbol{4{,}9\,\tfrac{\text{m}}{\text{s}}}}$$</p>
+          </div>
+        </div>
+      </div>
+    </article>
+  </section>
+
+  <!-- ================= STUFE 2 ================= -->
+  <section class="s2" data-stufe="2">
+    <div class="stufe-head">
+      <span class="stufe-badge">Stufe 2</span>
+      <span class="desc">Erweiterung · Fallen auf anderen Himmelskörpern, Reaktionszeit messen</span>
+    </div>
+
+    <!-- ---------- Aufgabe 3 ---------- -->
+    <article class="card s2" data-stufe="2">
+      <div class="card-head"><h3>Aufgabe 3 · Hammer und Feder auf dem Mond</h3><span class="chev">▾</span></div>
+      <div class="card-body">
+        <div class="task">
+          <p>1971 ließ der Astronaut David Scott auf dem Mond einen Hammer und eine Feder gleichzeitig aus der Hand fallen. Nehmen Sie eine Fallhöhe von $1{,}5\,\text{m}$ an.</p>
+          <p>
+            $$
+            \begin{array}{l|c|c|c}
+            \text{Ort} & \text{Erde} & \text{Mond} & \text{Mars}\\\hline
+            g \text{ in } \tfrac{\text{m}}{\text{s}^2} & 9{,}81 & 1{,}62 & 3{,}69
+            \end{array}
+            $$
+          </p>
+          <p><strong>a)</strong> Berechnen Sie die Fallzeit und die Auftreffgeschwindigkeit auf dem Mond.</p>
+          <p><strong>b)</strong> Berechnen Sie zum Vergleich die Fallzeit für dieselbe Höhe auf der Erde und auf dem Mars.</p>
+          <p><strong>c)</strong> Auf dem Mond kamen Hammer und Feder gleichzeitig am Boden an. Erklären Sie, warum das auf der Erde nicht so ist.</p>
+        </div>
+
+        <div class="assess">
+          <span class="lab">Einschätzung:</span>
+          <button data-v="ok" type="button">✓ Fertig &amp; verstanden</button>
+          <button data-v="mid" type="button">~ Noch unsicher</button>
+          <button data-v="ask" type="button">? Frage an Lehrer</button>
+        </div>
+
+        <div class="hints">
+          <div class="htitle">Hilfen</div>
+          <div class="htabs">
+            <button type="button">Hilfe 1 · Fallzeit</button>
+            <button type="button">Hilfe 2 · Geschwindigkeit</button>
+            <button type="button">Hilfe 3 · Zu c)</button>
+          </div>
+          <div class="hpanel">
+            <h4>Hilfe 1 · Fallzeit berechnen</h4>
+            <p>Es gelten dieselben Fallgesetze wie auf der Erde, nur mit einem anderen Wert für $g$: $t=\sqrt{\dfrac{2h}{g}}$.</p>
+          </div>
+          <div class="hpanel">
+            <h4>Hilfe 2 · Auftreffgeschwindigkeit</h4>
+            <p>Setze die Fallzeit aus a) in $v=g_{\text{Mond}}\cdot t$ ein.</p>
+          </div>
+          <div class="hpanel">
+            <h4>Hilfe 3 · Was ist auf dem Mond anders?</h4>
+            <p>Der Mond hat keine Atmosphäre. Überlege, welche Kraft auf der Erde auf die Feder wirkt, auf dem Mond aber nicht. Denk an die Fallröhre aus dem Buch (Galilei).</p>
+          </div>
+        </div>
+
+        <div class="sol-lock">🔒 Musterlösung – nach Freigabe durch den Lehrer sichtbar.</div>
+        <div class="sol">
+          <div class="sh">✓ Musterlösung · Aufgabe 3</div>
+          <div class="sb">
+            <p><strong>a)</strong> $$t_{\text{Mond}}=\sqrt{\frac{2\cdot 1{,}5\,\text{m}}{1{,}62\,\tfrac{\text{m}}{\text{s}^2}}}\approx{\color{#1a9e5c}\boldsymbol{1{,}36\,\text{s}}} \qquad v=1{,}62\,\tfrac{\text{m}}{\text{s}^2}\cdot 1{,}36\,\text{s}\approx{\color{#1a9e5c}\boldsymbol{2{,}2\,\tfrac{\text{m}}{\text{s}}}}$$</p>
+            <p><strong>b)</strong> $$t_{\text{Erde}}=\sqrt{\frac{2\cdot 1{,}5\,\text{m}}{9{,}81\,\tfrac{\text{m}}{\text{s}^2}}}\approx 0{,}55\,\text{s} \qquad t_{\text{Mars}}=\sqrt{\frac{2\cdot 1{,}5\,\text{m}}{3{,}69\,\tfrac{\text{m}}{\text{s}^2}}}\approx 0{,}90\,\text{s}$$</p>
+            <p>Auf dem Mond dauert der Fall also etwa $2{,}5$-mal so lange wie auf der Erde.</p>
+            <p><strong>c)</strong> Auf der Erde bremst der Luftwiderstand die Feder wegen ihrer großen Fläche und kleinen Masse stark ab, den Hammer dagegen kaum. Auf dem Mond gibt es keine Luft. Dort fallen alle Körper unabhängig von Masse und Form gleich schnell. Das ist genau Galileis Hypothese: Ohne Luftwiderstand fallen alle Körper gleich schnell.</p>
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <!-- ---------- Aufgabe 4 ---------- -->
+    <article class="card s2" data-stufe="2">
+      <div class="card-head"><h3>Aufgabe 4 · Reaktionszeit mit dem Lineal</h3><span class="chev">▾</span></div>
+      <div class="card-body">
+        <div class="task">
+          <p>Erinnern Sie sich an das Linealexperiment aus Kapitel 1.2: Eine Person hält ein Lineal senkrecht, die Testperson hat Daumen und Zeigefinger an der $0$-cm-Marke. Ohne Vorwarnung wird das Lineal losgelassen und so schnell wie möglich gefangen.</p>
+          <p><strong>a)</strong> Das Lineal wurde nach $18\,\text{cm}$ gefangen. Berechnen Sie die Reaktionszeit.</p>
+          <p><strong>b)</strong> Erstellen Sie eine Tabelle, die für die Fallstrecken $5\,\text{cm}$, $10\,\text{cm}$, $15\,\text{cm}$, $20\,\text{cm}$, $25\,\text{cm}$ und $30\,\text{cm}$ die zugehörige Reaktionszeit angibt.</p>
+          <p><strong>c)</strong> Mit der Tabelle aus b) könnte man eine „Reaktionszeit-Skala“ direkt auf das Lineal kleben. Begründen Sie, warum die Zeitmarken auf diesem Lineal nicht in gleichen Abständen liegen.</p>
+        </div>
+
+        <div class="assess">
+          <span class="lab">Einschätzung:</span>
+          <button data-v="ok" type="button">✓ Fertig &amp; verstanden</button>
+          <button data-v="mid" type="button">~ Noch unsicher</button>
+          <button data-v="ask" type="button">? Frage an Lehrer</button>
+        </div>
+
+        <div class="hints">
+          <div class="htitle">Hilfen</div>
+          <div class="htabs">
+            <button type="button">Hilfe 1 · Modell</button>
+            <button type="button">Hilfe 2 · Einheiten</button>
+            <button type="button">Hilfe 3 · Zu c)</button>
+          </div>
+          <div class="hpanel">
+            <h4>Hilfe 1 · Das Lineal fällt frei</h4>
+            <p>Zwischen Loslassen und Fangen fällt das Lineal frei aus der Ruhe. Die Reaktionszeit ist also die Fallzeit für die Fallstrecke: $t=\sqrt{\dfrac{2s}{g}}$.</p>
+          </div>
+          <div class="hpanel">
+            <h4>Hilfe 2 · In Meter umrechnen</h4>
+            <p>Rechne die Fallstrecke zuerst in Meter um: $18\,\text{cm}=0{,}18\,\text{m}$. Sonst passt die Einheit nicht zu $g$ in $\tfrac{\text{m}}{\text{s}^2}$.</p>
+          </div>
+          <div class="hpanel">
+            <h4>Hilfe 3 · Zeitabstände vergleichen</h4>
+            <p>Schau in deine Tabelle: Um wie viel wächst die Reaktionszeit von $5\,\text{cm}$ auf $10\,\text{cm}$, und um wie viel von $25\,\text{cm}$ auf $30\,\text{cm}$? Wie hängt $t$ von $s$ ab?</p>
+          </div>
+        </div>
+
+        <div class="sol-lock">🔒 Musterlösung – nach Freigabe durch den Lehrer sichtbar.</div>
+        <div class="sol">
+          <div class="sh">✓ Musterlösung · Aufgabe 4</div>
+          <div class="sb">
+            <p><strong>a)</strong> $$t=\sqrt{\frac{2\cdot 0{,}18\,\text{m}}{9{,}81\,\tfrac{\text{m}}{\text{s}^2}}}\approx{\color{#1a9e5c}\boldsymbol{0{,}19\,\text{s}}}$$</p>
+            <p><strong>b)</strong>
+            $$
+            \begin{array}{c|c|c|c|c|c|c}
+            s \text{ in cm} & 5 & 10 & 15 & 20 & 25 & 30\\\hline
+            t \text{ in s} & 0{,}10 & 0{,}14 & 0{,}17 & 0{,}20 & 0{,}23 & 0{,}25
+            \end{array}
+            $$</p>
+            <p><strong>c)</strong> Wegen $t=\sqrt{2s/g}$ wächst die Zeit nur mit der Wurzel der Strecke. Am Anfang ist das Lineal noch langsam, später schneller. Deshalb legt es pro Zeitabschnitt immer längere Strecken zurück. Von $5$ auf $10\,\text{cm}$ vergehen etwa $0{,}04\,\text{s}$, von $25$ auf $30\,\text{cm}$ nur noch etwa $0{,}02\,\text{s}$. Gleich große Zeitschritte liegen auf dem Lineal also nach unten hin immer weiter auseinander.</p>
+          </div>
+        </div>
+      </div>
+    </article>
+  </section>
+
+  <!-- ================= STUFE 3 ================= -->
+  <section class="s3" data-stufe="3">
+    <div class="stufe-head">
+      <span class="stufe-badge">Stufe 3</span>
+      <span class="desc">Vertiefung · Vernetzung, Sachkontexte, Grenzen des Modells</span>
+    </div>
+
+    <!-- ---------- Aufgabe 5 ---------- -->
+    <article class="card s3" data-stufe="3">
+      <div class="card-head"><h3>Aufgabe 5 · Wie tief ist der Brunnen?</h3><span class="chev">▾</span></div>
+      <div class="card-body">
+        <div class="task">
+          <p>Um die Tiefe eines Brunnens abzuschätzen, lässt Lena einen Stein hineinfallen und stoppt die Zeit, bis sie den Aufprall auf dem Wasser hört. Sie misst $T=2{,}5\,\text{s}$.</p>
+          <p><strong>a)</strong> Schätzen Sie die Tiefe des Brunnens ab, indem Sie annehmen, dass die gemessene Zeit nur die Fallzeit ist.</p>
+          <p><strong>b)</strong> Tatsächlich braucht auch der Schall Zeit, um nach oben zu gelangen ($c_{\text{Schall}}=340\,\tfrac{\text{m}}{\text{s}}$). Berechnen Sie, wie lange der Schall für die in a) berechnete Tiefe ungefähr benötigt.</p>
+          <p><strong>c)</strong> Berechnen Sie die tatsächliche Tiefe des Brunnens unter Berücksichtigung der Schalllaufzeit und beurteilen Sie, ob sich die Korrektur lohnt.</p>
+        </div>
+
+        <div class="assess">
+          <span class="lab">Einschätzung:</span>
+          <button data-v="ok" type="button">✓ Fertig &amp; verstanden</button>
+          <button data-v="mid" type="button">~ Noch unsicher</button>
+          <button data-v="ask" type="button">? Frage an Lehrer</button>
+        </div>
+
+        <div class="hints">
+          <div class="htitle">Hilfen</div>
+          <div class="htabs">
+            <button type="button">Hilfe 1 · Zu a) und b)</button>
+            <button type="button">Hilfe 2 · Zwei Teilzeiten</button>
+            <button type="button">Hilfe 3 · Gleichung lösen</button>
+          </div>
+          <div class="hpanel">
+            <h4>Hilfe 1 · Erste Abschätzung</h4>
+            <p>Für a) gilt $h=\tfrac12 g\cdot T^2$. Für b) bewegt sich der Schall mit konstanter Geschwindigkeit: $t_S=\dfrac{h}{c_{\text{Schall}}}$.</p>
+          </div>
+          <div class="hpanel">
+            <h4>Hilfe 2 · Gesamtzeit aufteilen</h4>
+            <p>Die gemessene Zeit setzt sich aus der Fallzeit $t_F$ und der Schalllaufzeit $t_S$ zusammen: $T=t_F+t_S$. Beide Teilstrecken sind gleich lang, nämlich die Brunnentiefe $h$:</p>
+            <p>$$h=\tfrac12 g\cdot t_F^2 \qquad\text{und}\qquad h=c_{\text{Schall}}\cdot t_S=c_{\text{Schall}}\cdot (T-t_F)$$</p>
+          </div>
+          <div class="hpanel">
+            <h4>Hilfe 3 · Quadratische Gleichung</h4>
+            <p>Setze beide Ausdrücke für $h$ gleich: $\tfrac12 g\, t_F^2=c\,(T-t_F)$. Mit Zahlen: $4{,}905\, t_F^2+340\, t_F-850=0$. Löse mit der $pq$- oder $abc$-Formel und nimm die positive Lösung. Alternativ: Probiere systematisch Werte für $t_F$ knapp unter $2{,}5\,\text{s}$ aus.</p>
+          </div>
+        </div>
+
+        <div class="sol-lock">🔒 Musterlösung – nach Freigabe durch den Lehrer sichtbar.</div>
+        <div class="sol">
+          <div class="sh">✓ Musterlösung · Aufgabe 5</div>
+          <div class="sb">
+            <p><strong>a)</strong> $$h=\tfrac12\cdot 9{,}81\,\tfrac{\text{m}}{\text{s}^2}\cdot(2{,}5\,\text{s})^2\approx{\color{#1a9e5c}\boldsymbol{30{,}7\,\text{m}}}$$</p>
+            <p><strong>b)</strong> $$t_S=\frac{30{,}7\,\text{m}}{340\,\tfrac{\text{m}}{\text{s}}}\approx{\color{#1a9e5c}\boldsymbol{0{,}09\,\text{s}}}$$</p>
+            <p><strong>c)</strong> Aus $4{,}905\, t_F^2+340\, t_F-850=0$ folgt (positive Lösung)</p>
+            <p>$$t_F=\frac{-340+\sqrt{340^2+4\cdot 4{,}905\cdot 850}}{2\cdot 4{,}905}\approx 2{,}42\,\text{s}$$</p>
+            <p>$$h=\tfrac12\cdot 9{,}81\,\tfrac{\text{m}}{\text{s}^2}\cdot(2{,}42\,\text{s})^2\approx{\color{#1a9e5c}\boldsymbol{28{,}6\,\text{m}}}$$</p>
+            <p>Kontrolle: Der Schall braucht für $28{,}6\,\text{m}$ etwa $0{,}08\,\text{s}$, und $2{,}42\,\text{s}+0{,}08\,\text{s}=2{,}5\,\text{s}$ ✓.</p>
+            <p><strong>Beurteilung:</strong> Die einfache Abschätzung überschätzt die Tiefe um etwa $2\,\text{m}$ (rund $7\,\%$). Die Reaktionszeit beim Stoppen mit der Hand liegt aber selbst bei etwa $0{,}2\,\text{s}$. Sie wirkt sich damit stärker aus als die Schalllaufzeit. Für eine grobe Abschätzung reicht a) also, für eine genauere Messung muss man beide Effekte berücksichtigen.</p>
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <!-- ---------- Aufgabe 6 ---------- -->
+    <article class="card s3" data-stufe="3">
+      <div class="card-head"><h3>Aufgabe 6 · Beurteilen und begründen</h3><span class="chev">▾</span></div>
+      <div class="card-body">
+        <div class="task">
+          <p>Untersuchen Sie, ob die folgenden Aussagen wahr oder falsch sind. Begründen Sie Ihre Entscheidung bzw. geben Sie ein Gegenbeispiel an.</p>
+          <p><strong>a)</strong> Ein schwerer Körper fällt grundsätzlich schneller als ein leichter.</p>
+          <p><strong>b)</strong> Ein frei fallender Körper legt in jeder Sekunde die gleiche Strecke zurück.</p>
+          <p><strong>c)</strong> Ein Fallschirmspringer, der vor dem Öffnen des Schirms $60\,\text{s}$ lang fällt, erreicht nach den Fallgesetzen eine Geschwindigkeit von über $2000\,\tfrac{\text{km}}{\text{h}}$.</p>
+        </div>
+
+        <div class="assess">
+          <span class="lab">Einschätzung:</span>
+          <button data-v="ok" type="button">✓ Fertig &amp; verstanden</button>
+          <button data-v="mid" type="button">~ Noch unsicher</button>
+          <button data-v="ask" type="button">? Frage an Lehrer</button>
+        </div>
+
+        <div class="hints">
+          <div class="htitle">Hilfen</div>
+          <div class="htabs">
+            <button type="button">Hilfe 1 · Zu a)</button>
+            <button type="button">Hilfe 2 · Zu b)</button>
+            <button type="button">Hilfe 3 · Zu c)</button>
+          </div>
+          <div class="hpanel">
+            <h4>Hilfe 1 · Zu a)</h4>
+            <p>Unterscheide zwischen dem Fall im Vakuum (Fallröhre, Mond) und dem Fall in Luft. Kommt die Masse in den Fallgesetzen $v=g\cdot t$ und $s=\tfrac12 g\cdot t^2$ überhaupt vor?</p>
+          </div>
+          <div class="hpanel">
+            <h4>Hilfe 2 · Zu b)</h4>
+            <p>Berechne die Strecke in der 1., 2. und 3. Sekunde: $s(1\,\text{s})-s(0)$, $s(2\,\text{s})-s(1\,\text{s})$ und $s(3\,\text{s})-s(2\,\text{s})$.</p>
+          </div>
+          <div class="hpanel">
+            <h4>Hilfe 3 · Zu c)</h4>
+            <p>Rechne $v=g\cdot t$ für $t=60\,\text{s}$ nach. Vergleiche dann mit der Grenzgeschwindigkeit eines Menschen in Luft (Buch, Tabelle B3: $v_{\text{Grenz}}\approx 57\,\tfrac{\text{m}}{\text{s}}$). Gilt das Modell „freier Fall“ hier noch?</p>
+          </div>
+        </div>
+
+        <div class="sol-lock">🔒 Musterlösung – nach Freigabe durch den Lehrer sichtbar.</div>
+        <div class="sol">
+          <div class="sh">✓ Musterlösung · Aufgabe 6</div>
+          <div class="sb">
+            <p><strong>a) Falsch.</strong> Im Vakuum fallen alle Körper gleich schnell, denn die Masse kommt in den Fallgesetzen gar nicht vor. Das zeigen die luftleere Fallröhre und das Hammer-Feder-Experiment auf dem Mond. In Luft können Unterschiede auftreten. Sie entstehen aber durch den Luftwiderstand, der von Form, Querschnittsfläche und Masse abhängt, und nicht durch das „Gewicht allein“. Ein zerknülltes Blatt Papier fällt z.&nbsp;B. fast so schnell wie eine Eisenkugel.</p>
+            <p><strong>b) Falsch.</strong> In der 1. Sekunde fällt der Körper $4{,}9\,\text{m}$, in der 2. Sekunde $14{,}7\,\text{m}$ und in der 3. Sekunde $24{,}5\,\text{m}$. Die Strecken verhalten sich wie $1:3:5$. Weil die Geschwindigkeit ständig zunimmt, wird die Strecke pro Sekunde immer größer.</p>
+            <p><strong>c) Rechnerisch wahr, physikalisch falsch.</strong> Nach den Fallgesetzen ergibt sich</p>
+            <p>$$v=9{,}81\,\tfrac{\text{m}}{\text{s}^2}\cdot 60\,\text{s}\approx 589\,\tfrac{\text{m}}{\text{s}}\approx 2120\,\tfrac{\text{km}}{\text{h}}$$</p>
+            <p>In Wirklichkeit erreicht ein Fallschirmspringer wegen des Luftwiderstands nur seine Grenzgeschwindigkeit von etwa $57\,\tfrac{\text{m}}{\text{s}}\approx 200\,\tfrac{\text{km}}{\text{h}}$. Bei dieser Geschwindigkeit sind Luftwiderstand und Gewichtskraft gleich groß, er wird also nicht mehr schneller. Das Modell „freier Fall“ gilt nur für die ersten Sekunden (rechnerisch wäre $57\,\tfrac{\text{m}}{\text{s}}$ schon nach knapp $6\,\text{s}$ erreicht). Für lange Fallzeiten in Luft ist es nicht mehr anwendbar.</p>
+          </div>
+        </div>
+      </div>
+    </article>
+  </section>
+
+</div>
+
+<footer class="bot">
+  Physik Einführungsphase · Kapitel 1.4 · Bewegungen beschreiben<br>
+  <a href="../">← Zurück zu EP Materialien</a>
+</footer>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+
+  /* ---------- KaTeX ---------- */
+  function render(){
+    if (window.renderMathInElement) {
+      renderMathInElement(document.body, {
+        delimiters: [
+          {left:'$$', right:'$$', display:true},
+          {left:'$',  right:'$',  display:false}
+        ],
+        throwOnError:false
+      });
+    }
+  }
+  if (window.renderMathInElement) render();
+  else window.addEventListener('load', render);
+
+  /* ---------- Karten auf/zu ---------- */
+  document.querySelectorAll('.card-head').forEach(function(h){
+    h.addEventListener('click', function(){
+      h.parentElement.classList.toggle('open');
+    });
+  });
+
+  /* ---------- Hilfe-Reiter ---------- */
+  document.querySelectorAll('.hints').forEach(function(box){
+    var tabs   = box.querySelectorAll('.htabs button');
+    var panels = box.querySelectorAll('.hpanel');
+    tabs.forEach(function(tab, i){
+      tab.addEventListener('click', function(){
+        var wasOn = tab.classList.contains('on');
+        tabs.forEach(function(t){ t.classList.remove('on'); });
+        panels.forEach(function(p){ p.classList.remove('on'); });
+        if (!wasOn) {
+          tab.classList.add('on');
+          if (panels[i]) panels[i].classList.add('on');
+        }
+      });
+    });
+  });
+
+  /* ---------- Selbsteinschätzung ---------- */
+  document.querySelectorAll('.assess').forEach(function(box){
+    var btns = box.querySelectorAll('button');
+    btns.forEach(function(b){
+      b.addEventListener('click', function(){
+        var wasOn = b.classList.contains('on');
+        btns.forEach(function(x){ x.classList.remove('on'); });
+        if (!wasOn) b.classList.add('on');
+      });
+    });
+  });
+
+  /* ---------- Filter ---------- */
+  document.querySelectorAll('.filters button').forEach(function(b){
+    b.addEventListener('click', function(){
+      document.querySelectorAll('.filters button').forEach(function(x){ x.classList.remove('on'); });
+      b.classList.add('on');
+      var f = b.dataset.f;
+      document.querySelectorAll('section[data-stufe]').forEach(function(sec){
+        sec.style.display = (f === 'all' || sec.dataset.stufe === f) ? '' : 'none';
+      });
+    });
+  });
+
+  /* ---------- Musterlösungen freischalten ---------- */
+  var CODE  = 'PHYSIK';
+  var input = document.getElementById('code');
+  var msg   = document.getElementById('msg');
+
+  function tryUnlock(){
+    var val = (input.value || '').trim().toUpperCase();
+    if (val === CODE) {
+      document.body.classList.add('unlocked');
+      msg.textContent = '✓ freigeschaltet';
+      msg.className = 'msg ok';
+      render();
+    } else {
+      msg.textContent = '✗ Code stimmt nicht';
+      msg.className = 'msg bad';
+    }
+  }
+  document.getElementById('btn-unlock').addEventListener('click', tryUnlock);
+  input.addEventListener('keydown', function(e){
+    if (e.key === 'Enter') tryUnlock();
+  });
+
+  /* Erste Aufgabe jeder Stufe geöffnet starten */
+  document.querySelectorAll('section[data-stufe]').forEach(function(sec){
+    var first = sec.querySelector('.card');
+    if (first) first.classList.add('open');
+  });
+});
+</script>
+
+</body>
+</html>
