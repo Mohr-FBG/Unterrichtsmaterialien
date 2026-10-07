@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Herz oder Bild · Simulation · LK Q2 Stochastik</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,400;0,600;1,400&display=swap">
+<style>
+  :root {
+    --gold:#b87500; --gold-pale:#fdf3dc;
+    --bg:#f5f4f0; --surface:#ffffff; --surface-2:#faf9f6;
+    --border:#ddd8cc; --text:#1c1a16; --muted:#6b6456;
+    --link:#2c5f8a; --link-pale:#e5eef7;
+    --win:#1a7a4c; --win-pale:#e3f3ea;
+    --suit-red:#c0392b; --suit-black:#1c1a16;
+    --rE:#f6d9d4; --rB:#e3d4f0; --rF:#d6e6f5; --rO:#f1efe9;
+    --sE:#c0392b; --sF:#2c5f8a;
+    --hl:#e8a800;
+    --r:6px;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --gold:#d4a030; --gold-pale:#2a2010;
+      --bg:#1a1814; --surface:#242018; --surface-2:#2a251c;
+      --border:#38332a; --text:#ede8de; --muted:#9e9482;
+      --link:#6a9fd8; --link-pale:#0f1e30;
+      --win:#3fbf82; --win-pale:#0f2a1c;
+      --suit-red:#c0392b; --suit-black:#1c1a16;
+      --rE:#3d2420; --rB:#33263f; --rF:#1d2d3f; --rO:#2a251c;
+      --sE:#ef6b5b; --sF:#6a9fd8;
+      --hl:#e8b830;
+    }
+  }
+  :root[data-theme="dark"] {
+    --gold:#d4a030; --gold-pale:#2a2010;
+    --bg:#1a1814; --surface:#242018; --surface-2:#2a251c;
+    --border:#38332a; --text:#ede8de; --muted:#9e9482;
+    --link:#6a9fd8; --link-pale:#0f1e30;
+    --win:#3fbf82; --win-pale:#0f2a1c;
+    --rE:#3d2420; --rB:#33263f; --rF:#1d2d3f; --rO:#2a251c;
+    --sE:#ef6b5b; --sF:#6a9fd8;
+    --hl:#e8b830;
+  }
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;font-size:16px;line-height:1.55;min-height:100vh}
+  button,select,input{font:inherit;color:inherit}
+
+  .topbar{background:var(--surface);border-bottom:1px solid var(--border);padding:0 20px}
+  .topbar-inner{max-width:960px;margin:0 auto;min-height:46px;display:flex;flex-wrap:wrap;align-items:center;gap:6px;font-size:.82rem;color:var(--muted)}
+  .topbar-inner a{color:var(--link);text-decoration:none}
+  .topbar-inner a:hover{text-decoration:underline}
+  .sep{opacity:.45}
+  header.page-head{background:var(--surface);border-bottom:3px solid var(--link);padding:28px 20px 24px;margin-bottom:28px}
+  header.page-head .inner{max-width:960px;margin:0 auto}
+  .head-eyebrow{font-size:.78rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--link);margin-bottom:6px}
+  h1{font-family:"Crimson Pro",Georgia,serif;font-size:2.2rem;font-weight:600;line-height:1.15}
+  header.page-head p{font-size:.95rem;color:var(--muted);margin-top:6px;max-width:720px}
+
+  .wrap{max-width:960px;margin:0 auto;padding:0 16px 80px}
+  .panel{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:20px;margin-bottom:24px}
+  .panel-head{display:flex;align-items:baseline;gap:10px;margin-bottom:4px}
+  .step{display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:50%;background:var(--link);color:#fff;font-weight:700;font-size:.85rem;flex-shrink:0}
+  h2{font-family:"Crimson Pro",Georgia,serif;font-size:1.45rem;font-weight:600}
+  h3{font-size:1rem;margin-bottom:8px}
+  .panel-sub{color:var(--muted);font-size:.9rem;margin:0 0 16px 36px}
+  .muted{color:var(--muted)}
+  .hide{display:none!important}
+
+  .rules{background:var(--gold-pale);border-left:3px solid var(--gold);border-radius:var(--r);padding:12px 16px;font-size:.93rem;margin-bottom:24px}
+  .rules b{color:var(--gold)}
+  .task-box{background:var(--gold-pale);border-left:3px solid var(--gold);border-radius:var(--r);padding:12px 16px;font-size:.92rem;margin:16px 0 0}
+  .task-box b{color:var(--gold)}
+  .task-box ol{margin:6px 0 0 20px}
+  .task-box li{margin:3px 0}
+
+  .btn{border:1px solid var(--border);background:var(--surface);border-radius:var(--r);padding:8px 14px;cursor:pointer;font-weight:600;font-size:.9rem}
+  .btn:hover{background:var(--surface-2)}
+  .btn:disabled{opacity:.45;cursor:not-allowed}
+  .btn-primary{background:var(--gold);border-color:var(--gold);color:#fff}
+  .btn-primary:hover{background:var(--gold);filter:brightness(1.07)}
+  .btn-blue{background:var(--link);border-color:var(--link);color:#fff}
+  .btn-blue:hover{background:var(--link);filter:brightness(1.1)}
+  .btn-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+  .ctl{display:flex;align-items:center;gap:8px;font-size:.9rem}
+  .ctl label{color:var(--muted);font-weight:600}
+  select,input[type=number],input[type=text],input[type=password]{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:6px 9px}
+
+  /* Spielkarte groß */
+  .table-area{display:flex;gap:22px;align-items:center;flex-wrap:wrap;margin:16px 0}
+  .bigcard{width:96px;height:136px;border-radius:9px;border:1.5px solid #b9b2a3;background:#fff;position:relative;box-shadow:0 3px 10px rgba(0,0,0,.12);flex-shrink:0;font-family:Georgia,serif}
+  .bigcard.back{background:repeating-linear-gradient(45deg,#2c5f8a 0 6px,#244f73 6px 12px);border-color:#1a3d5c}
+  .bigcard .c1,.bigcard .c2{position:absolute;font-weight:700;font-size:1.05rem;line-height:1;text-align:center}
+  .bigcard .c1{top:7px;left:8px}
+  .bigcard .c2{bottom:7px;right:8px;transform:rotate(180deg)}
+  .bigcard .mid{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:2.7rem}
+  .bigcard.red{color:var(--suit-red)} .bigcard.black{color:var(--suit-black)}
+  .bigcard.flip{animation:flip .35s ease-out}
+  @keyframes flip{0%{transform:rotateY(90deg)}100%{transform:none}}
+  .verdict{font-size:1.05rem}
+  .verdict b{font-size:1.25rem}
+  .verdict .win{color:var(--win)} .verdict .lose{color:var(--suit-red)}
+  .count-pill{font-size:.85rem;color:var(--muted)}
+
+  .stat-row{display:flex;flex-wrap:wrap;gap:10px;margin:6px 0 10px}
+  .stat{background:var(--surface-2);border:1px solid var(--border);border-radius:var(--r);padding:8px 14px;min-width:130px}
+  .stat .k{font-size:.72rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:600}
+  .stat .v{font-size:1.3rem;font-weight:700;font-variant-numeric:tabular-nums}
+
+  .chart-wrap{position:relative;margin-top:6px;border:1px solid var(--border);border-radius:var(--r);background:var(--surface-2)}
+  svg.chart{display:block;width:100%;height:auto}
+  .chart text{fill:var(--muted);font-size:11px;font-family:inherit}
+  .legend{display:flex;flex-wrap:wrap;gap:16px;font-size:.8rem;color:var(--muted);margin-top:6px}
+  .legend i{display:inline-block;width:18px;height:3px;vertical-align:4px;margin-right:5px;border-radius:2px}
+
+  /* Venn */
+  .ev-pick{display:flex;flex-wrap:wrap;gap:14px;margin-bottom:12px}
+  .ev-pick .ctl select{min-width:150px}
+  .tagE{color:var(--sE);font-weight:800} .tagF{color:var(--sF);font-weight:800}
+  .venn-wrap{border:1px solid var(--border);border-radius:var(--r);overflow-x:auto;background:var(--surface-2)}
+  svg.venn{display:block;width:100%;min-width:620px;height:auto}
+  .venn text{font-family:inherit}
+  .chip rect{stroke:#b9b2a3;stroke-width:1}
+  .chip.inEv rect{stroke:var(--hl);stroke-width:2.6}
+  .chip.pulse{animation:pulse .8s ease-out}
+  @keyframes pulse{0%{transform:scale(1.6)}100%{transform:scale(1)}}
+  .regions{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:10px}
+  .reg{border-radius:var(--r);padding:8px 10px;font-size:.84rem;border:1px solid var(--border);font-variant-numeric:tabular-nums}
+  .reg .t{font-weight:700;font-size:.8rem}
+  .reg .n{font-size:1.1rem;font-weight:700}
+  .reg.rE{background:var(--rE)} .reg.rB{background:var(--rB)} .reg.rF{background:var(--rF)} .reg.rO{background:var(--rO)}
+
+  .ops{display:flex;flex-wrap:wrap;gap:6px;margin:14px 0 8px}
+  .ops button{border:1px solid var(--border);background:var(--surface);border-radius:20px;padding:6px 14px;cursor:pointer;font-weight:700;font-size:.92rem;font-family:"Cambria Math","Times New Roman",serif}
+  .ops button.on{background:var(--hl);border-color:var(--hl);color:#1c1a16}
+  .opinfo{border:1px solid var(--border);border-radius:var(--r);padding:12px 16px;background:var(--surface-2);font-size:.95rem;font-variant-numeric:tabular-nums}
+  .opinfo .nm{font-weight:700}
+  .opinfo .set{word-break:break-word}
+  .sym{font-family:"Cambria Math","Times New Roman",serif;font-weight:700}
+  .bar{text-decoration:overline}
+
+  /* Vierfeldertafel */
+  .seg{display:inline-flex;border:1px solid var(--border);border-radius:var(--r);overflow:hidden;flex-wrap:wrap}
+  .seg button{border:none;background:var(--surface);padding:6px 12px;cursor:pointer;font-size:.85rem;font-weight:600;color:var(--muted)}
+  .seg button.on{background:var(--link);color:#fff}
+  .seg button:disabled{opacity:.45;cursor:not-allowed}
+  table.vf{border-collapse:collapse;margin-top:12px;font-variant-numeric:tabular-nums;min-width:420px}
+  table.vf th,table.vf td{border:1px solid var(--border);padding:8px 14px;text-align:center;min-width:90px}
+  table.vf th{background:var(--surface-2);font-weight:700}
+  table.vf td.cE{background:var(--rE)} table.vf td.cB{background:var(--rB)} table.vf td.cF{background:var(--rF)} table.vf td.cO{background:var(--rO)}
+  table.vf td.sum{font-weight:700}
+  .scroll-x{overflow-x:auto}
+
+  .lock-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:16px}
+  .merk{border:2px solid var(--link);border-radius:var(--r);padding:14px 18px;margin-top:14px;background:var(--link-pale);font-size:.93rem}
+  .merk b{color:var(--link)}
+  .merk p{margin:6px 0}
+
+  footer{text-align:center;color:var(--muted);font-size:.82rem;margin-top:48px;padding-top:20px;border-top:1px solid var(--border)}
+  @media (max-width:640px){
+    h1{font-size:1.8rem}
+    .panel{padding:14px}
+    .panel-sub{margin-left:0}
+    .regions{grid-template-columns:1fr 1fr}
+    .bigcard{width:80px;height:114px}
+  }
+</style>
+</head>
+<body>
+
+<nav class="topbar" aria-label="Breadcrumb">
+  <div class="topbar-inner">
+    <a href="../../../../../index.html">Unterrichtsmaterialien</a><span class="sep">›</span>
+    <a href="../../../../index.html">Mathematik</a><span class="sep">›</span>
+    <a href="../../../index.html">Leistungskurs</a><span class="sep">›</span>
+    <a href="../../index.html#simulationen">Stochastik</a><span class="sep">›</span>
+    <span>Herz oder Bild</span>
+  </div>
+</nav>
+
+<header class="page-head">
+  <div class="inner">
+    <div class="head-eyebrow">Simulation · Kapitel VIII.2</div>
+    <h1>Herz oder Bild?</h1>
+    <p>Ein Kartenspiel für das Schulfest – und die Frage, wie man Ereignisse richtig verknüpft.</p>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <div class="rules">
+    <b>Das Spiel:</b> Aus einem gut gemischten Skatblatt (32 Karten: Kreuz, Pik, Herz, Karo mit je 7, 8, 9, 10, Bube, Dame, König, Ass)
+    wird eine Karte gezogen. Man <b>gewinnt</b>, wenn die Karte eine <b>Herzkarte oder eine Bildkarte</b> (Bube, Dame, König) ist.
+    Danach wird die Karte zurückgesteckt und neu gemischt.
+  </div>
+
+  <!-- 1 · Wette -->
+  <section class="panel" id="wette">
+    <div class="panel-head"><span class="step">1</span><h2>Spielen und die Gewinnchance prüfen</h2></div>
+    <p class="panel-sub">Trage zuerst deine Vermutung ein. Spiele dann einzeln und anschließend viele Runden.</p>
+
+    <div class="btn-row">
+      <div class="ctl"><label for="guess">Meine Vermutung für die Gewinnwahrscheinlichkeit:</label>
+        <input type="number" id="guess" min="0" max="100" step="0.1" style="width:90px"> <span>%</span></div>
+    </div>
+
+    <div class="table-area">
+      <div class="bigcard back" id="bigcard"></div>
+      <div>
+        <div class="verdict" id="verdict"><span class="muted">Noch keine Karte gezogen.</span></div>
+        <div class="btn-row" style="margin-top:10px">
+          <button class="btn btn-primary" id="btnDraw">🂠 Karte ziehen</button>
+          <button class="btn btn-blue" data-n="10">+ 10</button>
+          <button class="btn btn-blue" data-n="100">+ 100</button>
+          <button class="btn btn-blue" data-n="1000">+ 1 000</button>
+          <button class="btn" id="btnReset">↺ Zurücksetzen</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="stat-row">
+      <div class="stat"><div class="k">Spiele</div><div class="v" id="sGames">0</div></div>
+      <div class="stat"><div class="k">Gewinne</div><div class="v" id="sWins">0</div></div>
+      <div class="stat"><div class="k">Gewinnquote</div><div class="v" id="sRate">–</div></div>
+      <div class="stat"><div class="k">Meine Vermutung</div><div class="v" id="sGuess">–</div></div>
+    </div>
+    <div class="chart-wrap"><svg class="chart" id="rateChart" viewBox="0 0 720 220" role="img" aria-label="Verlauf der Gewinnquote"></svg></div>
+    <div class="legend"><span><i style="background:var(--gold)"></i>relative Gewinnhäufigkeit</span><span><i style="background:var(--link)"></i>meine Vermutung</span></div>
+
+    <div class="task-box">
+      <b>Arbeitsauftrag 1</b>
+      <ol>
+        <li>Notiere deine Vermutung und deine Rechnung. Spiele 10 Runden einzeln, dann 1 000 Runden.</li>
+        <li>Stimmt die Gewinnquote mit deiner Vermutung überein? Falls nicht: Wo könnte der Fehler liegen?</li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- 2 · Mengendiagramm -->
+  <section class="panel" id="venn">
+    <div class="panel-head"><span class="step">2</span><h2>Die Karten im Mengendiagramm</h2></div>
+    <p class="panel-sub">Jede Karte liegt in genau einem Bereich. Die zuletzt gezogene Karte blinkt kurz auf. Du kannst andere Ereignisse wählen – das Spiel oben gewinnt dann bei „E oder F“.</p>
+
+    <div class="ev-pick">
+      <div class="ctl"><label for="selE">Ereignis <span class="tagE">E</span>:</label><select id="selE"></select></div>
+      <div class="ctl"><label for="selF">Ereignis <span class="tagF">F</span>:</label><select id="selF"></select></div>
+      <span class="muted" id="pickMsg" style="font-size:.85rem"></span>
+    </div>
+
+    <div class="venn-wrap"><svg class="venn" id="vennSvg" viewBox="0 0 760 420" role="img" aria-label="Mengendiagramm mit allen 32 Karten"></svg></div>
+
+    <div class="regions" id="regions"></div>
+
+    <div class="task-box">
+      <b>Arbeitsauftrag 2</b>
+      <ol>
+        <li>Wie viele Karten liegen in <span class="tagE">E</span>, wie viele in <span class="tagF">F</span>, wie viele in beiden? Erkläre damit den Fehler aus Arbeitsauftrag 1.</li>
+        <li>Wie viele Karten führen zum Gewinn? Vergleiche mit der Gewinnquote aus Schritt 1.</li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- 3 · Verknüpfungen -->
+  <section class="panel" id="ops">
+    <div class="panel-head"><span class="step">3</span><h2>Ereignisse verknüpfen</h2></div>
+    <p class="panel-sub">Wähle eine Verknüpfung. Der zugehörige Bereich wird markiert, die passenden Karten werden gold umrandet.</p>
+
+    <div class="ops" id="opBtns"></div>
+    <div class="opinfo" id="opInfo"></div>
+
+    <div class="task-box">
+      <b>Arbeitsauftrag 3</b>
+      <ol>
+        <li>Beschreibe für Herz (<span class="tagE">E</span>) und Bild (<span class="tagF">F</span>) jede Verknüpfung in Worten und gib die Anzahl der Karten an.</li>
+        <li>Finde einen Zusammenhang zwischen |E ∪ F|, |E|, |F| und |E ∩ F|. Gilt er auch für andere Ereignisse?</li>
+        <li>Wähle zwei Ereignisse, deren Schnittmenge leer ist. Was gilt dann für E ∪ F?</li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- 4 · Vierfeldertafel -->
+  <section class="panel" id="vft">
+    <div class="panel-head"><span class="step">4</span><h2>Die Vierfeldertafel</h2></div>
+    <p class="panel-sub">Die vier Felder entsprechen den vier Bereichen des Mengendiagramms (gleiche Farben).</p>
+
+    <div><span class="muted" style="font-size:.85rem;font-weight:600;margin-right:6px">Anzeigen:</span>
+      <div class="seg" id="segVf">
+        <button data-m="k" class="on">Anzahl der Karten</button>
+        <button data-m="n">gezogene Anzahl</button>
+        <button data-m="h">rel. Häufigkeit</button>
+        <button data-m="p" id="vfP" disabled title="Nach Freischaltung">Wahrscheinlichkeit 🔒</button>
+      </div>
+    </div>
+    <div class="scroll-x"><table class="vf" id="vfTable"></table></div>
+
+    <div class="task-box">
+      <b>Arbeitsauftrag 4</b>
+      <ol>
+        <li>Lies aus der Tafel P(E ∩ F), P(E ∩ <span class="bar">F</span>) und P(E) ab. Welcher Zusammenhang besteht zwischen den Feldern und den Summen?</li>
+        <li>Bestimme P(E ∪ F) mithilfe der Tafel auf zwei verschiedene Arten.</li>
+      </ol>
+    </div>
+
+    <div class="lock-row" id="lockRow">
+      <input type="password" id="code" placeholder="Code" autocomplete="off" style="width:110px">
+      <button class="btn" id="btnUnlock">🔒 Wahrscheinlichkeiten und Merkwissen freischalten</button>
+      <span class="muted" id="codeMsg" style="font-size:.85rem">Erst nach der Besprechung.</span>
+    </div>
+    <div class="merk hide" id="merk">
+      <p><b>Gegenereignis:</b> <span class="sym bar">E</span> enthält alle Ergebnisse, die nicht zu E gehören. Es gilt
+        P(<span class="sym bar">E</span>) = 1 − P(E).</p>
+      <p><b>Schnittmenge</b> <span class="sym">E ∩ F</span>: alle Ergebnisse, die in E <em>und</em> in F liegen.</p>
+      <p><b>Vereinigungsmenge</b> <span class="sym">E ∪ F</span>: alle Ergebnisse, die in E <em>oder</em> in F liegen (auch in beiden).</p>
+      <p><b>Komplementmenge</b> <span class="sym">E \ F</span>: alle Ergebnisse, die in E, aber nicht in F liegen. Es gilt E \ F = E ∩ <span class="sym bar">F</span>.</p>
+      <p><b>Wahrscheinlichkeiten</b> verknüpfter Ereignisse bestimmt man mit der Summenregel aus den Bereichen des Mengendiagramms
+        bzw. aus den Feldern der Vierfeldertafel, z. B. P(E ∪ F) = P(E ∩ F) + P(E ∩ <span class="sym bar">F</span>) + P(<span class="sym bar">E</span> ∩ F).</p>
+      <p><b>Folgerung:</b> Addiert man einfach P(E) + P(F), wird die Schnittmenge doppelt gezählt:
+        P(E ∪ F) = P(E) + P(F) − P(E ∩ F).</p>
+    </div>
+  </section>
+
+</div>
+
+<footer>Unterrichtsmaterialien · Friedrich-Bährens-Gymnasium Schwerte</footer>
+
+<script>
+(() => {
+  const $ = id => document.getElementById(id);
+  const fmt = n => n.toLocaleString('de-DE');
+  const dec = (x,d=3) => x.toLocaleString('de-DE',{minimumFractionDigits:d,maximumFractionDigits:d});
+  const pct = x => (x*100).toLocaleString('de-DE',{minimumFractionDigits:1,maximumFractionDigits:1})+' %';
+  const gcd=(a,b)=>{while(b){[a,b]=[b,a%b];}return a||1;};
+  const pdec=k=>{ const v=k/32; const r=Math.round(v*10000)/10000; return (Math.abs(r-v)<1e-12?' = ':' ≈ ')+r.toLocaleString('de-DE',{maximumFractionDigits:4}); };
+  const frac=(a,b)=>{ if(a===0) return '0'; const g=gcd(a,b); return (a/g)+'/'+(b/g); };
+
+  // ---------- Kartenblatt ----------
+  const SUITS=[{k:'kr',n:'Kreuz',s:'♣',red:false},{k:'pi',n:'Pik',s:'♠',red:false},{k:'he',n:'Herz',s:'♥',red:true},{k:'ka',n:'Karo',s:'♦',red:true}];
+  const RANKS=['7','8','9','10','B','D','K','A'];
+  const DECK=[]; SUITS.forEach(su=>RANKS.forEach(r=>DECK.push({su,r,id:su.k+r,label:su.s+r})));
+
+  const EVENTS={
+    herz:{n:'Herz',f:c=>c.su.k==='he'},
+    karo:{n:'Karo',f:c=>c.su.k==='ka'},
+    pik:{n:'Pik',f:c=>c.su.k==='pi'},
+    kreuz:{n:'Kreuz',f:c=>c.su.k==='kr'},
+    rot:{n:'rote Karte',f:c=>c.su.red},
+    schwarz:{n:'schwarze Karte',f:c=>!c.su.red},
+    bild:{n:'Bildkarte (B, D, K)',f:c=>['B','D','K'].includes(c.r)},
+    ass:{n:'Ass',f:c=>c.r==='A'},
+    zahl:{n:'Zahlkarte (7–10)',f:c=>['7','8','9','10'].includes(c.r)}
+  };
+  let eKey='herz', fKey='bild';
+  const inE=c=>EVENTS[eKey].f(c), inF=c=>EVENTS[fKey].f(c);
+  const region=c=> inE(c)&&inF(c)?'B': inE(c)?'E': inF(c)?'F':'O';
+
+  // Zähler: pro Karte, wie oft gezogen
+  let drawn=new Array(32).fill(0), games=0, wins=0, history=[], lastIdx=-1;
+  let op='union', vfMode='k', unlocked=false;
+
+  // ---------- Spiel ----------
+  function drawOne(){
+    const i=Math.floor(Math.random()*32);
+    drawn[i]++; games++; const c=DECK[i]; const w=inE(c)||inF(c); if(w) wins++;
+    if (games<=400 || games%Math.ceil(games/400)===0) history.push([games,wins/games]);
+    return i;
+  }
+  function showCard(i){
+    const c=DECK[i], el=$('bigcard');
+    el.className='bigcard flip '+(c.su.red?'red':'black');
+    el.innerHTML=`<div class="c1">${c.r}<br>${c.su.s}</div><div class="mid">${c.su.s}</div><div class="c2">${c.r}<br>${c.su.s}</div>`;
+    const w=inE(c)||inF(c);
+    $('verdict').innerHTML = `${c.su.n} ${({B:'Bube',D:'Dame',K:'König',A:'Ass'})[c.r]||c.r} &nbsp;→&nbsp; `+
+      (w?'<b class="win">Gewonnen!</b>':'<b class="lose">Verloren.</b>')+
+      `<div class="count-pill">${inE(c)?'liegt in E':'nicht in E'} · ${inF(c)?'liegt in F':'nicht in F'}</div>`;
+  }
+  function renderStats(){
+    $('sGames').textContent=fmt(games); $('sWins').textContent=fmt(wins);
+    $('sRate').textContent=games?pct(wins/games):'–';
+    const g=parseFloat(($('guess').value||'').replace(',','.'));
+    $('sGuess').textContent=isNaN(g)?'–':g.toLocaleString('de-DE')+' %';
+    drawChart(isNaN(g)?null:g/100);
+  }
+  const NS='http://www.w3.org/2000/svg';
+  function el(t,a,p){const e=document.createElementNS(NS,t);for(const k in a)e.setAttribute(k,a[k]);if(p)p.appendChild(e);return e;}
+  function drawChart(g){
+    const svg=$('rateChart'); svg.innerHTML='';
+    const W=720,H=220,m={l:46,r:12,t:12,b:30},iw=W-m.l-m.r,ih=H-m.t-m.b;
+    const N=Math.max(10,games); const x=n=>m.l+iw*(Math.log10(n)/Math.log10(N));
+    const y=v=>m.t+ih*(1-v);
+    for(let v=0;v<=1.0001;v+=0.25){ el('line',{x1:m.l,x2:W-m.r,y1:y(v),y2:y(v),stroke:'var(--border)'},svg); const t=el('text',{x:m.l-6,y:y(v)+4,'text-anchor':'end'},svg); t.textContent=Math.round(v*100)+' %'; }
+    [1,10,100,1000,10000,100000].filter(n=>n<=N).forEach(n=>{ const t=el('text',{x:x(n),y:H-10,'text-anchor':x(n)>W-m.r-20?'end':'middle'},svg); t.textContent=fmt(n); });
+    const tl=el('text',{x:W-m.r,y:H-10,'text-anchor':'end'},svg); tl.textContent='Anzahl der Spiele (log. Skala)'; tl.setAttribute('dy','0'); tl.setAttribute('x',W-m.r); tl.setAttribute('y',m.t+10);
+    if (g!==null && g>=0 && g<=1){ el('line',{x1:m.l,x2:W-m.r,y1:y(g),y2:y(g),stroke:'var(--link)','stroke-width':2,'stroke-dasharray':'6 4'},svg); }
+    if (history.length){ el('polyline',{points:history.map(([n,v])=>x(n)+','+y(v)).join(' '),fill:'none',stroke:'var(--gold)','stroke-width':2,'stroke-linejoin':'round'},svg); }
+  }
+
+  // ---------- Mengendiagramm ----------
+  const VW=760, VH=420, S={x:10,y:10,w:740,h:400};
+  const EL={cx:290,cy:185,rx:190,ry:140}, FL={cx:470,cy:185,rx:190,ry:140};
+  const inEll=(e,x,y,pad)=>((x-e.cx)/(e.rx-pad))**2+((y-e.cy)/(e.ry-pad))**2<=1;
+  const outEll=(e,x,y,pad)=>((x-e.cx)/(e.rx+pad))**2+((y-e.cy)/(e.ry+pad))**2>1;
+  let layout={};
+  function computeLayout(){
+    window.__fit=null;
+    for (const sc of [1,0.9,0.8,0.72,0.65]){
+      const cw=26*sc, ch=34*sc, gx=31*sc, gy=40*sc, pad=4;
+      const slots={E:[],B:[],F:[],O:[]};
+      for(let y=S.y+8+ch/2; y<=S.y+S.h-8-ch/2; y+=gy){
+        for(let x=S.x+8+cw/2; x<=S.x+S.w-8-cw/2; x+=gx){
+          const pts=[[x-cw/2,y-ch/2],[x+cw/2,y-ch/2],[x-cw/2,y+ch/2],[x+cw/2,y+ch/2],[x,y]];
+          const allIn=e=>pts.every(([a,b])=>inEll(e,a,b,pad));
+          const allOut=e=>pts.every(([a,b])=>outEll(e,a,b,pad));
+          let r=null;
+          if(allIn(EL)&&allIn(FL)) r='B'; else if(allIn(EL)&&allOut(FL)) r='E'; else if(allIn(FL)&&allOut(EL)) r='F'; else if(allOut(EL)&&allOut(FL)) r='O';
+          if(r) slots[r].push([x,y]);
+        }
+      }
+      // Slots nach Nähe zum Bereichszentrum sortieren
+      const ctr={E:[175,185],B:[380,185],F:[585,185],O:[380,385]};
+      for(const r in slots){ const [cx,cy]=ctr[r]; slots[r].sort((a,b)=>((a[0]-cx)**2+(a[1]-cy)**2*1.6)-((b[0]-cx)**2+(b[1]-cy)**2*1.6)); }
+      const need={E:0,B:0,F:0,O:0}; DECK.forEach(c=>need[region(c)]++);
+      if (Object.keys(need).every(r=>slots[r].length>=need[r])){
+        const pos={}; const used={E:0,B:0,F:0,O:0};
+        const cards={E:[],B:[],F:[],O:[]}; DECK.forEach((c,i)=>cards[region(c)].push(i));
+        for(const r in cards){ const sl=slots[r].slice(0,cards[r].length).sort((a,b)=>a[1]-b[1]||a[0]-b[0]); cards[r].forEach((i,k)=>pos[i]=sl[k]); }
+        layout={pos,cw,ch,sc}; window.__fit=sc; return;
+      }
+    }
+  }
+  // (Layout-Fehlerfall)
+  function opMember(c){
+    const e=inE(c), f=inF(c);
+    return {union:e||f, inter:e&&f, eminf:e&&!f, fmine:f&&!e, notE:!e, notF:!f, notU:!(e||f), E:e, F:f}[op];
+  }
+  function maskFor(kind){
+    // gibt Füllflächen für die Hervorhebung zurück
+    return kind;
+  }
+  function renderVenn(pulseIdx){
+    const svg=$('vennSvg'); svg.innerHTML='';
+    const defs=el('defs',{},svg);
+    const cpE=el('clipPath',{id:'cpE'},defs); el('ellipse',{cx:EL.cx,cy:EL.cy,rx:EL.rx,ry:EL.ry},cpE);
+    const cpF=el('clipPath',{id:'cpF'},defs); el('ellipse',{cx:FL.cx,cy:FL.cy,rx:FL.rx,ry:FL.ry},cpF);
+    const mkMask=(id,base,holes)=>{ const m=el('mask',{id},defs); el('rect',{x:0,y:0,width:VW,height:VH,fill:base},m); holes.forEach(([e,fill])=>el('ellipse',{cx:e.cx,cy:e.cy,rx:e.rx,ry:e.ry,fill},m)); };
+    mkMask('mNotE','white',[[EL,'black']]); mkMask('mNotF','white',[[FL,'black']]); mkMask('mNotU','white',[[EL,'black'],[FL,'black']]);
+    // Grundflächen
+    el('rect',{x:S.x,y:S.y,width:S.w,height:S.h,rx:8,fill:'var(--rO)',stroke:'var(--text)','stroke-width':1.2},svg);
+    el('ellipse',{cx:EL.cx,cy:EL.cy,rx:EL.rx,ry:EL.ry,fill:'var(--rE)'},svg);
+    el('ellipse',{cx:FL.cx,cy:FL.cy,rx:FL.rx,ry:FL.ry,fill:'var(--rF)'},svg);
+    const g0=el('g',{'clip-path':'url(#cpE)'},svg); el('ellipse',{cx:FL.cx,cy:FL.cy,rx:FL.rx,ry:FL.ry,fill:'var(--rB)'},g0);
+    // Hervorhebung
+    const H={fill:'var(--hl)',opacity:.38};
+    const hg=el('g',{},svg);
+    const ellE=(p,attr)=>el('ellipse',Object.assign({cx:EL.cx,cy:EL.cy,rx:EL.rx,ry:EL.ry},attr),p);
+    const ellF=(p,attr)=>el('ellipse',Object.assign({cx:FL.cx,cy:FL.cy,rx:FL.rx,ry:FL.ry},attr),p);
+    const rectS=(p,attr)=>el('rect',Object.assign({x:S.x,y:S.y,width:S.w,height:S.h,rx:8},attr),p);
+    if(op==='union'){ ellE(hg,H); ellF(el('g',{mask:'url(#mNotE)'},hg),H); }
+    if(op==='inter'){ ellF(el('g',{'clip-path':'url(#cpE)'},hg),H); }
+    if(op==='eminf'){ ellE(el('g',{mask:'url(#mNotF)'},hg),H); }
+    if(op==='fmine'){ ellF(el('g',{mask:'url(#mNotE)'},hg),H); }
+    if(op==='notE'){ rectS(el('g',{mask:'url(#mNotE)'},hg),H); }
+    if(op==='notF'){ rectS(el('g',{mask:'url(#mNotF)'},hg),H); }
+    if(op==='notU'){ rectS(el('g',{mask:'url(#mNotU)'},hg),H); }
+    if(op==='E'){ ellE(hg,H); }
+    if(op==='F'){ ellF(hg,H); }
+    ellE(svg,{fill:'none',stroke:'var(--sE)','stroke-width':2.4});
+    ellF(svg,{fill:'none',stroke:'var(--sF)','stroke-width':2.4});
+    const tE=el('text',{x:EL.cx-EL.rx+18,y:EL.cy-EL.ry+38,'font-size':22,'font-weight':800,fill:'var(--sE)'},svg); tE.textContent='E';
+    const tF=el('text',{x:FL.cx+FL.rx-32,y:FL.cy-FL.ry+38,'font-size':22,'font-weight':800,fill:'var(--sF)'},svg); tF.textContent='F';
+    const tS=el('text',{x:S.x+S.w-26,y:S.y+28,'font-size':20,'font-weight':700,fill:'var(--muted)'},svg); tS.textContent='S';
+    // Karten
+    const {pos,cw,ch,sc}=layout;
+    DECK.forEach((c,i)=>{
+      const [x,y]=pos[i];
+      const outer=el('g',{transform:`translate(${x},${y})`},svg);
+      const g=el('g',{class:'chip'+(opMember(c)?' inEv':'')+(i===pulseIdx?' pulse':''),style:'transform-box:fill-box;transform-origin:center'},outer);
+      el('rect',{x:-cw/2,y:-ch/2,width:cw,height:ch,rx:3*sc,fill:'#fff'},g);
+      const col=c.su.red?'#c0392b':'#1c1a16';
+      const t1=el('text',{x:0,y:-ch/2+12*sc,'text-anchor':'middle','font-size':11*sc,'font-weight':700,fill:col},g); t1.textContent=c.r;
+      const t2=el('text',{x:0,y:ch/2-5*sc,'text-anchor':'middle','font-size':14*sc,fill:col},g); t2.textContent=c.su.s;
+      if (drawn[i]){ const b=el('text',{x:cw/2-1,y:-ch/2-2,'text-anchor':'end','font-size':8.5*sc,fill:'var(--muted)'},g); b.textContent=drawn[i]; }
+      const tt=el('title',{},g); tt.textContent=`${c.su.n} ${c.r} · ${drawn[i]}-mal gezogen`;
+    });
+  }
+  function regionStats(){
+    const st={E:{k:0,n:0},B:{k:0,n:0},F:{k:0,n:0},O:{k:0,n:0}};
+    DECK.forEach((c,i)=>{ const r=region(c); st[r].k++; st[r].n+=drawn[i]; });
+    return st;
+  }
+  function renderRegions(){
+    const st=regionStats(), E=EVENTS[eKey].n, F=EVENTS[fKey].n;
+    const def=[['E',`nur E: ${E}, aber nicht ${F}`],['B','E und F'],['F',`nur F: ${F}, aber nicht ${E}`],['O','weder E noch F']];
+    $('regions').innerHTML=def.map(([r,t])=>`<div class="reg r${r}"><div class="t">${t}</div><div class="n">${st[r].k} Karten</div><div class="muted">gezogen: ${fmt(st[r].n)}${games?' · h = '+dec(st[r].n/games):''}</div></div>`).join('');
+  }
+
+  // ---------- Verknüpfungen ----------
+  const OPS=[['E','E'],['F','F'],['union','E ∪ F'],['inter','E ∩ F'],['eminf','E \\ F'],['fmine','F \\ E'],['notE','Ē'],['notF','F̄'],['notU','E ∪ F (Gegenereignis)']];
+  const OPNAME={E:'E',F:'F',union:'E ∪ F',inter:'E ∩ F',eminf:'E \\ F',fmine:'F \\ E',notE:'<span class="bar">E</span>',notF:'<span class="bar">F</span>',notU:'<span class="bar">E ∪ F</span>'};
+  function opWords(){
+    const E=EVENTS[eKey].n, F=EVENTS[fKey].n;
+    return {E:`„${E}“`,F:`„${F}“`,union:`„${E} oder ${F}“ (oder beides)`,inter:`„${E} und zugleich ${F}“`,eminf:`„${E}, aber nicht ${F}“`,fmine:`„${F}, aber nicht ${E}“`,
+      notE:`„nicht ${E}“ (Gegenereignis von E)`,notF:`„nicht ${F}“ (Gegenereignis von F)`,notU:`„weder ${E} noch ${F}“`}[op];
+  }
+  function buildOps(){
+    $('opBtns').innerHTML='';
+    OPS.forEach(([k,l])=>{
+      const b=document.createElement('button'); b.className=k===op?'on':''; b.dataset.k=k;
+      b.innerHTML = k==='notE'?'<span class="bar">E</span>' : k==='notF'?'<span class="bar">F</span>' : k==='notU'?'<span class="bar">E ∪ F</span>' : l;
+      b.addEventListener('click',()=>{ op=k; buildOps(); renderVenn(-1); renderOp(); });
+      $('opBtns').appendChild(b);
+    });
+  }
+  function renderOp(){
+    const cards=DECK.map((c,i)=>[c,i]).filter(([c])=>opMember(c));
+    const k=cards.length, n=cards.reduce((s,[,i])=>s+drawn[i],0);
+    let h=`<div><span class="nm sym">${OPNAME[op]}</span> &nbsp;=&nbsp; ${opWords()}</div>`;
+    h+=`<div class="set" style="margin-top:6px">${k?'{ '+cards.map(([c])=>`<span style="color:${c.su.red?'var(--suit-red)':'inherit'}">${c.label}</span>`).join(', ')+' }':'{ } &nbsp;(leere Menge)'}</div>`;
+    h+=`<div style="margin-top:6px"><b>${k}</b> von 32 Karten · in der Simulation ${fmt(n)}-mal gezogen${games?` · relative Häufigkeit <b style="color:var(--gold)">${dec(n/games)}</b>`:''}`;
+    if (unlocked) h+=` · Wahrscheinlichkeit <b>${frac(k,32)}${k?pdec(k):''}</b>`;
+    h+='</div>';
+    box=$('opInfo'); box.innerHTML=h;
+  }
+  let box;
+
+  // ---------- Vierfeldertafel ----------
+  function renderVf(){
+    const st=regionStats();
+    const v=r=>{ const s=st[r];
+      if(vfMode==='k') return s.k;
+      if(vfMode==='n') return s.n;
+      if(vfMode==='h') return games? s.n/games : null;
+      return s.k/32; };
+    const show=x=> x===null?'–' : (vfMode==='k'||vfMode==='n')? fmt(x) : (vfMode==='p'? fracStr(x) : dec(x));
+    const fracStr=x=>{ const k=Math.round(x*32); return frac(k,32)+(k?pdec(k):''); };
+    const add=(a,b)=> (a===null||b===null)?null:a+b;
+    const E=EVENTS[eKey].n, F=EVENTS[fKey].n;
+    const a=v('B'),b=v('E'),c=v('F'),d=v('O');
+    $('vfTable').innerHTML=`
+      <tr><th></th><th>F<div class="muted" style="font-weight:400;font-size:.75rem">${F}</div></th><th><span class="bar">F</span><div class="muted" style="font-weight:400;font-size:.75rem">nicht ${F}</div></th><th>Summe</th></tr>
+      <tr><th>E<div class="muted" style="font-weight:400;font-size:.75rem">${E}</div></th><td class="cB">${show(a)}</td><td class="cE">${show(b)}</td><td class="sum">${show(add(a,b))}</td></tr>
+      <tr><th><span class="bar">E</span><div class="muted" style="font-weight:400;font-size:.75rem">nicht ${E}</div></th><td class="cF">${show(c)}</td><td class="cO">${show(d)}</td><td class="sum">${show(add(c,d))}</td></tr>
+      <tr><th>Summe</th><td class="sum">${show(add(a,c))}</td><td class="sum">${show(add(b,d))}</td><td class="sum">${show(add(add(a,b),add(c,d)))}</td></tr>`;
+  }
+
+  // ---------- Steuerung ----------
+  function fillSelects(){
+    for (const [id,val] of [['selE',eKey],['selF',fKey]]){
+      const s=$(id); s.innerHTML='';
+      for (const k in EVENTS){ const o=document.createElement('option'); o.value=k; o.textContent=EVENTS[k].n; s.appendChild(o); }
+      s.value=val;
+    }
+  }
+  function onEvents(){
+    const e=$('selE').value, f=$('selF').value;
+    if (e===f){ $('pickMsg').textContent='Bitte zwei verschiedene Ereignisse wählen.'; $('selF').value=fKey; $('selE').value=eKey; return; }
+    $('pickMsg').textContent = (e==='herz'&&f==='bild') ? '' : 'Hinweis: Das Spiel in Schritt 1 gewinnt jetzt bei „E oder F“.';
+    eKey=e; fKey=f; computeLayout();
+    // Gewinnzählung bleibt an die Ziehungen gebunden → neu berechnen
+    wins=0; DECK.forEach((c,i)=>{ if(inE(c)||inF(c)) wins+=drawn[i]; }); history = games? [[games,wins/games]] : [];
+    renderAll(-1);
+  }
+  function renderAll(p){ renderStats(); renderVenn(p); renderRegions(); renderOp(); renderVf(); }
+
+  $('btnDraw').addEventListener('click',()=>{ const i=drawOne(); showCard(i); renderAll(i); });
+  document.querySelectorAll('[data-n]').forEach(b=>b.addEventListener('click',()=>{ let i; for(let k=0;k<+b.dataset.n;k++) i=drawOne(); showCard(i); renderAll(i); }));
+  $('btnReset').addEventListener('click',()=>{ drawn.fill(0); games=0; wins=0; history=[]; $('bigcard').className='bigcard back'; $('bigcard').innerHTML=''; $('verdict').innerHTML='<span class="muted">Noch keine Karte gezogen.</span>'; renderAll(-1); });
+  $('guess').addEventListener('input',renderStats);
+  $('selE').addEventListener('change',onEvents); $('selF').addEventListener('change',onEvents);
+  document.querySelectorAll('#segVf button').forEach(b=>b.addEventListener('click',()=>{ if(b.disabled) return; document.querySelectorAll('#segVf button').forEach(x=>x.classList.toggle('on',x===b)); vfMode=b.dataset.m; renderVf(); }));
+  function unlock(){
+    if (($('code').value||'').trim().toUpperCase()==='MATHE'){
+      unlocked=true; $('lockRow').classList.add('hide'); $('merk').classList.remove('hide');
+      const p=$('vfP'); p.disabled=false; p.textContent='Wahrscheinlichkeit'; p.title='';
+      renderOp(); renderVf();
+    } else { $('codeMsg').textContent='Code nicht korrekt.'; $('codeMsg').style.color='var(--gold)'; }
+  }
+  $('btnUnlock').addEventListener('click',unlock);
+  $('code').addEventListener('keydown',e=>{ if(e.key==='Enter') unlock(); });
+
+  fillSelects(); computeLayout(); buildOps(); renderAll(-1);
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Marens Würfel · Simulation · LK Q2 Stochastik</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,400;0,600;1,400&display=swap">
+<style>
+  :root {
+    --gold:#b87500; --gold-pale:#fdf3dc;
+    --bg:#f5f4f0; --surface:#ffffff; --surface-2:#faf9f6;
+    --border:#ddd8cc; --text:#1c1a16; --muted:#6b6456;
+    --link:#2c5f8a; --link-pale:#e5eef7;
+    --win:#1a7a4c; --win-pale:#e3f3ea;
+    --suit-red:#c0392b; --suit-black:#1c1a16;
+    --rE:#f6d9d4; --rB:#e3d4f0; --rF:#d6e6f5; --rO:#f1efe9;
+    --sE:#c0392b; --sF:#2c5f8a;
+    --hl:#e8a800;
+    --r:6px;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --gold:#d4a030; --gold-pale:#2a2010;
+      --bg:#1a1814; --surface:#242018; --surface-2:#2a251c;
+      --border:#38332a; --text:#ede8de; --muted:#9e9482;
+      --link:#6a9fd8; --link-pale:#0f1e30;
+      --win:#3fbf82; --win-pale:#0f2a1c;
+      --suit-red:#c0392b; --suit-black:#1c1a16;
+      --rE:#3d2420; --rB:#33263f; --rF:#1d2d3f; --rO:#2a251c;
+      --sE:#ef6b5b; --sF:#6a9fd8;
+      --hl:#e8b830;
+    }
+  }
+  :root[data-theme="dark"] {
+    --gold:#d4a030; --gold-pale:#2a2010;
+    --bg:#1a1814; --surface:#242018; --surface-2:#2a251c;
+    --border:#38332a; --text:#ede8de; --muted:#9e9482;
+    --link:#6a9fd8; --link-pale:#0f1e30;
+    --win:#3fbf82; --win-pale:#0f2a1c;
+    --rE:#3d2420; --rB:#33263f; --rF:#1d2d3f; --rO:#2a251c;
+    --sE:#ef6b5b; --sF:#6a9fd8;
+    --hl:#e8b830;
+  }
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;font-size:16px;line-height:1.55;min-height:100vh}
+  button,select,input{font:inherit;color:inherit}
+
+  .topbar{background:var(--surface);border-bottom:1px solid var(--border);padding:0 20px}
+  .topbar-inner{max-width:960px;margin:0 auto;min-height:46px;display:flex;flex-wrap:wrap;align-items:center;gap:6px;font-size:.82rem;color:var(--muted)}
+  .topbar-inner a{color:var(--link);text-decoration:none}
+  .topbar-inner a:hover{text-decoration:underline}
+  .sep{opacity:.45}
+  header.page-head{background:var(--surface);border-bottom:3px solid var(--link);padding:28px 20px 24px;margin-bottom:28px}
+  header.page-head .inner{max-width:960px;margin:0 auto}
+  .head-eyebrow{font-size:.78rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--link);margin-bottom:6px}
+  h1{font-family:"Crimson Pro",Georgia,serif;font-size:2.2rem;font-weight:600;line-height:1.15}
+  header.page-head p{font-size:.95rem;color:var(--muted);margin-top:6px;max-width:720px}
+
+  .wrap{max-width:960px;margin:0 auto;padding:0 16px 80px}
+  .panel{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:20px;margin-bottom:24px}
+  .panel-head{display:flex;align-items:baseline;gap:10px;margin-bottom:4px}
+  .step{display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:50%;background:var(--link);color:#fff;font-weight:700;font-size:.85rem;flex-shrink:0}
+  h2{font-family:"Crimson Pro",Georgia,serif;font-size:1.45rem;font-weight:600}
+  h3{font-size:1rem;margin-bottom:8px}
+  .panel-sub{color:var(--muted);font-size:.9rem;margin:0 0 16px 36px}
+  .muted{color:var(--muted)}
+  .hide{display:none!important}
+
+  .rules{background:var(--gold-pale);border-left:3px solid var(--gold);border-radius:var(--r);padding:12px 16px;font-size:.93rem;margin-bottom:24px}
+  .rules b{color:var(--gold)}
+  .task-box{background:var(--gold-pale);border-left:3px solid var(--gold);border-radius:var(--r);padding:12px 16px;font-size:.92rem;margin:16px 0 0}
+  .task-box b{color:var(--gold)}
+  .task-box ol{margin:6px 0 0 20px}
+  .task-box li{margin:3px 0}
+
+  .btn{border:1px solid var(--border);background:var(--surface);border-radius:var(--r);padding:8px 14px;cursor:pointer;font-weight:600;font-size:.9rem}
+  .btn:hover{background:var(--surface-2)}
+  .btn:disabled{opacity:.45;cursor:not-allowed}
+  .btn-primary{background:var(--gold);border-color:var(--gold);color:#fff}
+  .btn-primary:hover{background:var(--gold);filter:brightness(1.07)}
+  .btn-blue{background:var(--link);border-color:var(--link);color:#fff}
+  .btn-blue:hover{background:var(--link);filter:brightness(1.1)}
+  .btn-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+  .ctl{display:flex;align-items:center;gap:8px;font-size:.9rem}
+  .ctl label{color:var(--muted);font-weight:600}
+  select,input[type=number],input[type=text],input[type=password]{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:6px 9px}
+
+  /* Spielkarte groß */
+  .table-area{display:flex;gap:22px;align-items:center;flex-wrap:wrap;margin:16px 0}
+  .bigcard{width:96px;height:136px;border-radius:9px;border:1.5px solid #b9b2a3;background:#fff;position:relative;box-shadow:0 3px 10px rgba(0,0,0,.12);flex-shrink:0;font-family:Georgia,serif}
+  .bigcard.back{background:repeating-linear-gradient(45deg,#2c5f8a 0 6px,#244f73 6px 12px);border-color:#1a3d5c}
+  .bigcard .c1,.bigcard .c2{position:absolute;font-weight:700;font-size:1.05rem;line-height:1;text-align:center}
+  .bigcard .c1{top:7px;left:8px}
+  .bigcard .c2{bottom:7px;right:8px;transform:rotate(180deg)}
+  .bigcard .mid{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:2.7rem}
+  .bigcard.red{color:var(--suit-red)} .bigcard.black{color:var(--suit-black)}
+  .bigcard.flip{animation:flip .35s ease-out}
+  @keyframes flip{0%{transform:rotateY(90deg)}100%{transform:none}}
+  .verdict{font-size:1.05rem}
+  .verdict b{font-size:1.25rem}
+  .verdict .win{color:var(--win)} .verdict .lose{color:var(--suit-red)}
+  .count-pill{font-size:.85rem;color:var(--muted)}
+
+  .stat-row{display:flex;flex-wrap:wrap;gap:10px;margin:6px 0 10px}
+  .stat{background:var(--surface-2);border:1px solid var(--border);border-radius:var(--r);padding:8px 14px;min-width:130px}
+  .stat .k{font-size:.72rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:600}
+  .stat .v{font-size:1.3rem;font-weight:700;font-variant-numeric:tabular-nums}
+
+  .chart-wrap{position:relative;margin-top:6px;border:1px solid var(--border);border-radius:var(--r);background:var(--surface-2)}
+  svg.chart{display:block;width:100%;height:auto}
+  .chart text{fill:var(--muted);font-size:11px;font-family:inherit}
+  .legend{display:flex;flex-wrap:wrap;gap:16px;font-size:.8rem;color:var(--muted);margin-top:6px}
+  .legend i{display:inline-block;width:18px;height:3px;vertical-align:4px;margin-right:5px;border-radius:2px}
+
+  /* Venn */
+  .ev-pick{display:flex;flex-wrap:wrap;gap:14px;margin-bottom:12px}
+  .ev-pick .ctl select{min-width:150px}
+  .tagE{color:var(--sE);font-weight:800} .tagF{color:var(--sF);font-weight:800}
+  .venn-wrap{border:1px solid var(--border);border-radius:var(--r);overflow-x:auto;background:var(--surface-2)}
+  svg.venn{display:block;width:100%;min-width:620px;height:auto}
+  .venn text{font-family:inherit}
+  .chip rect{stroke:#b9b2a3;stroke-width:1}
+  .chip.inEv rect{stroke:var(--hl);stroke-width:2.6}
+  .chip.pulse{animation:pulse .8s ease-out}
+  @keyframes pulse{0%{transform:scale(1.6)}100%{transform:scale(1)}}
+  .regions{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:10px}
+  .reg{border-radius:var(--r);padding:8px 10px;font-size:.84rem;border:1px solid var(--border);font-variant-numeric:tabular-nums}
+  .reg .t{font-weight:700;font-size:.8rem}
+  .reg .n{font-size:1.1rem;font-weight:700}
+  .reg.rE{background:var(--rE)} .reg.rB{background:var(--rB)} .reg.rF{background:var(--rF)} .reg.rO{background:var(--rO)}
+
+  .ops{display:flex;flex-wrap:wrap;gap:6px;margin:14px 0 8px}
+  .ops button{border:1px solid var(--border);background:var(--surface);border-radius:20px;padding:6px 14px;cursor:pointer;font-weight:700;font-size:.92rem;font-family:"Cambria Math","Times New Roman",serif}
+  .ops button.on{background:var(--hl);border-color:var(--hl);color:#1c1a16}
+  .opinfo{border:1px solid var(--border);border-radius:var(--r);padding:12px 16px;background:var(--surface-2);font-size:.95rem;font-variant-numeric:tabular-nums}
+  .opinfo .nm{font-weight:700}
+  .opinfo .set{word-break:break-word}
+  .sym{font-family:"Cambria Math","Times New Roman",serif;font-weight:700}
+  .bar{text-decoration:overline}
+
+  /* Vierfeldertafel */
+  .seg{display:inline-flex;border:1px solid var(--border);border-radius:var(--r);overflow:hidden;flex-wrap:wrap}
+  .seg button{border:none;background:var(--surface);padding:6px 12px;cursor:pointer;font-size:.85rem;font-weight:600;color:var(--muted)}
+  .seg button.on{background:var(--link);color:#fff}
+  .seg button:disabled{opacity:.45;cursor:not-allowed}
+  table.vf{border-collapse:collapse;margin-top:12px;font-variant-numeric:tabular-nums;min-width:420px}
+  table.vf th,table.vf td{border:1px solid var(--border);padding:8px 14px;text-align:center;min-width:90px}
+  table.vf th{background:var(--surface-2);font-weight:700}
+  table.vf td.cE{background:var(--rE)} table.vf td.cB{background:var(--rB)} table.vf td.cF{background:var(--rF)} table.vf td.cO{background:var(--rO)}
+  table.vf td.sum{font-weight:700}
+  .scroll-x{overflow-x:auto}
+
+  .lock-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:16px}
+  .merk{border:2px solid var(--link);border-radius:var(--r);padding:14px 18px;margin-top:14px;background:var(--link-pale);font-size:.93rem}
+  .merk b{color:var(--link)}
+  .merk p{margin:6px 0}
+
+  footer{text-align:center;color:var(--muted);font-size:.82rem;margin-top:48px;padding-top:20px;border-top:1px solid var(--border)}
+  @media (max-width:640px){
+    h1{font-size:1.8rem}
+    .panel{padding:14px}
+    .panel-sub{margin-left:0}
+    .regions{grid-template-columns:1fr 1fr}
+    .bigcard{width:80px;height:114px}
+  }
+
+  /* Würfel */
+  .dice{display:flex;flex-wrap:wrap;gap:8px;min-height:56px;align-items:center}
+  .die{width:46px;height:46px;border-radius:9px;background:#fff;border:2px solid #1c1a16;display:grid;grid-template:repeat(3,1fr)/repeat(3,1fr);padding:6px;gap:1px;animation:roll .35s ease-out}
+  .die span{width:8px;height:8px;border-radius:50%;background:#1c1a16;place-self:center;visibility:hidden}
+  .die span.on{visibility:visible}
+  .die.six{border-color:var(--win);background:var(--win-pale);box-shadow:0 0 0 3px var(--win)}
+  .die.six span{background:var(--win)}
+  @keyframes roll{0%{transform:rotate(-30deg) scale(.7)}70%{transform:rotate(8deg) scale(1.05)}100%{transform:none}}
+  .nval{display:inline-block;min-width:2em;text-align:center;font-weight:700;background:var(--gold-pale);color:var(--gold);border-radius:20px;padding:1px 8px}
+  input[type=range]{accent-color:var(--gold);width:180px}
+  .maren{display:flex;gap:14px;align-items:flex-start;background:var(--gold-pale);border-left:3px solid var(--gold);border-radius:var(--r);padding:14px 18px;margin-bottom:24px}
+  .maren .q{font-size:1.02rem;font-style:italic}
+  .maren .who{font-weight:700;color:var(--gold);font-style:normal;font-size:.85rem;text-transform:uppercase;letter-spacing:.05em}
+  table.mw{border-collapse:collapse;width:100%;font-size:.9rem;margin-top:10px;font-variant-numeric:tabular-nums}
+  table.mw th,table.mw td{border-bottom:1px solid var(--border);padding:6px 8px;text-align:center}
+  table.mw th{font-size:.72rem;letter-spacing:.05em;text-transform:uppercase;color:var(--muted)}
+  table.mw td.bad{color:var(--suit-red);font-weight:700}
+  table.mw tr.goal td{background:var(--win-pale)}
+  .tree-box{overflow-x:auto;margin-top:10px}
+</style>
+</head>
+<body>
+
+<nav class="topbar" aria-label="Breadcrumb">
+  <div class="topbar-inner">
+    <a href="../../../../../index.html">Unterrichtsmaterialien</a><span class="sep">›</span>
+    <a href="../../../../index.html">Mathematik</a><span class="sep">›</span>
+    <a href="../../../index.html">Leistungskurs</a><span class="sep">›</span>
+    <a href="../../index.html#simulationen">Stochastik</a><span class="sep">›</span>
+    <span>Marens Würfel</span>
+  </div>
+</nav>
+
+<header class="page-head">
+  <div class="inner">
+    <div class="head-eyebrow">Simulation · Kapitel VIII.2</div>
+    <h1>Marens Würfel</h1>
+    <p>Mindestens eine Sechs – wie wahrscheinlich ist das mit mehreren Würfeln? Und warum hilft hier das Gegenereignis?</p>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <div class="maren">
+    <div style="font-size:2rem">🎲</div>
+    <div>
+      <div class="who">Maren überlegt</div>
+      <div class="q">„Wenn ich einen Würfel nehme, ist die Wahrscheinlichkeit für eine Sechs 1/6, wenn ich zwei Würfel nehme, ist sie 2/6,
+      wenn ich drei Würfel nehme, ist sie 3/6 usw. Das ist ja einfach!“</div>
+      <div style="margin-top:6px;font-size:.92rem">Gemeint ist: die Wahrscheinlichkeit, dass <b>mindestens eine Sechs</b> fällt.</div>
+    </div>
+  </div>
+
+  <!-- 1 -->
+  <section class="panel">
+    <div class="panel-head"><span class="step">1</span><h2>Würfeln und Marens Prognose prüfen</h2></div>
+    <p class="panel-sub">Stelle die Anzahl der Würfel ein und wirf einige Male, dann viele Male.</p>
+
+    <div class="btn-row" style="gap:14px">
+      <div class="ctl"><label for="nSl">Anzahl der Würfel n</label><input type="range" id="nSl" min="1" max="15" value="2"><span class="nval" id="nVal">2</span></div>
+      <div class="muted" style="font-size:.9rem">Marens Prognose: <b id="marenVal">2/6</b></div>
+    </div>
+
+    <div style="margin:14px 0" class="dice" id="dice"><span class="muted" style="font-size:.9rem">Noch nicht geworfen.</span></div>
+    <div id="verdict" style="min-height:26px"></div>
+
+    <div class="btn-row" style="margin-top:10px">
+      <button class="btn btn-primary" id="btnOne">🎲 Einmal werfen</button>
+      <button class="btn btn-blue" data-k="100">+ 100</button>
+      <button class="btn btn-blue" data-k="1000">+ 1 000</button>
+      <button class="btn btn-blue" data-k="10000">+ 10 000</button>
+      <button class="btn" id="btnReset">↺ Alles zurücksetzen</button>
+    </div>
+
+    <div class="stat-row" style="margin-top:14px">
+      <div class="stat"><div class="k">Würfe mit n = <span id="sN">2</span></div><div class="v" id="sT">0</div></div>
+      <div class="stat"><div class="k">mind. eine Sechs</div><div class="v" id="sH">0</div></div>
+      <div class="stat"><div class="k">rel. Häufigkeit</div><div class="v" id="sR">–</div></div>
+      <div class="stat"><div class="k">Marens Prognose</div><div class="v" id="sM">–</div></div>
+    </div>
+
+    <div class="task-box">
+      <b>Arbeitsauftrag 1</b>
+      <ol>
+        <li>Nimm Stellung zu Marens Überlegung, bevor du würfelst: Was passiert bei sieben Würfeln?</li>
+        <li>Simuliere für n = 2 und n = 3 jeweils 10 000 Würfe. Vergleiche mit Marens Prognose.</li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- 2 -->
+  <section class="panel">
+    <div class="panel-head"><span class="step">2</span><h2>Alle Anzahlen im Vergleich</h2></div>
+    <p class="panel-sub">Für jede Anzahl n = 1 … 15 werden 1 000 Würfe ergänzt. Die Werte aus Schritt 1 zählen mit.</p>
+    <div class="btn-row"><button class="btn btn-blue" id="btnAll">+ 1 000 Würfe für jedes n</button></div>
+    <div class="chart-wrap" style="margin-top:10px"><svg class="chart" id="chart" viewBox="0 0 720 280" role="img" aria-label="Wahrscheinlichkeit für mindestens eine Sechs"></svg></div>
+    <div class="legend">
+      <span><i style="background:var(--gold);height:10px;vertical-align:0"></i>relative Häufigkeit (Simulation)</span>
+      <span><i style="background:var(--link)"></i>Marens Prognose n/6</span>
+      <span id="legT" class="hide"><i style="background:var(--win)"></i>Wahrscheinlichkeit mit dem Gegenereignis</span>
+    </div>
+    <div class="scroll-x"><table class="mw" id="tbl"></table></div>
+
+    <div class="task-box">
+      <b>Arbeitsauftrag 2</b>
+      <ol>
+        <li>Ab welchem n ist Marens Prognose sicher falsch? Wie verändert sich der Fehler mit wachsendem n?</li>
+        <li>Für n = 2: Maren rechnet 1/6 + 1/6. Welche Ergebnisse zählt sie dabei doppelt? (Tipp: Kartenspiel „Herz oder Bild“)</li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- 3 -->
+  <section class="panel">
+    <div class="panel-head"><span class="step">3</span><h2>Der Trick: das Gegenereignis</h2></div>
+    <p class="panel-sub">„Mindestens eine Sechs“ besteht aus sehr vielen Ergebnissen. Das Gegenereignis „keine Sechs“ besteht nur aus einem einzigen Pfad.</p>
+
+    <div class="btn-row"><div class="ctl"><label for="tN">Baumdiagramm für n =</label>
+      <select id="tN"><option>2</option><option selected>3</option></select></div></div>
+    <div class="tree-box"><svg id="tree" role="img" aria-label="Baumdiagramm"></svg></div>
+    <div class="legend"><span><i style="background:var(--win)"></i>der einzige Pfad zu „keine Sechs“</span><span>6 = Sechs, n = keine Sechs</span></div>
+
+    <div class="task-box">
+      <b>Arbeitsauftrag 3</b>
+      <ol>
+        <li>Wie viele Pfade gehören bei n = 3 zu „mindestens eine Sechs“, wie viele zu „keine Sechs“?</li>
+        <li>Berechne P(keine Sechs) mit der Pfadregel und daraus P(mindestens eine Sechs). Verallgemeinere für n Würfel.</li>
+        <li>Wie viele Würfel braucht Maren, damit sie mit mehr als 90 % Wahrscheinlichkeit mindestens eine Sechs wirft?</li>
+      </ol>
+    </div>
+
+    <div class="lock-row" id="lockRow">
+      <input type="password" id="code" placeholder="Code" autocomplete="off" style="width:110px">
+      <button class="btn" id="btnUnlock">🔒 Lösung und Merkwissen freischalten</button>
+      <span class="muted" id="codeMsg" style="font-size:.85rem">Erst nach der Besprechung.</span>
+    </div>
+    <div class="merk hide" id="merk">
+      <p><b>Gegenereignis:</b> Zu jedem Ereignis E gibt es das Gegenereignis <span class="sym bar">E</span>, das alle Ergebnisse enthält, die nicht zu E gehören.
+        Da E und <span class="sym bar">E</span> zusammen S ergeben, gilt <b>P(E) = 1 − P(<span class="sym bar">E</span>)</b>.</p>
+      <p><b>Hier:</b> E: „mindestens eine Sechs“, <span class="sym bar">E</span>: „keine Sechs“. Nach der Pfadregel ist
+        P(<span class="sym bar">E</span>) = (5/6)<sup>n</sup>, also <b>P(E) = 1 − (5/6)<sup>n</sup></b>.</p>
+      <p><b>Marens Fehler:</b> Bei zwei Würfeln ist „Sechs beim 1. Würfel“ ∪ „Sechs beim 2. Würfel“ gesucht. 1/6 + 1/6 zählt das Ergebnis (6, 6) doppelt:
+        P = 1/6 + 1/6 − 1/36 = 11/36 = 1 − (5/6)² ✓</p>
+      <p><b>Tipp:</b> Die Berechnung über das Gegenereignis lohnt sich, wenn <span class="sym bar">E</span> weniger Ergebnisse enthält als E – typisch bei „mindestens …“.</p>
+    </div>
+  </section>
+
+</div>
+
+<footer>Unterrichtsmaterialien · Friedrich-Bährens-Gymnasium Schwerte</footer>
+
+<script>
+(() => {
+  const $=id=>document.getElementById(id);
+  const fmt=n=>n.toLocaleString('de-DE');
+  const pct=x=>(x*100).toLocaleString('de-DE',{minimumFractionDigits:1,maximumFractionDigits:1})+' %';
+  const NMAX=15;
+  const T=new Array(NMAX+1).fill(0), Hh=new Array(NMAX+1).fill(0);
+  let n=2, unlocked=false;
+  const theo=k=>1-Math.pow(5/6,k);
+  const PIPS={1:[4],2:[0,8],3:[0,4,8],4:[0,2,6,8],5:[0,2,4,6,8],6:[0,2,3,5,6,8]};
+  const throwN=k=>{ const r=[]; for(let i=0;i<k;i++) r.push(1+Math.floor(Math.random()*6)); return r; };
+  function record(k,r){ T[k]++; if(r.includes(6)) Hh[k]++; }
+  function showDice(r){
+    $('dice').innerHTML=r.map((v,i)=>`<div class="die${v===6?' six':''}" style="animation-delay:${i*0.04}s">${[...Array(9)].map((_,j)=>`<span class="${PIPS[v].includes(j)?'on':''}"></span>`).join('')}</div>`).join('');
+    const hit=r.includes(6), c=r.filter(v=>v===6).length;
+    $('verdict').innerHTML= hit ? `<b style="color:var(--win)">✓ Mindestens eine Sechs</b> <span class="muted">(${c} Sechs${c>1?'en':''})</span>` : `<b style="color:var(--suit-red)">✗ Keine Sechs</b>`;
+  }
+  const mStr=k=> k<=6 ? (k===6?'6/6 = 1':`${k}/6 ≈ ${pct(k/6)}`) : `${k}/6 > 1 !`;
+  function renderStats(){
+    $('nVal').textContent=n; $('sN').textContent=n; $('marenVal').textContent=mStr(n);
+    $('sT').textContent=fmt(T[n]); $('sH').textContent=fmt(Hh[n]);
+    $('sR').textContent=T[n]?pct(Hh[n]/T[n]):'–';
+    $('sM').textContent= n<=6 ? pct(n/6) : 'über 100 %';
+  }
+  const NS='http://www.w3.org/2000/svg';
+  function el(t,a,p){const e=document.createElementNS(NS,t);for(const k in a)e.setAttribute(k,a[k]);if(p)p.appendChild(e);return e;}
+  function renderChart(){
+    const svg=$('chart'); svg.innerHTML='';
+    const W=720,H=280,m={l:46,r:12,t:22,b:34},iw=W-m.l-m.r,ih=H-m.t-m.b, band=iw/NMAX, bw=band*0.55;
+    const y=v=>m.t+ih*(1-Math.min(v,1.08)/1.08);
+    for(let v=0;v<=1.0001;v+=0.25){ el('line',{x1:m.l,x2:W-m.r,y1:y(v),y2:y(v),stroke:'var(--border)'},svg); const t=el('text',{x:m.l-6,y:y(v)+4,'text-anchor':'end'},svg); t.textContent=Math.round(v*100)+' %'; }
+    el('line',{x1:m.l,x2:W-m.r,y1:y(1),y2:y(1),stroke:'var(--muted)','stroke-dasharray':'3 3'},svg);
+    const pts=[];
+    for(let k=1;k<=NMAX;k++){
+      const cx=m.l+band*(k-0.5);
+      if(T[k]){ const v=Hh[k]/T[k]; const yy=y(v); el('path',{d:`M${cx-bw/2},${y(0)}V${yy+4}Q${cx-bw/2},${yy} ${cx-bw/2+4},${yy}H${cx+bw/2-4}Q${cx+bw/2},${yy} ${cx+bw/2},${yy+4}V${y(0)}Z`,fill:'var(--gold)',opacity:.85},svg);
+        const t=el('text',{x:cx,y:yy-5,'text-anchor':'middle','font-size':10},svg); t.textContent=Math.round(v*100)+'%'; }
+      const lt=el('text',{x:cx,y:H-14,'text-anchor':'middle'},svg); lt.textContent=k;
+      pts.push([cx,k/6]);
+    }
+    const xl=el('text',{x:m.l+iw/2,y:H-1,'text-anchor':'middle'},svg); xl.textContent='Anzahl der Würfel n';
+    // Maren
+    const vis=pts.filter(([,v])=>v<=1.08);
+    el('polyline',{points:vis.map(([x,v])=>x+','+y(v)).join(' '),fill:'none',stroke:'var(--link)','stroke-width':2},svg);
+    vis.forEach(([x,v])=>el('circle',{cx:x,cy:y(v),r:4,fill:'var(--link)'},svg));
+    const last=vis[vis.length-1]; const nx=pts[vis.length];
+    if(nx){ el('line',{x1:last[0],y1:y(last[1]),x2:last[0]+(nx[0]-last[0])*0.6,y2:m.t-4,stroke:'var(--link)','stroke-width':2,'stroke-dasharray':'4 3'},svg);
+      const t=el('text',{x:nx[0]+6,y:m.t+6,fill:'var(--link)','font-weight':700},svg); t.textContent='Maren: über 100 %!'; t.setAttribute('style','fill:var(--link);font-weight:700'); }
+    if(unlocked){
+      const tp=pts.map(([x],i)=>[x,theo(i+1)]);
+      el('polyline',{points:tp.map(([x,v])=>x+','+y(v)).join(' '),fill:'none',stroke:'var(--win)','stroke-width':2.4},svg);
+      tp.forEach(([x,v])=>el('circle',{cx:x,cy:y(v),r:4,fill:'var(--win)',stroke:'var(--surface)','stroke-width':1.5},svg));
+    }
+  }
+  function renderTable(){
+    let h='<tr><th>n</th><th>Marens Prognose n/6</th><th>Simulation</th><th>Würfe</th>'+(unlocked?'<th>P(keine Sechs) = (5/6)ⁿ</th><th>P(mind. eine Sechs) = 1 − (5/6)ⁿ</th>':'<th colspan="2">🔒 nach Freischaltung</th>')+'</tr>';
+    for(let k=1;k<=NMAX;k++){
+      const goal = unlocked && theo(k)>0.9 && theo(k-1)<=0.9;
+      h+=`<tr class="${goal?'goal':''}"><td><b>${k}</b></td><td class="${k>6?'bad':''}">${k<=6?pct(k/6):pct(k/6)+' ✗'}</td><td>${T[k]?pct(Hh[k]/T[k]):'–'}</td><td>${fmt(T[k])}</td>`+
+        (unlocked?`<td>${(Math.pow(5/6,k)).toLocaleString('de-DE',{minimumFractionDigits:4,maximumFractionDigits:4})}</td><td><b>${pct(theo(k))}</b>${goal?' ← erstmals über 90 %':''}</td>`:'<td colspan="2"></td>')+'</tr>';
+    }
+    $('tbl').innerHTML=h;
+  }
+  // Baum
+  function renderTree(){
+    const d=+$('tN').value, svg=$('tree'); svg.innerHTML='';
+    const leaves=1<<d, dx=d===2?120:64, dy=78, left=80, top=24;
+    const W=left+leaves*dx+20, H=top+d*dy+46;
+    svg.setAttribute('viewBox',`0 0 ${W} ${H}`); svg.setAttribute('width',W); svg.setAttribute('height',H);
+    const pos={};
+    const paths=[]; (function gen(p){ if(p.length===d){paths.push(p);return;} gen([...p,6]); gen([...p,0]); })([]);
+    paths.forEach((p,i)=>pos[p.join('')]={x:left+dx*(i+0.5),y:top+d*dy});
+    for(let lv=d-1;lv>=0;lv--){ const seen={}; paths.forEach(p=>{ const k=p.slice(0,lv).join(''); if(seen[k]) return; seen[k]=1; const a=pos[p.slice(0,lv).concat([6]).join('')], b=pos[p.slice(0,lv).concat([0]).join('')]; pos[k]={x:(a.x+b.x)/2,y:top+lv*dy}; }); }
+    for(let lv=1;lv<=d;lv++){ const t=el('text',{x:6,y:top+lv*dy+5,fill:'var(--muted)','font-size':12},svg); t.textContent=lv+'. Würfel'; }
+    const done={};
+    paths.forEach(p=>{ for(let lv=1;lv<=d;lv++){ const pk=p.slice(0,lv-1).join(''), ck=p.slice(0,lv).join(''); if(done[ck]) continue; done[ck]=1;
+      const a=pos[pk], b=pos[ck], none=p.slice(0,lv).every(v=>v===0), six=p[lv-1]===6;
+      el('line',{x1:a.x,y1:a.y+(lv===1?3:13),x2:b.x,y2:b.y-13,stroke:none?'var(--win)':'var(--muted)','stroke-width':none?3.2:1.4},svg);
+      const mx=(a.x+b.x)/2+(six?-14:14), my=(a.y+b.y)/2;
+      const t=el('text',{x:mx,y:my,'text-anchor':'middle','font-size':12,'font-weight':700,fill:none?'var(--win)':'var(--text)'},svg); t.textContent=six?'1/6':'5/6';
+      el('circle',{cx:b.x,cy:b.y,r:12,fill:'var(--surface)',stroke:none?'var(--win)':(six?'var(--gold)':'var(--muted)'),'stroke-width':none?2.6:1.6},svg);
+      const tt=el('text',{x:b.x,y:b.y+4.5,'text-anchor':'middle','font-size':12,'font-weight':800,fill:six?'var(--gold)':'var(--text)'},svg); tt.textContent=six?'6':'n';
+    }});
+    el('circle',{cx:pos[''].x,cy:pos[''].y,r:3.5,fill:'var(--text)'},svg);
+    paths.forEach(p=>{ const q=pos[p.join('')]; const none=p.every(v=>v===0);
+      const t=el('text',{x:q.x,y:q.y+32,'text-anchor':'middle','font-size':11,fill:none?'var(--win)':'var(--muted)','font-weight':none?700:400},svg);
+      t.textContent= none?'keine Sechs':(d===2?'mind. eine 6':'✓'); });
+  }
+  function renderAll(){ renderStats(); renderChart(); renderTable(); }
+
+  $('nSl').addEventListener('input',e=>{ n=+e.target.value; $('dice').innerHTML='<span class="muted" style="font-size:.9rem">Noch nicht geworfen.</span>'; $('verdict').innerHTML=''; renderStats(); });
+  $('btnOne').addEventListener('click',()=>{ const r=throwN(n); record(n,r); showDice(r); renderAll(); });
+  document.querySelectorAll('[data-k]').forEach(b=>b.addEventListener('click',()=>{ let r; for(let i=0;i<+b.dataset.k;i++){ r=throwN(n); record(n,r);} showDice(r); renderAll(); }));
+  $('btnAll').addEventListener('click',()=>{ for(let k=1;k<=NMAX;k++) for(let i=0;i<1000;i++) record(k,throwN(k)); renderAll(); });
+  $('btnReset').addEventListener('click',()=>{ T.fill(0); Hh.fill(0); $('dice').innerHTML='<span class="muted" style="font-size:.9rem">Noch nicht geworfen.</span>'; $('verdict').innerHTML=''; renderAll(); });
+  $('tN').addEventListener('change',renderTree);
+  function unlock(){
+    if(($('code').value||'').trim().toUpperCase()==='MATHE'){ unlocked=true; $('lockRow').classList.add('hide'); $('merk').classList.remove('hide'); $('legT').classList.remove('hide'); renderAll(); }
+    else { $('codeMsg').textContent='Code nicht korrekt.'; $('codeMsg').style.color='var(--gold)'; }
+  }
+  $('btnUnlock').addEventListener('click',unlock);
+  $('code').addEventListener('keydown',e=>{ if(e.key==='Enter') unlock(); });
+  renderAll(); renderTree();
+})();
+</script>
+</body>
+</html>
