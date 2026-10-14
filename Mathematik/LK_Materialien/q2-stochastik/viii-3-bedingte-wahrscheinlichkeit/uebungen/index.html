@@ -601,6 +601,42 @@ footer.bot a{color:var(--blue)}
         </div></div>
       </div>
     </article>
+    <article class="card s2">
+      <div class="card-head"><h3>Aufgabe 7 · Mitglieder zweier Sportvereine</h3><span class="chev">▾</span></div>
+      <div class="card-body">
+        <div class="task">
+          <p>Die Tabelle zeigt, wie viele Jugendliche und Erwachsene in den Sportvereinen A und B einer Gemeinde Mitglied sind.
+          Ein Mitglied wird zufällig ausgewählt. $J$: „Das Mitglied ist jugendlich.“, $A$: „Das Mitglied gehört zu Verein A.“</p>
+          <div class="tw"><table class="vt">
+            <tr><th></th><th>Verein A</th><th>Verein B</th><th>gesamt</th></tr>
+            <tr><th>jugendlich</th><td>120</td><td>80</td><td>200</td></tr>
+            <tr><th>erwachsen</th><td>180</td><td>120</td><td>300</td></tr>
+            <tr><th>gesamt</th><td>300</td><td>200</td><td>500</td></tr>
+          </table></div>
+          <p><strong>a)</strong> Untersuchen Sie, ob $J$ und $A$ stochastisch unabhängig sind.</p>
+          <p><strong>b)</strong> Ein Jugendlicher wechselt von Verein A zu Verein B. Untersuchen Sie die Auswirkung auf die Unabhängigkeit und diskutieren Sie das Ergebnis.</p>
+        </div>
+        <div class="assess"><span class="lab">Einschätzung:</span>
+          <button data-v="ok" type="button">✓ Fertig &amp; verstanden</button><button data-v="mid" type="button">~ Noch unsicher</button><button data-v="ask" type="button">? Frage an Lehrer</button></div>
+        <div class="hints">
+          <div class="htitle">Hilfen</div>
+          <div class="htabs"><button type="button">Hilfe 1 · Anzahlen nutzen</button><button type="button">Hilfe 2 · Neue Tafel</button><button type="button">Hilfe 3 · Diskussion</button></div>
+          <div class="hpanel"><h4>Hilfe 1 · Bedingte Wahrscheinlichkeit aus Anzahlen</h4><p>$P_A(J)$ ist der Anteil der Jugendlichen <em>unter den Mitgliedern von A</em>: $\frac{120}{300}$. Vergleiche mit dem Anteil der Jugendlichen insgesamt, $P(J)=\frac{200}{500}$.</p></div>
+          <div class="hpanel"><h4>Hilfe 2 · Was ändert sich?</h4><p>Nach dem Wechsel: jugendlich in A $119$, jugendlich in B $81$; Spaltensummen $299$ und $201$. Die Zeilensummen und die Gesamtzahl bleiben gleich.</p></div>
+          <div class="hpanel"><h4>Hilfe 3 · Wie groß ist der Unterschied?</h4><p>Berechne $P_A(J)$ auf drei Nachkommastellen und vergleiche mit $0{,}4$. Ist die Abhängigkeit praktisch bedeutsam?</p></div>
+        </div>
+        <div class="sol-lock">🔒 Musterlösung – nach Freigabe durch den Lehrer sichtbar.</div>
+        <div class="sol"><div class="sh">✓ Musterlösung · Aufgabe 7</div><div class="sb">
+          <p><strong>a)</strong> $$P_A(J)=\frac{P(A\cap J)}{P(A)}=\frac{120/500}{300/500}=\frac{120}{300}=0{,}4,\qquad P(J)=\frac{200}{500}=0{,}4.$$
+          Wegen $P_A(J)=P(J)$ sind $J$ und $A$ ${\color{#1a9e5c}\boldsymbol{\text{stochastisch unabhängig}}}$. Probe: $P(A)\cdot P(J)=0{,}6\cdot0{,}4=0{,}24=\frac{120}{500}=P(A\cap J)$.</p>
+          <p><strong>b)</strong> Neue Tafel: $A\cap J$: $119$, $\overline A\cap J$: $81$, $P(A)=\frac{299}{500}$.
+          $$P_A(J)=\frac{119}{299}\approx0{,}398\neq0{,}4=P(J)$$
+          Damit sind $J$ und $A$ ${\color{#1a9e5c}\boldsymbol{\text{nicht mehr unabhängig}}}$. Probe: $P(A\cap J)=0{,}238\neq0{,}2392=P(A)\cdot P(J)$.</p>
+          <p>Diskussion: Stochastische Unabhängigkeit ist eine exakte Gleichheit und geht schon bei einer kleinen Änderung verloren.
+          Praktisch ist der Unterschied ($39{,}8\,\%$ statt $40\,\%$) aber bedeutungslos – bei realen Daten spricht man daher eher von „annähernd unabhängig“.</p>
+        </div></div>
+      </div>
+    </article>
   </section>
 
   <!-- ================= STUFE 3 ================= -->
@@ -611,7 +647,7 @@ footer.bot a{color:var(--blue)}
     </div>
 
     <article class="card s3">
-      <div class="card-head"><h3>Aufgabe 7 · Gilt immer – gilt nie – es kommt darauf an</h3><span class="chev">▾</span></div>
+      <div class="card-head"><h3>Aufgabe 8 · Gilt immer – gilt nie – es kommt darauf an</h3><span class="chev">▾</span></div>
       <div class="card-body">
         <div class="task">
           <p>Untersuchen Sie, ob die Aussage immer gilt, nie stimmt oder nur in bestimmten Fällen richtig ist. Geben Sie gegebenenfalls die Bedingungen an.
@@ -631,7 +667,7 @@ footer.bot a{color:var(--blue)}
           <div class="hpanel"><h4>Hilfe 3 · Formel einsetzen</h4><p>Schreibe beide bedingten Wahrscheinlichkeiten als Bruch mit dem Nenner $P(E)$ und addiere. Was ergibt $P(E\cap F)+P(E\cap\overline F)$?</p></div>
         </div>
         <div class="sol-lock">🔒 Musterlösung – nach Freigabe durch den Lehrer sichtbar.</div>
-        <div class="sol"><div class="sh">✓ Musterlösung · Aufgabe 7</div><div class="sb">
+        <div class="sol"><div class="sh">✓ Musterlösung · Aufgabe 8</div><div class="sb">
           <p><strong>a)</strong> ${\color{#1a9e5c}\boldsymbol{\text{Es kommt darauf an.}}}$ In Beispiel 2 ist $P_E(F)=\frac12>\frac16=P(F)$, in Aufgabe 3 ist $P_E(F)=\frac13<\frac25=P(F)$.
           Gleichheit gilt genau bei Unabhängigkeit.</p>
           <p><strong>b)</strong> ${\color{#1a9e5c}\boldsymbol{\text{Gilt immer.}}}$ Aus $E\subseteq F$ folgt $E\cap F=E$, also $P_E(F)=\frac{P(E)}{P(E)}=1$.</p>
@@ -644,7 +680,7 @@ footer.bot a{color:var(--blue)}
     </article>
 
     <article class="card s3">
-      <div class="card-head"><h3>Aufgabe 8 · Allgemeine Urne</h3><span class="chev">▾</span></div>
+      <div class="card-head"><h3>Aufgabe 9 · Allgemeine Urne</h3><span class="chev">▾</span></div>
       <div class="card-body">
         <div class="task">
           <p>Gegeben sind zwei natürliche Zahlen $x$ und $y$, beide größer als 0. Aus einem Gefäß mit $x$ roten und $y$ blauen Kugeln werden nacheinander zwei Kugeln
@@ -661,7 +697,7 @@ footer.bot a{color:var(--blue)}
           <div class="hpanel"><h4>Hilfe 3 · Ist P_E(F) = P(F)?</h4><p>Setze $\frac{x-1}{x+y-1}=\frac{x}{x+y}$ an und multipliziere über Kreuz. Was folgt für $y$?</p></div>
         </div>
         <div class="sol-lock">🔒 Musterlösung – nach Freigabe durch den Lehrer sichtbar.</div>
-        <div class="sol"><div class="sh">✓ Musterlösung · Aufgabe 8</div><div class="sb">
+        <div class="sol"><div class="sh">✓ Musterlösung · Aufgabe 9</div><div class="sb">
           <p><strong>Mit Zurücklegen:</strong> Beim zweiten Zug ist die Urne unverändert, also $P_E(F)=\frac{x}{x+y}=P(F)$ $\Rightarrow$ ${\color{#1a9e5c}\boldsymbol{\text{stets unabhängig}}}$.</p>
           <p><strong>Ohne Zurücklegen:</strong> Mit Pfad- und Summenregel
           $$P(F)=\frac{x}{x+y}\cdot\frac{x-1}{x+y-1}+\frac{y}{x+y}\cdot\frac{x}{x+y-1}=\frac{x\,(x-1+y)}{(x+y)(x+y-1)}=\frac{x}{x+y}.$$</p>
@@ -673,7 +709,7 @@ footer.bot a{color:var(--blue)}
     </article>
 
     <article class="card s3">
-      <div class="card-head"><h3>Aufgabe 9 · Zwei Eigenschaften beweisen</h3><span class="chev">▾</span></div>
+      <div class="card-head"><h3>Aufgabe 10 · Zwei Eigenschaften beweisen</h3><span class="chev">▾</span></div>
       <div class="card-body">
         <div class="task">
           <p>Zeigen Sie, dass für zwei Ereignisse $E$ und $F$ mit $P(E)>0$ und $P(F)>0$ gilt:</p>
@@ -691,7 +727,7 @@ footer.bot a{color:var(--blue)}
           <div class="hpanel"><h4>Hilfe 3 · Zerlegen</h4><p>$P(E\cap\overline F)=P(E)-P(E\cap F)$, denn $E$ zerfällt in $E\cap F$ und $E\cap\overline F$. Klammere dann $P(E)$ aus.</p></div>
         </div>
         <div class="sol-lock">🔒 Musterlösung – nach Freigabe durch den Lehrer sichtbar.</div>
-        <div class="sol"><div class="sh">✓ Musterlösung · Aufgabe 9</div><div class="sb">
+        <div class="sol"><div class="sh">✓ Musterlösung · Aufgabe 10</div><div class="sb">
           <p><strong>a)</strong> Nach der Formel ist $P_E(\overline F)=\frac{P(E\cap\overline F)}{P(E)}$. Da $E\cap\overline F$ alle Ergebnisse enthält, die in $E$, aber nicht in $F$ liegen,
           gilt $E\cap\overline F=E\setminus F$ und damit ${\color{#1a9e5c}\boldsymbol{P_E(\overline F)=\frac{P(E\setminus F)}{P(E)}}}$.</p>
           <p><strong>b)</strong> Aus $P_E(F)=P(F)$ folgt mit der Pfadregel $P(E\cap F)=P(E)\cdot P_E(F)=P(E)\cdot P(F)$. Damit
@@ -699,6 +735,35 @@ footer.bot a{color:var(--blue)}
           Unabhängigkeit ist also eine gegenseitige Beziehung.</p>
           <p><strong>c)</strong> $E$ zerfällt in $E\cap F$ und $E\cap\overline F$, also
           $$P(E\cap\overline F)=P(E)-P(E\cap F)=P(E)-P(E)\cdot P(F)=P(E)\cdot(1-P(F))={\color{#1a9e5c}\boldsymbol{P(E)\cdot P(\overline F)}}.$$</p>
+        </div></div>
+      </div>
+    </article>
+    <article class="card s3">
+      <div class="card-head"><h3>Aufgabe 11 · Bedingte Wahrscheinlichkeitsverteilung</h3><span class="chev">▾</span></div>
+      <div class="card-body">
+        <div class="task">
+          <p>In einem Gefäß liegen zehn Kugeln: vier tragen die Nummer 1, drei die Nummer 2, zwei die Nummer 3 und eine die Nummer 4.
+          Eine Kugel wird zufällig gezogen, die Ergebnismenge ist $S=\{1;2;3;4\}$. Es sei $E$: „Die gezogene Nummer ist gerade.“</p>
+          <p><strong>a)</strong> Bestimmen Sie die Wahrscheinlichkeiten $P_E(\{x\})$ für alle $x\in S$.</p>
+          <p><strong>b)</strong> Geben Sie eine Ergebnismenge $S_E$ an, auf die man $S$ für die bedingten Wahrscheinlichkeiten $P_E$ verkleinern kann. Untersuchen Sie, ob sich auf $S_E$ eine Wahrscheinlichkeitsverteilung ergibt.</p>
+        </div>
+        <div class="assess"><span class="lab">Einschätzung:</span>
+          <button data-v="ok" type="button">✓ Fertig &amp; verstanden</button><button data-v="mid" type="button">~ Noch unsicher</button><button data-v="ask" type="button">? Frage an Lehrer</button></div>
+        <div class="hints">
+          <div class="htitle">Hilfen</div>
+          <div class="htabs"><button type="button">Hilfe 1 · Formel</button><button type="button">Hilfe 2 · Schnittmengen</button><button type="button">Hilfe 3 · Verteilung</button></div>
+          <div class="hpanel"><h4>Hilfe 1 · Ansatz</h4><p>$E=\{2;4\}$ und $P_E(\{x\})=\dfrac{P(E\cap\{x\})}{P(E)}$. Bestimme zuerst $P(E)$.</p></div>
+          <div class="hpanel"><h4>Hilfe 2 · Was ist $E\cap\{x\}$?</h4><p>Für ungerade $x$ ist $E\cap\{x\}=\{\,\}$. Für gerade $x$ ist $E\cap\{x\}=\{x\}$.</p></div>
+          <div class="hpanel"><h4>Hilfe 3 · Bedingungen einer Verteilung</h4><p>Alle Wahrscheinlichkeiten müssen zwischen 0 und 1 liegen und zusammen 1 ergeben.</p></div>
+        </div>
+        <div class="sol-lock">🔒 Musterlösung – nach Freigabe durch den Lehrer sichtbar.</div>
+        <div class="sol"><div class="sh">✓ Musterlösung · Aufgabe 11</div><div class="sb">
+          <p><strong>a)</strong> $E=\{2;4\}$, $P(E)=\frac3{10}+\frac1{10}=\frac4{10}$.</p>
+          <p>$P_E(\{1\})=P_E(\{3\})=\dfrac{P(\{\,\})}{P(E)}={\color{#1a9e5c}\boldsymbol{0}}$, $\quad P_E(\{2\})=\dfrac{3/10}{4/10}={\color{#1a9e5c}\boldsymbol{\tfrac34}}$, $\quad P_E(\{4\})=\dfrac{1/10}{4/10}={\color{#1a9e5c}\boldsymbol{\tfrac14}}$.</p>
+          <p><strong>b)</strong> Die ungeraden Nummern können unter der Bedingung $E$ nicht auftreten, also $S_E=E=\{2;4\}$.
+          Es gilt $0\le P_E(\{2\}),P_E(\{4\})\le1$ und $P_E(\{2\})+P_E(\{4\})=\frac34+\frac14=1$.
+          Also ist $P_E$ eine ${\color{#1a9e5c}\boldsymbol{\text{Wahrscheinlichkeitsverteilung auf } S_E}}$.</p>
+          <p>Allgemein: $P_E(\{x\})=\dfrac{P(\{x\})}{P(E)}$ für $x\in E$ – die Wahrscheinlichkeiten der Ergebnisse in $E$ werden mit demselben Faktor $\frac1{P(E)}$ „hochskaliert“.</p>
         </div></div>
       </div>
     </article>
