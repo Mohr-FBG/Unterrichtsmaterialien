@@ -172,6 +172,7 @@
   .door.chosen{outline:5px solid var(--hl);outline-offset:4px}
   .door.open{background:var(--surface-2);border-color:var(--border);color:var(--text);cursor:default}
   .door.open .knob{display:none}
+  @media (max-width:520px){ .doors{gap:12px;flex-wrap:nowrap} .door{width:31%;max-width:110px;height:160px} .door .num{font-size:2.4rem} .big-btn{min-width:130px;font-size:1rem} }
   .door.open .num{font-size:4.2rem}
   .door.car{background:var(--win-pale);border-color:var(--win)}
   .door.disabled{cursor:default}
@@ -182,6 +183,10 @@
   .center{display:flex;justify-content:center;flex-wrap:wrap;gap:8px;margin:10px 0}
   .vote{display:flex;flex-wrap:wrap;gap:18px;justify-content:center;align-items:center;margin:12px 0}
   .vote .ctl input{width:80px;font-size:1.1rem;font-weight:700;text-align:center}
+  .big-btn{min-width:170px;font-size:1.15rem;padding:12px 22px}
+  .decide{gap:14px;margin:12px 0}
+  .cand{text-align:center;margin:10px 0 4px;font-weight:600}
+  .cand select{font:inherit;font-weight:700;padding:4px 8px;border-radius:6px;border:1px solid var(--border);background:var(--surface);color:var(--text)}
   .chips{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin:10px 0}
   .chip-n{border:1.5px solid var(--border);border-radius:18px;padding:5px 12px;cursor:pointer;font-weight:600;font-size:.88rem;background:var(--surface)}
   .chip-n.s{border-color:var(--link);background:var(--link-pale);color:var(--link)}
@@ -249,37 +254,29 @@
 
   <div class="tabs" id="tabs">
     <button data-t="klasse" class="on">👥 Klassenspiel (Beamer)</button>
-    <button data-t="einzel">👤 Einzelspiel</button>
     <button data-t="viele">⚡ Viele Runden</button>
   </div>
 
   <!-- ===== KLASSENSPIEL ===== -->
   <section class="panel" id="tab-klasse">
     <div class="panel-head"><span class="step">1</span><h2>Klassenspiel am Beamer</h2></div>
-    <p class="panel-sub">Die Klasse wählt gemeinsam eine Tür. Nachdem der Moderator eine Ziege gezeigt hat, entscheidet jede Person für sich: bleiben oder wechseln.</p>
+    <p class="panel-sub">Die Klasse (oder die Kandidatin bzw. der Kandidat der Runde) wählt eine Tür. Der Moderator zeigt eine Ziege – dann wird entschieden: <b>Bleiben</b> oder <b>Wechseln</b> anklicken.</p>
 
     <details class="setup" id="setup">
-      <summary>⚙ Namen der Schülerinnen und Schüler eintragen (optional)</summary>
-      <p class="muted" style="font-size:.88rem;margin:8px 0">Mit Namen wird für jede Person mitgezählt, wie oft sie gewinnt. Ohne Namen gibt es eine einfache Strichliste.
-      Ein Name pro Zeile oder mit Komma getrennt. Die Daten bleiben nur in diesem Browser.</p>
+      <summary>⚙ Kandidatinnen und Kandidaten eintragen (optional)</summary>
+      <p class="muted" style="font-size:.88rem;margin:8px 0">Mit Namen spielt in jeder Runde eine Person als Kandidatin bzw. Kandidat (die Reihenfolge läuft automatisch weiter, kann aber geändert werden).
+      Dann wird für jede Person mitgezählt, wie oft sie gewinnt. Ein Name pro Zeile oder mit Komma getrennt. Die Daten bleiben nur in diesem Browser.</p>
       <textarea class="names" id="names" rows="3" placeholder="z. B. Anna, Ben, Can, Dana …"></textarea>
       <div class="btn-row" style="margin-top:8px"><button class="btn btn-blue" id="btnNames">Namen übernehmen</button><span class="muted" id="namesMsg" style="font-size:.85rem"></span></div>
     </details>
 
+    <div class="cand hide" id="kCand"><label for="kWho">Kandidat/in dieser Runde:</label> <select id="kWho"></select></div>
     <div class="stage-msg" id="kMsg"></div>
     <div class="doors" id="kDoors"></div>
 
-    <div id="kVote" class="hide">
-      <div id="kChipsWrap" class="hide">
-        <p class="muted" style="text-align:center;font-size:.88rem;margin:0">Antippen wechselt zwischen <span class="wS">B</span> = bleiben und <span class="wW">W</span> = wechseln. „?“ = noch nicht entschieden (zählt in dieser Runde nicht).</p>
-        <div class="chips" id="kChips"></div>
-        <div class="center"><button class="btn" id="allStay">Alle bleiben</button><button class="btn" id="allSwitch">Alle wechseln</button></div>
-      </div>
-      <div class="vote" id="kCount">
-        <div class="ctl"><label for="nStay" class="wS">Bleiben:</label><input type="number" id="nStay" min="0" value="0"></div>
-        <div class="ctl"><label for="nSwitch" class="wW">Wechseln:</label><input type="number" id="nSwitch" min="0" value="0"></div>
-      </div>
-      <div class="center"><button class="btn btn-primary" id="btnReveal">🎁 Türen öffnen</button></div>
+    <div class="center decide hide" id="kChoice">
+      <button class="btn btn-blue big-btn" id="kStay">🔵 Bleiben</button>
+      <button class="btn btn-primary big-btn" id="kSwitch">🟠 Wechseln</button>
     </div>
 
     <div class="result" id="kResult"></div>
@@ -287,11 +284,11 @@
 
     <h3 style="margin-top:18px">Spielstand</h3>
     <div class="scoreboard">
-      <div class="team stay"><div class="h">🔵 Bleiben gewinnt</div><div class="big" id="sStay">0</div><div id="sStay2" class="muted"></div></div>
-      <div class="team sw"><div class="h">🟠 Wechseln gewinnt</div><div class="big" id="sSw">0</div><div id="sSw2" class="muted"></div></div>
+      <div class="team stay"><div class="h">🔵 Wer bleibt …</div><div class="big" id="sStay">–</div><div id="sStay2" class="muted"></div></div>
+      <div class="team sw"><div class="h">🟠 Wer wechselt …</div><div class="big" id="sSw">–</div><div id="sSw2" class="muted"></div></div>
     </div>
-    <div class="chart-wrap"><svg class="chart" id="kChart" viewBox="0 0 720 200" role="img" aria-label="Verlauf"></svg></div>
-    <div class="legend"><span><i style="background:var(--gold)"></i>Anteil der Runden, in denen Wechseln gewinnt</span><span><i style="background:var(--link)"></i>… in denen Bleiben gewinnt</span></div>
+    <div class="chart-wrap"><svg class="chart" id="kChart" viewBox="0 0 720 200" role="img" aria-label="Verlauf der Gewinnquoten"></svg></div>
+    <div class="legend"><span><i style="background:var(--gold)"></i>Gewinnquote beim Wechseln</span><span><i style="background:var(--link)"></i>Gewinnquote beim Bleiben</span></div>
 
     <div id="kPlayers" class="hide">
       <h3 style="margin-top:18px">Wer gewinnt wie oft?</h3>
@@ -310,44 +307,13 @@
       <b>Fragen an die Klasse</b>
       <ol>
         <li>Bevor wir spielen: Ist es egal, ob man bleibt oder wechselt? Stimmt ab!</li>
-        <li>Nach etwa 15 Runden: Welche Strategie gewinnt häufiger? Ist das noch Zufall?</li>
+        <li>Nach etwa 15 Runden: Welche Entscheidung gewinnt häufiger? Ist das noch Zufall?</li>
         <li>Wie oft gewinnt man durch Bleiben, wenn man von Anfang an die richtige Tür gewählt hat – und wie oft hat man das?</li>
       </ol>
+      <p class="muted" style="font-size:.85rem;margin:6px 0 0">Tipp: Damit beide Gewinnquoten aussagekräftig werden, sollten etwa gleich viele Runden mit „Bleiben“ und mit „Wechseln“ gespielt werden.</p>
     </div>
   </section>
 
-  <!-- ===== EINZELSPIEL ===== -->
-  <section class="panel hide" id="tab-einzel">
-    <div class="panel-head"><span class="step">2</span><h2>Einzelspiel auf dem iPad</h2></div>
-    <p class="panel-sub">Spiele so viele Runden wie möglich. Probiere beide Strategien aus. Am Ende erzeugst du einen Code für das Klassenergebnis.</p>
-    <div class="stage-msg" id="eMsg"></div>
-    <div class="doors" id="eDoors"></div>
-    <div class="center hide" id="eChoice"><button class="btn btn-blue" id="eStay" style="min-width:140px">🔵 Bleiben</button><button class="btn btn-primary" id="eSwitch" style="min-width:140px">🟠 Wechseln</button></div>
-    <div class="result" id="eResult"></div>
-    <div class="center"><button class="btn btn-blue hide" id="eNext">▶ Nächste Runde</button></div>
-    <div class="bars">
-      <div class="barbox"><b class="wS">Wenn ich geblieben bin</b><div class="bar-outer"><div class="bar-inner" id="eBarS" style="background:var(--link);width:0"></div></div><div id="eTxtS" class="muted">noch keine Runde</div></div>
-      <div class="barbox"><b class="wW">Wenn ich gewechselt habe</b><div class="bar-outer"><div class="bar-inner" id="eBarW" style="background:var(--gold);width:0"></div></div><div id="eTxtW" class="muted">noch keine Runde</div></div>
-    </div>
-
-    <h3 style="margin-top:22px">Mein Ergebnis an die Lehrkraft schicken</h3>
-    <div class="btn-row"><div class="ctl"><label for="eName">Name</label><input type="text" id="eName" maxlength="24" style="width:160px"></div><button class="btn btn-primary" id="eCode">Code erzeugen</button></div>
-    <div id="eCodeBox" class="hide" style="margin-top:8px"><textarea class="code" id="eCodeOut" rows="2" readonly></textarea>
-      <div class="btn-row" style="margin-top:6px"><button class="btn" id="eCopy">📋 Kopieren</button><span class="muted" id="eCodeInfo" style="font-size:.85rem"></span></div></div>
-
-    <h3 style="margin-top:22px">Klassenergebnis <span class="muted" style="font-weight:400">(Lehrkraft)</span></h3>
-    <textarea class="code" id="mIn" rows="4" placeholder="Alle Codes hier einfügen – einer pro Zeile."></textarea>
-    <div class="btn-row" style="margin-top:6px"><button class="btn btn-blue" id="mGo">Zusammenführen</button><span class="muted" id="mMsg" style="font-size:.85rem"></span></div>
-    <div id="mOut" class="hide">
-      <div class="scoreboard">
-        <div class="team stay"><div class="h">🔵 Bleiben</div><div class="big" id="mS">–</div><div class="muted" id="mS2"></div></div>
-        <div class="team sw"><div class="h">🟠 Wechseln</div><div class="big" id="mW">–</div><div class="muted" id="mW2"></div></div>
-      </div>
-      <div class="scroll-x"><table class="t" id="mTable"></table></div>
-    </div>
-  </section>
-
-  <!-- ===== VIELE RUNDEN ===== -->
   <section class="panel hide" id="tab-viele">
     <div class="panel-head"><span class="step">3</span><h2>Viele Runden automatisch</h2></div>
     <p class="panel-sub">Der Computer spielt beide Strategien jeweils viele Male.</p>
@@ -394,7 +360,7 @@
   // ---------- Tabs ----------
   document.querySelectorAll('#tabs button').forEach(b=>b.addEventListener('click',()=>{
     document.querySelectorAll('#tabs button').forEach(x=>x.classList.toggle('on',x===b));
-    ['klasse','einzel','viele'].forEach(t=>$('tab-'+t).classList.toggle('hide',t!==b.dataset.t));
+    ['klasse','viele'].forEach(t=>$('tab-'+t).classList.toggle('hide',t!==b.dataset.t));
   }));
 
   // ---------- gemeinsame Spiellogik ----------
@@ -419,135 +385,87 @@
   }
 
   // ---------- Klassenspiel ----------
-  let K = store.get('ziege-klasse') || {names:[], rounds:[], lastChoice:{}};
-  let kg = newGame(); let kChoice={};
-  const saveK=()=>store.set('ziege-klasse',K);
-  function kRender(){
-    renderDoors($('kDoors'),kg,d=>{ kg.pick=d; kg.phase='chosen'; kRender(); }, kg.phase==='done', null);
-    const msg=$('kMsg');
-    if (kg.phase==='pick') msg.innerHTML='Runde <b>'+(K.rounds.length+1)+'</b>: Die Klasse wählt eine Tür – bitte antippen.';
-    if (kg.phase==='chosen') { msg.innerHTML='Gewählt: <b>Tür '+(kg.pick+1)+'</b>. '; const b=document.createElement('button'); b.className='btn btn-primary'; b.textContent='🎙 Moderator öffnet eine Tür'; b.addEventListener('click',()=>{ kg.open=hostOpens(kg); kg.phase='open'; kRender(); }); msg.appendChild(b); }
-    if (kg.phase==='open') msg.innerHTML='Hinter <b>Tür '+(kg.open+1)+'</b> steht eine Ziege. Bleibt ihr bei Tür '+(kg.pick+1)+' oder wechselt ihr zu <b>Tür '+(otherDoor(kg)+1)+'</b>?';
-    if (kg.phase==='done') msg.innerHTML='Das Auto stand hinter <b>Tür '+(kg.car+1)+'</b>.';
-    $('kVote').classList.toggle('hide',kg.phase!=='open');
-    $('btnNext').classList.toggle('hide',kg.phase!=='done');
-    if (kg.phase==='open') renderChips();
-  }
-  function renderChips(){
-    const has=K.names.length>0;
-    $('kChipsWrap').classList.toggle('hide',!has);
-    $('nStay').disabled=has; $('nSwitch').disabled=has;
+  let K = store.get('ziege-klasse2') || {names:[], rounds:[], next:0};
+  let kg = newGame();
+  const saveK=()=>store.set('ziege-klasse2',K);
+  function kWho(){ return K.names.length ? $('kWho').value : ''; }
+  function fillWho(){
+    const has=K.names.length>0; $('kCand').classList.toggle('hide',!has);
     if(!has) return;
-    $('kChips').innerHTML='';
-    K.names.forEach(n=>{
-      const v=kChoice[n]; const b=document.createElement('button'); b.className='chip-n '+(v||'');
-      b.innerHTML=esc(n)+`<span class="st">${v==='s'?'B':v==='w'?'W':'?'}</span>`;
-      b.addEventListener('click',()=>{ kChoice[n]= kChoice[n]==='s'?'w':'s'; renderChips(); syncCounts(); });
-      $('kChips').appendChild(b);
-    });
-    syncCounts();
+    $('kWho').innerHTML=K.names.map((n,i)=>`<option value="${esc(n)}">${esc(n)}</option>`).join('');
+    $('kWho').selectedIndex = (K.next||0) % K.names.length;
   }
-  function syncCounts(){ const v=Object.values(kChoice); $('nStay').value=v.filter(x=>x==='s').length; $('nSwitch').value=v.filter(x=>x==='w').length; }
-  $('allStay').addEventListener('click',()=>{ K.names.forEach(n=>kChoice[n]='s'); renderChips(); });
-  $('allSwitch').addEventListener('click',()=>{ K.names.forEach(n=>kChoice[n]='w'); renderChips(); });
-  $('btnReveal').addEventListener('click',()=>{
-    const ns=Math.max(0,parseInt($('nStay').value)||0), nw=Math.max(0,parseInt($('nSwitch').value)||0);
-    const stayWins = kg.pick===kg.car;
-    K.rounds.push({pick:kg.pick,open:kg.open,car:kg.car,ns,nw,stayWins,choices:{...kChoice}});
-    K.names.forEach(n=>{ if(kChoice[n]) K.lastChoice[n]=kChoice[n]; });
+  function kRender(){
+    renderDoors($('kDoors'),kg,d=>{ kg.pick=d; kg.phase='chosen'; kRender(); }, kg.phase==='done', kg.finalChoice);
+    const msg=$('kMsg'), who=kWho(), wer = who ? '<b>'+esc(who)+'</b> wählt' : 'Die Klasse wählt';
+    if (kg.phase==='pick') msg.innerHTML='Runde <b>'+(K.rounds.length+1)+'</b>: '+wer+' eine Tür – bitte antippen.';
+    if (kg.phase==='chosen') { msg.innerHTML='Gewählt: <b>Tür '+(kg.pick+1)+'</b>. '; const b=document.createElement('button'); b.className='btn btn-primary'; b.textContent='🎙 Moderator öffnet eine Tür'; b.addEventListener('click',()=>{ kg.open=hostOpens(kg); kg.phase='open'; kRender(); }); msg.appendChild(b); }
+    if (kg.phase==='open') msg.innerHTML='Hinter <b>Tür '+(kg.open+1)+'</b> steht eine Ziege. Bei Tür '+(kg.pick+1)+' <span class="wS">bleiben</span> oder zu <b>Tür '+(otherDoor(kg)+1)+'</b> <span class="wW">wechseln</span>?';
+    if (kg.phase==='done') msg.innerHTML='Das Auto stand hinter <b>Tür '+(kg.car+1)+'</b>.';
+    $('kChoice').classList.toggle('hide',kg.phase!=='open');
+    $('btnNext').classList.toggle('hide',kg.phase!=='done');
+    $('kWho').disabled = kg.phase!=='pick';
+  }
+  function kDecide(sw){
+    kg.finalChoice = sw? otherDoor(kg) : kg.pick;
+    const win = kg.finalChoice===kg.car, who=kWho();
+    K.rounds.push({who,pick:kg.pick,open:kg.open,car:kg.car,sw,win});
+    if (K.names.length) K.next = (K.names.indexOf(who)+1) % K.names.length;
     saveK(); kg.phase='done';
-    $('kResult').innerHTML = stayWins ? '<span class="wS">🔵 Bleiben gewinnt!</span>' : '<span class="wW">🟠 Wechseln gewinnt!</span>';
-    if (ns+nw) $('kResult').innerHTML += `<div class="muted" style="font-size:.95rem;font-weight:400">${stayWins?ns:nw} von ${ns+nw} Personen gewinnen das Auto.</div>`;
+    $('kResult').innerHTML = (win ? '🚗 <span style="color:var(--win)">Gewonnen!</span>' : '🐐 <span style="color:var(--suit-red)">Leider eine Ziege.</span>')
+      + `<div class="muted" style="font-size:.95rem;font-weight:400">${who?esc(who)+' hat':'Ihr habt'} ${sw?'<span class="wW">gewechselt</span>':'<span class="wS">die Tür behalten</span>'}.</div>`;
     kRender(); kStats();
-  });
-  $('btnNext').addEventListener('click',()=>{ kg=newGame(); kChoice={...K.lastChoice}; $('kResult').innerHTML=''; kRender(); });
+  }
+  $('kStay').addEventListener('click',()=>kDecide(false));
+  $('kSwitch').addEventListener('click',()=>kDecide(true));
+  $('btnNext').addEventListener('click',()=>{ kg=newGame(); $('kResult').innerHTML=''; fillWho(); kRender(); });
+  $('kWho').addEventListener('change',kRender);
   $('btnNames').addEventListener('click',()=>{
     const arr=$('names').value.split(/[\n,;]+/).map(s=>s.trim()).filter(Boolean);
-    K.names=[...new Set(arr)].slice(0,40); saveK();
-    $('namesMsg').textContent = K.names.length ? `${K.names.length} Namen übernommen.` : 'Keine Namen – Strichliste wird verwendet.';
-    kRender(); kStats();
+    K.names=[...new Set(arr)].slice(0,40); K.next=0; saveK();
+    $('namesMsg').textContent = K.names.length ? `${K.names.length} Namen übernommen.` : 'Keine Namen – die Klasse spielt gemeinsam.';
+    fillWho(); kRender(); kStats();
   });
-  $('btnUndo').addEventListener('click',()=>{ K.rounds.pop(); saveK(); kStats(); kRender(); });
+  $('btnUndo').addEventListener('click',()=>{ const r=K.rounds.pop(); if(r && r.who && K.names.includes(r.who)) K.next=K.names.indexOf(r.who); saveK(); if(kg.phase==='done'){ kg=newGame(); $('kResult').innerHTML=''; } fillWho(); kStats(); kRender(); });
   $('btnClear').addEventListener('click',()=>{ $('btnClear2').classList.remove('hide'); setTimeout(()=>$('btnClear2').classList.add('hide'),4000); });
-  $('btnClear2').addEventListener('click',()=>{ K.rounds=[]; K.lastChoice={}; saveK(); kg=newGame(); kChoice={}; $('kResult').innerHTML=''; $('btnClear2').classList.add('hide'); kRender(); kStats(); });
+  $('btnClear2').addEventListener('click',()=>{ K.rounds=[]; K.next=0; saveK(); kg=newGame(); $('kResult').innerHTML=''; $('btnClear2').classList.add('hide'); fillWho(); kRender(); kStats(); });
 
   const NS='http://www.w3.org/2000/svg';
   function el(t,a,p){const e=document.createElementNS(NS,t);for(const k in a)e.setAttribute(k,a[k]);if(p)p.appendChild(e);return e;}
   let unlocked=false;
   function kStats(){
-    const R=K.rounds, n=R.length, sw=R.filter(r=>!r.stayWins).length, st=n-sw;
-    $('sStay').textContent=st; $('sSw').textContent=sw;
-    const vs=R.reduce((a,r)=>a+r.ns,0), vsw=R.reduce((a,r)=>a+(r.stayWins?r.ns:0),0);
-    const vw=R.reduce((a,r)=>a+r.nw,0), vww=R.reduce((a,r)=>a+(!r.stayWins?r.nw:0),0);
-    $('sStay2').innerHTML = n? `in ${pct(st/n)} der Runden` + (vs?` · ${vsw} von ${vs} Entscheidungen „bleiben“ gewonnen`:'') : 'noch keine Runde';
-    $('sSw2').innerHTML = n? `in ${pct(sw/n)} der Runden` + (vw?` · ${vww} von ${vw} Entscheidungen „wechseln“ gewonnen`:'') : 'noch keine Runde';
-    // Chart
+    const R=K.rounds, n=R.length;
+    const S=R.filter(r=>!r.sw), Wc=R.filter(r=>r.sw);
+    const sWin=S.filter(r=>r.win).length, wWin=Wc.filter(r=>r.win).length;
+    $('sStay').textContent = S.length? pct(sWin/S.length) : '–';
+    $('sSw').textContent  = Wc.length? pct(wWin/Wc.length) : '–';
+    $('sStay2').innerHTML = S.length? `gewinnt in ${sWin} von ${S.length} Runden` : 'noch keine Runde mit „Bleiben“';
+    $('sSw2').innerHTML  = Wc.length? `gewinnt in ${wWin} von ${Wc.length} Runden` : 'noch keine Runde mit „Wechseln“';
+    // Chart: laufende Gewinnquoten je Entscheidung
     const svg=$('kChart'); svg.innerHTML=''; const W=720,H=200,m={l:46,r:12,t:12,b:26},iw=W-m.l-m.r,ih=H-m.t-m.b;
     const y=v=>m.t+ih*(1-v), x=i=>m.l+iw*(n<=1?0.5:(i)/(Math.max(n,2)-1));
     for(let v=0;v<=1.001;v+=0.25){ el('line',{x1:m.l,x2:W-m.r,y1:y(v),y2:y(v),stroke:'var(--border)'},svg); const t=el('text',{x:m.l-6,y:y(v)+4,'text-anchor':'end'},svg); t.textContent=Math.round(v*100)+' %'; }
     if (unlocked){ [[2/3,'var(--gold)'],[1/3,'var(--link)']].forEach(([v,c])=>el('line',{x1:m.l,x2:W-m.r,y1:y(v),y2:y(v),stroke:c,'stroke-dasharray':'5 4','stroke-width':1.5},svg)); }
-    if (n){ let c=0; const ptsW=[],ptsS=[]; R.forEach((r,i)=>{ if(!r.stayWins) c++; ptsW.push([x(i),y(c/(i+1))]); ptsS.push([x(i),y(1-c/(i+1))]); });
-      el('polyline',{points:ptsW.map(p=>p.join(',')).join(' '),fill:'none',stroke:'var(--gold)','stroke-width':2.5},svg);
-      el('polyline',{points:ptsS.map(p=>p.join(',')).join(' '),fill:'none',stroke:'var(--link)','stroke-width':2.5},svg);
+    if (n){ let gs=0,ws=0,gw=0,ww=0; const pS=[],pW=[];
+      R.forEach((r,i)=>{ if(r.sw){gw++; if(r.win) ww++;} else {gs++; if(r.win) ws++;} if(gs) pS.push([x(i),y(ws/gs)]); if(gw) pW.push([x(i),y(ww/gw)]); });
+      [[pW,'var(--gold)'],[pS,'var(--link)']].forEach(([p,c])=>{ if(p.length>1) el('polyline',{points:p.map(q=>q.join(',')).join(' '),fill:'none',stroke:c,'stroke-width':2.5},svg); if(p.length) { const q=p[p.length-1]; el('circle',{cx:q[0],cy:q[1],r:4,fill:c},svg); } });
       const t=el('text',{x:W-m.r,y:H-6,'text-anchor':'end'},svg); t.textContent='Runde '+n; }
     // Runden
-    let h='<tr><th>Runde</th><th>erste Wahl</th><th>Moderator öffnet</th><th>Auto</th><th>bleiben</th><th>wechseln</th><th>Gewinner</th></tr>';
-    R.slice().reverse().forEach((r,k)=>{ const i=n-k; h+=`<tr><td>${i}</td><td>Tür ${r.pick+1}</td><td>Tür ${r.open+1}</td><td>Tür ${r.car+1}</td><td>${r.ns}</td><td>${r.nw}</td><td>${r.stayWins?'<span class="wS">Bleiben</span>':'<span class="wW">Wechseln</span>'}</td></tr>`; });
+    const hasW=R.some(r=>r.who);
+    let h='<tr><th>Runde</th>'+(hasW?'<th class="l">Kandidat/in</th>':'')+'<th>erste Wahl</th><th>Moderator öffnet</th><th>Entscheidung</th><th>Auto</th><th>Ergebnis</th></tr>';
+    R.slice().reverse().forEach((r,k)=>{ const i=n-k; h+=`<tr><td>${i}</td>`+(hasW?`<td class="l">${esc(r.who||'–')}</td>`:'')+`<td>Tür ${r.pick+1}</td><td>Tür ${r.open+1}</td><td>${r.sw?'<span class="wW">Wechseln</span>':'<span class="wS">Bleiben</span>'}</td><td>Tür ${r.car+1}</td><td>${r.win?'🚗 gewonnen':'🐐 Ziege'}</td></tr>`; });
     $('kRounds').innerHTML = n? h : '<tr><td class="muted">Noch keine Runde gespielt.</td></tr>';
     // Spieler
     const has=K.names.length>0; $('kPlayers').classList.toggle('hide',!has);
     if(has){
-      const P=K.names.map(nm=>{ let g=0,w=0,sg=0,sw2=0; R.forEach(r=>{ const c=r.choices&&r.choices[nm]; if(!c) return; g++; if(c==='w') sg++; const won=(c==='s')===r.stayWins; if(won){ w++; if(c==='w') sw2++; } }); return {nm,g,w,sg,sw2}; });
-      P.sort((a,b)=>b.w-a.w||a.nm.localeCompare(b.nm));
-      $('kPlayerTable').innerHTML='<tr><th>Platz</th><th class="l">Name</th><th>Runden</th><th>Siege</th><th>Siegquote</th><th>davon gewechselt</th><th>Siege beim Wechseln</th><th>Siege beim Bleiben</th></tr>'+
-        P.map((p,i)=>`<tr><td>${i+1}</td><td class="l"><b>${esc(p.nm)}</b></td><td>${p.g}</td><td><b>${p.w}</b></td><td>${p.g?pct(p.w/p.g):'–'}</td><td>${p.sg}</td><td class="wW">${p.sw2}</td><td class="wS">${p.w-p.sw2}</td></tr>`).join('');
+      const P=K.names.map(nm=>{ const M=R.filter(r=>r.who===nm); const g=M.length, w=M.filter(r=>r.win).length, gw=M.filter(r=>r.sw).length, wsw=M.filter(r=>r.sw&&r.win).length; return {nm,g,w,gw,wsw,gs:g-gw,wst:w-wsw}; });
+      P.sort((a,b)=>b.w-a.w||(b.g?b.w/b.g:0)-(a.g?a.w/a.g:0)||a.nm.localeCompare(b.nm));
+      $('kPlayerTable').innerHTML='<tr><th>Platz</th><th class="l">Name</th><th>Runden</th><th>Siege</th><th>Siegquote</th><th>Siege beim Wechseln</th><th>Siege beim Bleiben</th></tr>'+
+        P.map((p,i)=>`<tr><td>${i+1}</td><td class="l"><b>${esc(p.nm)}</b></td><td>${p.g}</td><td><b>${p.w}</b></td><td>${p.g?pct(p.w/p.g):'–'}</td><td class="wW">${p.wsw} von ${p.gw}</td><td class="wS">${p.wst} von ${p.gs}</td></tr>`).join('');
     }
   }
   if (K.names.length){ $('names').value=K.names.join(', '); $('namesMsg').textContent=`${K.names.length} Namen gespeichert.`; }
-  kChoice={...K.lastChoice};
-
-  // ---------- Einzelspiel ----------
-  let E = store.get('ziege-einzel') || {sg:0,sw:0,wg:0,ww:0,id:Math.random().toString(36).slice(2,8)};
-  let eg=newGame();
-  function eRender(){
-    renderDoors($('eDoors'),eg,d=>{ eg.pick=d; eg.open=hostOpens(eg); eg.phase='open'; eRender(); }, eg.phase==='done', eg.finalChoice);
-    $('eChoice').classList.toggle('hide',eg.phase!=='open');
-    $('eNext').classList.toggle('hide',eg.phase!=='done');
-    $('eMsg').innerHTML = eg.phase==='pick' ? 'Wähle eine Tür.' : eg.phase==='open' ? `Der Moderator öffnet <b>Tür ${eg.open+1}</b>: eine Ziege! Bleibst du bei Tür ${eg.pick+1} oder wechselst du zu <b>Tür ${otherDoor(eg)+1}</b>?` : '';
-    const bs=E.sg?E.sw/E.sg:0, bw=E.wg?E.ww/E.wg:0;
-    $('eBarS').style.width=(bs*100)+'%'; $('eBarW').style.width=(bw*100)+'%';
-    $('eTxtS').textContent = E.sg? `${E.sw} von ${E.sg} gewonnen (${pct(bs)})` : 'noch keine Runde';
-    $('eTxtW').textContent = E.wg? `${E.ww} von ${E.wg} gewonnen (${pct(bw)})` : 'noch keine Runde';
-  }
-  function eDecide(sw){
-    eg.finalChoice = sw? otherDoor(eg) : eg.pick; const win = eg.finalChoice===eg.car;
-    if(sw){ E.wg++; if(win) E.ww++; } else { E.sg++; if(win) E.sw++; }
-    store.set('ziege-einzel',E); eg.phase='done';
-    $('eResult').innerHTML = win ? '🚗 <span style="color:var(--win)">Gewonnen!</span>' : '🐐 <span style="color:var(--suit-red)">Leider eine Ziege.</span>';
-    eRender();
-  }
-  $('eStay').addEventListener('click',()=>eDecide(false)); $('eSwitch').addEventListener('click',()=>eDecide(true));
-  $('eNext').addEventListener('click',()=>{ eg=newGame(); $('eResult').innerHTML=''; eRender(); });
-  const b64e=s=>btoa(unescape(encodeURIComponent(s))), b64d=s=>decodeURIComponent(escape(atob(s)));
-  $('eCode').addEventListener('click',()=>{
-    const name=($('eName').value.trim()||'ohne Namen').slice(0,24);
-    $('eCodeOut').value='ZIEGE1:'+b64e(JSON.stringify({g:name,id:E.id,s:[E.sg,E.sw,E.wg,E.ww]}));
-    $('eCodeBox').classList.remove('hide'); $('eCodeInfo').textContent=`${E.sg+E.wg} Runden im Code. Nach weiteren Runden neu erzeugen.`;
-  });
-  $('eCopy').addEventListener('click',async()=>{ $('eCodeOut').select(); try{ await navigator.clipboard.writeText($('eCodeOut').value); }catch(e){ try{document.execCommand('copy');}catch(_){} } $('eCopy').textContent='✓ Kopiert'; setTimeout(()=>$('eCopy').textContent='📋 Kopieren',1500); });
-  $('mGo').addEventListener('click',()=>{
-    const found=$('mIn').value.match(/ZIEGE1:[A-Za-z0-9+/=]+/g)||[]; const seen=new Set(); const L=[]; let bad=0;
-    found.forEach(c=>{ try{ const o=JSON.parse(b64d(c.slice(7))); if(!Array.isArray(o.s)||o.s.length!==4) throw 0; if(seen.has(o.id)) return; seen.add(o.id); L.push(o);}catch(e){bad++;} });
-    if(!L.length){ $('mMsg').textContent='Keine gültigen Codes gefunden.'; $('mOut').classList.add('hide'); return; }
-    $('mMsg').textContent=`${L.length} ${L.length===1?'Code':'Codes'} zusammengeführt.`+(bad?` ${bad} unlesbar.`:'');
-    const T=L.reduce((a,o)=>a.map((v,i)=>v+o.s[i]),[0,0,0,0]);
-    $('mS').textContent=T[0]?pct(T[1]/T[0]):'–'; $('mS2').textContent=`${T[1]} von ${T[0]} Spielen gewonnen`;
-    $('mW').textContent=T[2]?pct(T[3]/T[2]):'–'; $('mW2').textContent=`${T[3]} von ${T[2]} Spielen gewonnen`;
-    L.sort((a,b)=>(b.s[1]+b.s[3])-(a.s[1]+a.s[3]));
-    $('mTable').innerHTML='<tr><th>Platz</th><th class="l">Name</th><th>Spiele</th><th>Siege</th><th>Siegquote</th><th>Anteil gewechselt</th></tr>'+
-      L.map((o,i)=>{ const g=o.s[0]+o.s[2], w=o.s[1]+o.s[3]; return `<tr><td>${i+1}</td><td class="l"><b>${esc(o.g)}</b></td><td>${g}</td><td><b>${w}</b></td><td>${g?pct(w/g):'–'}</td><td>${g?pct(o.s[2]/g):'–'}</td></tr>`; }).join('');
-    $('mOut').classList.remove('hide');
-  });
+  fillWho();
 
   // ---------- Viele Runden ----------
   let V={sg:0,sw:0,wg:0,ww:0};
@@ -585,7 +503,7 @@
   }
   $('btnUnlock').addEventListener('click',unlock); $('code').addEventListener('keydown',e=>{ if(e.key==='Enter') unlock(); });
 
-  kRender(); kStats(); eRender(); vRender();
+  kRender(); kStats(); vRender();
 })();
 </script>
 </body>
