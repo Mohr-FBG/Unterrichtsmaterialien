@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bedingte Wahrscheinlichkeit · Simulation · LK Q2 Stochastik</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,400;0,600;1,400&display=swap">
+<style>
+  :root {
+    --gold:#b87500; --gold-pale:#fdf3dc;
+    --bg:#f5f4f0; --surface:#ffffff; --surface-2:#faf9f6;
+    --border:#ddd8cc; --text:#1c1a16; --muted:#6b6456;
+    --link:#2c5f8a; --link-pale:#e5eef7;
+    --win:#1a7a4c; --win-pale:#e3f3ea;
+    --suit-red:#c0392b; --suit-black:#1c1a16;
+    --rE:#f6d9d4; --rB:#e3d4f0; --rF:#d6e6f5; --rO:#f1efe9;
+    --sE:#c0392b; --sF:#2c5f8a;
+    --hl:#e8a800;
+    --r:6px;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --gold:#d4a030; --gold-pale:#2a2010;
+      --bg:#1a1814; --surface:#242018; --surface-2:#2a251c;
+      --border:#38332a; --text:#ede8de; --muted:#9e9482;
+      --link:#6a9fd8; --link-pale:#0f1e30;
+      --win:#3fbf82; --win-pale:#0f2a1c;
+      --suit-red:#c0392b; --suit-black:#1c1a16;
+      --rE:#3d2420; --rB:#33263f; --rF:#1d2d3f; --rO:#2a251c;
+      --sE:#ef6b5b; --sF:#6a9fd8;
+      --hl:#e8b830;
+    }
+  }
+  :root[data-theme="dark"] {
+    --gold:#d4a030; --gold-pale:#2a2010;
+    --bg:#1a1814; --surface:#242018; --surface-2:#2a251c;
+    --border:#38332a; --text:#ede8de; --muted:#9e9482;
+    --link:#6a9fd8; --link-pale:#0f1e30;
+    --win:#3fbf82; --win-pale:#0f2a1c;
+    --rE:#3d2420; --rB:#33263f; --rF:#1d2d3f; --rO:#2a251c;
+    --sE:#ef6b5b; --sF:#6a9fd8;
+    --hl:#e8b830;
+  }
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;font-size:16px;line-height:1.55;min-height:100vh}
+  button,select,input{font:inherit;color:inherit}
+
+  .topbar{background:var(--surface);border-bottom:1px solid var(--border);padding:0 20px}
+  .topbar-inner{max-width:960px;margin:0 auto;min-height:46px;display:flex;flex-wrap:wrap;align-items:center;gap:6px;font-size:.82rem;color:var(--muted)}
+  .topbar-inner a{color:var(--link);text-decoration:none}
+  .topbar-inner a:hover{text-decoration:underline}
+  .sep{opacity:.45}
+  header.page-head{background:var(--surface);border-bottom:3px solid var(--link);padding:28px 20px 24px;margin-bottom:28px}
+  header.page-head .inner{max-width:960px;margin:0 auto}
+  .head-eyebrow{font-size:.78rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--link);margin-bottom:6px}
+  h1{font-family:"Crimson Pro",Georgia,serif;font-size:2.2rem;font-weight:600;line-height:1.15}
+  header.page-head p{font-size:.95rem;color:var(--muted);margin-top:6px;max-width:720px}
+
+  .wrap{max-width:960px;margin:0 auto;padding:0 16px 80px}
+  .panel{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:20px;margin-bottom:24px}
+  .panel-head{display:flex;align-items:baseline;gap:10px;margin-bottom:4px}
+  .step{display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:50%;background:var(--link);color:#fff;font-weight:700;font-size:.85rem;flex-shrink:0}
+  h2{font-family:"Crimson Pro",Georgia,serif;font-size:1.45rem;font-weight:600}
+  h3{font-size:1rem;margin-bottom:8px}
+  .panel-sub{color:var(--muted);font-size:.9rem;margin:0 0 16px 36px}
+  .muted{color:var(--muted)}
+  .hide{display:none!important}
+
+  .rules{background:var(--gold-pale);border-left:3px solid var(--gold);border-radius:var(--r);padding:12px 16px;font-size:.93rem;margin-bottom:24px}
+  .rules b{color:var(--gold)}
+  .task-box{background:var(--gold-pale);border-left:3px solid var(--gold);border-radius:var(--r);padding:12px 16px;font-size:.92rem;margin:16px 0 0}
+  .task-box b{color:var(--gold)}
+  .task-box ol{margin:6px 0 0 20px}
+  .task-box li{margin:3px 0}
+
+  .btn{border:1px solid var(--border);background:var(--surface);border-radius:var(--r);padding:8px 14px;cursor:pointer;font-weight:600;font-size:.9rem}
+  .btn:hover{background:var(--surface-2)}
+  .btn:disabled{opacity:.45;cursor:not-allowed}
+  .btn-primary{background:var(--gold);border-color:var(--gold);color:#fff}
+  .btn-primary:hover{background:var(--gold);filter:brightness(1.07)}
+  .btn-blue{background:var(--link);border-color:var(--link);color:#fff}
+  .btn-blue:hover{background:var(--link);filter:brightness(1.1)}
+  .btn-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+  .ctl{display:flex;align-items:center;gap:8px;font-size:.9rem}
+  .ctl label{color:var(--muted);font-weight:600}
+  select,input[type=number],input[type=text],input[type=password]{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:6px 9px}
+
+  /* Spielkarte groß */
+  .table-area{display:flex;gap:22px;align-items:center;flex-wrap:wrap;margin:16px 0}
+  .bigcard{width:96px;height:136px;border-radius:9px;border:1.5px solid #b9b2a3;background:#fff;position:relative;box-shadow:0 3px 10px rgba(0,0,0,.12);flex-shrink:0;font-family:Georgia,serif}
+  .bigcard.back{background:repeating-linear-gradient(45deg,#2c5f8a 0 6px,#244f73 6px 12px);border-color:#1a3d5c}
+  .bigcard .c1,.bigcard .c2{position:absolute;font-weight:700;font-size:1.05rem;line-height:1;text-align:center}
+  .bigcard .c1{top:7px;left:8px}
+  .bigcard .c2{bottom:7px;right:8px;transform:rotate(180deg)}
+  .bigcard .mid{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:2.7rem}
+  .bigcard.red{color:var(--suit-red)} .bigcard.black{color:var(--suit-black)}
+  .bigcard.flip{animation:flip .35s ease-out}
+  @keyframes flip{0%{transform:rotateY(90deg)}100%{transform:none}}
+  .verdict{font-size:1.05rem}
+  .verdict b{font-size:1.25rem}
+  .verdict .win{color:var(--win)} .verdict .lose{color:var(--suit-red)}
+  .count-pill{font-size:.85rem;color:var(--muted)}
+
+  .stat-row{display:flex;flex-wrap:wrap;gap:10px;margin:6px 0 10px}
+  .stat{background:var(--surface-2);border:1px solid var(--border);border-radius:var(--r);padding:8px 14px;min-width:130px}
+  .stat .k{font-size:.72rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:600}
+  .stat .v{font-size:1.3rem;font-weight:700;font-variant-numeric:tabular-nums}
+
+  .chart-wrap{position:relative;margin-top:6px;border:1px solid var(--border);border-radius:var(--r);background:var(--surface-2)}
+  svg.chart{display:block;width:100%;height:auto}
+  .chart text{fill:var(--muted);font-size:11px;font-family:inherit}
+  .legend{display:flex;flex-wrap:wrap;gap:16px;font-size:.8rem;color:var(--muted);margin-top:6px}
+  .legend i{display:inline-block;width:18px;height:3px;vertical-align:4px;margin-right:5px;border-radius:2px}
+
+  /* Venn */
+  .ev-pick{display:flex;flex-wrap:wrap;gap:14px;margin-bottom:12px}
+  .ev-pick .ctl select{min-width:150px}
+  .tagE{color:var(--sE);font-weight:800} .tagF{color:var(--sF);font-weight:800}
+  .venn-wrap{border:1px solid var(--border);border-radius:var(--r);overflow-x:auto;background:var(--surface-2)}
+  svg.venn{display:block;width:100%;min-width:620px;height:auto}
+  .venn text{font-family:inherit}
+  .chip rect{stroke:#b9b2a3;stroke-width:1}
+  .chip.inEv rect{stroke:var(--hl);stroke-width:2.6}
+  .chip.pulse{animation:pulse .8s ease-out}
+  @keyframes pulse{0%{transform:scale(1.6)}100%{transform:scale(1)}}
+  .regions{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:10px}
+  .reg{border-radius:var(--r);padding:8px 10px;font-size:.84rem;border:1px solid var(--border);font-variant-numeric:tabular-nums}
+  .reg .t{font-weight:700;font-size:.8rem}
+  .reg .n{font-size:1.1rem;font-weight:700}
+  .reg.rE{background:var(--rE)} .reg.rB{background:var(--rB)} .reg.rF{background:var(--rF)} .reg.rO{background:var(--rO)}
+
+  .ops{display:flex;flex-wrap:wrap;gap:6px;margin:14px 0 8px}
+  .ops button{border:1px solid var(--border);background:var(--surface);border-radius:20px;padding:6px 14px;cursor:pointer;font-weight:700;font-size:.92rem;font-family:"Cambria Math","Times New Roman",serif}
+  .ops button.on{background:var(--hl);border-color:var(--hl);color:#1c1a16}
+  .opinfo{border:1px solid var(--border);border-radius:var(--r);padding:12px 16px;background:var(--surface-2);font-size:.95rem;font-variant-numeric:tabular-nums}
+  .opinfo .nm{font-weight:700}
+  .opinfo .set{word-break:break-word}
+  .sym{font-family:"Cambria Math","Times New Roman",serif;font-weight:700}
+  .bar{text-decoration:overline}
+
+  /* Vierfeldertafel */
+  .seg{display:inline-flex;border:1px solid var(--border);border-radius:var(--r);overflow:hidden;flex-wrap:wrap}
+  .seg button{border:none;background:var(--surface);padding:6px 12px;cursor:pointer;font-size:.85rem;font-weight:600;color:var(--muted)}
+  .seg button.on{background:var(--link);color:#fff}
+  .seg button:disabled{opacity:.45;cursor:not-allowed}
+  table.vf{border-collapse:collapse;margin-top:12px;font-variant-numeric:tabular-nums;min-width:420px}
+  table.vf th,table.vf td{border:1px solid var(--border);padding:8px 14px;text-align:center;min-width:90px}
+  table.vf th{background:var(--surface-2);font-weight:700}
+  table.vf td.cE{background:var(--rE)} table.vf td.cB{background:var(--rB)} table.vf td.cF{background:var(--rF)} table.vf td.cO{background:var(--rO)}
+  table.vf td.sum{font-weight:700}
+  .scroll-x{overflow-x:auto}
+
+  .lock-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:16px}
+  .merk{border:2px solid var(--link);border-radius:var(--r);padding:14px 18px;margin-top:14px;background:var(--link-pale);font-size:.93rem}
+  .merk b{color:var(--link)}
+  .merk p{margin:6px 0}
+
+  footer{text-align:center;color:var(--muted);font-size:.82rem;margin-top:48px;padding-top:20px;border-top:1px solid var(--border)}
+  .scen{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:10px;margin-bottom:14px}
+  .scen button{border:1.5px solid var(--border);border-radius:var(--r);padding:10px 14px;cursor:pointer;background:var(--surface);text-align:left}
+  .scen button:hover{border-color:var(--link)}
+  .scen button.on{border-color:var(--link);background:var(--link-pale)}
+  .scen .t{font-weight:700;font-size:.92rem} .scen .d{font-size:.8rem;color:var(--muted)}
+  .evdef{display:flex;flex-wrap:wrap;gap:18px;font-size:.95rem;margin:4px 0 12px}
+  .evdef b.E{color:var(--sE)} .evdef b.F{color:var(--sF)}
+  .last{min-height:28px;font-size:.95rem;margin:10px 0}
+  .ov{text-decoration:overline}
+  table.vf2{border-collapse:collapse;font-variant-numeric:tabular-nums;margin-top:8px}
+  table.vf2 th,table.vf2 td{border:1px solid var(--border);padding:7px 12px;text-align:center;min-width:92px}
+  table.vf2 th{background:var(--surface-2)}
+  table.vf2 td.sum{font-weight:700}
+  table.vf2 input{width:76px;text-align:center;padding:4px 6px;border:1.5px solid var(--border);border-radius:5px;background:var(--surface)}
+  .ok{border-color:var(--win)!important;background:var(--win-pale)!important}
+  .no{border-color:var(--suit-red)!important;background:#fbe9e7!important}
+  .filter{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:10px}
+  .fbox{border:1px solid var(--border);border-radius:var(--r);padding:12px 14px;background:var(--surface-2);font-variant-numeric:tabular-nums}
+  .fbox .q{font-weight:700;margin-bottom:6px}
+  .fbox .v{font-size:1.4rem;font-weight:800}
+  .bar-outer{height:16px;background:var(--border);border-radius:8px;overflow:hidden;margin:6px 0}
+  .bar-inner{height:100%;border-radius:8px;transition:width .3s}
+  .tree-wrap{overflow-x:auto;margin-top:10px;border:1px solid var(--border);border-radius:var(--r);background:var(--surface-2)}
+  .tree{position:relative;width:680px;height:340px;margin:0 auto}
+  .tree svg{position:absolute;inset:0}
+  .tree .node{position:absolute;width:38px;height:38px;margin:-19px 0 0 -19px;border-radius:50%;border:2px solid var(--text);background:var(--surface);display:flex;align-items:center;justify-content:center;font-weight:800;font-family:"Cambria Math","Times New Roman",serif;font-size:1.05rem}
+  .tree .node.E{border-color:var(--sE);color:var(--sE)} .tree .node.F{border-color:var(--sF);color:var(--sF)}
+  .tree .cnt{position:absolute;font-size:.75rem;color:var(--muted);transform:translate(24px,-8px);white-space:nowrap}
+  .tree .inp{position:absolute;transform:translate(-50%,-50%);display:flex;flex-direction:column;align-items:center}
+  .tree .inp input{width:66px;text-align:center;padding:3px 4px;border:1.5px solid var(--gold);border-radius:5px;background:var(--surface);font-size:.9rem}
+  .tree .inp .lab{font-size:.7rem;color:var(--muted);font-family:"Cambria Math","Times New Roman",serif;margin-bottom:1px;white-space:nowrap}
+  .tree .inp.leaf input{border-color:var(--win)}
+  .seg{display:inline-flex;border:1px solid var(--border);border-radius:var(--r);overflow:hidden}
+  .seg button{border:none;background:var(--surface);padding:6px 12px;cursor:pointer;font-size:.85rem;font-weight:600;color:var(--muted)}
+  .seg button.on{background:var(--link);color:#fff}
+  .fb{font-size:.9rem;margin-top:8px;min-height:1.3em}
+  .chk{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:10px}
+  @media (max-width:640px){
+    h1{font-size:1.8rem}
+    .panel{padding:14px}
+    .panel-sub{margin-left:0}
+    .filter{grid-template-columns:1fr}
+  }
+</style>
+</head>
+<body>
+
+<nav class="topbar" aria-label="Breadcrumb">
+  <div class="topbar-inner">
+    <a href="../../../../../index.html">Unterrichtsmaterialien</a><span class="sep">›</span>
+    <a href="../../../../index.html">Mathematik</a><span class="sep">›</span>
+    <a href="../../../index.html">Leistungskurs</a><span class="sep">›</span>
+    <a href="../../index.html#simulationen">Stochastik</a><span class="sep">›</span>
+    <span>Bedingte Wahrscheinlichkeit</span>
+  </div>
+</nav>
+
+<header class="page-head">
+  <div class="inner">
+    <div class="head-eyebrow">Simulation · Kapitel VIII.3</div>
+    <h1>Wenn man schon etwas weiß …</h1>
+    <p>Bedingte Wahrscheinlichkeiten mit Vierfeldertafel und Baumdiagramm erarbeiten – vom Ziegenproblem bis zur Urne.</p>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <!-- 1 -->
+  <section class="panel">
+    <div class="panel-head"><span class="step">1</span><h2>Experiment wählen und Daten sammeln</h2></div>
+    <p class="panel-sub">Jede Durchführung wird gezählt: Ist E eingetreten? Ist F eingetreten?</p>
+    <div class="scen" id="scen"></div>
+    <div class="evdef" id="evdef"></div>
+    <div class="btn-row">
+      <button class="btn btn-primary" id="btnOne">▶ Einmal durchführen</button>
+      <button class="btn btn-blue" data-n="100">+ 100</button>
+      <button class="btn btn-blue" data-n="1000">+ 1 000</button>
+      <button class="btn btn-blue" data-n="10000">+ 10 000</button>
+      <button class="btn" id="btnReset">↺ Zurücksetzen</button>
+    </div>
+    <div class="last" id="last"></div>
+
+    <h3 style="margin-top:6px">Vierfeldertafel der Daten</h3>
+    <div class="seg" id="segD"><button data-m="abs" class="on">absolute Häufigkeiten</button><button data-m="rel">relative Häufigkeiten</button></div>
+    <div class="scroll-x"><table class="vf2" id="dataVf"></table></div>
+  </section>
+
+  <!-- 2 -->
+  <section class="panel">
+    <div class="panel-head"><span class="step">2</span><h2>Nur die Fälle betrachten, in denen E eingetreten ist</h2></div>
+    <p class="panel-sub">Wie oft tritt F ein – bezogen auf <b>alle</b> Durchführungen und bezogen nur auf die Durchführungen <b>mit E</b>?</p>
+    <div class="filter" id="filter"></div>
+    <div class="task-box">
+      <b>Arbeitsauftrag 1</b>
+      <ol>
+        <li>Vergleiche h(F) mit dem Anteil von F unter den Fällen mit E. Verändert das Wissen „E ist eingetreten“ die Chance für F?</li>
+        <li>Mit welchen Zahlen aus der Vierfeldertafel berechnet man den Anteil von F unter den Fällen mit E?</li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- 3 -->
+  <section class="panel">
+    <div class="panel-head"><span class="step">3</span><h2>Das Baumdiagramm erarbeiten</h2></div>
+    <p class="panel-sub">Trage die Wahrscheinlichkeiten ein (als Bruch, Dezimalzahl oder in Prozent) und prüfe deine Eingaben. Die Anzahlen aus der Simulation helfen dir.</p>
+    <div class="btn-row" style="gap:14px">
+      <div><span class="muted" style="font-size:.85rem;font-weight:600;margin-right:6px">Erste Stufe:</span>
+        <div class="seg" id="segOrder"><button data-o="EF" class="on">zuerst E</button><button data-o="FE">zuerst F</button></div></div>
+      <label class="muted" style="font-size:.85rem"><input type="checkbox" id="showCnt" checked> Anzahlen im Baum anzeigen</label>
+    </div>
+    <div class="tree-wrap"><div class="tree" id="tree"></div></div>
+    <div class="chk"><button class="btn btn-primary" id="chkTree">✓ Baum prüfen</button><button class="btn" id="clrTree">Eingaben löschen</button><button class="btn hide" id="solTree">Lösung einsetzen</button></div>
+    <div class="fb" id="fbTree"></div>
+    <div class="task-box">
+      <b>Arbeitsauftrag 2</b>
+      <ol>
+        <li>Was bedeutet die Wahrscheinlichkeit am Ast von E nach F? Warum schreibt man dafür P<sub>E</sub>(F) und nicht P(F)?</li>
+        <li>Wie hängen P(E), P<sub>E</sub>(F) und P(E ∩ F) zusammen? Stelle die Pfadregel nach P<sub>E</sub>(F) um.</li>
+        <li>Stelle „zuerst F“ ein. Beim Ziegenproblem ist das die natürliche Reihenfolge (erst steht das Auto, dann öffnet der Moderator). Wie erhältst du daraus P<sub>E</sub>(F)?</li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- 4 -->
+  <section class="panel">
+    <div class="panel-head"><span class="step">4</span><h2>Die Vierfeldertafel erarbeiten</h2></div>
+    <p class="panel-sub">Trage die Wahrscheinlichkeiten ein. Die inneren Felder sind die Pfadwahrscheinlichkeiten des Baumdiagramms.</p>
+    <div class="scroll-x"><table class="vf2" id="inVf"></table></div>
+    <div class="chk"><button class="btn btn-primary" id="chkVf">✓ Tafel prüfen</button><button class="btn" id="clrVf">Eingaben löschen</button><button class="btn hide" id="solVf">Lösung einsetzen</button></div>
+    <div class="fb" id="fbVf"></div>
+    <div class="task-box">
+      <b>Arbeitsauftrag 3</b>
+      <ol>
+        <li>Berechne P<sub>E</sub>(F) allein aus der Vierfeldertafel.</li>
+        <li>Vergleiche P<sub>E</sub>(F) mit P(F) für alle drei Experimente. Wann sind sie gleich? Formuliere eine Vermutung.</li>
+      </ol>
+    </div>
+
+    <div class="lock-row" id="lockRow">
+      <input type="password" id="code" placeholder="Code" autocomplete="off" style="width:110px">
+      <button class="btn" id="btnUnlock">🔒 Lösungen und Merkwissen freischalten</button>
+      <span class="muted" id="codeMsg" style="font-size:.85rem"></span>
+    </div>
+    <div class="merk hide" id="merk">
+      <p><b>Bedingte Wahrscheinlichkeit:</b> Die Wahrscheinlichkeit dafür, dass F eintritt, wenn man weiß, dass E eingetreten ist, wird mit
+        <b>P<sub>E</sub>(F)</b> bezeichnet. Im Baumdiagramm steht sie am Ast von E nach F.</p>
+      <p><b>Berechnung:</b> Aus der Pfadregel P(E ∩ F) = P(E) · P<sub>E</sub>(F) folgt &nbsp;<b>P<sub>E</sub>(F) = P(E ∩ F) / P(E)</b>, falls P(E) ≠ 0.</p>
+      <p><b>Stochastische Unabhängigkeit:</b> E und F heißen stochastisch unabhängig, wenn <b>P<sub>E</sub>(F) = P(F)</b>.
+        Das ist genau dann der Fall, wenn <b>P(E ∩ F) = P(E) · P(F)</b>.</p>
+      <p><b>Beispiele:</b> Ziehen mit Zurücklegen: unabhängig (P<sub>E</sub>(F) = 0,6 = P(F)). Ohne Zurücklegen: abhängig (P<sub>E</sub>(F) = 5/9 ≠ 0,6).
+        Ziegenproblem: Öffnet der Moderator Tür 3, steht das Auto mit P<sub>E</sub>(F) = 2/3 hinter Tür 2 – deshalb lohnt sich das Wechseln.</p>
+    </div>
+  </section>
+
+</div>
+
+<footer>Unterrichtsmaterialien · Friedrich-Bährens-Gymnasium Schwerte</footer>
+
+<script>
+(() => {
+  const $=id=>document.getElementById(id);
+  const fmt=n=>n.toLocaleString('de-DE');
+  const dec=(x,d=3)=>x.toLocaleString('de-DE',{minimumFractionDigits:d,maximumFractionDigits:d});
+  const rnd=n=>Math.floor(Math.random()*n);
+
+  // Szenarien: run() liefert [E,F] (booleans); p = exakte Wahrscheinlichkeiten [EF, E~F, ~EF, ~E~F] als [Zähler,Nenner]
+  const SC={
+    ziege:{t:'Ziegenproblem',d:'Kandidatin wählt immer Tür 1, Moderator öffnet eine Ziegentür',
+      E:'Der Moderator öffnet Tür 3.',F:'Das Auto steht hinter Tür 2.',
+      run(){ const car=rnd(3); let open; if(car===0) open=1+rnd(2); else open= car===1?2:1; return [[open===2,car===1],`Auto hinter Tür ${car+1}, Moderator öffnet Tür ${open+1}`]; },
+      p:[[1,3],[1,6],[0,1],[1,2]]},
+    mit:{t:'Urne mit Zurücklegen',d:'6 rote, 4 blaue Kugeln · zwei Kugeln nacheinander mit Zurücklegen',
+      E:'Im ersten Zug wird Rot gezogen.',F:'Im zweiten Zug wird Rot gezogen.',
+      run(){ const a=rnd(10)<6, b=rnd(10)<6; return [[a,b],`gezogen: ${a?'rot':'blau'}, dann ${b?'rot':'blau'}`]; },
+      p:[[36,100],[24,100],[24,100],[16,100]]},
+    ohne:{t:'Urne ohne Zurücklegen',d:'6 rote, 4 blaue Kugeln · zwei Kugeln nacheinander ohne Zurücklegen',
+      E:'Im ersten Zug wird Rot gezogen.',F:'Im zweiten Zug wird Rot gezogen.',
+      run(){ const a=rnd(10)<6; const b= a? rnd(9)<5 : rnd(9)<6; return [[a,b],`gezogen: ${a?'rot':'blau'}, dann ${b?'rot':'blau'}`]; },
+      p:[[30,90],[24,90],[24,90],[12,90]]}
+  };
+  let key='ziege', S=SC[key], C=[0,0,0,0], order='EF', dMode='abs', unlocked=false;
+  const idx=(e,f)=> e? (f?0:1) : (f?2:3);
+  const N=()=>C[0]+C[1]+C[2]+C[3];
+
+  // ---------- Bruchrechnung ----------
+  const gcd=(a,b)=>{while(b){[a,b]=[b,a%b];}return a||1;};
+  const fr=(a,b)=>{ if(a===0) return [0,1]; const g=gcd(a,b); return [a/g,b/g]; };
+  const fadd=(x,y)=>fr(x[0]*y[1]+y[0]*x[1],x[1]*y[1]);
+  const fdiv=(x,y)=> y[0]===0? null : fr(x[0]*y[1],x[1]*y[0]);
+  const fval=f=>f[0]/f[1];
+  const term=d=>{ while(d%2===0) d/=2; while(d%5===0) d/=5; return d===1; };
+  const fstr=f=> f===null?'–' : f[0]===0?'0' : f[1]===1? String(f[0]) : (key!=='ziege' && term(f[1]))? (f[0]/f[1]).toLocaleString('de-DE',{maximumFractionDigits:4}) : f[0]+'/'+f[1];
+  function theory(){
+    const p=S.p.map(([a,b])=>fr(a,b));
+    const PE=fadd(p[0],p[1]), PnE=fadd(p[2],p[3]), PF=fadd(p[0],p[2]), PnF=fadd(p[1],p[3]);
+    return {EF:p[0],EnF:p[1],nEF:p[2],nEnF:p[3],E:PE,nE:PnE,F:PF,nF:PnF,
+      E_F:fdiv(p[0],PE),E_nF:fdiv(p[1],PE),nE_F:fdiv(p[2],PnE),nE_nF:fdiv(p[3],PnE),
+      F_E:fdiv(p[0],PF),F_nE:fdiv(p[2],PF),nF_E:fdiv(p[1],PnF),nF_nE:fdiv(p[3],PnF)};
+  }
+  function parse(s){
+    s=(s||'').trim().replace(',','.').replace(/\s/g,''); if(!s) return null;
+    let v; if(s.endsWith('%')) v=parseFloat(s)/100; else if(s.includes('/')){ const [a,b]=s.split('/').map(Number); v=b?a/b:NaN; } else v=parseFloat(s);
+    return isNaN(v)?NaN:v;
+  }
+  const close=(v,f)=> f!==null && v!==null && !isNaN(v) && Math.abs(v-fval(f))<=0.012;
+
+  // ---------- Szenario ----------
+  function buildScen(){
+    $('scen').innerHTML='';
+    for(const k in SC){ const b=document.createElement('button'); b.className=k===key?'on':''; b.innerHTML=`<div class="t">${SC[k].t}</div><div class="d">${SC[k].d}</div>`;
+      b.addEventListener('click',()=>{ key=k; S=SC[k]; C=[0,0,0,0]; order= k==='ziege'?'FE':'EF'; document.querySelectorAll('#segOrder button').forEach(x=>x.classList.toggle('on',x.dataset.o===order)); buildScen(); $('last').innerHTML=''; renderAll(true); });
+      $('scen').appendChild(b); }
+    $('evdef').innerHTML=`<span><b class="E">E:</b> ${S.E}</span><span><b class="F">F:</b> ${S.F}</span>`;
+  }
+  const tagE=e=> e?'<b style="color:var(--sE)">E</b>':'<b style="color:var(--sE)" class="ov">E</b>';
+  const tagF=f=> f?'<b style="color:var(--sF)">F</b>':'<b style="color:var(--sF)" class="ov">F</b>';
+
+  // ---------- Daten-Vierfeldertafel ----------
+  function renderData(){
+    const n=N(); const v=i=> dMode==='abs'? fmt(i) : (n? dec(i/n):'–');
+    const a=C[0],b=C[1],c=C[2],d=C[3];
+    $('dataVf').innerHTML=`<tr><th></th><th>F</th><th><span class="ov">F</span></th><th>Summe</th></tr>
+      <tr><th>E</th><td>${v(a)}</td><td>${v(b)}</td><td class="sum">${v(a+b)}</td></tr>
+      <tr><th><span class="ov">E</span></th><td>${v(c)}</td><td>${v(d)}</td><td class="sum">${v(c+d)}</td></tr>
+      <tr><th>Summe</th><td class="sum">${v(a+c)}</td><td class="sum">${v(b+d)}</td><td class="sum">${v(n)}</td></tr>`;
+  }
+  function renderFilter(){
+    const n=N(), nE=C[0]+C[1], nF=C[0]+C[2];
+    const box=(q,num,den,col,txt)=>`<div class="fbox"><div class="q">${q}</div><div class="v" style="color:${col}">${den?dec(num/den):'–'}</div>
+      <div class="bar-outer"><div class="bar-inner" style="width:${den?num/den*100:0}%;background:${col}"></div></div><div class="muted" style="font-size:.85rem">${txt(num,den)}</div></div>`;
+    $('filter').innerHTML =
+      box('Anteil von F unter <u>allen</u> Durchführungen',nF,n,'var(--sF)',(a,b)=>`h(F) = ${fmt(a)} / ${fmt(b)}`)+
+      box('Anteil von F unter den Durchführungen <u>mit E</u>',C[0],nE,'var(--gold)',(a,b)=>`h<sub>E</sub>(F) = ${fmt(a)} / ${fmt(b)} &nbsp;(Fälle mit E und F / Fälle mit E)`);
+  }
+
+  // ---------- Baum ----------
+  const TP={root:[340,26],a:[170,140],b:[510,140],aa:[85,262],ab:[255,262],ba:[425,262],bb:[595,262]};
+  function treeSpec(){
+    const t=theory(), cE=C[0]+C[1], cnE=C[2]+C[3], cF=C[0]+C[2], cnF=C[1]+C[3];
+    if(order==='EF') return {first:['E','nE'],firstLab:['E','<span class="ov">E</span>'],cls1:'E',second:['F','nF'],secLab:['F','<span class="ov">F</span>'],cls2:'F',
+      edges:{a:['P(E)',t.E],b:['P(<span class="ov">E</span>)',t.nE],aa:['P<sub>E</sub>(F)',t.E_F],ab:['P<sub>E</sub>(<span class="ov">F</span>)',t.E_nF],ba:['P<sub><span class="ov">E</span></sub>(F)',t.nE_F],bb:['P<sub><span class="ov">E</span></sub>(<span class="ov">F</span>)',t.nE_nF]},
+      leaves:{aa:['P(E∩F)',t.EF],ab:['P(E∩<span class="ov">F</span>)',t.EnF],ba:['P(<span class="ov">E</span>∩F)',t.nEF],bb:['P(<span class="ov">E</span>∩<span class="ov">F</span>)',t.nEnF]},
+      cnt:{a:cE,b:cnE,aa:C[0],ab:C[1],ba:C[2],bb:C[3]}};
+    return {first:['F','nF'],firstLab:['F','<span class="ov">F</span>'],cls1:'F',second:['E','nE'],secLab:['E','<span class="ov">E</span>'],cls2:'E',
+      edges:{a:['P(F)',t.F],b:['P(<span class="ov">F</span>)',t.nF],aa:['P<sub>F</sub>(E)',t.F_E],ab:['P<sub>F</sub>(<span class="ov">E</span>)',t.F_nE],ba:['P<sub><span class="ov">F</span></sub>(E)',t.nF_E],bb:['P<sub><span class="ov">F</span></sub>(<span class="ov">E</span>)',t.nF_nE]},
+      leaves:{aa:['P(F∩E)',t.EF],ab:['P(F∩<span class="ov">E</span>)',t.nEF],ba:['P(<span class="ov">F</span>∩E)',t.EnF],bb:['P(<span class="ov">F</span>∩<span class="ov">E</span>)',t.nEnF]},
+      cnt:{a:cF,b:cnF,aa:C[0],ab:C[2],ba:C[1],bb:C[3]}};
+  }
+  let treeVals={};
+  function renderTree(){
+    const T=$('tree'), sp=treeSpec(), show=$('showCnt').checked;
+    // aktuelle Eingaben sichern
+    T.querySelectorAll('input').forEach(i=>treeVals[order+i.dataset.k]=i.value);
+    T.innerHTML='';
+    const NS='http://www.w3.org/2000/svg'; const svg=document.createElementNS(NS,'svg'); svg.setAttribute('viewBox','0 0 680 340'); svg.setAttribute('width','680'); svg.setAttribute('height','340'); T.appendChild(svg);
+    const line=(p,q)=>{ const l=document.createElementNS(NS,'line'); l.setAttribute('x1',p[0]);l.setAttribute('y1',p[1]+(p===TP.root?4:19));l.setAttribute('x2',q[0]);l.setAttribute('y2',q[1]-19); l.setAttribute('stroke','var(--muted)'); l.setAttribute('stroke-width','1.6'); svg.appendChild(l); };
+    [['root','a'],['root','b'],['a','aa'],['a','ab'],['b','ba'],['b','bb']].forEach(([p,q])=>line(TP[p],TP[q]));
+    const dot=document.createElementNS(NS,'circle'); dot.setAttribute('cx',340);dot.setAttribute('cy',26);dot.setAttribute('r',4);dot.setAttribute('fill','var(--text)'); svg.appendChild(dot);
+    if(show){ const t=document.createElement('div'); t.className='cnt'; t.style.left='340px'; t.style.top='26px'; t.textContent='n = '+fmt(N()); T.appendChild(t); }
+    const node=(k,lab,cls)=>{ const d=document.createElement('div'); d.className='node '+cls; d.style.left=TP[k][0]+'px'; d.style.top=TP[k][1]+'px'; d.innerHTML=lab; T.appendChild(d);
+      if(show){ const c=document.createElement('div'); c.className='cnt'; c.style.left=TP[k][0]+'px'; c.style.top=TP[k][1]+'px'; c.textContent=fmt(sp.cnt[k]); T.appendChild(c);} };
+    node('a',sp.firstLab[0],sp.cls1); node('b',sp.firstLab[1],sp.cls1);
+    node('aa',sp.secLab[0],sp.cls2); node('ab',sp.secLab[1],sp.cls2); node('ba',sp.secLab[0],sp.cls2); node('bb',sp.secLab[1],sp.cls2);
+    const inp=(k,x,y,lab,leaf)=>{ const w=document.createElement('div'); w.className='inp'+(leaf?' leaf':''); w.style.left=x+'px'; w.style.top=y+'px';
+      w.innerHTML=`<span class="lab">${lab}</span><input type="text" inputmode="decimal" data-k="${k}" aria-label="${lab.replace(/<[^>]+>/g,'')}">`; T.appendChild(w);
+      const i=w.querySelector('input'); i.value=treeVals[order+k]||''; i.addEventListener('input',()=>{ i.classList.remove('ok','no'); treeVals[order+k]=i.value; }); };
+    const mid=(p,q,dx)=>[(TP[p][0]+TP[q][0])/2+dx,(TP[p][1]+TP[q][1])/2];
+    const E=sp.edges;
+    inp('e_a',...mid('root','a',-46),E.a[0]); inp('e_b',...mid('root','b',46),E.b[0]);
+    inp('e_aa',...mid('a','aa',-44),E.aa[0]); inp('e_ab',...mid('a','ab',44),E.ab[0]);
+    inp('e_ba',...mid('b','ba',-44),E.ba[0]); inp('e_bb',...mid('b','bb',44),E.bb[0]);
+    ['aa','ab','ba','bb'].forEach(k=>inp('l_'+k,TP[k][0],TP[k][1]+48,sp.leaves[k][0],true));
+  }
+  function checkTree(fill){
+    const sp=treeSpec(); let ok=0,tot=0,empty=0;
+    $('tree').querySelectorAll('input').forEach(i=>{
+      const k=i.dataset.k; const f= k[0]==='e'? sp.edges[k.slice(2)][1] : sp.leaves[k.slice(2)][1];
+      if(fill){ i.value=fstr(f).replace('.',','); treeVals[order+k]=i.value; }
+      const v=parse(i.value); tot++; i.classList.remove('ok','no');
+      if(v===null){ empty++; return; } if(close(v,f)){ ok++; i.classList.add('ok'); } else i.classList.add('no');
+    });
+    $('fbTree').innerHTML = fill? 'Lösung eingesetzt.' : `${ok} von ${tot} Feldern richtig`+(empty?` · ${empty} noch leer`:'')+(ok===tot?' – 🎉 alles richtig!':'')+
+      '<span class="muted"> (Rundungen bis ±0,01 werden akzeptiert.)</span>';
+  }
+
+  // ---------- Eingabe-Vierfeldertafel ----------
+  const VF=[['EF','EnF','E'],['nEF','nEnF','nE'],['F','nF','one']];
+  let vfVals={};
+  function renderInVf(){
+    $('inVf').querySelectorAll('input').forEach(i=>vfVals[key+i.dataset.k]=i.value);
+    const cell=k=>`<td><input type="text" inputmode="decimal" data-k="${k}" value="${vfVals[key+k]||''}"></td>`;
+    $('inVf').innerHTML=`<tr><th></th><th>F</th><th><span class="ov">F</span></th><th>Summe</th></tr>
+      <tr><th>E</th>${VF[0].map(cell).join('')}</tr><tr><th><span class="ov">E</span></th>${VF[1].map(cell).join('')}</tr><tr><th>Summe</th>${VF[2].map(cell).join('')}</tr>`;
+    $('inVf').querySelectorAll('input').forEach(i=>i.addEventListener('input',()=>i.classList.remove('ok','no')));
+  }
+  function checkVf(fill){
+    const t=theory(); t.one=[1,1]; let ok=0,tot=0,empty=0;
+    $('inVf').querySelectorAll('input').forEach(i=>{ const f=t[i.dataset.k]; if(fill){ i.value=fstr(f); vfVals[key+i.dataset.k]=i.value; }
+      const v=parse(i.value); tot++; i.classList.remove('ok','no'); if(v===null){empty++;return;} if(close(v,f)){ok++;i.classList.add('ok');} else i.classList.add('no'); });
+    $('fbVf').innerHTML= fill? 'Lösung eingesetzt.' : `${ok} von ${tot} Feldern richtig`+(empty?` · ${empty} noch leer`:'')+(ok===tot?' – 🎉 alles richtig!':'');
+  }
+
+  function renderAll(rebuild){ renderData(); renderFilter(); renderTree(); if(rebuild) renderInVf(); $('fbTree').innerHTML=''; }
+
+  $('btnOne').addEventListener('click',()=>{ const [[e,f],txt]=S.run(); C[idx(e,f)]++; $('last').innerHTML=`${txt} &nbsp;→&nbsp; ${tagE(e)} und ${tagF(f)}`; renderAll(false); });
+  document.querySelectorAll('[data-n]').forEach(b=>b.addEventListener('click',()=>{ const n=+b.dataset.n; for(let i=0;i<n;i++){ const [[e,f]]=S.run(); C[idx(e,f)]++; } $('last').innerHTML=`${fmt(n)} Durchführungen ergänzt.`; renderAll(false); }));
+  $('btnReset').addEventListener('click',()=>{ C=[0,0,0,0]; $('last').innerHTML=''; renderAll(false); });
+  document.querySelectorAll('#segD button').forEach(b=>b.addEventListener('click',()=>{ document.querySelectorAll('#segD button').forEach(x=>x.classList.toggle('on',x===b)); dMode=b.dataset.m; renderData(); }));
+  document.querySelectorAll('#segOrder button').forEach(b=>b.addEventListener('click',()=>{ renderTree(); document.querySelectorAll('#segOrder button').forEach(x=>x.classList.toggle('on',x===b)); order=b.dataset.o; renderTree(); $('fbTree').innerHTML=''; }));
+  $('showCnt').addEventListener('change',renderTree);
+  $('chkTree').addEventListener('click',()=>checkTree(false));
+  $('solTree').addEventListener('click',()=>checkTree(true));
+  $('clrTree').addEventListener('click',()=>{ Object.keys(treeVals).forEach(k=>{ if(k.startsWith(order)) delete treeVals[k]; }); $('tree').querySelectorAll('input').forEach(i=>i.value=''); renderTree(); $('fbTree').innerHTML=''; });
+  $('chkVf').addEventListener('click',()=>checkVf(false));
+  $('solVf').addEventListener('click',()=>checkVf(true));
+  $('clrVf').addEventListener('click',()=>{ Object.keys(vfVals).forEach(k=>{ if(k.startsWith(key)) delete vfVals[k]; }); renderInVf(); $('fbVf').innerHTML=''; });
+  function unlock(){
+    if(($('code').value||'').trim().toUpperCase()==='MATHE'){ unlocked=true; $('lockRow').classList.add('hide'); $('merk').classList.remove('hide'); $('solTree').classList.remove('hide'); $('solVf').classList.remove('hide'); }
+    else { $('codeMsg').textContent='Code nicht korrekt.'; $('codeMsg').style.color='var(--gold)'; }
+  }
+  $('btnUnlock').addEventListener('click',unlock); $('code').addEventListener('keydown',e=>{ if(e.key==='Enter') unlock(); });
+
+  order='FE'; document.querySelectorAll('#segOrder button').forEach(x=>x.classList.toggle('on',x.dataset.o===order));
+  buildScen(); renderAll(true);
+})();
+</script>
+</body>
+</html>

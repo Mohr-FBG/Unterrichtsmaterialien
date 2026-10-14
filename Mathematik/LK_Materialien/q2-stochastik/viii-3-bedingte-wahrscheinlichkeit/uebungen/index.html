@@ -1,0 +1,896 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Übungsphase · Bedingte Wahrscheinlichkeit</title>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css">
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/contrib/auto-render.min.js"></script>
+
+<style>
+:root{
+  --gold:#e8a800; --gold-dark:#b58200;
+  --blue:#2c5f8a; --blue-dark:#1a3d5c;
+  --green:#1a9e5c; --orange:#d4760a; --purple:#7b3fb5;
+  --red:#c0392b;
+  --border:#dde1e7; --bg:#f4f5f7; --text:#1c1f26;
+  --muted:#5c6472;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0; background:var(--bg); color:var(--text);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  line-height:1.55; font-size:16px;
+}
+.wrap{max-width:960px; margin:0 auto; padding:0 16px 64px}
+
+/* ---------- Kopf ---------- */
+header.top{background:var(--gold); border-bottom:4px solid var(--gold-dark); color:#fff}
+header.top .inner{max-width:960px; margin:0 auto; padding:22px 16px 24px}
+header.top .kap{font-size:.78rem; font-weight:700; letter-spacing:.06em; text-transform:uppercase; opacity:.92}
+header.top h1{margin:6px 0 4px; font-size:1.7rem; line-height:1.2}
+header.top .sub{font-size:.92rem; opacity:.95}
+
+/* ---------- Steuerleiste ---------- */
+.controls{
+  background:#fff; border:1px solid var(--border); border-radius:10px;
+  padding:14px 16px; margin:18px 0 22px;
+  display:flex; flex-wrap:wrap; gap:16px; align-items:center; justify-content:space-between;
+}
+.unlock{display:flex; align-items:center; gap:8px; flex-wrap:wrap}
+.unlock label{font-size:.9rem; color:var(--muted)}
+.unlock input{border:1px solid var(--border); border-radius:6px; padding:6px 10px; font-size:.95rem; width:130px; font-family:inherit}
+.unlock button{background:var(--blue); color:#fff; border:0; border-radius:6px; padding:7px 14px; font-size:.9rem; font-weight:600; cursor:pointer; font-family:inherit}
+.unlock button:hover{background:var(--blue-dark)}
+.unlock .msg{font-size:.85rem; font-weight:600}
+.unlock .msg.ok{color:var(--green)}
+.unlock .msg.bad{color:#c0392b}
+
+.filters{display:flex; gap:6px; flex-wrap:wrap}
+.filters button{background:#fff; border:1px solid var(--border); border-radius:20px; padding:6px 14px; font-size:.85rem; cursor:pointer; color:var(--muted); font-family:inherit; font-weight:600}
+.filters button:hover{border-color:var(--muted)}
+.filters button.on{background:var(--text); border-color:var(--text); color:#fff}
+
+/* ---------- Abschnitte ---------- */
+.stufe-head{display:flex; align-items:baseline; gap:12px; flex-wrap:wrap; margin:30px 0 12px; padding-bottom:8px; border-bottom:2px solid var(--border)}
+.stufe-badge{color:#fff; border-radius:6px; padding:4px 12px; font-weight:700; font-size:.9rem; letter-spacing:.02em}
+.sA .stufe-badge{background:var(--blue)}
+.sG .stufe-badge{background:var(--text)}
+.s1 .stufe-badge{background:var(--green)}
+.s2 .stufe-badge{background:var(--orange)}
+.s3 .stufe-badge{background:var(--purple)}
+.stufe-head .desc{color:var(--muted); font-size:.9rem}
+
+/* ---------- Karten ---------- */
+.card{background:#fff; border:1px solid var(--border); border-radius:10px; margin-bottom:14px; overflow:hidden; position:relative}
+.tw,.tree-box,.katex-display{position:relative}
+.card.sA{border-top:4px solid var(--blue)}
+.card.sG{border-top:4px solid var(--text)}
+.card.s1{border-top:4px solid var(--green)}
+.card.s2{border-top:4px solid var(--orange)}
+.card.s3{border-top:4px solid var(--purple)}
+.card-head{display:flex; align-items:center; justify-content:space-between; gap:12px; padding:13px 18px; cursor:pointer; user-select:none}
+.card-head:hover{background:#fafbfc}
+.card-head h3{margin:0; font-size:1.03rem; font-weight:700}
+.chev{color:var(--muted); font-size:1.1rem; transition:transform .18s}
+.card.open .chev{transform:rotate(180deg)}
+.card-body{display:none; padding:0 18px 18px}
+.card.open .card-body{display:block}
+
+.task{background:#fbfcfd; border:1px solid var(--border); border-left:3px solid var(--blue); border-radius:6px; padding:12px 15px; margin-bottom:14px}
+.task p{margin:.5em 0}
+.task p:first-child{margin-top:0}
+.task p:last-child{margin-bottom:0}
+.task .sub-i{margin-left:1.6em}
+
+/* Merkkasten wie im Buch */
+.merk{border:2px solid var(--blue); border-radius:8px; padding:14px 18px; background:#f3f7fb}
+.merk h4{margin:0 0 6px; font-size:1rem}
+.merk p{margin:.45em 0}
+
+/* Beispiel-Lösung im Buchstil */
+.bsp{border-left:3px solid var(--blue); padding:2px 0 2px 16px}
+.bsp .lh{font-weight:700; color:var(--muted); margin:10px 0 4px}
+.bsp p{margin:.5em 0}
+
+/* Tafel-Hinweis */
+.board{border:1.5px dashed var(--text); border-radius:8px; padding:12px 15px; font-size:.92rem; color:var(--muted); display:flex; gap:10px; align-items:center}
+.board b{color:var(--text)}
+
+/* ---------- Selbsteinschätzung ---------- */
+.assess{display:flex; align-items:center; gap:7px; flex-wrap:wrap; margin-bottom:14px}
+.assess .lab{font-size:.83rem; color:var(--muted); margin-right:2px}
+.assess button{border:1px solid var(--border); background:#fff; border-radius:16px; padding:4px 12px; font-size:.8rem; cursor:pointer; color:var(--muted); font-family:inherit}
+.assess button.on[data-v="ok"]{background:var(--green); border-color:var(--green); color:#fff}
+.assess button.on[data-v="mid"]{background:var(--orange); border-color:var(--orange); color:#fff}
+.assess button.on[data-v="ask"]{background:var(--blue); border-color:var(--blue); color:#fff}
+
+/* ---------- Hilfen ---------- */
+.hints{border:1px solid var(--border); border-radius:8px; overflow:hidden; margin-bottom:14px}
+.hints .htitle{background:#f7f8fa; padding:7px 14px; font-size:.8rem; font-weight:700; color:var(--muted); text-transform:uppercase; letter-spacing:.05em; border-bottom:1px solid var(--border)}
+.htabs{display:flex; flex-wrap:wrap; gap:6px; padding:10px 14px; background:#fdfdfe}
+.htabs button{border:1px solid var(--border); background:#fff; border-radius:6px; padding:5px 11px; font-size:.82rem; cursor:pointer; color:var(--text); font-family:inherit}
+.htabs button:hover{border-color:var(--blue)}
+.htabs button.on{background:var(--blue); border-color:var(--blue); color:#fff; font-weight:600}
+.hpanel{display:none; padding:12px 15px; border-top:1px solid var(--border); font-size:.95rem}
+.hpanel.on{display:block}
+.hpanel h4{margin:0 0 8px; font-size:.92rem; color:var(--blue-dark)}
+.hpanel p{margin:.5em 0}
+
+/* ---------- Musterlösung ---------- */
+.sol-lock{background:#f7f8fa; border:1px dashed var(--border); border-radius:8px; padding:12px 15px; font-size:.9rem; color:var(--muted); text-align:center}
+.sol-lock.active{cursor:pointer; background:#eef4f9; border:1px solid var(--blue); color:var(--blue-dark); font-weight:600}
+.sol-lock.active:hover{background:#e2ecf5}
+.sol{display:none; border:1px solid var(--green); border-radius:8px; overflow:hidden}
+.sol.shown{display:block}
+.sol .sh{background:var(--green); color:#fff; padding:7px 15px; font-weight:700; font-size:.88rem}
+.sol .sb{padding:13px 15px; font-size:.95rem}
+.sol .sb p{margin:.55em 0}
+.sol .sb p:first-child{margin-top:0}
+
+/* Alternativer Lösungsweg */
+.alt-btn{margin-top:10px; background:#fff; border:1px solid var(--purple); color:var(--purple); border-radius:6px; padding:6px 12px; font-size:.85rem; font-weight:600; cursor:pointer; font-family:inherit}
+.alt-btn:hover{background:#f6f0fb}
+.alt{display:none; margin-top:10px; border:1px solid var(--purple); border-left:4px solid var(--purple); border-radius:6px; padding:10px 14px; background:#faf6fd; font-size:.93rem}
+.alt.shown{display:block}
+.alt .ah{font-weight:700; color:var(--purple); font-size:.85rem; text-transform:uppercase; letter-spacing:.04em; margin-bottom:4px}
+
+/* Verteilungstabelle im Buchstil */
+.tw{overflow-x:auto; margin:.6em 0}
+table.vt{border-collapse:collapse; font-size:.92rem}
+table.vt th, table.vt td{border:1px solid var(--border); padding:5px 10px; text-align:center; white-space:nowrap}
+table.vt th{background:#eef0f3; font-weight:600}
+table.vt td.hl{background:#e6f5ec}
+
+/* Grafiken */
+.fig{display:flex; flex-wrap:wrap; gap:18px; align-items:flex-start}
+.fig .txt{flex:1 1 320px; min-width:0}
+.fig .pic{flex:0 1 auto; overflow-x:auto; max-width:100%}
+.tree-box{overflow-x:auto; max-width:100%}
+.tree-box svg{display:block}
+.cap{font-size:.78rem; color:var(--muted); text-align:center; margin-top:2px}
+
+.res{color:#1a9e5c;font-weight:700}
+.note{background:#fdf6e3; border-left:3px solid var(--gold); border-radius:6px; padding:10px 14px; font-size:.9rem; margin:12px 0}
+.note a{color:var(--blue); font-weight:600}
+.katex{font-size:1.04em}
+.katex-display{margin:.6em 0; overflow-x:auto; overflow-y:hidden}
+footer.bot{text-align:center; color:var(--muted); font-size:.82rem; padding:26px 16px; border-top:1px solid var(--border); margin-top:34px}
+footer.bot a{color:var(--blue)}
+@media(max-width:600px){
+  header.top h1{font-size:1.32rem}
+  .controls{flex-direction:column; align-items:stretch}
+  .card-head h3{font-size:.95rem}
+  .card-body{padding:0 12px 14px}
+}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="inner">
+    <div class="kap">Kapitel VIII · Daten und Wahrscheinlichkeit · LK Mathematik Q2</div>
+    <h1>3 · Bedingte Wahrscheinlichkeit – stochastische Unabhängigkeit</h1>
+    <div class="sub">Anleitung lesen · Gemeinsam starten · Stufe wählen · Hilfen schrittweise nutzen · Musterlösungen nach Freigabe</div>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <div class="controls">
+    <div class="unlock">
+      <label for="code">🔒 Musterlösungen freischalten:</label>
+      <input id="code" type="text" autocomplete="off" placeholder="Code">
+      <button id="btn-unlock" type="button">Bestätigen</button>
+      <span class="msg" id="msg"></span>
+    </div>
+    <div class="filters">
+      <button class="on" data-f="all" type="button">Alles</button>
+      <button data-f="A" type="button">Anleitung</button>
+      <button data-f="G" type="button">Gemeinsam</button>
+      <button data-f="1" type="button">Stufe 1</button>
+      <button data-f="2" type="button">Stufe 2</button>
+      <button data-f="3" type="button">Stufe 3</button>
+    </div>
+  </div>
+
+  <div class="note">
+    <strong>Zum Ausprobieren:</strong> Die Simulationen
+    <a href="../../simulationen/ziegenproblem/">Ziegenproblem</a> und
+    <a href="../../simulationen/bedingte-wahrscheinlichkeit/">Bedingte Wahrscheinlichkeit</a>
+    zeigen, wie Vierfeldertafel, Baumdiagramm und bedingte Wahrscheinlichkeit zusammenhängen.
+  </div>
+
+  <!-- ================= ANLEITUNG ================= -->
+  <section class="sA" data-stufe="A">
+    <div class="stufe-head">
+      <span class="stufe-badge">Anleitung</span>
+      <span class="desc">Merkwissen und vollständig vorgerechnete Beispiele – so sollen deine Lösungen aussehen</span>
+    </div>
+
+    <article class="card sA">
+      <div class="card-head"><h3>Merkwissen · Bedingte Wahrscheinlichkeit und stochastische Unabhängigkeit</h3><span class="chev">▾</span></div>
+      <div class="card-body">
+        <div class="merk">
+          <p><strong>Bedingte Wahrscheinlichkeit:</strong> Die Wahrscheinlichkeit dafür, dass $F$ eintritt, wenn man weiß, dass $E$ eingetreten
+          ist, wird mit $P_E(F)$ bezeichnet. Im Baumdiagramm steht sie am Ast von $E$ nach $F$.</p>
+          <p><strong>Berechnung:</strong> Aus der Pfadregel $P(E\cap F)=P(E)\cdot P_E(F)$ folgt
+          $$P_E(F)=\frac{P(E\cap F)}{P(E)},\quad\text{falls } P(E)\neq0.$$
+          In der Vierfeldertafel teilt man also das Feld $E\cap F$ durch die Randsumme von $E$.</p>
+          <p><strong>Stochastische Unabhängigkeit:</strong> Zwei Ereignisse $E$ und $F$ heißen stochastisch unabhängig, wenn $P_E(F)=P(F)$.
+          Das ist genau dann der Fall, wenn $P(E\cap F)=P(E)\cdot P(F)$.</p>
+          <p><strong>Deutung:</strong> Bei Abhängigkeit ($P_E(F)\neq P(F)$) verändert die Beobachtung von $E$ die Wahrscheinlichkeit für $F$ –
+          man hat aus $E$ etwas über $F$ „gelernt“.</p>
+        </div>
+      </div>
+    </article>
+
+    <!-- Beispiel 1 -->
+    <article class="card sA">
+      <div class="card-head"><h3>Beispiel 1 · Bedingte Wahrscheinlichkeiten berechnen</h3><span class="chev">▾</span></div>
+      <div class="card-body">
+        <div class="task">
+          <div class="fig">
+            <div class="txt">
+              <p>An einer Schule wurde erfasst, wer in der Mensa isst und wer mit dem Bus zur Schule kommt. Die Vierfeldertafel zeigt die
+              Wahrscheinlichkeiten für eine zufällig ausgewählte Person.<br>
+              $E$: Person isst in der Mensa, $F$: Person kommt mit dem Bus.</p>
+              <p>Bestimmen Sie die Wahrscheinlichkeiten.</p>
+              <p><strong>a)</strong> $P(E)$, $P(F)$, $P(E\cap F)$, $P_E(F)$ und $P_F(E)$</p>
+              <p><strong>b)</strong> $P_{\overline E}(F)$ und $P_E(\overline F)$. Erläutern Sie die Bedeutung dieser Wahrscheinlichkeiten.</p>
+              <p><strong>c)</strong> $P_E(E\cup F)$. Erläutern Sie die Bedeutung dieser Wahrscheinlichkeit.</p>
+            </div>
+            <div class="pic"><div class="tw"><table class="vt">
+              <tr><th></th><th>$E$</th><th>$\overline E$</th><th></th></tr>
+              <tr><th>$F$</th><td>$35\,\%$</td><td>$25\,\%$</td><td>$60\,\%$</td></tr>
+              <tr><th>$\overline F$</th><td>$15\,\%$</td><td>$25\,\%$</td><td>$40\,\%$</td></tr>
+              <tr><th></th><td>$50\,\%$</td><td>$50\,\%$</td><td>$100\,\%$</td></tr>
+            </table></div></div>
+          </div>
+        </div>
+        <div class="bsp">
+          <div class="lh">Lösung</div>
+          <p><strong>a)</strong> $P(E)=50\,\%$, $P(F)=60\,\%$, $P(E\cap F)=35\,\%$ (abgelesen)</p>
+          <p>$$P_E(F)=\frac{P(E\cap F)}{P(E)}=\frac{0{,}35}{0{,}5}=0{,}7=70\,\%;\qquad P_F(E)=\frac{P(E\cap F)}{P(F)}=\frac{0{,}35}{0{,}6}=\frac{7}{12}\approx58{,}3\,\%$$</p>
+          <p><strong>b)</strong> $$P_{\overline E}(F)=\frac{P(\overline E\cap F)}{P(\overline E)}=\frac{0{,}25}{0{,}5}=0{,}5=50\,\%;\qquad
+          P_E(\overline F)=\frac{P(E\cap\overline F)}{P(E)}=\frac{0{,}15}{0{,}5}=0{,}3=30\,\%$$</p>
+          <p>$P_{\overline E}(F)$ ist die Wahrscheinlichkeit dafür, dass eine Person mit dem Bus kommt, wenn sie <em>nicht</em> in der Mensa isst.
+          $P_E(\overline F)$ ist die Wahrscheinlichkeit dafür, dass eine Person <em>nicht</em> mit dem Bus kommt, wenn sie in der Mensa isst.</p>
+          <p><strong>c)</strong> $$P_E(E\cup F)=\frac{P(E\cap(E\cup F))}{P(E)}=\frac{P(E)}{P(E)}=1.$$
+          Wenn eine Person in der Mensa isst, ist es sicher, dass sie in der Mensa isst oder mit dem Bus kommt.</p>
+          <div class="note" style="margin:6px 0 0">Dass $E\cap(E\cup F)=E$ gilt, erkennt man an einem Mengendiagramm.</div>
+        </div>
+      </div>
+    </article>
+
+    <!-- Beispiel 2 -->
+    <article class="card sA">
+      <div class="card-head"><h3>Beispiel 2 · Stochastische Unabhängigkeit prüfen und interpretieren</h3><span class="chev">▾</span></div>
+      <div class="card-body">
+        <div class="task">
+          <p>Man würfelt zweimal und betrachtet die Ereignisse $E$: „Der erste Würfel zeigt eine 1.“ und $F$: „Die Augensumme beträgt höchstens 4.“</p>
+          <p><strong>a)</strong> Zeigen Sie: Die Ereignisse $E$ und $F$ sind nicht stochastisch unabhängig.</p>
+          <p><strong>b)</strong> Vergleichen Sie $P_E(F)$ mit $P(F)$ und interpretieren Sie das Ergebnis.</p>
+        </div>
+        <div class="bsp">
+          <div class="lh">Lösung</div>
+          <p><strong>a)</strong> Beim zweimaligen Würfeln gibt es die 36 gleich wahrscheinlichen Ergebnisse $(1,1),(1,2),\dots,(6,6)$. Es gilt</p>
+          <p><i>E</i>&nbsp;=&nbsp;{(1,&nbsp;1), (1,&nbsp;2), (1,&nbsp;3), (1,&nbsp;4), (1,&nbsp;5), (1,&nbsp;6)};
+          <i>F</i>&nbsp;=&nbsp;{(1,&nbsp;1), (1,&nbsp;2), (1,&nbsp;3), (2,&nbsp;1), (2,&nbsp;2), (3,&nbsp;1)};
+          <i>E</i>&nbsp;∩&nbsp;<i>F</i>&nbsp;=&nbsp;{(1,&nbsp;1), (1,&nbsp;2), (1,&nbsp;3)}.</p>
+          <p>Daraus folgt $P(E)=\frac{6}{36}=\frac16$, $P(F)=\frac{6}{36}=\frac16$, $P(E\cap F)=\frac{3}{36}=\frac1{12}$ und somit
+          $$P(E\cap F)=\tfrac1{12}\neq\tfrac1{36}=P(E)\cdot P(F).$$</p>
+          <p><strong>b)</strong> Mit den Ergebnissen aus Teilaufgabe a) erhält man $P(F)=\frac16$ und
+          $$P_E(F)=\frac{P(E\cap F)}{P(E)}=\frac{1/12}{1/6}=\frac12.$$</p>
+          <p>Wenn man also weiß, dass der erste Wurf „1“ zeigt, wächst die Wahrscheinlichkeit für eine Augensumme von höchstens 4 von
+          $\frac16$ auf $\frac12$.</p>
+        </div>
+      </div>
+    </article>
+
+    <!-- Beispiel 3 -->
+    <article class="card sA">
+      <div class="card-head"><h3>Beispiel 3 · Bedingte Wahrscheinlichkeiten im Baumdiagramm</h3><span class="chev">▾</span></div>
+      <div class="card-body">
+        <div class="task">
+          <p>Ein Betrieb stellt Bauteile auf zwei Maschinen her: $40\,\%$ auf Maschine $A$, der Rest auf Maschine $B$. Von den Bauteilen der
+          Maschine $A$ sind $5\,\%$ defekt, von denen der Maschine $B$ sind $2\,\%$ defekt. Ein Bauteil wird zufällig ausgewählt.<br>
+          $D$: „Das Bauteil ist defekt.“</p>
+          <p><strong>a)</strong> Zeichnen Sie ein Baumdiagramm und bestimmen Sie $P(D)$.</p>
+          <p><strong>b)</strong> Ein ausgewähltes Bauteil ist defekt. Bestimmen Sie die Wahrscheinlichkeit, dass es von Maschine $A$ stammt.</p>
+        </div>
+        <div class="bsp">
+          <div class="lh">Lösung</div>
+          <div class="tree-box" data-tree='{"levels":["Maschine","Qualität"],"root":{"c":[{"l":"A","p":"0,4","c":[{"l":"D","p":"0,05"},{"l":"D̄","p":"0,95"}]},{"l":"B","p":"0,6","c":[{"l":"D","p":"0,02"},{"l":"D̄","p":"0,98"}]}]},"leaf":"tuple","dx":96}'></div>
+          <p><strong>a)</strong> Die Anteile der defekten Teile sind bedingte Wahrscheinlichkeiten: $P_A(D)=0{,}05$ und $P_B(D)=0{,}02$.
+          Mit der Pfadregel ergibt sich $P(A\cap D)=0{,}4\cdot0{,}05=0{,}02$ und $P(B\cap D)=0{,}6\cdot0{,}02=0{,}012$. Nach der Summenregel gilt
+          $$P(D)=0{,}02+0{,}012=0{,}032=3{,}2\,\%.$$</p>
+          <p><strong>b)</strong> Gesucht ist $P_D(A)$:
+          $$P_D(A)=\frac{P(D\cap A)}{P(D)}=\frac{0{,}02}{0{,}032}=0{,}625=62{,}5\,\%.$$</p>
+          <p>Obwohl nur $40\,\%$ der Bauteile von Maschine $A$ stammen, kommen $62{,}5\,\%$ der defekten Teile von dort.</p>
+        </div>
+      </div>
+    </article>
+  </section>
+
+  <!-- ================= GEMEINSAM ================= -->
+  <section class="sG" data-stufe="G">
+    <div class="stufe-head">
+      <span class="stufe-badge">Gemeinsam im Unterricht</span>
+      <span class="desc">Diese Aufgaben lösen wir zusammen – die Lösung wird an der Tafel gesichert</span>
+    </div>
+
+    <article class="card sG">
+      <div class="card-head"><h3>Aufgabe A · Vierfeldertafel vervollständigen</h3><span class="chev">▾</span></div>
+      <div class="card-body">
+        <div class="task">
+          <div class="fig">
+            <div class="txt">
+              <p>Bei einer Befragung in der Jahrgangsstufe wird erfasst, ob eine Person ein Haustier hat ($H$) und ob sie in der Stadt wohnt ($S$).</p>
+              <p><strong>a)</strong> Vervollständigen Sie die Vierfeldertafel.</p>
+              <p><strong>b)</strong> Bestimmen Sie die bedingten Wahrscheinlichkeiten $P_H(S)$ und $P_S(H)$. Erklären Sie, was Sie daran erkennen.</p>
+              <p><strong>c)</strong> Bestimmen Sie die Wahrscheinlichkeit, dass eine Person kein Haustier hat, wenn man weiß, dass sie in der Stadt wohnt.</p>
+            </div>
+            <div class="pic"><div class="tw"><table class="vt">
+              <tr><th></th><th>$S$</th><th>$\overline S$</th><th></th></tr>
+              <tr><th>$H$</th><td>$0{,}24$</td><td>$0{,}16$</td><td></td></tr>
+              <tr><th>$\overline H$</th><td>$0{,}36$</td><td></td><td></td></tr>
+              <tr><th></th><td></td><td>$0{,}4$</td><td>$1$</td></tr>
+            </table></div></div>
+          </div>
+        </div>
+        <div class="board">✏️ <span><b>Tafelsicherung:</b> vollständige Tafel, Rechenweg $P_E(F)=\frac{P(E\cap F)}{P(E)}$, Deutung des Ergebnisses.</span></div>
+      </div>
+    </article>
+
+    <article class="card sG">
+      <div class="card-head"><h3>Aufgabe B · Mit und ohne Zurücklegen</h3><span class="chev">▾</span></div>
+      <div class="card-body">
+        <div class="task">
+          <p>In einer Urne liegen fünf Kugeln: drei tragen die Ziffer 1, zwei die Ziffer 2. Es werden nacheinander zufällig zwei Kugeln entnommen.
+          Es sei $E$: „Die erste Kugel trägt die Ziffer 1.“ und $F$: „Die zweite Kugel trägt die Ziffer 2.“</p>
+          <p><strong>a)</strong> Die erste Kugel wird zurückgelegt. Bestimmen Sie die Mengen zu $E$ und $F$ und berechnen Sie $P_E(F)$. Weisen Sie nach:
+          $P(E\cap F)=P(E)\cdot P(F)$.</p>
+          <p><strong>b)</strong> Die erste Kugel wird nicht zurückgelegt. Berechnen Sie $P_E(F)$ und weisen Sie nach, dass $P(E\cap F)\neq P(E)\cdot P(F)$ gilt.</p>
+        </div>
+        <div class="board">✏️ <span><b>Tafelsicherung:</b> beide Baumdiagramme nebeneinander, $P_E(F)$ am Ast ablesen, Unabhängigkeit prüfen.</span></div>
+      </div>
+    </article>
+
+    <article class="card sG">
+      <div class="card-head"><h3>Aufgabe C · Zwei Drehungen am Glücksrad</h3><span class="chev">▾</span></div>
+      <div class="card-body">
+        <div class="task">
+          <div class="fig">
+            <div class="txt">
+              <p>Ein Glücksrad hat ein rotes, ein gelbes und ein blaues Feld. Das rote Feld ist halb so groß wie das ganze Rad, Gelb und Blau sind gleich groß.
+              Es wird zweimal gedreht. Rot zählt 1 Punkt, Gelb 2 Punkte, Blau 3 Punkte. Es sei $E$: „Beim ersten Drehen erscheint Rot.“</p>
+              <p><strong>a)</strong> Untersuchen Sie, ob $E$ und das Ereignis $F$: „Beim zweiten Drehen erscheint Blau.“ unabhängig sind.</p>
+              <p><strong>b)</strong> Untersuchen Sie, ob $E$ und $G$: „Man erzielt zusammen höchstens 3 Punkte.“ stochastisch unabhängig sind.
+              Berechnen Sie $P_E(G)$ und deuten Sie das Ergebnis.</p>
+            </div>
+            <div class="pic"><div data-wheel='{"s":[[0.5,"#f3c9c4","Rot · 1"],[0.25,"#fbeab0","Gelb · 2"],[0.25,"#c8daea","Blau · 3"]],"size":170}'></div></div>
+          </div>
+        </div>
+        <div class="board">✏️ <span><b>Tafelsicherung:</b> Baumdiagramm, Ereignis $G$ als Menge, Vergleich $P(E\cap G)$ mit $P(E)\cdot P(G)$.</span></div>
+      </div>
+    </article>
+  </section>
+
+  <!-- ================= STUFE 1 ================= -->
+  <section class="s1" data-stufe="1">
+    <div class="stufe-head">
+      <span class="stufe-badge">Stufe 1</span>
+      <span class="desc">Grundaufgaben · Vierfeldertafel, bedingte Wahrscheinlichkeit, Unabhängigkeit prüfen</span>
+    </div>
+
+    <article class="card s1">
+      <div class="card-head"><h3>Aufgabe 1 · Fahrradhelm und Alter</h3><span class="chev">▾</span></div>
+      <div class="card-body">
+        <div class="task">
+          <p>Bei einer Verkehrszählung wurden 200 Radfahrende erfasst. Darunter waren 60 Kinder unter 12 Jahren, von denen 54 einen Helm trugen.
+          Von den übrigen Radfahrenden trug genau die Hälfte einen Helm. Eine der erfassten Personen wird zufällig ausgewählt.
+          $K$: „Die Person ist ein Kind.“, $H$: „Die Person trägt einen Helm.“</p>
+          <p><strong>a)</strong> Erstellen Sie eine Vierfeldertafel mit den Wahrscheinlichkeiten.</p>
+          <p><strong>b)</strong> Bestimmen Sie $P_K(H)$ und $P_{\overline K}(H)$ und erläutern Sie die Bedeutung.</p>
+          <p><strong>c)</strong> Untersuchen Sie, ob $K$ und $H$ stochastisch unabhängig sind.</p>
+        </div>
+        <div class="assess"><span class="lab">Einschätzung:</span>
+          <button data-v="ok" type="button">✓ Fertig &amp; verstanden</button><button data-v="mid" type="button">~ Noch unsicher</button><button data-v="ask" type="button">? Frage an Lehrer</button></div>
+        <div class="hints">
+          <div class="htitle">Hilfen</div>
+          <div class="htabs"><button type="button">Hilfe 1 · Anzahlen</button><button type="button">Hilfe 2 · Bedingte W.</button><button type="button">Hilfe 3 · Unabhängigkeit</button></div>
+          <div class="hpanel"><h4>Hilfe 1 · Erst Anzahlen, dann Wahrscheinlichkeiten</h4>
+            <p>Erwachsene: $200-60=140$, davon mit Helm die Hälfte. Lege eine Vierfeldertafel mit Anzahlen an (Kinder/Erwachsene, Helm/kein Helm) und teile dann jedes Feld durch 200.</p></div>
+          <div class="hpanel"><h4>Hilfe 2 · Formel anwenden</h4>
+            <p>$P_K(H)=\dfrac{P(K\cap H)}{P(K)}$. Das Feld $K\cap H$ steht in der Tafel, $P(K)$ in der Randspalte bzw. Randzeile. Für $P_{\overline K}(H)$ nimmst du die Zeile bzw. Spalte von $\overline K$.</p></div>
+          <div class="hpanel"><h4>Hilfe 3 · Zwei Wege</h4>
+            <p>Vergleiche $P_K(H)$ mit $P(H)$ – oder prüfe, ob $P(K\cap H)=P(K)\cdot P(H)$ gilt.</p></div>
+        </div>
+        <div class="sol-lock">🔒 Musterlösung – nach Freigabe durch den Lehrer sichtbar.</div>
+        <div class="sol"><div class="sh">✓ Musterlösung · Aufgabe 1</div><div class="sb">
+          <p><strong>a)</strong> Anzahlen: Kinder mit Helm 54, Kinder ohne Helm 6; Erwachsene $140$, davon 70 mit und 70 ohne Helm. Division durch 200:</p>
+          <div class="tw"><table class="vt">
+            <tr><th></th><th>$K$</th><th>$\overline K$</th><th></th></tr>
+            <tr><th>$H$</th><td>$0{,}27$</td><td>$0{,}35$</td><td>$0{,}62$</td></tr>
+            <tr><th>$\overline H$</th><td>$0{,}03$</td><td>$0{,}35$</td><td>$0{,}38$</td></tr>
+            <tr><th></th><td>$0{,}3$</td><td>$0{,}7$</td><td>$1$</td></tr>
+          </table></div>
+          <p><strong>b)</strong> $$P_K(H)=\frac{P(K\cap H)}{P(K)}=\frac{0{,}27}{0{,}3}={\color{#1a9e5c}\boldsymbol{0{,}9}};\qquad P_{\overline K}(H)=\frac{P(\overline K\cap H)}{P(\overline K)}=\frac{0{,}35}{0{,}7}={\color{#1a9e5c}\boldsymbol{0{,}5}}$$</p>
+          <p>$P_K(H)$ ist die Wahrscheinlichkeit, dass eine Person einen Helm trägt, wenn sie ein Kind ist ($90\,\%$). Bei den Erwachsenen sind es nur $50\,\%$.</p>
+          <p><strong>c)</strong> $P_K(H)=0{,}9\neq0{,}62=P(H)$, also sind $K$ und $H$ ${\color{#1a9e5c}\boldsymbol{\text{nicht stochastisch unabhängig}}}$.
+          Probe: $P(K\cap H)=0{,}27\neq0{,}186=0{,}3\cdot0{,}62=P(K)\cdot P(H)$.</p>
+        </div></div>
+      </div>
+    </article>
+
+    <article class="card s1">
+      <div class="card-head"><h3>Aufgabe 2 · Zweimal mit dem Tetraeder</h3><span class="chev">▾</span></div>
+      <div class="card-body">
+        <div class="task">
+          <p>Ein fairer Tetraeder mit den Zahlen 1 bis 4 wird zweimal geworfen. Gezählt wird die Zahl, auf der er liegen bleibt. Man betrachtet die Ereignisse<br>
+          <span class="sub-i">$A$: „Die erste Zahl ist gerade.“ &nbsp; $B$: „Die zweite Zahl ist gerade.“</span><br>
+          <span class="sub-i">$C$: „Die Summe ist gerade.“ &nbsp; $D$: „Die Summe beträgt 8.“</span></p>
+          <p><strong>a)</strong> Untersuchen Sie auf stochastische Unabhängigkeit, indem Sie jeweils eine Vierfeldertafel erstellen:<br>
+          <span class="sub-i">(1) $A$ und $B$ &nbsp;&nbsp; (2) $A$ und $C$ &nbsp;&nbsp; (3) $A$ und $D$</span></p>
+          <p><strong>b)</strong> Entnehmen Sie der Vierfeldertafel zu (3) die bedingten Wahrscheinlichkeiten $P_A(D)$ und $P_D(A)$.</p>
+        </div>
+        <div class="assess"><span class="lab">Einschätzung:</span>
+          <button data-v="ok" type="button">✓ Fertig &amp; verstanden</button><button data-v="mid" type="button">~ Noch unsicher</button><button data-v="ask" type="button">? Frage an Lehrer</button></div>
+        <div class="hints">
+          <div class="htitle">Hilfen</div>
+          <div class="htabs"><button type="button">Hilfe 1 · Ergebnismenge</button><button type="button">Hilfe 2 · Abzählen</button><button type="button">Hilfe 3 · Prüfen</button></div>
+          <div class="hpanel"><h4>Hilfe 1 · 16 Ergebnisse</h4><p>Es gibt $4\cdot4=16$ gleich wahrscheinliche Tupel $(1,1),\dots,(4,4)$. Schreibe sie als $4\times4$-Tabelle auf und markiere die Ereignisse.</p></div>
+          <div class="hpanel"><h4>Hilfe 2 · Wahrscheinlichkeiten abzählen</h4><p>$P(A)=\frac{8}{16}$, denn die erste Zahl ist 2 oder 4. Für $A\cap C$: Beide Zahlen gerade – oder die erste gerade und die zweite ungerade? Wann ist die Summe gerade?</p></div>
+          <div class="hpanel"><h4>Hilfe 3 · Kriterium</h4><p>Trage $P(A\cap X)$, $P(A\cap\overline X)$ usw. in die Vierfeldertafel ein und prüfe, ob das Feld oben links gleich dem Produkt der beiden Randwerte ist.</p></div>
+        </div>
+        <div class="sol-lock">🔒 Musterlösung – nach Freigabe durch den Lehrer sichtbar.</div>
+        <div class="sol"><div class="sh">✓ Musterlösung · Aufgabe 2</div><div class="sb">
+          <p>Es gibt 16 gleich wahrscheinliche Ergebnisse. $P(A)=P(B)=\frac{8}{16}=\frac12$.</p>
+          <p><strong>(1)</strong> $A\cap B$: beide Zahlen gerade, 4 Ergebnisse.</p>
+          <div class="tw"><table class="vt"><tr><th></th><th>$B$</th><th>$\overline B$</th><th></th></tr><tr><th>$A$</th><td>$\frac14$</td><td>$\frac14$</td><td>$\frac12$</td></tr><tr><th>$\overline A$</th><td>$\frac14$</td><td>$\frac14$</td><td>$\frac12$</td></tr><tr><th></th><td>$\frac12$</td><td>$\frac12$</td><td>$1$</td></tr></table></div>
+          <p>$P(A\cap B)=\frac14=\frac12\cdot\frac12=P(A)\cdot P(B)$ $\Rightarrow$ ${\color{#1a9e5c}\boldsymbol{\text{unabhängig}}}$.</p>
+          <p><strong>(2)</strong> Die Summe ist gerade, wenn beide Zahlen gerade oder beide ungerade sind: $P(C)=\frac{8}{16}=\frac12$. $A\cap C$: beide gerade, $P(A\cap C)=\frac{4}{16}=\frac14$.</p>
+          <div class="tw"><table class="vt"><tr><th></th><th>$C$</th><th>$\overline C$</th><th></th></tr><tr><th>$A$</th><td>$\frac14$</td><td>$\frac14$</td><td>$\frac12$</td></tr><tr><th>$\overline A$</th><td>$\frac14$</td><td>$\frac14$</td><td>$\frac12$</td></tr><tr><th></th><td>$\frac12$</td><td>$\frac12$</td><td>$1$</td></tr></table></div>
+          <p>$P(A\cap C)=\frac14=P(A)\cdot P(C)$ $\Rightarrow$ ${\color{#1a9e5c}\boldsymbol{\text{unabhängig}}}$ – obwohl $C$ von der ersten Zahl „abhängt“.</p>
+          <p><strong>(3)</strong> $D=\{(4,4)\}$, $P(D)=\frac1{16}$; $A\cap D=\{(4,4)\}$, $P(A\cap D)=\frac1{16}$.</p>
+          <div class="tw"><table class="vt"><tr><th></th><th>$D$</th><th>$\overline D$</th><th></th></tr><tr><th>$A$</th><td>$\frac1{16}$</td><td>$\frac7{16}$</td><td>$\frac12$</td></tr><tr><th>$\overline A$</th><td>$0$</td><td>$\frac8{16}$</td><td>$\frac12$</td></tr><tr><th></th><td>$\frac1{16}$</td><td>$\frac{15}{16}$</td><td>$1$</td></tr></table></div>
+          <p>$P(A\cap D)=\frac1{16}\neq\frac1{32}=P(A)\cdot P(D)$ $\Rightarrow$ ${\color{#1a9e5c}\boldsymbol{\text{abhängig}}}$.</p>
+          <p><strong>b)</strong> $$P_A(D)=\frac{1/16}{1/2}={\color{#1a9e5c}\boldsymbol{\frac18}};\qquad P_D(A)=\frac{1/16}{1/16}={\color{#1a9e5c}\boldsymbol{1}}$$
+          Ist die Summe 8, ist die erste Zahl sicher gerade (nämlich 4).</p>
+        </div></div>
+      </div>
+    </article>
+
+    <article class="card s1">
+      <div class="card-head"><h3>Aufgabe 3 · Ziehen ohne Zurücklegen im Baumdiagramm</h3><span class="chev">▾</span></div>
+      <div class="card-body">
+        <div class="task">
+          <p>In einer Urne liegen 4 rote und 6 blaue Kugeln. Es werden nacheinander zwei Kugeln ohne Zurücklegen gezogen.
+          $E$: „Im ersten Zug Rot“, $F$: „Im zweiten Zug Rot“.</p>
+          <p><strong>a)</strong> Zeichnen Sie ein Baumdiagramm. Geben Sie $P_E(F)$ an und berechnen Sie $P(F)$.</p>
+          <p><strong>b)</strong> Untersuchen Sie, ob $E$ und $F$ stochastisch unabhängig sind.</p>
+          <p><strong>c)</strong> Bestimmen Sie $P_F(E)$: Die zweite Kugel ist rot. Mit welcher Wahrscheinlichkeit war auch die erste rot?</p>
+        </div>
+        <div class="assess"><span class="lab">Einschätzung:</span>
+          <button data-v="ok" type="button">✓ Fertig &amp; verstanden</button><button data-v="mid" type="button">~ Noch unsicher</button><button data-v="ask" type="button">? Frage an Lehrer</button></div>
+        <div class="hints">
+          <div class="htitle">Hilfen</div>
+          <div class="htabs"><button type="button">Hilfe 1 · Äste</button><button type="button">Hilfe 2 · P(F)</button><button type="button">Hilfe 3 · Zu c)</button></div>
+          <div class="hpanel"><h4>Hilfe 1 · Bedingte Wahrscheinlichkeiten stehen am Ast</h4><p>Nach einer roten Kugel liegen noch 3 rote und 6 blaue Kugeln in der Urne. Der Ast von $E$ nach $F$ trägt also $P_E(F)=\frac39$.</p></div>
+          <div class="hpanel"><h4>Hilfe 2 · Zwei Pfade</h4><p>$F$ tritt auf den Pfaden „rot–rot“ und „blau–rot“ ein. Pfadregel, dann Summenregel.</p></div>
+          <div class="hpanel"><h4>Hilfe 3 · Formel</h4><p>$P_F(E)=\dfrac{P(F\cap E)}{P(F)}$. Den Zähler kennst du vom Pfad „rot–rot“.</p></div>
+        </div>
+        <div class="sol-lock">🔒 Musterlösung – nach Freigabe durch den Lehrer sichtbar.</div>
+        <div class="sol"><div class="sh">✓ Musterlösung · Aufgabe 3</div><div class="sb">
+          <div class="tree-box" data-tree='{"levels":["1. Zug","2. Zug"],"root":{"c":[{"l":"r","p":"4/10","c":[{"l":"r","p":"3/9"},{"l":"b","p":"6/9"}]},{"l":"b","p":"6/10","c":[{"l":"r","p":"4/9"},{"l":"b","p":"5/9"}]}]},"leaf":"concat","dx":80,"col":{"r":"#c0392b","b":"#2c5f8a"}}'></div>
+          <p><strong>a)</strong> Am Ast von $E$ nach $F$ steht ${\color{#1a9e5c}\boldsymbol{P_E(F)=\frac39=\frac13}}$. Pfad- und Summenregel:
+          $$P(F)=P(rr)+P(br)=\frac{4}{10}\cdot\frac39+\frac{6}{10}\cdot\frac49=\frac{12}{90}+\frac{24}{90}=\frac{36}{90}={\color{#1a9e5c}\boldsymbol{\frac25}}$$</p>
+          <p><strong>b)</strong> $P_E(F)=\frac13\neq\frac25=P(F)$ $\Rightarrow$ ${\color{#1a9e5c}\boldsymbol{\text{nicht unabhängig}}}$. Probe: $P(E\cap F)=\frac{12}{90}=\frac{2}{15}\neq\frac{4}{25}=\frac25\cdot\frac25$.</p>
+          <p><strong>c)</strong> $$P_F(E)=\frac{P(F\cap E)}{P(F)}=\frac{12/90}{36/90}={\color{#1a9e5c}\boldsymbol{\frac13}}$$</p>
+        </div></div>
+      </div>
+    </article>
+  </section>
+
+  <!-- ================= STUFE 2 ================= -->
+  <section class="s2" data-stufe="2">
+    <div class="stufe-head">
+      <span class="stufe-badge">Stufe 2</span>
+      <span class="desc">Erweiterung · zweistufige Experimente, Rückschlüsse, Tests</span>
+    </div>
+
+    <article class="card s2">
+      <div class="card-head"><h3>Aufgabe 4 · Zwei Lostrommeln</h3><span class="chev">▾</span></div>
+      <div class="card-body">
+        <div class="task">
+          <p>In einer roten Lostrommel sind 3 Gewinne und 5 Nieten, in einer blauen Lostrommel 6 Gewinne und 10 Nieten. Durch einen Münzwurf wird eine
+          Trommel ausgewählt und daraus ein Los gezogen.</p>
+          <p><strong>a)</strong> Untersuchen Sie, ob die Ereignisse $E$: „Die rote Trommel wird gewählt.“ und $F$: „Man zieht einen Gewinn.“ stochastisch unabhängig sind.</p>
+          <p><strong>b)</strong> Untersuchen Sie, ob $\overline E$ und $\overline F$ stochastisch unabhängig sind.</p>
+          <p><strong>c)</strong> Ändern Sie die Anzahl der Gewinne in der blauen Trommel so, dass $E$ und $F$ abhängig werden, und berechnen Sie dann $P_F(E)$.</p>
+        </div>
+        <div class="assess"><span class="lab">Einschätzung:</span>
+          <button data-v="ok" type="button">✓ Fertig &amp; verstanden</button><button data-v="mid" type="button">~ Noch unsicher</button><button data-v="ask" type="button">? Frage an Lehrer</button></div>
+        <div class="hints">
+          <div class="htitle">Hilfen</div>
+          <div class="htabs"><button type="button">Hilfe 1 · Baum</button><button type="button">Hilfe 2 · Vergleich</button><button type="button">Hilfe 3 · Zu c)</button></div>
+          <div class="hpanel"><h4>Hilfe 1 · Stufen</h4><p>Stufe 1: Trommel (rot/blau, je $\frac12$), Stufe 2: Gewinn/Niete. Am Ast von $E$ nach $F$ steht $P_E(F)=\frac38$.</p></div>
+          <div class="hpanel"><h4>Hilfe 2 · P(F) berechnen</h4><p>Berechne $P(F)$ mit Pfad- und Summenregel und vergleiche mit $P_E(F)$. Kürze die Brüche!</p></div>
+          <div class="hpanel"><h4>Hilfe 3 · Wann abhängig?</h4><p>Unabhängigkeit liegt hier vor, weil der Gewinnanteil in beiden Trommeln gleich ist. Wähle z. B. 2 statt 6 Gewinne in der blauen Trommel (bei 16 Losen insgesamt).</p></div>
+        </div>
+        <div class="sol-lock">🔒 Musterlösung – nach Freigabe durch den Lehrer sichtbar.</div>
+        <div class="sol"><div class="sh">✓ Musterlösung · Aufgabe 4</div><div class="sb">
+          <div class="tree-box" data-tree='{"levels":["Trommel","Los"],"root":{"c":[{"l":"rot","p":"1/2","c":[{"l":"G","p":"3/8"},{"l":"N","p":"5/8"}]},{"l":"bl","p":"1/2","c":[{"l":"G","p":"6/16"},{"l":"N","p":"10/16"}]}]},"leaf":"tuple","dx":90}'></div>
+          <p><strong>a)</strong> $P_E(F)=\frac38$. Pfad- und Summenregel: $$P(F)=\frac12\cdot\frac38+\frac12\cdot\frac{6}{16}=\frac{3}{16}+\frac{3}{16}=\frac38.$$
+          Also $P_E(F)=P(F)=\frac38$ $\Rightarrow$ ${\color{#1a9e5c}\boldsymbol{\text{unabhängig}}}$. Grund: In beiden Trommeln ist der Gewinnanteil $\frac38$.</p>
+          <p><strong>b)</strong> $P(\overline E\cap\overline F)=\frac12\cdot\frac{10}{16}=\frac{5}{16}$ und $P(\overline E)\cdot P(\overline F)=\frac12\cdot\frac58=\frac5{16}$
+          $\Rightarrow$ ${\color{#1a9e5c}\boldsymbol{\text{ebenfalls unabhängig}}}$.</p>
+          <p><strong>c)</strong> Z. B. 2 Gewinne und 14 Nieten in der blauen Trommel: $P(F)=\frac12\cdot\frac38+\frac12\cdot\frac2{16}=\frac3{16}+\frac1{16}=\frac14\neq\frac38=P_E(F)$ $\Rightarrow$ abhängig.
+          $$P_F(E)=\frac{P(E\cap F)}{P(F)}=\frac{3/16}{1/4}={\color{#1a9e5c}\boldsymbol{\frac34}}$$
+          (Jede Anzahl außer 6 Gewinnen führt zur Abhängigkeit.)</p>
+        </div></div>
+      </div>
+    </article>
+
+    <article class="card s2">
+      <div class="card-head"><h3>Aufgabe 5 · Wer hat das Abo?</h3><span class="chev">▾</span></div>
+      <div class="card-body">
+        <div class="task">
+          <p>In einer Jahrgangsstufe sind 45 Mädchen und 35 Jungen. Zwei Drittel der Mädchen und drei Siebtel der Jungen haben ein Abo für das Schwimmbad.
+          Herr Kaya trifft im Schwimmbad zufällig eine Person der Stufe mit Abo.</p>
+          <p>Bestimmen Sie die Wahrscheinlichkeit dafür, dass es sich um ein Mädchen handelt.</p>
+        </div>
+        <div class="assess"><span class="lab">Einschätzung:</span>
+          <button data-v="ok" type="button">✓ Fertig &amp; verstanden</button><button data-v="mid" type="button">~ Noch unsicher</button><button data-v="ask" type="button">? Frage an Lehrer</button></div>
+        <div class="hints">
+          <div class="htitle">Hilfen</div>
+          <div class="htabs"><button type="button">Hilfe 1 · Was ist gesucht?</button><button type="button">Hilfe 2 · Baum oder Tafel</button><button type="button">Hilfe 3 · Rechnen</button></div>
+          <div class="hpanel"><h4>Hilfe 1 · Bedingung erkennen</h4><p>Man weiß: Die Person hat ein Abo ($A$). Gesucht ist $P_A(M)$ – nicht $P_M(A)$! Die Angabe „zwei Drittel der Mädchen“ ist dagegen $P_M(A)$.</p></div>
+          <div class="hpanel"><h4>Hilfe 2 · Baumdiagramm</h4><p>Stufe 1: Mädchen ($\frac{45}{80}$) / Junge ($\frac{35}{80}$). Stufe 2: Abo / kein Abo. Alternativ: Wie viele Mädchen und Jungen haben ein Abo?</p></div>
+          <div class="hpanel"><h4>Hilfe 3 · Formel</h4><p>$P_A(M)=\dfrac{P(M\cap A)}{P(A)}$; $P(A)$ erhältst du mit der Summenregel über beide Pfade mit Abo.</p></div>
+        </div>
+        <div class="sol-lock">🔒 Musterlösung – nach Freigabe durch den Lehrer sichtbar.</div>
+        <div class="sol"><div class="sh">✓ Musterlösung · Aufgabe 5</div><div class="sb">
+          <div class="tree-box" data-tree='{"levels":["Person","Abo"],"root":{"c":[{"l":"M","p":"45/80","c":[{"l":"A","p":"2/3"},{"l":"Ā","p":"1/3"}]},{"l":"J","p":"35/80","c":[{"l":"A","p":"3/7"},{"l":"Ā","p":"4/7"}]}]},"leaf":"tuple","dx":90}'></div>
+          <p>Pfadregel: $P(M\cap A)=\frac{45}{80}\cdot\frac23=\frac{30}{80}$, $P(J\cap A)=\frac{35}{80}\cdot\frac37=\frac{15}{80}$. Summenregel: $P(A)=\frac{45}{80}$.</p>
+          <p>$$P_A(M)=\frac{P(M\cap A)}{P(A)}=\frac{30/80}{45/80}=\frac{30}{45}={\color{#1a9e5c}\boldsymbol{\frac23}}\approx66{,}7\,\%$$</p>
+          <button class="alt-btn" type="button">➕ Alternativer Lösungsweg</button>
+          <div class="alt"><div class="ah">Alternative · über Anzahlen</div>
+            <p>30 Mädchen ($\frac23$ von 45) und 15 Jungen ($\frac37$ von 35) haben ein Abo, zusammen 45. Unter den 45 Personen mit Abo sind 30 Mädchen: $\frac{30}{45}=\frac23$.</p></div>
+        </div></div>
+      </div>
+    </article>
+
+    <article class="card s2">
+      <div class="card-head"><h3>Aufgabe 6 · Ein medizinischer Schnelltest</h3><span class="chev">▾</span></div>
+      <div class="card-body">
+        <div class="task">
+          <p>Eine Krankheit tritt bei $2\,\%$ der Bevölkerung auf. Ein Schnelltest zeigt bei Erkrankten in $95\,\%$ der Fälle ein positives Ergebnis ($+$),
+          bei Gesunden fälschlicherweise in $4\,\%$ der Fälle.</p>
+          <p><strong>a)</strong> Erstellen Sie ein Baumdiagramm und eine Vierfeldertafel.</p>
+          <p><strong>b)</strong> Berechnen Sie die Wahrscheinlichkeit, dass eine Person (1) mit positivem Testergebnis krank ist, (2) mit negativem Testergebnis gesund ist.</p>
+          <p><strong>c)</strong> Beurteilen Sie die Aussagekraft eines positiven Testergebnisses.</p>
+        </div>
+        <div class="assess"><span class="lab">Einschätzung:</span>
+          <button data-v="ok" type="button">✓ Fertig &amp; verstanden</button><button data-v="mid" type="button">~ Noch unsicher</button><button data-v="ask" type="button">? Frage an Lehrer</button></div>
+        <div class="hints">
+          <div class="htitle">Hilfen</div>
+          <div class="htabs"><button type="button">Hilfe 1 · Bedingte Angaben</button><button type="button">Hilfe 2 · Tafel</button><button type="button">Hilfe 3 · Gesuchtes</button></div>
+          <div class="hpanel"><h4>Hilfe 1 · Welche Angaben sind bedingt?</h4><p>$P(K)=0{,}02$. „Bei Erkrankten in 95 % positiv“ bedeutet $P_K(+)=0{,}95$, entsprechend $P_{\overline K}(+)=0{,}04$.</p></div>
+          <div class="hpanel"><h4>Hilfe 2 · Felder der Tafel</h4><p>$P(K\cap+)=0{,}02\cdot0{,}95$, $P(\overline K\cap+)=0{,}98\cdot0{,}04$. Die übrigen Felder ergänzt du über die Randsummen.</p></div>
+          <div class="hpanel"><h4>Hilfe 3 · Bedingung „positiv“</h4><p>Gesucht in (1) ist $P_+(K)=\dfrac{P(K\cap+)}{P(+)}$, in (2) $P_-(\overline K)$.</p></div>
+        </div>
+        <div class="sol-lock">🔒 Musterlösung – nach Freigabe durch den Lehrer sichtbar.</div>
+        <div class="sol"><div class="sh">✓ Musterlösung · Aufgabe 6</div><div class="sb">
+          <div class="tree-box" data-tree='{"levels":["Zustand","Test"],"root":{"c":[{"l":"K","p":"0,02","c":[{"l":"+","p":"0,95"},{"l":"−","p":"0,05"}]},{"l":"K̄","p":"0,98","c":[{"l":"+","p":"0,04"},{"l":"−","p":"0,96"}]}]},"leaf":"tuple","dx":96}'></div>
+          <div class="tw"><table class="vt">
+            <tr><th></th><th>krank $K$</th><th>gesund $\overline K$</th><th></th></tr>
+            <tr><th>$+$</th><td>$0{,}019$</td><td>$0{,}0392$</td><td>$0{,}0582$</td></tr>
+            <tr><th>$-$</th><td>$0{,}001$</td><td>$0{,}9408$</td><td>$0{,}9418$</td></tr>
+            <tr><th></th><td>$0{,}02$</td><td>$0{,}98$</td><td>$1$</td></tr>
+          </table></div>
+          <p><strong>b)</strong> (1) $$P_+(K)=\frac{P(K\cap+)}{P(+)}=\frac{0{,}019}{0{,}0582}\approx{\color{#1a9e5c}\boldsymbol{0{,}326=32{,}6\,\%}}$$</p>
+          <p>(2) $$P_-(\overline K)=\frac{P(\overline K\cap-)}{P(-)}=\frac{0{,}9408}{0{,}9418}\approx{\color{#1a9e5c}\boldsymbol{0{,}999=99{,}9\,\%}}$$</p>
+          <p><strong>c)</strong> Ein positives Ergebnis bedeutet nur zu etwa einem Drittel, dass die Person wirklich krank ist: Weil die Krankheit selten ist,
+          gibt es viel mehr falsch-positive ($3{,}92\,\%$ der Bevölkerung) als richtig-positive Tests ($1{,}9\,\%$). Ein positiver Test sollte durch einen
+          zweiten Test überprüft werden. Ein negatives Ergebnis ist dagegen sehr zuverlässig.</p>
+        </div></div>
+      </div>
+    </article>
+  </section>
+
+  <!-- ================= STUFE 3 ================= -->
+  <section class="s3" data-stufe="3">
+    <div class="stufe-head">
+      <span class="stufe-badge">Stufe 3</span>
+      <span class="desc">Vertiefung · allgemeine Aussagen, Parameter, Beweise</span>
+    </div>
+
+    <article class="card s3">
+      <div class="card-head"><h3>Aufgabe 7 · Gilt immer – gilt nie – es kommt darauf an</h3><span class="chev">▾</span></div>
+      <div class="card-body">
+        <div class="task">
+          <p>Untersuchen Sie, ob die Aussage immer gilt, nie stimmt oder nur in bestimmten Fällen richtig ist. Geben Sie gegebenenfalls die Bedingungen an.
+          Es sei stets $P(E)>0$ und $P(F)>0$.</p>
+          <p><strong>a)</strong> Für zwei Ereignisse gilt $P_E(F)\le P(F)$.</p>
+          <p><strong>b)</strong> Wenn $E\subseteq F$, dann gilt $P_E(F)=1$.</p>
+          <p><strong>c)</strong> Wenn $E\cap F=\{\,\}$, dann sind $E$ und $F$ stochastisch unabhängig.</p>
+          <p><strong>d)</strong> $P_E(F)+P_E(\overline F)=1$.</p>
+        </div>
+        <div class="assess"><span class="lab">Einschätzung:</span>
+          <button data-v="ok" type="button">✓ Fertig &amp; verstanden</button><button data-v="mid" type="button">~ Noch unsicher</button><button data-v="ask" type="button">? Frage an Lehrer</button></div>
+        <div class="hints">
+          <div class="htitle">Hilfen</div>
+          <div class="htabs"><button type="button">Hilfe 1 · Beispiele</button><button type="button">Hilfe 2 · Zu b) und c)</button><button type="button">Hilfe 3 · Zu d)</button></div>
+          <div class="hpanel"><h4>Hilfe 1 · Mit Beispielen testen</h4><p>Suche Gegenbeispiele in den Beispielen und Aufgaben dieser Seite. In Beispiel 2 war $P_E(F)=\frac12>\frac16=P(F)$.</p></div>
+          <div class="hpanel"><h4>Hilfe 2 · Mengendiagramm</h4><p>Wenn $E\subseteq F$: Was ist dann $E\cap F$? Wenn $E\cap F=\{\,\}$: Was ist $P(E\cap F)$, und was ist $P(E)\cdot P(F)$?</p></div>
+          <div class="hpanel"><h4>Hilfe 3 · Formel einsetzen</h4><p>Schreibe beide bedingten Wahrscheinlichkeiten als Bruch mit dem Nenner $P(E)$ und addiere. Was ergibt $P(E\cap F)+P(E\cap\overline F)$?</p></div>
+        </div>
+        <div class="sol-lock">🔒 Musterlösung – nach Freigabe durch den Lehrer sichtbar.</div>
+        <div class="sol"><div class="sh">✓ Musterlösung · Aufgabe 7</div><div class="sb">
+          <p><strong>a)</strong> ${\color{#1a9e5c}\boldsymbol{\text{Es kommt darauf an.}}}$ In Beispiel 2 ist $P_E(F)=\frac12>\frac16=P(F)$, in Aufgabe 3 ist $P_E(F)=\frac13<\frac25=P(F)$.
+          Gleichheit gilt genau bei Unabhängigkeit.</p>
+          <p><strong>b)</strong> ${\color{#1a9e5c}\boldsymbol{\text{Gilt immer.}}}$ Aus $E\subseteq F$ folgt $E\cap F=E$, also $P_E(F)=\frac{P(E)}{P(E)}=1$.</p>
+          <p><strong>c)</strong> ${\color{#1a9e5c}\boldsymbol{\text{Gilt nie}}}$ (unter der Voraussetzung $P(E),P(F)>0$): $P(E\cap F)=P(\{\,\})=0$, aber $P(E)\cdot P(F)>0$.
+          Unvereinbare Ereignisse sind sogar stark abhängig: Tritt $E$ ein, kann $F$ nicht mehr eintreten.</p>
+          <p><strong>d)</strong> ${\color{#1a9e5c}\boldsymbol{\text{Gilt immer.}}}$
+          $$P_E(F)+P_E(\overline F)=\frac{P(E\cap F)+P(E\cap\overline F)}{P(E)}=\frac{P(E)}{P(E)}=1,$$ denn $E\cap F$ und $E\cap\overline F$ ergeben zusammen $E$.</p>
+        </div></div>
+      </div>
+    </article>
+
+    <article class="card s3">
+      <div class="card-head"><h3>Aufgabe 8 · Allgemeine Urne</h3><span class="chev">▾</span></div>
+      <div class="card-body">
+        <div class="task">
+          <p>Gegeben sind zwei natürliche Zahlen $x$ und $y$, beide größer als 0. Aus einem Gefäß mit $x$ roten und $y$ blauen Kugeln werden nacheinander zwei Kugeln
+          zufällig gezogen, einmal mit, einmal ohne Zurücklegen. Untersuchen Sie für beide Ziehungsvarianten die Ereignisse $E$: „Im ersten Zug Rot“ und
+          $F$: „Im zweiten Zug Rot“ auf stochastische Unabhängigkeit.</p>
+        </div>
+        <div class="assess"><span class="lab">Einschätzung:</span>
+          <button data-v="ok" type="button">✓ Fertig &amp; verstanden</button><button data-v="mid" type="button">~ Noch unsicher</button><button data-v="ask" type="button">? Frage an Lehrer</button></div>
+        <div class="hints">
+          <div class="htitle">Hilfen</div>
+          <div class="htabs"><button type="button">Hilfe 1 · Baum mit Variablen</button><button type="button">Hilfe 2 · P(F) ohne Zurücklegen</button><button type="button">Hilfe 3 · Vergleich</button></div>
+          <div class="hpanel"><h4>Hilfe 1 · Äste mit x und y</h4><p>Erster Zug: $P(E)=\frac{x}{x+y}$. Ohne Zurücklegen nach Rot: $P_E(F)=\frac{x-1}{x+y-1}$, nach Blau: $P_{\overline E}(F)=\frac{x}{x+y-1}$.</p></div>
+          <div class="hpanel"><h4>Hilfe 2 · Summenregel</h4><p>$P(F)=\frac{x}{x+y}\cdot\frac{x-1}{x+y-1}+\frac{y}{x+y}\cdot\frac{x}{x+y-1}$. Bringe auf einen Bruch und klammere $x$ im Zähler aus.</p></div>
+          <div class="hpanel"><h4>Hilfe 3 · Ist P_E(F) = P(F)?</h4><p>Setze $\frac{x-1}{x+y-1}=\frac{x}{x+y}$ an und multipliziere über Kreuz. Was folgt für $y$?</p></div>
+        </div>
+        <div class="sol-lock">🔒 Musterlösung – nach Freigabe durch den Lehrer sichtbar.</div>
+        <div class="sol"><div class="sh">✓ Musterlösung · Aufgabe 8</div><div class="sb">
+          <p><strong>Mit Zurücklegen:</strong> Beim zweiten Zug ist die Urne unverändert, also $P_E(F)=\frac{x}{x+y}=P(F)$ $\Rightarrow$ ${\color{#1a9e5c}\boldsymbol{\text{stets unabhängig}}}$.</p>
+          <p><strong>Ohne Zurücklegen:</strong> Mit Pfad- und Summenregel
+          $$P(F)=\frac{x}{x+y}\cdot\frac{x-1}{x+y-1}+\frac{y}{x+y}\cdot\frac{x}{x+y-1}=\frac{x\,(x-1+y)}{(x+y)(x+y-1)}=\frac{x}{x+y}.$$</p>
+          <p>Am Ast steht $P_E(F)=\frac{x-1}{x+y-1}$. Aus $\frac{x-1}{x+y-1}=\frac{x}{x+y}$ folgt $(x-1)(x+y)=x(x+y-1)$, also $x^2+xy-x-y=x^2+xy-x$, d. h. $y=0$.
+          Wegen $y>0$ ist das unmöglich: $P_E(F)&lt;P(F)$ $\Rightarrow$ ${\color{#1a9e5c}\boldsymbol{\text{stets abhängig}}}$.</p>
+          <p>Bemerkenswert: Ohne Zurücklegen ist $P(F)=\frac{x}{x+y}$ trotzdem genauso groß wie $P(E)$.</p>
+        </div></div>
+      </div>
+    </article>
+
+    <article class="card s3">
+      <div class="card-head"><h3>Aufgabe 9 · Zwei Eigenschaften beweisen</h3><span class="chev">▾</span></div>
+      <div class="card-body">
+        <div class="task">
+          <p>Zeigen Sie, dass für zwei Ereignisse $E$ und $F$ mit $P(E)>0$ und $P(F)>0$ gilt:</p>
+          <p><strong>a)</strong> $P_E(\overline F)=\dfrac{P(E\setminus F)}{P(E)}$</p>
+          <p><strong>b)</strong> Wenn $P_E(F)=P(F)$, dann $P_F(E)=P(E)$.</p>
+          <p><strong>c)</strong> Wenn $E$ und $F$ unabhängig sind, dann sind auch $E$ und $\overline F$ unabhängig.</p>
+        </div>
+        <div class="assess"><span class="lab">Einschätzung:</span>
+          <button data-v="ok" type="button">✓ Fertig &amp; verstanden</button><button data-v="mid" type="button">~ Noch unsicher</button><button data-v="ask" type="button">? Frage an Lehrer</button></div>
+        <div class="hints">
+          <div class="htitle">Hilfen</div>
+          <div class="htabs"><button type="button">Hilfe 1 · Zu a)</button><button type="button">Hilfe 2 · Zu b)</button><button type="button">Hilfe 3 · Zu c)</button></div>
+          <div class="hpanel"><h4>Hilfe 1 · Mengen vergleichen</h4><p>Erinnere dich an Abschnitt 2: $E\setminus F=E\cap\overline F$. Setze in die Formel für $P_E(\overline F)$ ein.</p></div>
+          <div class="hpanel"><h4>Hilfe 2 · Über die Produktformel</h4><p>$P_E(F)=P(F)$ ist gleichbedeutend mit $P(E\cap F)=P(E)\cdot P(F)$. Setze das in $P_F(E)=\frac{P(E\cap F)}{P(F)}$ ein.</p></div>
+          <div class="hpanel"><h4>Hilfe 3 · Zerlegen</h4><p>$P(E\cap\overline F)=P(E)-P(E\cap F)$, denn $E$ zerfällt in $E\cap F$ und $E\cap\overline F$. Klammere dann $P(E)$ aus.</p></div>
+        </div>
+        <div class="sol-lock">🔒 Musterlösung – nach Freigabe durch den Lehrer sichtbar.</div>
+        <div class="sol"><div class="sh">✓ Musterlösung · Aufgabe 9</div><div class="sb">
+          <p><strong>a)</strong> Nach der Formel ist $P_E(\overline F)=\frac{P(E\cap\overline F)}{P(E)}$. Da $E\cap\overline F$ alle Ergebnisse enthält, die in $E$, aber nicht in $F$ liegen,
+          gilt $E\cap\overline F=E\setminus F$ und damit ${\color{#1a9e5c}\boldsymbol{P_E(\overline F)=\frac{P(E\setminus F)}{P(E)}}}$.</p>
+          <p><strong>b)</strong> Aus $P_E(F)=P(F)$ folgt mit der Pfadregel $P(E\cap F)=P(E)\cdot P_E(F)=P(E)\cdot P(F)$. Damit
+          $$P_F(E)=\frac{P(E\cap F)}{P(F)}=\frac{P(E)\cdot P(F)}{P(F)}={\color{#1a9e5c}\boldsymbol{P(E)}}.$$
+          Unabhängigkeit ist also eine gegenseitige Beziehung.</p>
+          <p><strong>c)</strong> $E$ zerfällt in $E\cap F$ und $E\cap\overline F$, also
+          $$P(E\cap\overline F)=P(E)-P(E\cap F)=P(E)-P(E)\cdot P(F)=P(E)\cdot(1-P(F))={\color{#1a9e5c}\boldsymbol{P(E)\cdot P(\overline F)}}.$$</p>
+        </div></div>
+      </div>
+    </article>
+  </section>
+
+</div>
+
+<footer class="bot">
+  Mathematik Oberstufe LK · Q2 · Kapitel VIII · Daten und Wahrscheinlichkeit<br>
+  <a href="../">← Zurück zu Kapitel VIII.3</a> · <a href="../../index.html#kap-viii">Stochastik-Übersicht</a>
+</footer>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+
+  /* ---------- Baumdiagramme (SVG) ---------- */
+  var NS='http://www.w3.org/2000/svg';
+  function mk(tag,a,p){ var e=document.createElementNS(NS,tag); for(var k in a) e.setAttribute(k,a[k]); if(p) p.appendChild(e); return e; }
+  function txt(p,x,y,s,a){ var t=mk('text',Object.assign({x:x,y:y,'text-anchor':'middle','font-family':'inherit'},a||{}),p); t.textContent=s; return t; }
+  function probLabel(g,x,y,s){
+    if (s.indexOf('/')>0){
+      var q=s.split('/'); var w=Math.max(q[0].length,q[1].length)*7+4;
+      mk('rect',{x:x-w/2-2,y:y-14,width:w+4,height:29,fill:'#fff',opacity:.9},g);
+      txt(g,x,y-3,q[0],{'font-size':12});
+      mk('line',{x1:x-w/2,x2:x+w/2,y1:y+1,y2:y+1,stroke:'#1c1f26','stroke-width':1.1},g);
+      txt(g,x,y+13,q[1],{'font-size':12});
+    } else {
+      var w2=s.length*7+6; mk('rect',{x:x-w2/2,y:y-9,width:w2,height:17,fill:'#fff',opacity:.9},g);
+      txt(g,x,y+4,s,{'font-size':12});
+    }
+  }
+  function buildFromStages(st,lv){
+    if (lv>=st.length) return [];
+    return st[lv].map(function(b){ return {l:b[0],p:b[1],c:buildFromStages(st,lv+1)}; });
+  }
+  document.querySelectorAll('[data-tree]').forEach(function(box){
+    var s=JSON.parse(box.getAttribute('data-tree'));
+    var root = s.root ? s.root : {c:buildFromStages(s.stages,0)};
+    var depth=0, leaves=[];
+    (function walk(n,d,path){ n.d=d; n.path=path; if(!n.c||!n.c.length){ leaves.push(n); depth=Math.max(depth,d); } else n.c.forEach(function(c){ walk(c,d+1,path.concat([c.l])); }); })(root,0,[]);
+    var dx=s.dx||60, dy=s.dy||78, left=78, top=18;
+    var tupleLabels = s.leaf==='tuple';
+    var W=left+leaves.length*dx+10, H=top+depth*dy+44;
+    var svg=mk('svg',{width:W,height:H,viewBox:'0 0 '+W+' '+H,role:'img','aria-label':'Baumdiagramm'},null);
+    leaves.forEach(function(n,i){ n.x=left+dx*(i+0.5); });
+    (function place(n){ if(n.c&&n.c.length){ n.c.forEach(place); n.x=(n.c[0].x+n.c[n.c.length-1].x)/2; } n.y=top+n.d*dy; })(root);
+    for (var lv=1; lv<=depth; lv++){ if (s.levels && s.levels[lv-1]) txt(svg,4,top+lv*dy+4,s.levels[lv-1],{'text-anchor':'start','font-size':12,fill:'#5c6472'}); }
+    var hl=s.hl||[];
+    var gE=mk('g',{},svg), gL=mk('g',{},svg), gN=mk('g',{},svg);
+    var col=s.col||{};
+    (function draw(n){
+      if(!n.c) return;
+      n.c.forEach(function(c,idx){
+        var on = hl.length && c.path.length<=hl.length && c.path.every(function(v,k){ return v===hl[k]; });
+        var y1=n.y+(n.d===0?3:12), y2=c.y-12;
+        mk('line',{x1:n.x,y1:y1,x2:c.x,y2:y2,stroke:on?'#c0392b':'#2c5f8a','stroke-width':on?2.6:1.5},gE);
+        var mx=(n.x+c.x)/2, my=(y1+y2)/2;
+        var side = n.c.length===1 ? 1 : (idx < (n.c.length-1)/2 ? -1 : (idx > (n.c.length-1)/2 ? 1 : 0));
+        var off = side===0 ? 0 : side*Math.min(20, Math.abs(c.x-n.x)*0.35+10);
+        probLabel(gL,mx+off,my,c.p);
+        draw(c);
+      });
+    })(root);
+    (function nodes(n){
+      if (n.d===0){ mk('circle',{cx:n.x,cy:n.y,r:3.5,fill:'#1c1f26'},gN); }
+      else {
+        var c=col[n.l]||'#1c1f26';
+        mk('circle',{cx:n.x,cy:n.y,r:11.5,fill:'#fff',stroke:c,'stroke-width':1.6},gN);
+        txt(gN,n.x,n.y+4.5,n.l,{'font-size':n.l.length>2?10:13,'font-weight':700,fill:c});
+      }
+      if (n.c && n.c.length) n.c.forEach(nodes);
+      else if (n.d>0){
+        var lab = tupleLabels ? '('+n.path.join(', ')+')' : n.path.join('');
+        txt(gN,n.x,n.y+30,lab,{'font-size':tupleLabels&&n.path.length>2?10.5:12,fill:'#1c1f26'});
+      }
+    })(root);
+    box.appendChild(svg);
+  });
+
+  /* ---------- Glücksräder ---------- */
+  document.querySelectorAll('[data-wheel]').forEach(function(box){
+    var s=JSON.parse(box.getAttribute('data-wheel')), R=(s.size||160)/2, c=R+6, W=2*c;
+    var svg=mk('svg',{width:W,height:W,viewBox:'0 0 '+W+' '+W,role:'img','aria-label':'Glücksrad'},null);
+    var a=-Math.PI/2;
+    s.s.forEach(function(sec){
+      var a2=a+sec[0]*2*Math.PI, large=sec[0]>0.5?1:0;
+      var x1=c+R*Math.cos(a), y1=c+R*Math.sin(a), x2=c+R*Math.cos(a2), y2=c+R*Math.sin(a2);
+      mk('path',{d:'M'+c+','+c+' L'+x1+','+y1+' A'+R+','+R+' 0 '+large+' 1 '+x2+','+y2+' Z',fill:sec[1],stroke:'#1c1f26','stroke-width':s.lines?1:1.2},svg);
+      var am=(a+a2)/2, rr=R*(sec[0]<0.2?0.68:0.55);
+      txt(svg,c+rr*Math.cos(am),c+rr*Math.sin(am)+4,sec[2],{'font-size':sec[2].length>2?11:13,'font-weight':700,fill:'#1c1f26'});
+      a=a2;
+    });
+    mk('circle',{cx:c,cy:c,r:R,fill:'none',stroke:'#1c1f26','stroke-width':1.6},svg);
+    mk('line',{x1:c,y1:c,x2:c+R*0.45,y2:c-R*0.45,stroke:'#1c1f26','stroke-width':3,'stroke-linecap':'round'},svg);
+    mk('circle',{cx:c,cy:c,r:4,fill:'#1c1f26'},svg);
+    box.appendChild(svg);
+  });
+
+  /* ---------- KaTeX ---------- */
+  function render(){
+    if (window.renderMathInElement) {
+      renderMathInElement(document.body, {
+        delimiters: [ {left:'$$', right:'$$', display:true}, {left:'$', right:'$', display:false} ],
+        throwOnError:false
+      });
+    }
+  }
+  if (window.renderMathInElement) render(); else window.addEventListener('load', render);
+
+  /* ---------- Karten auf/zu ---------- */
+  document.querySelectorAll('.card-head').forEach(function(h){
+    h.addEventListener('click', function(){ h.parentElement.classList.toggle('open'); });
+  });
+
+  /* ---------- Hilfe-Reiter ---------- */
+  document.querySelectorAll('.hints').forEach(function(box){
+    var tabs=box.querySelectorAll('.htabs button'), panels=box.querySelectorAll('.hpanel');
+    tabs.forEach(function(tab,i){
+      tab.addEventListener('click', function(){
+        var wasOn=tab.classList.contains('on');
+        tabs.forEach(function(t){ t.classList.remove('on'); });
+        panels.forEach(function(p){ p.classList.remove('on'); });
+        if (!wasOn){ tab.classList.add('on'); if (panels[i]) panels[i].classList.add('on'); }
+      });
+    });
+  });
+
+  /* ---------- Selbsteinschätzung ---------- */
+  document.querySelectorAll('.assess').forEach(function(box){
+    var btns=box.querySelectorAll('button');
+    btns.forEach(function(b){
+      b.addEventListener('click', function(){
+        var wasOn=b.classList.contains('on');
+        btns.forEach(function(x){ x.classList.remove('on'); });
+        if (!wasOn) b.classList.add('on');
+      });
+    });
+  });
+
+  /* ---------- Filter ---------- */
+  document.querySelectorAll('.filters button').forEach(function(b){
+    b.addEventListener('click', function(){
+      document.querySelectorAll('.filters button').forEach(function(x){ x.classList.remove('on'); });
+      b.classList.add('on');
+      var f=b.dataset.f;
+      document.querySelectorAll('section[data-stufe]').forEach(function(sec){
+        sec.style.display=(f==='all' || sec.dataset.stufe===f) ? '' : 'none';
+      });
+    });
+  });
+
+  /* ---------- Alternative Lösungswege ---------- */
+  document.querySelectorAll('.alt-btn').forEach(function(b){
+    var label=b.textContent;
+    b.addEventListener('click', function(){
+      var alt=b.nextElementSibling; var on=alt.classList.toggle('shown');
+      b.textContent = on ? '➖ Alternativen Weg ausblenden' : label;
+    });
+  });
+
+  /* ---------- Musterlösungen freischalten (pro Aufgabe einzeln) ---------- */
+  var CODE='MATHE', input=document.getElementById('code'), msg=document.getElementById('msg');
+  function activateLocks(){
+    document.querySelectorAll('.sol-lock').forEach(function(lock){ lock.classList.add('active'); lock.textContent='👁 Musterlösung anzeigen'; });
+  }
+  function tryUnlock(){
+    var val=(input.value||'').trim().toUpperCase();
+    if (val===CODE){
+      document.body.classList.add('unlocked');
+      msg.textContent='✓ freigeschaltet – Musterlösungen jetzt einzeln aufklappbar'; msg.className='msg ok';
+      activateLocks();
+    } else { msg.textContent='✗ Code stimmt nicht'; msg.className='msg bad'; }
+  }
+  document.getElementById('btn-unlock').addEventListener('click', tryUnlock);
+  input.addEventListener('keydown', function(e){ if (e.key==='Enter') tryUnlock(); });
+  document.querySelectorAll('.sol-lock').forEach(function(lock){
+    lock.addEventListener('click', function(){
+      if (!document.body.classList.contains('unlocked')) return;
+      var sol=lock.nextElementSibling;
+      if (!sol || !sol.classList.contains('sol')) return;
+      var showing=sol.classList.toggle('shown');
+      lock.textContent = showing ? '🙈 Musterlösung wieder ausblenden' : '👁 Musterlösung anzeigen';
+      if (showing) sol.scrollIntoView({behavior:'smooth', block:'nearest'});
+    });
+  });
+
+  /* Erste Karte jedes Abschnitts geöffnet starten */
+  document.querySelectorAll('section[data-stufe]').forEach(function(sec){
+    var first=sec.querySelector('.card'); if (first) first.classList.add('open');
+  });
+});
+</script>
+
+</body>
+</html>
