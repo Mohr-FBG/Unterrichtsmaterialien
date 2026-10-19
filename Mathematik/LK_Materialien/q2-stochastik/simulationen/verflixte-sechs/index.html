@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Die verflixte 6 · Simulation · LK Q2 Stochastik</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,400;0,600;1,400&display=swap">
+<style>
+  :root {
+    --gold:#b87500; --gold-pale:#fdf3dc;
+    --bg:#f5f4f0; --surface:#ffffff; --surface-2:#faf9f6;
+    --border:#ddd8cc; --text:#1c1a16; --muted:#6b6456;
+    --link:#2c5f8a; --link-pale:#e5eef7;
+    --win:#1a7a4c; --win-pale:#e3f3ea;
+    --suit-red:#c0392b; --suit-black:#1c1a16;
+    --rE:#f6d9d4; --rB:#e3d4f0; --rF:#d6e6f5; --rO:#f1efe9;
+    --sE:#c0392b; --sF:#2c5f8a;
+    --hl:#e8a800;
+    --r:6px;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --gold:#d4a030; --gold-pale:#2a2010;
+      --bg:#1a1814; --surface:#242018; --surface-2:#2a251c;
+      --border:#38332a; --text:#ede8de; --muted:#9e9482;
+      --link:#6a9fd8; --link-pale:#0f1e30;
+      --win:#3fbf82; --win-pale:#0f2a1c;
+      --suit-red:#c0392b; --suit-black:#1c1a16;
+      --rE:#3d2420; --rB:#33263f; --rF:#1d2d3f; --rO:#2a251c;
+      --sE:#ef6b5b; --sF:#6a9fd8;
+      --hl:#e8b830;
+    }
+  }
+  :root[data-theme="dark"] {
+    --gold:#d4a030; --gold-pale:#2a2010;
+    --bg:#1a1814; --surface:#242018; --surface-2:#2a251c;
+    --border:#38332a; --text:#ede8de; --muted:#9e9482;
+    --link:#6a9fd8; --link-pale:#0f1e30;
+    --win:#3fbf82; --win-pale:#0f2a1c;
+    --rE:#3d2420; --rB:#33263f; --rF:#1d2d3f; --rO:#2a251c;
+    --sE:#ef6b5b; --sF:#6a9fd8;
+    --hl:#e8b830;
+  }
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;font-size:16px;line-height:1.55;min-height:100vh}
+  button,select,input{font:inherit;color:inherit}
+
+  .topbar{background:var(--surface);border-bottom:1px solid var(--border);padding:0 20px}
+  .topbar-inner{max-width:960px;margin:0 auto;min-height:46px;display:flex;flex-wrap:wrap;align-items:center;gap:6px;font-size:.82rem;color:var(--muted)}
+  .topbar-inner a{color:var(--link);text-decoration:none}
+  .topbar-inner a:hover{text-decoration:underline}
+  .sep{opacity:.45}
+  header.page-head{background:var(--surface);border-bottom:3px solid var(--link);padding:28px 20px 24px;margin-bottom:28px}
+  header.page-head .inner{max-width:960px;margin:0 auto}
+  .head-eyebrow{font-size:.78rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--link);margin-bottom:6px}
+  h1{font-family:"Crimson Pro",Georgia,serif;font-size:2.2rem;font-weight:600;line-height:1.15}
+  header.page-head p{font-size:.95rem;color:var(--muted);margin-top:6px;max-width:720px}
+
+  .wrap{max-width:960px;margin:0 auto;padding:0 16px 80px}
+  .panel{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:20px;margin-bottom:24px}
+  .panel-head{display:flex;align-items:baseline;gap:10px;margin-bottom:4px}
+  .step{display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:50%;background:var(--link);color:#fff;font-weight:700;font-size:.85rem;flex-shrink:0}
+  h2{font-family:"Crimson Pro",Georgia,serif;font-size:1.45rem;font-weight:600}
+  h3{font-size:1rem;margin-bottom:8px}
+  .panel-sub{color:var(--muted);font-size:.9rem;margin:0 0 16px 36px}
+  .muted{color:var(--muted)}
+  .hide{display:none!important}
+
+  .rules{background:var(--gold-pale);border-left:3px solid var(--gold);border-radius:var(--r);padding:12px 16px;font-size:.93rem;margin-bottom:24px}
+  .rules b{color:var(--gold)}
+  .task-box{background:var(--gold-pale);border-left:3px solid var(--gold);border-radius:var(--r);padding:12px 16px;font-size:.92rem;margin:16px 0 0}
+  .task-box b{color:var(--gold)}
+  .task-box ol{margin:6px 0 0 20px}
+  .task-box li{margin:3px 0}
+
+  .btn{border:1px solid var(--border);background:var(--surface);border-radius:var(--r);padding:8px 14px;cursor:pointer;font-weight:600;font-size:.9rem}
+  .btn:hover{background:var(--surface-2)}
+  .btn:disabled{opacity:.45;cursor:not-allowed}
+  .btn-primary{background:var(--gold);border-color:var(--gold);color:#fff}
+  .btn-primary:hover{background:var(--gold);filter:brightness(1.07)}
+  .btn-blue{background:var(--link);border-color:var(--link);color:#fff}
+  .btn-blue:hover{background:var(--link);filter:brightness(1.1)}
+  .btn-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+  .ctl{display:flex;align-items:center;gap:8px;font-size:.9rem}
+  .ctl label{color:var(--muted);font-weight:600}
+  select,input[type=number],input[type=text],input[type=password]{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:6px 9px}
+
+  /* Spielkarte groß */
+  .table-area{display:flex;gap:22px;align-items:center;flex-wrap:wrap;margin:16px 0}
+  .bigcard{width:96px;height:136px;border-radius:9px;border:1.5px solid #b9b2a3;background:#fff;position:relative;box-shadow:0 3px 10px rgba(0,0,0,.12);flex-shrink:0;font-family:Georgia,serif}
+  .bigcard.back{background:repeating-linear-gradient(45deg,#2c5f8a 0 6px,#244f73 6px 12px);border-color:#1a3d5c}
+  .bigcard .c1,.bigcard .c2{position:absolute;font-weight:700;font-size:1.05rem;line-height:1;text-align:center}
+  .bigcard .c1{top:7px;left:8px}
+  .bigcard .c2{bottom:7px;right:8px;transform:rotate(180deg)}
+  .bigcard .mid{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:2.7rem}
+  .bigcard.red{color:var(--suit-red)} .bigcard.black{color:var(--suit-black)}
+  .bigcard.flip{animation:flip .35s ease-out}
+  @keyframes flip{0%{transform:rotateY(90deg)}100%{transform:none}}
+  .verdict{font-size:1.05rem}
+  .verdict b{font-size:1.25rem}
+  .verdict .win{color:var(--win)} .verdict .lose{color:var(--suit-red)}
+  .count-pill{font-size:.85rem;color:var(--muted)}
+
+  .stat-row{display:flex;flex-wrap:wrap;gap:10px;margin:6px 0 10px}
+  .stat{background:var(--surface-2);border:1px solid var(--border);border-radius:var(--r);padding:8px 14px;min-width:130px}
+  .stat .k{font-size:.72rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:600}
+  .stat .v{font-size:1.3rem;font-weight:700;font-variant-numeric:tabular-nums}
+
+  .chart-wrap{position:relative;margin-top:6px;border:1px solid var(--border);border-radius:var(--r);background:var(--surface-2)}
+  svg.chart{display:block;width:100%;height:auto}
+  .chart text{fill:var(--muted);font-size:11px;font-family:inherit}
+  .legend{display:flex;flex-wrap:wrap;gap:16px;font-size:.8rem;color:var(--muted);margin-top:6px}
+  .legend i{display:inline-block;width:18px;height:3px;vertical-align:4px;margin-right:5px;border-radius:2px}
+
+  /* Venn */
+  .ev-pick{display:flex;flex-wrap:wrap;gap:14px;margin-bottom:12px}
+  .ev-pick .ctl select{min-width:150px}
+  .tagE{color:var(--sE);font-weight:800} .tagF{color:var(--sF);font-weight:800}
+  .venn-wrap{border:1px solid var(--border);border-radius:var(--r);overflow-x:auto;background:var(--surface-2)}
+  svg.venn{display:block;width:100%;min-width:620px;height:auto}
+  .venn text{font-family:inherit}
+  .chip rect{stroke:#b9b2a3;stroke-width:1}
+  .chip.inEv rect{stroke:var(--hl);stroke-width:2.6}
+  .chip.pulse{animation:pulse .8s ease-out}
+  @keyframes pulse{0%{transform:scale(1.6)}100%{transform:scale(1)}}
+  .regions{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:10px}
+  .reg{border-radius:var(--r);padding:8px 10px;font-size:.84rem;border:1px solid var(--border);font-variant-numeric:tabular-nums}
+  .reg .t{font-weight:700;font-size:.8rem}
+  .reg .n{font-size:1.1rem;font-weight:700}
+  .reg.rE{background:var(--rE)} .reg.rB{background:var(--rB)} .reg.rF{background:var(--rF)} .reg.rO{background:var(--rO)}
+
+  .ops{display:flex;flex-wrap:wrap;gap:6px;margin:14px 0 8px}
+  .ops button{border:1px solid var(--border);background:var(--surface);border-radius:20px;padding:6px 14px;cursor:pointer;font-weight:700;font-size:.92rem;font-family:"Cambria Math","Times New Roman",serif}
+  .ops button.on{background:var(--hl);border-color:var(--hl);color:#1c1a16}
+  .opinfo{border:1px solid var(--border);border-radius:var(--r);padding:12px 16px;background:var(--surface-2);font-size:.95rem;font-variant-numeric:tabular-nums}
+  .opinfo .nm{font-weight:700}
+  .opinfo .set{word-break:break-word}
+  .sym{font-family:"Cambria Math","Times New Roman",serif;font-weight:700}
+  .bar{text-decoration:overline}
+
+  /* Vierfeldertafel */
+  .seg{display:inline-flex;border:1px solid var(--border);border-radius:var(--r);overflow:hidden;flex-wrap:wrap}
+  .seg button{border:none;background:var(--surface);padding:6px 12px;cursor:pointer;font-size:.85rem;font-weight:600;color:var(--muted)}
+  .seg button.on{background:var(--link);color:#fff}
+  .seg button:disabled{opacity:.45;cursor:not-allowed}
+  table.vf{border-collapse:collapse;margin-top:12px;font-variant-numeric:tabular-nums;min-width:420px}
+  table.vf th,table.vf td{border:1px solid var(--border);padding:8px 14px;text-align:center;min-width:90px}
+  table.vf th{background:var(--surface-2);font-weight:700}
+  table.vf td.cE{background:var(--rE)} table.vf td.cB{background:var(--rB)} table.vf td.cF{background:var(--rF)} table.vf td.cO{background:var(--rO)}
+  table.vf td.sum{font-weight:700}
+  .scroll-x{overflow-x:auto}
+
+  .lock-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:16px}
+  .merk{border:2px solid var(--link);border-radius:var(--r);padding:14px 18px;margin-top:14px;background:var(--link-pale);font-size:.93rem}
+  .merk b{color:var(--link)}
+  .merk p{margin:6px 0}
+
+  footer{text-align:center;color:var(--muted);font-size:.82rem;margin-top:48px;padding-top:20px;border-top:1px solid var(--border)}
+  @media (max-width:640px){
+    h1{font-size:1.8rem}
+    .panel{padding:14px}
+    .panel-sub{margin-left:0}
+    .regions{grid-template-columns:1fr 1fr}
+    .bigcard{width:80px;height:114px}
+  }
+
+  /* Würfel */
+  .dice{display:flex;flex-wrap:wrap;gap:8px;min-height:56px;align-items:center}
+  .die{width:46px;height:46px;border-radius:9px;background:#fff;border:2px solid #1c1a16;display:grid;grid-template:repeat(3,1fr)/repeat(3,1fr);padding:6px;gap:1px;animation:roll .35s ease-out}
+  .die span{width:8px;height:8px;border-radius:50%;background:#1c1a16;place-self:center;visibility:hidden}
+  .die span.on{visibility:visible}
+  .die.six{border-color:var(--win);background:var(--win-pale);box-shadow:0 0 0 3px var(--win)}
+  .die.six span{background:var(--win)}
+  @keyframes roll{0%{transform:rotate(-30deg) scale(.7)}70%{transform:rotate(8deg) scale(1.05)}100%{transform:none}}
+  .nval{display:inline-block;min-width:2em;text-align:center;font-weight:700;background:var(--gold-pale);color:var(--gold);border-radius:20px;padding:1px 8px}
+  input[type=range]{accent-color:var(--gold);width:180px}
+  .maren{display:flex;gap:14px;align-items:flex-start;background:var(--gold-pale);border-left:3px solid var(--gold);border-radius:var(--r);padding:14px 18px;margin-bottom:24px}
+  .maren .q{font-size:1.02rem;font-style:italic}
+  .maren .who{font-weight:700;color:var(--gold);font-style:normal;font-size:.85rem;text-transform:uppercase;letter-spacing:.05em}
+  table.mw{border-collapse:collapse;width:100%;font-size:.9rem;margin-top:10px;font-variant-numeric:tabular-nums}
+  table.mw th,table.mw td{border-bottom:1px solid var(--border);padding:6px 8px;text-align:center}
+  table.mw th{font-size:.72rem;letter-spacing:.05em;text-transform:uppercase;color:var(--muted)}
+  table.mw td.bad{color:var(--suit-red);font-weight:700}
+  table.mw tr.goal td{background:var(--win-pale)}
+  .tree-box{overflow-x:auto;margin-top:10px}
+  .die.six{border-color:var(--suit-red);background:#fdecea;box-shadow:0 0 0 3px var(--suit-red)}
+  .die.six span{background:var(--suit-red)}
+  .pts{font-size:1.5rem;font-weight:800;font-variant-numeric:tabular-nums}
+  .pts.zero{color:var(--suit-red)} .pts.ok{color:var(--win)}
+  table.ns{border-collapse:collapse;font-size:.85rem;font-variant-numeric:tabular-nums;background:var(--surface);min-width:100%}
+  table.ns th,table.ns td{border:1px solid var(--border);padding:3px 8px;text-align:center;white-space:nowrap}
+  table.ns tr.hd th{background:var(--link-pale);color:var(--link);font-size:.78rem}
+  table.ns tr.fm td{background:var(--surface-2);color:var(--muted);font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.72rem}
+  table.ns td.rn{color:var(--muted);background:var(--surface-2);font-size:.75rem}
+  table.ns td.s6{color:var(--suit-red);font-weight:700}
+  table.ns td.p0{color:var(--suit-red)}
+  .ns-box{max-height:330px;overflow:auto;border:2px solid var(--text);border-radius:10px}
+  .entry{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.85rem;background:var(--surface-2);border:1px solid var(--border);border-radius:var(--r);padding:6px 10px;margin-top:8px}
+  .kbd{display:inline-block;border:1px solid currentColor;border-radius:4px;padding:0 5px;font-size:.78rem;font-weight:700;background:transparent;color:inherit}
+</style>
+</head>
+<body>
+
+<nav class="topbar" aria-label="Breadcrumb">
+  <div class="topbar-inner">
+    <a href="../../../../../index.html">Unterrichtsmaterialien</a><span class="sep">›</span>
+    <a href="../../../../index.html">Mathematik</a><span class="sep">›</span>
+    <a href="../../../index.html">Leistungskurs</a><span class="sep">›</span>
+    <a href="../../index.html#simulationen">Stochastik</a><span class="sep">›</span>
+    <span>Die verflixte 6</span>
+  </div>
+</nav>
+
+<header class="page-head">
+  <div class="inner">
+    <div class="head-eyebrow">Simulation · Kapitel VIII.4</div>
+    <h1>Die verflixte 6</h1>
+    <p>Mit wie vielen Würfeln holt man auf lange Sicht die meisten Punkte – wenn eine einzige Sechs alles zunichtemacht?</p>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <div class="maren">
+    <div style="font-size:2rem">🎲</div>
+    <div>
+      <div class="who">Die Spielregeln</div>
+      <div style="font-size:.98rem">Wähle eine Anzahl n von Würfeln und wirf sie gleichzeitig. Ist <b>keine 6</b> dabei, bekommst du die <b>Augensumme</b> als Punkte.
+      Zeigt <b>mindestens ein Würfel eine 6</b>, bekommst du <b style="color:var(--suit-red)">0 Punkte</b>.</div>
+    </div>
+  </div>
+
+  <!-- 1 -->
+  <section class="panel">
+    <div class="panel-head"><span class="step">1</span><h2>Spielen</h2></div>
+    <p class="panel-sub">Spielt einige Runden mit verschiedenen Würfelanzahlen und notiert eure Punkte.</p>
+
+    <div class="btn-row" style="gap:14px">
+      <div class="ctl"><label for="nSl">Anzahl der Würfel n</label><input type="range" id="nSl" min="1" max="10" value="2"><span class="nval" id="nVal">2</span></div>
+    </div>
+    <div style="margin:14px 0" class="dice" id="dice"><span class="muted" style="font-size:.9rem">Noch nicht geworfen.</span></div>
+    <div id="verdict" style="min-height:34px"></div>
+    <div class="btn-row" style="margin-top:8px">
+      <button class="btn btn-primary" id="btnOne">🎲 Würfeln</button>
+      <button class="btn" id="btnReset1">↺ Meine Runden löschen</button>
+    </div>
+
+    <h3 style="margin-top:16px">Meine Runden</h3>
+    <div class="scroll-x"><table class="mw" id="myTbl"></table></div>
+
+    <div class="task-box">
+      <b>Arbeitsauftrag</b>
+      <ol>
+        <li>Spielt je 5 Runden mit n = 2 und mit n = 5 Würfeln. Welche Anzahl würdet ihr wählen?</li>
+        <li>Warum reichen ein paar Runden nicht aus, um die Frage zu entscheiden?</li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- 2 -->
+  <section class="panel">
+    <div class="panel-head"><span class="step">2</span><h2>So sieht es im TI-Nspire aus</h2></div>
+    <p class="panel-sub">Jede Zeile ist ein Spiel. Vergleiche mit deiner Tabelle in Lists &amp; Spreadsheet – Spaltennamen und Formeln sind dieselben.</p>
+    <div class="btn-row" style="gap:14px">
+      <div class="ctl"><label for="tN">Würfel</label><select id="tN"><option>2</option><option selected>3</option><option>4</option><option>5</option><option>6</option><option>7</option><option>8</option></select></div>
+      <button class="btn btn-blue" id="btnRecalc"><span class="kbd">ctrl</span> <span class="kbd">R</span> &nbsp;100 neue Spiele</button>
+    </div>
+    <div class="ns-box" style="margin-top:10px"><table class="ns" id="nsTbl"></table></div>
+    <div class="entry" id="nsEntry"></div>
+    <div class="stat-row" style="margin-top:10px">
+      <div class="stat"><div class="k">F1 · mittlere Punktzahl</div><div class="v" id="f1">–</div></div>
+      <div class="stat"><div class="k">F2 · rel. Häufigkeit „keine 6“</div><div class="v" id="f2">–</div></div>
+      <div class="stat"><div class="k">Durchgänge</div><div class="v" id="nRec">0</div></div>
+    </div>
+    <div class="scroll-x"><table class="mw" id="recTbl"></table></div>
+  </section>
+
+  <!-- 3 -->
+  <section class="panel">
+    <div class="panel-head"><span class="step">3</span><h2>Kontrolle mit sehr vielen Spielen</h2></div>
+    <p class="panel-sub">Erst nach der Auswertung eurer eigenen Simulationen freischalten.</p>
+    <div class="lock-row" id="lockRow">
+      <input type="password" id="code" placeholder="Code" autocomplete="off" style="width:110px">
+      <button class="btn" id="btnUnlock">🔒 Kontrolle freischalten</button>
+      <span class="muted" id="codeMsg" style="font-size:.85rem">Freigabe durch die Lehrkraft.</span>
+    </div>
+    <div id="ctrl" class="hide">
+      <div class="btn-row">
+        <button class="btn btn-blue" data-k="100">+ 100 Spiele je n</button>
+        <button class="btn btn-blue" data-k="1000">+ 1 000 Spiele je n</button>
+        <button class="btn btn-blue" data-k="10000">+ 10 000 Spiele je n</button>
+        <button class="btn" id="btnReset3">↺ Zurücksetzen</button>
+        <label class="ctl" style="margin-left:6px"><input type="checkbox" id="showExact"> exakte Werte zeigen</label>
+      </div>
+      <div class="chart-wrap" style="margin-top:10px"><svg class="chart" id="chart" viewBox="0 0 720 280" role="img" aria-label="Mittlere Punktzahl in Abhängigkeit von der Würfelanzahl"></svg></div>
+      <div class="legend">
+        <span><i style="background:var(--gold);height:10px;vertical-align:0"></i>mittlere Punktzahl (Simulation)</span>
+        <span id="legE" class="hide"><i style="background:var(--win)"></i>exakt: 3n · (5/6)ⁿ</span>
+      </div>
+      <div class="scroll-x"><table class="mw" id="tbl"></table></div>
+      <div class="merk hide" id="merk">
+        <p><b>Warum 3n · (5/6)ⁿ?</b> Mit Wahrscheinlichkeit (5/6)ⁿ fällt keine 6. Dann zeigt jeder Würfel eine der Zahlen 1 bis 5, im Mittel 3 – zusammen also im Mittel 3n Punkte. Sonst gibt es 0 Punkte.</p>
+        <p><b>Ergebnis:</b> 5 und 6 Würfel sind gleich gut (je etwa 6,03 Punkte pro Spiel). Mit 100 oder 500 Spielen lassen sich n = 4 bis 7 kaum unterscheiden – die Schätzwerte schwanken dafür zu stark.</p>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<footer>Unterrichtsmaterialien · Friedrich-Bährens-Gymnasium Schwerte</footer>
+
+<script>
+(() => {
+  const $=id=>document.getElementById(id);
+  const fmt=n=>n.toLocaleString('de-DE');
+  const dec=(x,d=2)=>x.toLocaleString('de-DE',{minimumFractionDigits:d,maximumFractionDigits:d});
+  const PIPS={1:[4],2:[0,8],3:[0,4,8],4:[0,2,6,8],5:[0,2,4,6,8],6:[0,2,3,5,6,8]};
+  const d6=()=>1+Math.floor(Math.random()*6);
+  const roll=k=>{ const r=[]; for(let i=0;i<k;i++) r.push(d6()); return r; };
+  const score=r=>r.includes(6)?0:r.reduce((a,b)=>a+b,0);
+  const NMAX=10;
+
+  // ---------- 1 · Spielen ----------
+  let n=2; const my={}; // n -> [points]
+  function showDice(r){
+    $('dice').innerHTML=r.map((v,i)=>`<div class="die${v===6?' six':''}" style="animation-delay:${i*0.04}s">${[...Array(9)].map((_,j)=>`<span class="${PIPS[v].includes(j)?'on':''}"></span>`).join('')}</div>`).join('');
+    const p=score(r);
+    $('verdict').innerHTML = p===0 ? `<span class="pts zero">0 Punkte</span> <span class="muted">– die verflixte 6!</span>` : `<span class="pts ok">${p} Punkte</span> <span class="muted">(${r.join(' + ')})</span>`;
+  }
+  function renderMy(){
+    const ks=Object.keys(my).map(Number).sort((a,b)=>a-b);
+    if(!ks.length){ $('myTbl').innerHTML='<tr><td class="muted">Noch keine Runde gespielt.</td></tr>'; return; }
+    $('myTbl').innerHTML='<tr><th>n</th><th>Runden</th><th>Punkte der Runden</th><th>Mittelwert</th></tr>'+
+      ks.map(k=>{ const a=my[k]; return `<tr><td><b>${k}</b></td><td>${a.length}</td><td style="text-align:left">${a.map(p=>p===0?'<span style="color:var(--suit-red)">0</span>':p).join(', ')}</td><td><b>${dec(a.reduce((x,y)=>x+y,0)/a.length)}</b></td></tr>`; }).join('');
+  }
+  $('nSl').addEventListener('input',e=>{ n=+e.target.value; $('nVal').textContent=n; $('dice').innerHTML='<span class="muted" style="font-size:.9rem">Noch nicht geworfen.</span>'; $('verdict').innerHTML=''; });
+  $('btnOne').addEventListener('click',()=>{ const r=roll(n); (my[n]=my[n]||[]).push(score(r)); showDice(r); renderMy(); });
+  $('btnReset1').addEventListener('click',()=>{ for(const k in my) delete my[k]; renderMy(); });
+
+  // ---------- 2 · Tabellenansicht ----------
+  let tn=3, games=[], recs=[];
+  const col=i=>String.fromCharCode(97+i);
+  function newGames(){ games=[]; for(let i=0;i<100;i++) games.push(roll(tn)); }
+  function renderNs(){
+    const L=i=>String.fromCharCode(65+i);
+    let h='<tr class="hd"><th></th>'; for(let i=0;i<tn;i++) h+=`<th>${L(i)}<br>w${i+1}</th>`; h+=`<th>${L(tn)}<br>sechsen</th><th>${L(tn+1)}<br>punkte</th><th>${L(tn+2)}<br>&nbsp;</th></tr>`;
+    h+='<tr class="fm"><td>◆</td>'; for(let i=0;i<tn;i++) h+=`<td>=randint(1,6,100)</td>`; h+='<td></td><td></td><td></td></tr>';
+    const mean=games.reduce((a,g)=>a+score(g),0)/100, none=games.filter(g=>!g.includes(6)).length/100;
+    games.forEach((g,r)=>{ h+=`<tr><td class="rn">${r+1}</td>`+g.map(v=>`<td class="${v===6?'s6':''}">${v}</td>`).join('')+`<td>${g.filter(v=>v===6).length}</td><td class="${score(g)===0?'p0':''}">${score(g)}</td><td>${r===0?dec(mean):r===1?dec(none):''}</td></tr>`; });
+    $('nsTbl').innerHTML=h;
+    const last=col(tn-1);
+    $('nsEntry').innerHTML=`<b>${col(tn).toUpperCase()}1</b> =countif(a1:${last}1,6) &nbsp;·&nbsp; <b>${col(tn+1).toUpperCase()}1</b> =when(${col(tn)}1&gt;0,0,sum(a1:${last}1)) &nbsp;·&nbsp; <b>${col(tn+2).toUpperCase()}1</b> =mean(${col(tn+1)}1:${col(tn+1)}100)*1.0 &nbsp;·&nbsp; <b>${col(tn+2).toUpperCase()}2</b> =countif(${col(tn)}1:${col(tn)}100,0)/100.0`;
+    $('f1').textContent=dec(mean); $('f2').textContent=dec(none);
+    return {mean,none};
+  }
+  function addRec(){ const r=renderNs(); recs.push(r); $('nRec').textContent=recs.length;
+    const m=recs.reduce((a,x)=>a+x.mean,0)/recs.length;
+    $('recTbl').innerHTML='<tr><th>Durchgang</th>'+recs.map((_,i)=>`<th>${i+1}</th>`).join('')+'<th>Mittelwert</th></tr><tr><td>mittlere Punktzahl</td>'+recs.map(x=>`<td>${dec(x.mean)}</td>`).join('')+`<td><b>${dec(m)}</b></td></tr>`;
+  }
+  $('tN').addEventListener('change',e=>{ tn=+e.target.value; recs=[]; newGames(); addRec(); });
+  $('btnRecalc').addEventListener('click',()=>{ newGames(); addRec(); });
+
+  // ---------- 3 · Kontrolle ----------
+  const T=new Array(NMAX+1).fill(0), S=new Array(NMAX+1).fill(0);
+  const exact=k=>3*k*Math.pow(5/6,k);
+  const NS='http://www.w3.org/2000/svg';
+  function el(t,a,p){const e=document.createElementNS(NS,t);for(const k in a)e.setAttribute(k,a[k]);if(p)p.appendChild(e);return e;}
+  function renderCtrl(){
+    const ex=$('showExact').checked; $('legE').classList.toggle('hide',!ex); $('merk').classList.toggle('hide',!ex);
+    const svg=$('chart'); svg.innerHTML='';
+    const W=720,H=280,m={l:46,r:12,t:22,b:34},iw=W-m.l-m.r,ih=H-m.t-m.b, band=iw/NMAX, bw=band*0.55, YM=8;
+    const y=v=>m.t+ih*(1-v/YM);
+    for(let v=0;v<=YM;v+=2){ el('line',{x1:m.l,x2:W-m.r,y1:y(v),y2:y(v),stroke:'var(--border)'},svg); const t=el('text',{x:m.l-6,y:y(v)+4,'text-anchor':'end'},svg); t.textContent=v; }
+    const yl=el('text',{x:12,y:m.t-8},svg); yl.textContent='Punkte pro Spiel';
+    for(let k=1;k<=NMAX;k++){
+      const cx=m.l+band*(k-0.5);
+      if(T[k]){ const v=S[k]/T[k], yy=y(v); el('rect',{x:cx-bw/2,y:yy,width:bw,height:y(0)-yy,rx:3,fill:'var(--gold)',opacity:.85},svg);
+        const t=el('text',{x:cx,y:yy-5,'text-anchor':'middle','font-size':10},svg); t.textContent=dec(v); }
+      const lt=el('text',{x:cx,y:H-14,'text-anchor':'middle'},svg); lt.textContent=k;
+    }
+    const xl=el('text',{x:m.l+iw/2,y:H-1,'text-anchor':'middle'},svg); xl.textContent='Anzahl der Würfel n';
+    if(ex){ const pts=[]; for(let k=1;k<=NMAX;k++) pts.push([m.l+band*(k-0.5),y(exact(k))]);
+      el('polyline',{points:pts.map(p=>p.join(',')).join(' '),fill:'none',stroke:'var(--win)','stroke-width':2.4},svg);
+      pts.forEach(p=>el('circle',{cx:p[0],cy:p[1],r:4,fill:'var(--win)',stroke:'var(--surface)','stroke-width':1.5},svg)); }
+    let h='<tr><th>n</th><th>Spiele</th><th>mittlere Punktzahl</th>'+(ex?'<th>exakt 3n·(5/6)ⁿ</th>':'')+'</tr>';
+    for(let k=1;k<=NMAX;k++) h+=`<tr class="${ex&&(k===5||k===6)?'goal':''}"><td><b>${k}</b></td><td>${fmt(T[k])}</td><td>${T[k]?dec(S[k]/T[k],3):'–'}</td>`+(ex?`<td>${dec(exact(k),3)}</td>`:'')+'</tr>';
+    $('tbl').innerHTML=h;
+  }
+  document.querySelectorAll('[data-k]').forEach(b=>b.addEventListener('click',()=>{ const K=+b.dataset.k; for(let k=1;k<=NMAX;k++) for(let i=0;i<K;i++){ T[k]++; S[k]+=score(roll(k)); } renderCtrl(); }));
+  $('btnReset3').addEventListener('click',()=>{ T.fill(0); S.fill(0); renderCtrl(); });
+  $('showExact').addEventListener('change',renderCtrl);
+  function unlock(){
+    if(($('code').value||'').trim().toUpperCase()==='MATHE'){ $('lockRow').classList.add('hide'); $('ctrl').classList.remove('hide'); renderCtrl(); }
+    else { $('codeMsg').textContent='Code nicht korrekt.'; $('codeMsg').style.color='var(--gold)'; }
+  }
+  $('btnUnlock').addEventListener('click',unlock);
+  $('code').addEventListener('keydown',e=>{ if(e.key==='Enter') unlock(); });
+
+  renderMy(); newGames(); addRec();
+})();
+</script>
+</body>
+</html>

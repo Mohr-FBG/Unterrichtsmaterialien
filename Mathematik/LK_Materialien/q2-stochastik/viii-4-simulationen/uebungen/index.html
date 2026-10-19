@@ -1,0 +1,766 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Übungsphase · Simulationen</title>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css">
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/contrib/auto-render.min.js"></script>
+
+<style>
+:root{
+  --gold:#e8a800; --gold-dark:#b58200;
+  --blue:#2c5f8a; --blue-dark:#1a3d5c;
+  --green:#1a9e5c; --orange:#d4760a; --purple:#7b3fb5;
+  --red:#c0392b;
+  --border:#dde1e7; --bg:#f4f5f7; --text:#1c1f26;
+  --muted:#5c6472;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0; background:var(--bg); color:var(--text);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  line-height:1.55; font-size:16px;
+}
+.wrap{max-width:960px; margin:0 auto; padding:0 16px 64px}
+
+/* ---------- Kopf ---------- */
+header.top{background:var(--gold); border-bottom:4px solid var(--gold-dark); color:#fff}
+header.top .inner{max-width:960px; margin:0 auto; padding:22px 16px 24px}
+header.top .kap{font-size:.78rem; font-weight:700; letter-spacing:.06em; text-transform:uppercase; opacity:.92}
+header.top h1{margin:6px 0 4px; font-size:1.7rem; line-height:1.2}
+header.top .sub{font-size:.92rem; opacity:.95}
+
+/* ---------- Steuerleiste ---------- */
+.controls{
+  background:#fff; border:1px solid var(--border); border-radius:10px;
+  padding:14px 16px; margin:18px 0 22px;
+  display:flex; flex-wrap:wrap; gap:16px; align-items:center; justify-content:space-between;
+}
+.unlock{display:flex; align-items:center; gap:8px; flex-wrap:wrap}
+.unlock label{font-size:.9rem; color:var(--muted)}
+.unlock input{border:1px solid var(--border); border-radius:6px; padding:6px 10px; font-size:.95rem; width:130px; font-family:inherit}
+.unlock button{background:var(--blue); color:#fff; border:0; border-radius:6px; padding:7px 14px; font-size:.9rem; font-weight:600; cursor:pointer; font-family:inherit}
+.unlock button:hover{background:var(--blue-dark)}
+.unlock .msg{font-size:.85rem; font-weight:600}
+.unlock .msg.ok{color:var(--green)}
+.unlock .msg.bad{color:#c0392b}
+
+.filters{display:flex; gap:6px; flex-wrap:wrap}
+.filters button{background:#fff; border:1px solid var(--border); border-radius:20px; padding:6px 14px; font-size:.85rem; cursor:pointer; color:var(--muted); font-family:inherit; font-weight:600}
+.filters button:hover{border-color:var(--muted)}
+.filters button.on{background:var(--text); border-color:var(--text); color:#fff}
+
+/* ---------- Abschnitte ---------- */
+.stufe-head{display:flex; align-items:baseline; gap:12px; flex-wrap:wrap; margin:30px 0 12px; padding-bottom:8px; border-bottom:2px solid var(--border)}
+.stufe-badge{color:#fff; border-radius:6px; padding:4px 12px; font-weight:700; font-size:.9rem; letter-spacing:.02em}
+.sA .stufe-badge{background:var(--blue)}
+.sG .stufe-badge{background:var(--text)}
+.s1 .stufe-badge{background:var(--green)}
+.s2 .stufe-badge{background:var(--orange)}
+.s3 .stufe-badge{background:var(--purple)}
+.stufe-head .desc{color:var(--muted); font-size:.9rem}
+
+/* ---------- Karten ---------- */
+.card{background:#fff; border:1px solid var(--border); border-radius:10px; margin-bottom:14px; overflow:hidden; position:relative}
+.tw,.tree-box,.katex-display{position:relative}
+.card.sA{border-top:4px solid var(--blue)}
+.card.sG{border-top:4px solid var(--text)}
+.card.s1{border-top:4px solid var(--green)}
+.card.s2{border-top:4px solid var(--orange)}
+.card.s3{border-top:4px solid var(--purple)}
+.card-head{display:flex; align-items:center; justify-content:space-between; gap:12px; padding:13px 18px; cursor:pointer; user-select:none}
+.card-head:hover{background:#fafbfc}
+.card-head h3{margin:0; font-size:1.03rem; font-weight:700}
+.chev{color:var(--muted); font-size:1.1rem; transition:transform .18s}
+.card.open .chev{transform:rotate(180deg)}
+.card-body{display:none; padding:0 18px 18px}
+.card.open .card-body{display:block}
+
+.task{background:#fbfcfd; border:1px solid var(--border); border-left:3px solid var(--blue); border-radius:6px; padding:12px 15px; margin-bottom:14px}
+.task p{margin:.5em 0}
+.task p:first-child{margin-top:0}
+.task p:last-child{margin-bottom:0}
+.task .sub-i{margin-left:1.6em}
+
+/* Merkkasten wie im Buch */
+.merk{border:2px solid var(--blue); border-radius:8px; padding:14px 18px; background:#f3f7fb}
+.merk h4{margin:0 0 6px; font-size:1rem}
+.merk p{margin:.45em 0}
+
+/* Beispiel-Lösung im Buchstil */
+.bsp{border-left:3px solid var(--blue); padding:2px 0 2px 16px}
+.bsp .lh{font-weight:700; color:var(--muted); margin:10px 0 4px}
+.bsp p{margin:.5em 0}
+
+/* Tafel-Hinweis */
+.board{border:1.5px dashed var(--text); border-radius:8px; padding:12px 15px; font-size:.92rem; color:var(--muted); display:flex; gap:10px; align-items:center}
+.board b{color:var(--text)}
+
+/* ---------- Selbsteinschätzung ---------- */
+.assess{display:flex; align-items:center; gap:7px; flex-wrap:wrap; margin-bottom:14px}
+.assess .lab{font-size:.83rem; color:var(--muted); margin-right:2px}
+.assess button{border:1px solid var(--border); background:#fff; border-radius:16px; padding:4px 12px; font-size:.8rem; cursor:pointer; color:var(--muted); font-family:inherit}
+.assess button.on[data-v="ok"]{background:var(--green); border-color:var(--green); color:#fff}
+.assess button.on[data-v="mid"]{background:var(--orange); border-color:var(--orange); color:#fff}
+.assess button.on[data-v="ask"]{background:var(--blue); border-color:var(--blue); color:#fff}
+
+/* ---------- Hilfen ---------- */
+.hints{border:1px solid var(--border); border-radius:8px; overflow:hidden; margin-bottom:14px}
+.hints .htitle{background:#f7f8fa; padding:7px 14px; font-size:.8rem; font-weight:700; color:var(--muted); text-transform:uppercase; letter-spacing:.05em; border-bottom:1px solid var(--border)}
+.htabs{display:flex; flex-wrap:wrap; gap:6px; padding:10px 14px; background:#fdfdfe}
+.htabs button{border:1px solid var(--border); background:#fff; border-radius:6px; padding:5px 11px; font-size:.82rem; cursor:pointer; color:var(--text); font-family:inherit}
+.htabs button:hover{border-color:var(--blue)}
+.htabs button.on{background:var(--blue); border-color:var(--blue); color:#fff; font-weight:600}
+.hpanel{display:none; padding:12px 15px; border-top:1px solid var(--border); font-size:.95rem}
+.hpanel.on{display:block}
+.hpanel h4{margin:0 0 8px; font-size:.92rem; color:var(--blue-dark)}
+.hpanel p{margin:.5em 0}
+
+/* ---------- Musterlösung ---------- */
+.sol-lock{background:#f7f8fa; border:1px dashed var(--border); border-radius:8px; padding:12px 15px; font-size:.9rem; color:var(--muted); text-align:center}
+.sol-lock.active{cursor:pointer; background:#eef4f9; border:1px solid var(--blue); color:var(--blue-dark); font-weight:600}
+.sol-lock.active:hover{background:#e2ecf5}
+.sol{display:none; border:1px solid var(--green); border-radius:8px; overflow:hidden}
+.sol.shown{display:block}
+.sol .sh{background:var(--green); color:#fff; padding:7px 15px; font-weight:700; font-size:.88rem}
+.sol .sb{padding:13px 15px; font-size:.95rem}
+.sol .sb p{margin:.55em 0}
+.sol .sb p:first-child{margin-top:0}
+
+/* Alternativer Lösungsweg */
+.alt-btn{margin-top:10px; background:#fff; border:1px solid var(--purple); color:var(--purple); border-radius:6px; padding:6px 12px; font-size:.85rem; font-weight:600; cursor:pointer; font-family:inherit}
+.alt-btn:hover{background:#f6f0fb}
+.alt{display:none; margin-top:10px; border:1px solid var(--purple); border-left:4px solid var(--purple); border-radius:6px; padding:10px 14px; background:#faf6fd; font-size:.93rem}
+.alt.shown{display:block}
+.alt .ah{font-weight:700; color:var(--purple); font-size:.85rem; text-transform:uppercase; letter-spacing:.04em; margin-bottom:4px}
+
+/* Verteilungstabelle im Buchstil */
+.tw{overflow-x:auto; margin:.6em 0}
+table.vt{border-collapse:collapse; font-size:.92rem}
+table.vt th, table.vt td{border:1px solid var(--border); padding:5px 10px; text-align:center; white-space:nowrap}
+table.vt th{background:#eef0f3; font-weight:600}
+table.vt td.hl{background:#e6f5ec}
+
+/* Grafiken */
+.fig{display:flex; flex-wrap:wrap; gap:18px; align-items:flex-start}
+.fig .txt{flex:1 1 320px; min-width:0}
+.fig .pic{flex:0 1 auto; overflow-x:auto; max-width:100%}
+.tree-box{overflow-x:auto; max-width:100%}
+.tree-box svg{display:block}
+.cap{font-size:.78rem; color:var(--muted); text-align:center; margin-top:2px}
+
+.res{color:#1a9e5c;font-weight:700}
+.note{background:#fdf6e3; border-left:3px solid var(--gold); border-radius:6px; padding:10px 14px; font-size:.9rem; margin:12px 0}
+.note a{color:var(--blue); font-weight:600}
+.katex{font-size:1.04em}
+.katex-display{margin:.6em 0; overflow-x:auto; overflow-y:hidden}
+footer.bot{text-align:center; color:var(--muted); font-size:.82rem; padding:26px 16px; border-top:1px solid var(--border); margin-top:34px}
+footer.bot a{color:var(--blue)}
+@media(max-width:600px){
+  header.top h1{font-size:1.32rem}
+  .controls{flex-direction:column; align-items:stretch}
+  .card-head h3{font-size:.95rem}
+  .card-body{padding:0 12px 14px}
+}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="inner">
+    <div class="kap">Kapitel VIII · Daten und Wahrscheinlichkeit · LK Mathematik Q2</div>
+    <h1>4 · Simulationen</h1>
+    <div class="sub">Anleitung lesen · Gemeinsam starten · Stufe wählen · Hilfen schrittweise nutzen · Musterlösungen nach Freigabe</div>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <style>
+    code.ti{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.86em;background:#eef1f5;border:1px solid #dde1e7;border-radius:4px;padding:1px 5px;white-space:nowrap}
+    .kbd{display:inline-block;font-size:.75rem;font-weight:700;border:1px solid #8a93a3;border-radius:4px;padding:0 5px;background:#f4f5f7;line-height:1.5}
+    table.lst{border-collapse:collapse;font-size:.8rem;margin:8px 0;font-variant-numeric:tabular-nums}
+    table.lst th,table.lst td{border:1px solid #dde1e7;padding:2px 7px;text-align:center;white-space:nowrap}
+    table.lst tr.hd th{background:#e5eef7;color:#2c5f8a}
+    table.lst tr.fm td{background:#f4f5f7;color:#6b7280;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.72rem}
+    table.lst td.rn{background:#f4f5f7;color:#6b7280}
+    .steps{margin:6px 0 6px 20px}
+    .steps li{margin:3px 0}
+    .tool{display:grid;grid-template-columns:minmax(150px,auto) 1fr;gap:4px 14px;font-size:.92rem;margin-top:6px}
+    .tool div:nth-child(odd){font-weight:600}
+    @media (max-width:560px){ .tool{grid-template-columns:1fr} .tool div:nth-child(even){margin-bottom:6px} code.ti{white-space:normal;word-break:break-word} }
+  </style>
+
+  <div class="controls">
+    <div class="unlock">
+      <label for="code">🔒 Musterlösungen freischalten:</label>
+      <input id="code" type="text" autocomplete="off" placeholder="Code">
+      <button id="btn-unlock" type="button">Bestätigen</button>
+      <span class="msg" id="msg"></span>
+    </div>
+    <div class="filters">
+      <button class="on" data-f="all" type="button">Alles</button>
+      <button data-f="A" type="button">Anleitung</button>
+      <button data-f="G" type="button">Gemeinsam</button>
+      <button data-f="1" type="button">Stufe 1</button>
+      <button data-f="2" type="button">Stufe 2</button>
+      <button data-f="3" type="button">Stufe 3</button>
+    </div>
+  </div>
+
+  <div class="note">
+    <strong>Werkzeug:</strong> Alle Aufgaben werden mit dem <b>TI-Nspire CAS</b> in <b>Lists &amp; Spreadsheet</b> gelöst. Die Befehle stehen auf der
+    Werkzeugkarte des Arbeitsblatts „Die verflixte 6“. Zum Vergleichen: Simulation <a href="../../simulationen/verflixte-sechs/">Die verflixte 6</a>.
+  </div>
+
+  <!-- ================= ANLEITUNG ================= -->
+  <section class="sA" data-stufe="A">
+    <div class="stufe-head">
+      <span class="stufe-badge">Anleitung</span>
+      <span class="desc">Merkwissen und vollständig vorgerechnete Beispiele – so sollen deine Lösungen aussehen</span>
+    </div>
+
+    <article class="card sA">
+      <div class="card-head"><h3>Merkwissen · Simulation von Datenerhebungen und Zufallsexperimenten</h3><span class="chev">▾</span></div>
+      <div class="card-body">
+        <div class="merk">
+          <p><strong>Simulation:</strong> Eine Datenerhebung oder ein Zufallsexperiment kann man auf der Grundlage einer <b>Modellannahme</b> mithilfe von
+          <b>Zufallszahlen</b> simulieren. Die Zufallszahlen liefern analoge Zufallsgeräte (Würfel, Urne, Glücksrad) oder digitale Hilfsmittel.
+          Man ordnet jedem Ergebnis eine Zufallszahl so zu, dass es so oft auftritt, wie es seiner Wahrscheinlichkeit im Modell entspricht.</p>
+          <p><strong>Schätzwert:</strong> Wiederholt man die Simulation $n$-mal und tritt ein Ergebnis dabei $k$-mal auf, so ist die relative Häufigkeit
+          $\frac kn$ eine Schätzung für die Wahrscheinlichkeit des Ergebnisses. Mit wachsendem $n$ schwanken die Schätzwerte weniger.</p>
+          <p><strong>Zufallszahlen am TI-Nspire:</strong></p>
+          <div class="tool">
+            <div>ganze Zahl von $a$ bis $b$</div><div><code class="ti">randint(a,b)</code>, als Spaltenformel für $k$ Werte: <code class="ti">=randint(a,b,k)</code></div>
+            <div>Treffer mit Wahrscheinlichkeit $p$</div><div><code class="ti">=when(rand()&lt;p,1,0)</code> &nbsp;(1 = Treffer, 0 = kein Treffer)</div>
+            <div>Zählen</div><div><code class="ti">countif(Bereich,Wert)</code>, z.&nbsp;B. <code class="ti">countif(k1:k100,?&gt;7)</code></div>
+            <div>Formel kopieren</div><div>Zelle markieren, <b>menu ▸ Daten ▸ Füllen</b>, Pfeiltasten, <span class="kbd">enter</span></div>
+            <div>neu simulieren</div><div><span class="kbd">ctrl</span> <span class="kbd">R</span></div>
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <!-- Beispiel 1 -->
+    <article class="card sA">
+      <div class="card-head"><h3>Beispiel 1 · Simulieren durch Werfen eines Würfels</h3><span class="chev">▾</span></div>
+      <div class="card-body">
+        <div class="task">
+          <p>Bei einem Spiel gewinnt man mit einer Wahrscheinlichkeit von &nbsp;<strong>a)</strong> $\frac13$, &nbsp;<strong>b)</strong> $\frac56$, &nbsp;<strong>c)</strong> $\frac19$.</p>
+          <p>Beschreiben Sie, wie man das Spiel durch Werfen eines normalen Würfels simulieren kann. Geben Sie jeweils auch eine Formel für den TI-Nspire an.</p>
+        </div>
+        <div class="bsp">
+          <div class="lh">Lösung</div>
+          <p><strong>a)</strong> Man würfelt einmal und ordnet zwei der sechs Würfelaugen (z.&nbsp;B. 1 und 2) das Ergebnis „Gewinn“ zu und den anderen vier Würfelaugen das Ergebnis „Verlust“.
+          TI-Nspire: <code class="ti">=when(randint(1,6)&lt;=2,1,0)</code></p>
+          <p><strong>b)</strong> Man würfelt einmal und ordnet fünf der sechs Würfelaugen (1 bis 5) das Ergebnis „Gewinn“ zu und der 6 das Ergebnis „Verlust“.
+          TI-Nspire: <code class="ti">=when(randint(1,6)&lt;=5,1,0)</code></p>
+          <p><strong>c)</strong> Man würfelt zweimal und betrachtet nur, ob die Augenzahl höchstens 2 ist ($\frac13$) oder nicht. Nur wenn <em>beide</em> Würfe höchstens 2 zeigen, ergibt sich „Gewinn“, denn
+          $\frac13\cdot\frac13=\frac19$. Sonst ergibt sich „Verlust“.
+          TI-Nspire: <code class="ti">=when(randint(1,6)&lt;=2 and randint(1,6)&lt;=2,1,0)</code> &nbsp;oder kürzer <code class="ti">=when(randint(1,9)=1,1,0)</code></p>
+        </div>
+      </div>
+    </article>
+
+    <!-- Beispiel 2 -->
+    <article class="card sA">
+      <div class="card-head"><h3>Beispiel 2 · Freiwürfe mit Lists &amp; Spreadsheet simulieren</h3><span class="chev">▾</span></div>
+      <div class="card-body">
+        <div class="task">
+          <p>Ein Basketballspieler trifft bei einem Freiwurf mit einer Wahrscheinlichkeit von $0{,}7$. Er wirft zehnmal hintereinander; die Würfe werden als unabhängig angenommen.</p>
+          <p><strong>a)</strong> Beschreiben Sie, wie man eine Serie von zehn Freiwürfen mit Zufallszahlen simuliert.</p>
+          <p><strong>b)</strong> Schätzen Sie mithilfe von 100 simulierten Serien die Wahrscheinlichkeit dafür, dass er mindestens acht Treffer erzielt.</p>
+        </div>
+        <div class="bsp">
+          <div class="lh">Lösung</div>
+          <p><strong>a)</strong> Modellannahme: Jeder Wurf trifft mit Wahrscheinlichkeit $0{,}7$, unabhängig von den anderen. Man erzeugt eine Zufallszahl zwischen 0 und 1.
+          Ist sie kleiner als $0{,}7$, wird der Wurf als Treffer gewertet. Das geschieht in $70\,\%$ der Fälle. Zehn solche Zufallszahlen bilden eine Serie.</p>
+          <p><strong>b)</strong> In Lists &amp; Spreadsheet ist jede Zeile eine Serie:</p>
+          <ol class="steps">
+            <li>Zelle A1: <code class="ti">=when(rand()&lt;0.7,1,0)</code>, mit <b>Füllen</b> nach rechts bis J1 (10 Würfe).</li>
+            <li>Zelle K1: <code class="ti">=sum(a1:j1)</code> (Trefferzahl der Serie).</li>
+            <li>A1 bis K1 markieren und bis Zeile 100 nach unten füllen.</li>
+            <li>Zelle L1: <code class="ti">=countif(k1:k100,?&gt;7)/100.0</code></li>
+          </ol>
+          <div class="tw"><table class="lst">
+            <tr class="hd"><th></th><th>A</th><th>B</th><th>C</th><th>…</th><th>J</th><th>K</th><th>L</th></tr>
+            <tr><td class="rn">1</td><td>1</td><td>0</td><td>1</td><td>…</td><td>1</td><td>8</td><td>0.36</td></tr>
+            <tr><td class="rn">2</td><td>1</td><td>1</td><td>0</td><td>…</td><td>1</td><td>6</td><td></td></tr>
+            <tr><td class="rn">3</td><td>0</td><td>1</td><td>1</td><td>…</td><td>1</td><td>9</td><td></td></tr>
+          </table></div>
+          <p>In dieser Simulation hatten 36 der 100 Serien mindestens acht Treffer. Ein Schätzwert ist also
+          $$P(\text{mindestens 8 Treffer})\approx\frac{36}{100}={\color{#1a9e5c}\boldsymbol{0{,}36}}.$$
+          Mit <span class="kbd">ctrl</span> <span class="kbd">R</span> erhält man weitere Schätzwerte; sie schwanken etwa zwischen $0{,}29$ und $0{,}47$.</p>
+          <div class="note" style="margin:6px 0 0">Den exakten Wert $0{,}383$ werden wir in Kapitel IX mit der Binomialverteilung berechnen.</div>
+          <button class="alt-btn" type="button">➕ Kürzerer Weg mit einer Spaltenformel</button>
+          <div class="alt"><div class="ah">Alternative · ohne Füllen</div>
+            <p>Spaltenformel in Spalte A: <code class="ti">=seq(countif(rand(10),?&lt;0.7),k,1,100)</code>. Für jedes $k$ werden zehn neue Zufallszahlen erzeugt und die Treffer gezählt –
+            das ergibt 100 Trefferzahlen in einer Spalte. Danach wie oben: <code class="ti">=countif(a1:a100,?&gt;7)/100.0</code>.</p></div>
+        </div>
+      </div>
+    </article>
+  </section>
+
+  <!-- ================= GEMEINSAM ================= -->
+  <section class="sG" data-stufe="G">
+    <div class="stufe-head">
+      <span class="stufe-badge">Gemeinsam im Unterricht</span>
+      <span class="desc">Diese Aufgaben lösen wir zusammen – die Lösung wird an der Tafel gesichert</span>
+    </div>
+
+    <article class="card sG">
+      <div class="card-head"><h3>Aufgabe A · Das passende Zufallsgerät</h3><span class="chev">▾</span></div>
+      <div class="card-body">
+        <div class="task">
+          <p>Beschreiben Sie, wie man den Vorgang mit einem Würfel simulieren kann, und geben Sie eine passende TI-Nspire-Formel an.</p>
+          <p><strong>a)</strong> Werfen einer Münze &nbsp; <strong>b)</strong> Ein Elfmeter wird mit $\frac56$ verwandelt.
+          &nbsp; <strong>c)</strong> Jede dritte befragte Person wählt Partei X. &nbsp; <strong>d)</strong> Ein Bauteil funktioniert mit $90\,\%$.</p>
+          <p>Bei welchem Vorgang stößt der Würfel an seine Grenzen? Welche Zufallsgeräte eignen sich stattdessen?</p>
+        </div>
+        <div class="board">✏️ <span><b>Tafelsicherung:</b> Tabelle Vorgang – Würfel – TI-Formel; Grenzen des Würfels und Alternativen (Urne, Zehnerwürfel, <code class="ti">rand()</code>).</span></div>
+      </div>
+    </article>
+
+    <article class="card sG">
+      <div class="card-head"><h3>Aufgabe B · Drei Würfel – Augensumme mindestens 12</h3><span class="chev">▾</span></div>
+      <div class="card-body">
+        <div class="task">
+          <p>Es werden drei Würfel geworfen und die Augensumme gebildet. Gesucht ist ein Schätzwert für die Wahrscheinlichkeit, dass die Augensumme mindestens 12 beträgt.</p>
+          <p><strong>a)</strong> Werfen Sie zu zweit zehnmal drei Würfel und schätzen Sie die Wahrscheinlichkeit.</p>
+          <p><strong>b)</strong> Fassen Sie alle Ergebnisse des Kurses zusammen und schätzen Sie erneut.</p>
+          <p><strong>c)</strong> Simulieren Sie 300 Würfe mit dem TI-Nspire. Tipp: Spalte A heißt <code class="ti">summe</code>; eine einzige Spaltenformel genügt:
+          <code class="ti">=randint(1,6,300)+randint(1,6,300)+randint(1,6,300)</code>. Beurteilen Sie die Güte der Schätzungen aus a) und b).</p>
+        </div>
+        <div class="board">✏️ <span><b>Tafelsicherung:</b> Schätzwerte aus a), b), c) nebeneinander; Formel <code class="ti">countif(summe,?&gt;11)/300.0</code>; „mehr Wiederholungen – weniger Schwankung“.</span></div>
+      </div>
+    </article>
+
+    <article class="card sG">
+      <div class="card-head"><h3>Aufgabe C · Raten im Multiple-Choice-Test</h3><span class="chev">▾</span></div>
+      <div class="card-body">
+        <div class="task">
+          <p>Ein Test besteht aus zehn Fragen mit jeweils vier Antworten, von denen genau eine richtig ist. Zum Bestehen braucht man mindestens fünf richtige Antworten.
+          Jemand kreuzt bei jeder Frage zufällig an.</p>
+          <p><strong>a)</strong> Planen Sie gemeinsam eine Tabelle in Lists &amp; Spreadsheet: Was steht in einer Zeile, welche Formeln braucht man?</p>
+          <p><strong>b)</strong> Simulieren Sie 200 Tests und schätzen Sie die Wahrscheinlichkeit, durch Raten zu bestehen.</p>
+        </div>
+        <div class="board">✏️ <span><b>Tafelsicherung:</b> Skizze der Tabelle (Zeile = ein Test, A–J = Fragen, K = Anzahl richtig), Formeln, Schätzwert und Bewertung des Ergebnisses.</span></div>
+      </div>
+    </article>
+  </section>
+
+  <!-- ================= STUFE 1 ================= -->
+  <section class="s1" data-stufe="1">
+    <div class="stufe-head">
+      <span class="stufe-badge">Stufe 1</span>
+      <span class="desc">Grundaufgaben · Zufallszahlen zuordnen, Tabelle aufbauen, Schätzwert bestimmen</span>
+    </div>
+
+    <article class="card s1">
+      <div class="card-head"><h3>Aufgabe 1 · Zwei Oktaeder</h3><span class="chev">▾</span></div>
+      <div class="card-body">
+        <div class="task">
+          <p>Ein Oktaeder ist ein fairer Würfel mit acht Flächen, die die Zahlen 1 bis 8 tragen. Es werden zwei Oktaeder geworfen.</p>
+          <p><strong>a)</strong> Bestimmen Sie mithilfe einer Simulation von 250 Würfen näherungsweise die Wahrscheinlichkeit dafür, dass beide Oktaeder dieselbe Zahl zeigen.</p>
+          <p><strong>b)</strong> Berechnen Sie die Wahrscheinlichkeit aus Teilaufgabe a).</p>
+          <p><strong>c)</strong> Lösen Sie die Teilaufgaben a) und b) für drei Oktaeder. Was fällt Ihnen beim Schätzwert auf?</p>
+        </div>
+        <div class="assess"><span class="lab">Einschätzung:</span>
+          <button data-v="ok" type="button">✓ Fertig &amp; verstanden</button><button data-v="mid" type="button">~ Noch unsicher</button><button data-v="ask" type="button">? Frage an Lehrer</button></div>
+        <div class="hints">
+          <div class="htitle">Hilfen</div>
+          <div class="htabs"><button type="button">Hilfe 1 · Tabelle</button><button type="button">Hilfe 2 · Vergleichen</button><button type="button">Hilfe 3 · Berechnen</button></div>
+          <div class="hpanel"><h4>Hilfe 1 · Zwei Spalten mit Würfen</h4><p>Spaltenformel in A und in B: <code class="ti">=randint(1,8,250)</code>. Jede Zeile ist ein Wurf mit beiden Oktaedern.</p></div>
+          <div class="hpanel"><h4>Hilfe 2 · Gleiche Zahl erkennen</h4><p>In C1: <code class="ti">=when(a1=b1,1,0)</code> und bis Zeile 250 füllen. Dann zählt <code class="ti">=sum(c1:c250)/250.0</code> den Anteil der Treffer.</p></div>
+          <div class="hpanel"><h4>Hilfe 3 · Pfadregel</h4><p>Das erste Oktaeder darf jede Zahl zeigen. Wie wahrscheinlich ist es, dass das zweite genau diese Zahl trifft?</p></div>
+        </div>
+        <div class="sol-lock">🔒 Musterlösung – nach Freigabe durch den Lehrer sichtbar.</div>
+        <div class="sol"><div class="sh">✓ Musterlösung · Aufgabe 1</div><div class="sb">
+          <p><strong>a)</strong> Spalten A und B: <code class="ti">=randint(1,8,250)</code>; C1: <code class="ti">=when(a1=b1,1,0)</code>, bis C250 füllen; D1: <code class="ti">=sum(c1:c250)/250.0</code>.
+          Ein Durchlauf ergab z.&nbsp;B. 29 gleiche Paare, also den Schätzwert $\frac{29}{250}\approx{\color{#1a9e5c}\boldsymbol{0{,}12}}$ (typisch zwischen $0{,}08$ und $0{,}17$).</p>
+          <p><strong>b)</strong> Es gibt $8\cdot8=64$ gleich wahrscheinliche Paare, davon 8 mit gleicher Zahl:
+          $$P(\text{gleiche Zahl})=\frac{8}{64}={\color{#1a9e5c}\boldsymbol{\tfrac18=0{,}125}}.$$</p>
+          <p><strong>c)</strong> Dritte Spalte <code class="ti">=randint(1,8,250)</code> ergänzen, in D1: <code class="ti">=when(a1=b1 and b1=c1,1,0)</code>.
+          Exakt: $P=\frac{8}{8^3}=\frac1{64}\approx{\color{#1a9e5c}\boldsymbol{0{,}016}}$. Bei 250 Würfen erwartet man nur etwa 4 Treffer; je nach Durchlauf erhält man 0 bis 9 Treffer –
+          der Schätzwert schwankt zwischen $0$ und $0{,}036$ und ist damit sehr <b>ungenau</b>. Für seltene Ereignisse braucht man viel mehr Wiederholungen.</p>
+        </div></div>
+      </div>
+    </article>
+
+    <article class="card s1">
+      <div class="card-head"><h3>Aufgabe 2 · Siebenmeter im Handball</h3><span class="chev">▾</span></div>
+      <div class="card-body">
+        <div class="task">
+          <p>Eine Handballspielerin verwandelt einen Siebenmeter mit einer Wahrscheinlichkeit von $85\,\%$.</p>
+          <p><strong>a)</strong> Simulieren Sie 20 Siebenmeter mithilfe von Kugeln in einer Urne und geben Sie die relative Häufigkeit der Treffer an.</p>
+          <p><strong>b)</strong> Simulieren Sie 200 Siebenmeter mit dem TI-Nspire. Vergleichen Sie die relative Häufigkeit mit dem Ergebnis aus a).</p>
+        </div>
+        <div class="assess"><span class="lab">Einschätzung:</span>
+          <button data-v="ok" type="button">✓ Fertig &amp; verstanden</button><button data-v="mid" type="button">~ Noch unsicher</button><button data-v="ask" type="button">? Frage an Lehrer</button></div>
+        <div class="hints">
+          <div class="htitle">Hilfen</div>
+          <div class="htabs"><button type="button">Hilfe 1 · Urne</button><button type="button">Hilfe 2 · TI-Nspire</button><button type="button">Hilfe 3 · Vergleich</button></div>
+          <div class="hpanel"><h4>Hilfe 1 · Welche Kugeln?</h4><p>$85\,\%=\frac{17}{20}$. Wie viele „Treffer-Kugeln“ und wie viele andere braucht die Urne? Muss man zurücklegen?</p></div>
+          <div class="hpanel"><h4>Hilfe 2 · Treffer mit rand()</h4><p>A1: <code class="ti">=when(rand()&lt;0.85,1,0)</code>, bis Zeile 200 füllen. Der Anteil der Treffer ist <code class="ti">=sum(a1:a200)/200.0</code>.</p></div>
+          <div class="hpanel"><h4>Hilfe 3 · Wie genau?</h4><p>Wiederhole beide Simulationen einige Male (<span class="kbd">ctrl</span> <span class="kbd">R</span>). Welche Schätzwerte schwanken stärker?</p></div>
+        </div>
+        <div class="sol-lock">🔒 Musterlösung – nach Freigabe durch den Lehrer sichtbar.</div>
+        <div class="sol"><div class="sh">✓ Musterlösung · Aufgabe 2</div><div class="sb">
+          <p><strong>a)</strong> In eine Urne legt man 17 rote Kugeln (Treffer) und 3 blaue Kugeln (kein Treffer), zieht 20-mal <b>mit Zurücklegen</b> und notiert die Farbe.
+          Ergebnis z.&nbsp;B. 18 Treffer: relative Häufigkeit $\frac{18}{20}=0{,}9$. Bei nur 20 Würfen sind Werte zwischen etwa $0{,}7$ und $1$ üblich.</p>
+          <p><strong>b)</strong> A1: <code class="ti">=when(rand()&lt;0.85,1,0)</code>, bis A200 füllen; B1: <code class="ti">=sum(a1:a200)/200.0</code>.
+          Ergebnis z.&nbsp;B. ${\color{#1a9e5c}\boldsymbol{0{,}855}}$. Die Werte liegen jetzt meist zwischen $0{,}80$ und $0{,}90$, also deutlich näher an $0{,}85$:
+          Mit mehr Wiederholungen schwanken die Schätzwerte weniger.</p>
+          <button class="alt-btn" type="button">➕ Kürzerer Weg in einer Zelle</button>
+          <div class="alt"><div class="ah">Alternative · eine einzige Formel</div>
+            <p><code class="ti">=countif(rand(200),?&lt;0.85)/200.0</code> erzeugt 200 Zufallszahlen und zählt direkt, wie viele kleiner als $0{,}85$ sind.</p></div>
+        </div></div>
+      </div>
+    </article>
+  </section>
+
+  <!-- ================= STUFE 2 ================= -->
+  <section class="s2" data-stufe="2">
+    <div class="stufe-head">
+      <span class="stufe-badge">Stufe 2</span>
+      <span class="desc">Erweiterung · historische Probleme, Simulation und exakte Rechnung vergleichen</span>
+    </div>
+
+    <article class="card s2">
+      <div class="card-head"><h3>Aufgabe 3 · Das Würfelproblem des Großherzogs</h3><span class="chev">▾</span></div>
+      <div class="card-body">
+        <div class="task">
+          <p>Um 1620 fiel einem Würfelspieler am Hof der Medici auf, dass beim Wurf von drei Würfeln die Augensumme 10 öfter vorkommt als die Augensumme 9 –
+          obwohl sich beide Summen auf sechs Arten zerlegen lassen:<br>
+          $10=1+3+6=1+4+5=2+2+6=2+3+5=2+4+4=3+3+4$,<br>
+          $9=1+2+6=1+3+5=1+4+4=2+2+5=2+3+4=3+3+3$.</p>
+          <p><strong>a)</strong> Überprüfen Sie die Beobachtung, indem Sie 100-mal bzw. 1000-mal das Werfen von drei Würfeln simulieren. Wiederholen Sie die Simulation mehrmals.</p>
+          <p><strong>b)</strong> Erklären Sie die Beobachtung und berechnen Sie beide Wahrscheinlichkeiten.</p>
+        </div>
+        <div class="assess"><span class="lab">Einschätzung:</span>
+          <button data-v="ok" type="button">✓ Fertig &amp; verstanden</button><button data-v="mid" type="button">~ Noch unsicher</button><button data-v="ask" type="button">? Frage an Lehrer</button></div>
+        <div class="hints">
+          <div class="htitle">Hilfen</div>
+          <div class="htabs"><button type="button">Hilfe 1 · Spaltenformel</button><button type="button">Hilfe 2 · Zählen</button><button type="button">Hilfe 3 · Reihenfolge</button></div>
+          <div class="hpanel"><h4>Hilfe 1 · Alle Würfe in einer Spalte</h4><p>Spalte A heißt <code class="ti">summe</code>, Formelzeile: <code class="ti">=randint(1,6,1000)+randint(1,6,1000)+randint(1,6,1000)</code>.</p></div>
+          <div class="hpanel"><h4>Hilfe 2 · Häufigkeiten</h4><p><code class="ti">=countif(summe,9)/1000.0</code> und <code class="ti">=countif(summe,10)/1000.0</code>. Für 100 Würfe: Spalte mit 100 Werten anlegen.</p></div>
+          <div class="hpanel"><h4>Hilfe 3 · Sind die Zerlegungen gleich wahrscheinlich?</h4><p>Die Würfel sind unterscheidbar. Wie viele Reihenfolgen gibt es für $1+3+6$, wie viele für $2+2+6$, wie viele für $3+3+3$?</p></div>
+        </div>
+        <div class="sol-lock">🔒 Musterlösung – nach Freigabe durch den Lehrer sichtbar.</div>
+        <div class="sol"><div class="sh">✓ Musterlösung · Aufgabe 3</div><div class="sb">
+          <p><strong>a)</strong> Spalte <code class="ti">summe</code> mit der Spaltenformel <code class="ti">=randint(1,6,1000)+randint(1,6,1000)+randint(1,6,1000)</code>;
+          Zellen <code class="ti">=countif(summe,9)/1000.0</code> und <code class="ti">=countif(summe,10)/1000.0</code>, mehrmals <span class="kbd">ctrl</span> <span class="kbd">R</span>.
+          Typische Ergebnisse bei 1000 Würfen: $h(9)\approx0{,}10$ bis $0{,}13$, $h(10)\approx0{,}11$ bis $0{,}14$. Meist ist $h(10)>h(9)$, aber nicht immer.
+          Bei 100 Würfen ist die Reihenfolge oft vertauscht – der Unterschied ist zu klein, um ihn mit wenigen Würfen sicher zu erkennen.</p>
+          <p><strong>b)</strong> Die Zerlegungen sind nicht gleich wahrscheinlich, denn sie lassen sich unterschiedlich oft anordnen (drei verschiedene Zahlen: 6 Reihenfolgen,
+          zwei gleiche: 3, drei gleiche: 1). Von den $6^3=216$ gleich wahrscheinlichen Ergebnissen gehören</p>
+          <p>zur Summe 10: $6+6+3+6+3+3=27$, &nbsp; zur Summe 9: $6+6+3+3+6+1=25$.</p>
+          <p>$$P(\text{Summe }10)=\frac{27}{216}={\color{#1a9e5c}\boldsymbol{0{,}125}},\qquad P(\text{Summe }9)=\frac{25}{216}\approx{\color{#1a9e5c}\boldsymbol{0{,}116}}.$$
+          Der Spieler muss sehr oft gespielt haben, um den Unterschied von weniger als einem Prozentpunkt zu bemerken.</p>
+        </div></div>
+      </div>
+    </article>
+
+    <article class="card s2">
+      <div class="card-head"><h3>Aufgabe 4 · Die Wette des Chevalier de Méré</h3><span class="chev">▾</span></div>
+      <div class="card-body">
+        <div class="task">
+          <p>Der Chevalier de Méré fragte 1654 den Mathematiker Blaise Pascal, was wahrscheinlicher sei: bei vier Würfen mit einem Würfel mindestens eine Sechs
+          oder bei 24 Würfen mit zwei Würfeln mindestens einen Sechserpasch (Doppelsechs) zu werfen.</p>
+          <p><strong>a)</strong> Berechnen Sie die beiden Wahrscheinlichkeiten.</p>
+          <p><strong>b)</strong> Bestimmen Sie Näherungswerte mithilfe einer Simulation von je 500 Spielen. Beurteilen Sie, ob die Simulation die Frage entscheiden kann.</p>
+        </div>
+        <div class="assess"><span class="lab">Einschätzung:</span>
+          <button data-v="ok" type="button">✓ Fertig &amp; verstanden</button><button data-v="mid" type="button">~ Noch unsicher</button><button data-v="ask" type="button">? Frage an Lehrer</button></div>
+        <div class="hints">
+          <div class="htitle">Hilfen</div>
+          <div class="htabs"><button type="button">Hilfe 1 · Gegenereignis</button><button type="button">Hilfe 2 · Doppelsechs</button><button type="button">Hilfe 3 · seq</button></div>
+          <div class="hpanel"><h4>Hilfe 1 · „Mindestens eine …“</h4><p>Rechne mit dem Gegenereignis „keine Sechs“ bzw. „kein Sechserpasch“ (wie bei Marens Würfeln).</p></div>
+          <div class="hpanel"><h4>Hilfe 2 · Doppelsechs mit einer Zufallszahl</h4><p>Ein Wurf mit zwei Würfeln hat 36 gleich wahrscheinliche Ergebnisse. Ein Sechserpasch entspricht also z.&nbsp;B. der Zahl 36 bei <code class="ti">randint(1,36)</code>.</p></div>
+          <div class="hpanel"><h4>Hilfe 3 · Viele Spiele in einer Spalte</h4><p><code class="ti">=seq(when(countif(randint(1,6,4),6)&gt;0,1,0),k,1,500)</code> erzeugt 500 Spiele „vier Würfe“ (1 = gewonnen). Baue die zweite Spalte genauso.</p></div>
+        </div>
+        <div class="sol-lock">🔒 Musterlösung – nach Freigabe durch den Lehrer sichtbar.</div>
+        <div class="sol"><div class="sh">✓ Musterlösung · Aufgabe 4</div><div class="sb">
+          <p><strong>a)</strong> Über das Gegenereignis:
+          $$P_1=1-\left(\tfrac56\right)^4\approx{\color{#1a9e5c}\boldsymbol{0{,}518}},\qquad P_2=1-\left(\tfrac{35}{36}\right)^{24}\approx{\color{#1a9e5c}\boldsymbol{0{,}491}}.$$
+          Mindestens eine Sechs bei vier Würfen ist also wahrscheinlicher.</p>
+          <p><strong>b)</strong> Spaltenformeln:<br>
+          Spalte A: <code class="ti">=seq(when(countif(randint(1,6,4),6)&gt;0,1,0),k,1,500)</code><br>
+          Spalte B: <code class="ti">=seq(when(countif(randint(1,36,24),36)&gt;0,1,0),k,1,500)</code><br>
+          Schätzwerte: <code class="ti">=sum(a1:a500)/500.0</code> und <code class="ti">=sum(b1:b500)/500.0</code>, z.&nbsp;B. $0{,}53$ und $0{,}48$.</p>
+          <p>Bei 500 Spielen schwanken die Schätzwerte um etwa $\pm0{,}04$; der Unterschied der Wahrscheinlichkeiten beträgt nur $0{,}027$. Die Simulation kann die Frage
+          also <b>nicht sicher entscheiden</b> – oft liegt sogar das zweite Spiel vorn. Die Rechnung in a) ist hier überlegen.</p>
+          <button class="alt-btn" type="button">➕ Ohne seq: mit Füllen</button>
+          <div class="alt"><div class="ah">Alternative · erstes Spiel mit Zellformeln</div>
+            <p>A1 bis D1: <code class="ti">=randint(1,6)</code> (vier Würfe), E1: <code class="ti">=when(countif(a1:d1,6)&gt;0,1,0)</code>, alles bis Zeile 500 füllen.
+            Für das zweite Spiel bräuchte man 24 Spalten – hier ist <code class="ti">seq</code> deutlich bequemer.</p></div>
+        </div></div>
+      </div>
+    </article>
+  </section>
+
+  <!-- ================= STUFE 3 ================= -->
+  <section class="s3" data-stufe="3">
+    <div class="stufe-head">
+      <span class="stufe-badge">Stufe 3</span>
+      <span class="desc">Vertiefung · eigene Bedingungen formulieren, Spielverläufe simulieren</span>
+    </div>
+
+    <article class="card s3">
+      <div class="card-head"><h3>Aufgabe 5 · Vier verschiedene Augenzahlen</h3><span class="chev">▾</span></div>
+      <div class="card-body">
+        <div class="task">
+          <p>Es werden vier Würfel geworfen.</p>
+          <p><strong>a)</strong> Bestimmen Sie mithilfe einer Simulation einen Schätzwert für die Wahrscheinlichkeit, dass alle vier Würfel verschiedene Augenzahlen zeigen.</p>
+          <p><strong>b)</strong> Berechnen Sie die Wahrscheinlichkeit exakt und beurteilen Sie Ihr Ergebnis aus der Simulation.</p>
+        </div>
+        <div class="assess"><span class="lab">Einschätzung:</span>
+          <button data-v="ok" type="button">✓ Fertig &amp; verstanden</button><button data-v="mid" type="button">~ Noch unsicher</button><button data-v="ask" type="button">? Frage an Lehrer</button></div>
+        <div class="hints">
+          <div class="htitle">Hilfen</div>
+          <div class="htabs"><button type="button">Hilfe 1 · Gegenteil</button><button type="button">Hilfe 2 · Formel</button><button type="button">Hilfe 3 · Pfadregel</button></div>
+          <div class="hpanel"><h4>Hilfe 1 · Wann sind sie nicht alle verschieden?</h4><p>Sobald zwei der vier Würfel dieselbe Zahl zeigen. Wie viele Paare von Würfeln gibt es?</p></div>
+          <div class="hpanel"><h4>Hilfe 2 · Bedingung mit or</h4><p>Spalten A–D: <code class="ti">=randint(1,6,300)</code>. In E1: <code class="ti">=when(a1=b1 or a1=c1 or a1=d1 or b1=c1 or b1=d1 or c1=d1,0,1)</code>, dann füllen.</p></div>
+          <div class="hpanel"><h4>Hilfe 3 · Exakt</h4><p>Der erste Würfel ist beliebig, der zweite muss eine andere Zahl zeigen ($\frac56$), der dritte …</p></div>
+        </div>
+        <div class="sol-lock">🔒 Musterlösung – nach Freigabe durch den Lehrer sichtbar.</div>
+        <div class="sol"><div class="sh">✓ Musterlösung · Aufgabe 5</div><div class="sb">
+          <p><strong>a)</strong> Spalten A–D: <code class="ti">=randint(1,6,300)</code>. Zwei Würfel zeigen dieselbe Zahl, wenn eines der sechs Paare übereinstimmt, also in E1:
+          <code class="ti">=when(a1=b1 or a1=c1 or a1=d1 or b1=c1 or b1=d1 or c1=d1,0,1)</code>, bis E300 füllen; F1: <code class="ti">=sum(e1:e300)/300.0</code>.
+          Ein Durchlauf ergab z.&nbsp;B. 86 von 300, also den Schätzwert ${\color{#1a9e5c}\boldsymbol{0{,}29}}$ (typisch $0{,}23$ bis $0{,}33$).</p>
+          <p><strong>b)</strong> Pfadregel: $$P(\text{alle verschieden})=1\cdot\frac56\cdot\frac46\cdot\frac36=\frac{360}{1296}=\frac5{18}\approx{\color{#1a9e5c}\boldsymbol{0{,}278}}.$$
+          Der Schätzwert liegt in der Nähe. Mit 300 Wiederholungen ist eine Abweichung von einigen Hundertsteln normal.</p>
+        </div></div>
+      </div>
+    </article>
+
+    <article class="card s3">
+      <div class="card-head"><h3>Aufgabe 6 · Aus 1 € mach 4 €</h3><span class="chev">▾</span></div>
+      <div class="card-body">
+        <div class="task">
+          <p>Lea hat 1 €, möchte aber 4 € haben. Sie setzt immer 1 € auf einen Münzwurf: Bei „Zahl“ bekommt sie 1 € dazu, bei „Wappen“ verliert sie den Einsatz.
+          Das Spiel endet, wenn Lea pleite ist oder 4 € besitzt.</p>
+          <p><strong>a)</strong> Erläutern Sie, dass das Spiel prinzipiell unendlich lange dauern kann.</p>
+          <p><strong>b)</strong> Simulieren Sie mindestens 20 Spiele mit dem TI-Nspire. Schätzen Sie die Wahrscheinlichkeit, dass Lea 4 € erreicht, und die mittlere Spieldauer.</p>
+        </div>
+        <div class="assess"><span class="lab">Einschätzung:</span>
+          <button data-v="ok" type="button">✓ Fertig &amp; verstanden</button><button data-v="mid" type="button">~ Noch unsicher</button><button data-v="ask" type="button">? Frage an Lehrer</button></div>
+        <div class="hints">
+          <div class="htitle">Hilfen</div>
+          <div class="htabs"><button type="button">Hilfe 1 · Ein Spiel pro Spalte</button><button type="button">Hilfe 2 · Formel</button><button type="button">Hilfe 3 · Auswerten</button></div>
+          <div class="hpanel"><h4>Hilfe 1 · Den Kontostand verfolgen</h4><p>Jede <b>Spalte</b> ist ein Spiel, jede Zeile ein Münzwurf. In Zeile 1 steht der Startbetrag 1, darunter jeweils der neue Kontostand.</p></div>
+          <div class="hpanel"><h4>Hilfe 2 · Kontostand nach einem Wurf</h4><p>A2: <code class="ti">=when(a1=0 or a1=4,a1,a1+when(rand()&lt;0.5,1,-1))</code>. Ist das Spiel vorbei, bleibt der Betrag stehen. Bis A40 füllen, dann A1:A40 nach rechts bis T füllen.</p></div>
+          <div class="hpanel"><h4>Hilfe 3 · Gewinn und Dauer zählen</h4><p>Gewonnen: <code class="ti">=countif(a40:t40,4)</code>. Dauer eines Spiels = Anzahl der Zeilen mit 1, 2 oder 3 Euro, z.&nbsp;B. <code class="ti">=countif(a1:a40,1)+countif(a1:a40,2)+countif(a1:a40,3)</code>.</p></div>
+        </div>
+        <div class="sol-lock">🔒 Musterlösung – nach Freigabe durch den Lehrer sichtbar.</div>
+        <div class="sol"><div class="sh">✓ Musterlösung · Aufgabe 6</div><div class="sb">
+          <p><strong>a)</strong> Lea kann zwischen 1 €, 2 € und 3 € beliebig oft hin- und herwechseln, z.&nbsp;B. 1 → 2 → 1 → 2 → … oder 2 → 3 → 2 → 3 → …
+          Eine obere Grenze für die Zahl der Würfe gibt es daher nicht – allerdings werden sehr lange Spiele immer unwahrscheinlicher.</p>
+          <p><strong>b)</strong> A1: <code class="ti">1</code>; A2: <code class="ti">=when(a1=0 or a1=4,a1,a1+when(rand()&lt;0.5,1,-1))</code>, bis A40 füllen.
+          A1:A40 markieren und nach rechts bis Spalte T füllen (20 Spiele). In Zeile 41: A41: <code class="ti">=countif(a1:a40,1)+countif(a1:a40,2)+countif(a1:a40,3)</code> (Dauer), nach rechts füllen.</p>
+          <p>Auswertung: <code class="ti">=countif(a40:t40,4)/20.0</code> und <code class="ti">=mean(a41:t41)*1.0</code>. Ein Durchlauf ergab 6 Gewinne in 20 Spielen und eine mittlere Dauer von $3{,}2$ Würfen.
+          Fasst man mehrere Durchläufe zusammen, ergibt sich etwa ${\color{#1a9e5c}\boldsymbol{P(\text{4 € erreicht})\approx0{,}25}}$ und eine mittlere Dauer von etwa ${\color{#1a9e5c}\boldsymbol{3}}$ Würfen.</p>
+          <p>Kontrolle: Nach 39 Würfen ist so gut wie jedes Spiel beendet (Wahrscheinlichkeit für ein noch laufendes Spiel unter $0{,}01\,\%$).</p>
+          <button class="alt-btn" type="button">➕ Exakter Wert durch eine Überlegung</button>
+          <div class="alt"><div class="ah">Alternative · faires Spiel</div>
+            <p>Das Spiel ist fair: Bei jedem Wurf bleibt der zu erwartende Kontostand gleich. Am Ende hat Lea entweder 4 € (Wahrscheinlichkeit $p$) oder 0 €.
+            Also muss im Mittel $4\cdot p+0\cdot(1-p)=1$ gelten, d.&nbsp;h. $p=\frac14$.</p></div>
+        </div></div>
+      </div>
+    </article>
+  </section>
+
+</div>
+
+<footer class="bot">
+  Mathematik Oberstufe LK · Q2 · Kapitel VIII · Daten und Wahrscheinlichkeit<br>
+  <a href="../">← Zurück zu Kapitel VIII.4</a> · <a href="../../index.html#kap-viii">Stochastik-Übersicht</a>
+</footer>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+
+  /* ---------- Baumdiagramme (SVG) ---------- */
+  var NS='http://www.w3.org/2000/svg';
+  function mk(tag,a,p){ var e=document.createElementNS(NS,tag); for(var k in a) e.setAttribute(k,a[k]); if(p) p.appendChild(e); return e; }
+  function txt(p,x,y,s,a){ var t=mk('text',Object.assign({x:x,y:y,'text-anchor':'middle','font-family':'inherit'},a||{}),p); t.textContent=s; return t; }
+  function probLabel(g,x,y,s){
+    if (s.indexOf('/')>0){
+      var q=s.split('/'); var w=Math.max(q[0].length,q[1].length)*7+4;
+      mk('rect',{x:x-w/2-2,y:y-14,width:w+4,height:29,fill:'#fff',opacity:.9},g);
+      txt(g,x,y-3,q[0],{'font-size':12});
+      mk('line',{x1:x-w/2,x2:x+w/2,y1:y+1,y2:y+1,stroke:'#1c1f26','stroke-width':1.1},g);
+      txt(g,x,y+13,q[1],{'font-size':12});
+    } else {
+      var w2=s.length*7+6; mk('rect',{x:x-w2/2,y:y-9,width:w2,height:17,fill:'#fff',opacity:.9},g);
+      txt(g,x,y+4,s,{'font-size':12});
+    }
+  }
+  function buildFromStages(st,lv){
+    if (lv>=st.length) return [];
+    return st[lv].map(function(b){ return {l:b[0],p:b[1],c:buildFromStages(st,lv+1)}; });
+  }
+  document.querySelectorAll('[data-tree]').forEach(function(box){
+    var s=JSON.parse(box.getAttribute('data-tree'));
+    var root = s.root ? s.root : {c:buildFromStages(s.stages,0)};
+    var depth=0, leaves=[];
+    (function walk(n,d,path){ n.d=d; n.path=path; if(!n.c||!n.c.length){ leaves.push(n); depth=Math.max(depth,d); } else n.c.forEach(function(c){ walk(c,d+1,path.concat([c.l])); }); })(root,0,[]);
+    var dx=s.dx||60, dy=s.dy||78, left=78, top=18;
+    var tupleLabels = s.leaf==='tuple';
+    var W=left+leaves.length*dx+10, H=top+depth*dy+44;
+    var svg=mk('svg',{width:W,height:H,viewBox:'0 0 '+W+' '+H,role:'img','aria-label':'Baumdiagramm'},null);
+    leaves.forEach(function(n,i){ n.x=left+dx*(i+0.5); });
+    (function place(n){ if(n.c&&n.c.length){ n.c.forEach(place); n.x=(n.c[0].x+n.c[n.c.length-1].x)/2; } n.y=top+n.d*dy; })(root);
+    for (var lv=1; lv<=depth; lv++){ if (s.levels && s.levels[lv-1]) txt(svg,4,top+lv*dy+4,s.levels[lv-1],{'text-anchor':'start','font-size':12,fill:'#5c6472'}); }
+    var hl=s.hl||[];
+    var gE=mk('g',{},svg), gL=mk('g',{},svg), gN=mk('g',{},svg);
+    var col=s.col||{};
+    (function draw(n){
+      if(!n.c) return;
+      n.c.forEach(function(c,idx){
+        var on = hl.length && c.path.length<=hl.length && c.path.every(function(v,k){ return v===hl[k]; });
+        var y1=n.y+(n.d===0?3:12), y2=c.y-12;
+        mk('line',{x1:n.x,y1:y1,x2:c.x,y2:y2,stroke:on?'#c0392b':'#2c5f8a','stroke-width':on?2.6:1.5},gE);
+        var mx=(n.x+c.x)/2, my=(y1+y2)/2;
+        var side = n.c.length===1 ? 1 : (idx < (n.c.length-1)/2 ? -1 : (idx > (n.c.length-1)/2 ? 1 : 0));
+        var off = side===0 ? 0 : side*Math.min(20, Math.abs(c.x-n.x)*0.35+10);
+        probLabel(gL,mx+off,my,c.p);
+        draw(c);
+      });
+    })(root);
+    (function nodes(n){
+      if (n.d===0){ mk('circle',{cx:n.x,cy:n.y,r:3.5,fill:'#1c1f26'},gN); }
+      else {
+        var c=col[n.l]||'#1c1f26';
+        mk('circle',{cx:n.x,cy:n.y,r:11.5,fill:'#fff',stroke:c,'stroke-width':1.6},gN);
+        txt(gN,n.x,n.y+4.5,n.l,{'font-size':n.l.length>2?10:13,'font-weight':700,fill:c});
+      }
+      if (n.c && n.c.length) n.c.forEach(nodes);
+      else if (n.d>0){
+        var lab = tupleLabels ? '('+n.path.join(', ')+')' : n.path.join('');
+        txt(gN,n.x,n.y+30,lab,{'font-size':tupleLabels&&n.path.length>2?10.5:12,fill:'#1c1f26'});
+      }
+    })(root);
+    box.appendChild(svg);
+  });
+
+  /* ---------- Glücksräder ---------- */
+  document.querySelectorAll('[data-wheel]').forEach(function(box){
+    var s=JSON.parse(box.getAttribute('data-wheel')), R=(s.size||160)/2, c=R+6, W=2*c;
+    var svg=mk('svg',{width:W,height:W,viewBox:'0 0 '+W+' '+W,role:'img','aria-label':'Glücksrad'},null);
+    var a=-Math.PI/2;
+    s.s.forEach(function(sec){
+      var a2=a+sec[0]*2*Math.PI, large=sec[0]>0.5?1:0;
+      var x1=c+R*Math.cos(a), y1=c+R*Math.sin(a), x2=c+R*Math.cos(a2), y2=c+R*Math.sin(a2);
+      mk('path',{d:'M'+c+','+c+' L'+x1+','+y1+' A'+R+','+R+' 0 '+large+' 1 '+x2+','+y2+' Z',fill:sec[1],stroke:'#1c1f26','stroke-width':s.lines?1:1.2},svg);
+      var am=(a+a2)/2, rr=R*(sec[0]<0.2?0.68:0.55);
+      txt(svg,c+rr*Math.cos(am),c+rr*Math.sin(am)+4,sec[2],{'font-size':sec[2].length>2?11:13,'font-weight':700,fill:'#1c1f26'});
+      a=a2;
+    });
+    mk('circle',{cx:c,cy:c,r:R,fill:'none',stroke:'#1c1f26','stroke-width':1.6},svg);
+    mk('line',{x1:c,y1:c,x2:c+R*0.45,y2:c-R*0.45,stroke:'#1c1f26','stroke-width':3,'stroke-linecap':'round'},svg);
+    mk('circle',{cx:c,cy:c,r:4,fill:'#1c1f26'},svg);
+    box.appendChild(svg);
+  });
+
+  /* ---------- KaTeX ---------- */
+  function render(){
+    if (window.renderMathInElement) {
+      renderMathInElement(document.body, {
+        delimiters: [ {left:'$$', right:'$$', display:true}, {left:'$', right:'$', display:false} ],
+        throwOnError:false
+      });
+    }
+  }
+  if (window.renderMathInElement) render(); else window.addEventListener('load', render);
+
+  /* ---------- Karten auf/zu ---------- */
+  document.querySelectorAll('.card-head').forEach(function(h){
+    h.addEventListener('click', function(){ h.parentElement.classList.toggle('open'); });
+  });
+
+  /* ---------- Hilfe-Reiter ---------- */
+  document.querySelectorAll('.hints').forEach(function(box){
+    var tabs=box.querySelectorAll('.htabs button'), panels=box.querySelectorAll('.hpanel');
+    tabs.forEach(function(tab,i){
+      tab.addEventListener('click', function(){
+        var wasOn=tab.classList.contains('on');
+        tabs.forEach(function(t){ t.classList.remove('on'); });
+        panels.forEach(function(p){ p.classList.remove('on'); });
+        if (!wasOn){ tab.classList.add('on'); if (panels[i]) panels[i].classList.add('on'); }
+      });
+    });
+  });
+
+  /* ---------- Selbsteinschätzung ---------- */
+  document.querySelectorAll('.assess').forEach(function(box){
+    var btns=box.querySelectorAll('button');
+    btns.forEach(function(b){
+      b.addEventListener('click', function(){
+        var wasOn=b.classList.contains('on');
+        btns.forEach(function(x){ x.classList.remove('on'); });
+        if (!wasOn) b.classList.add('on');
+      });
+    });
+  });
+
+  /* ---------- Filter ---------- */
+  document.querySelectorAll('.filters button').forEach(function(b){
+    b.addEventListener('click', function(){
+      document.querySelectorAll('.filters button').forEach(function(x){ x.classList.remove('on'); });
+      b.classList.add('on');
+      var f=b.dataset.f;
+      document.querySelectorAll('section[data-stufe]').forEach(function(sec){
+        sec.style.display=(f==='all' || sec.dataset.stufe===f) ? '' : 'none';
+      });
+    });
+  });
+
+  /* ---------- Alternative Lösungswege ---------- */
+  document.querySelectorAll('.alt-btn').forEach(function(b){
+    var label=b.textContent;
+    b.addEventListener('click', function(){
+      var alt=b.nextElementSibling; var on=alt.classList.toggle('shown');
+      b.textContent = on ? '➖ Alternativen Weg ausblenden' : label;
+    });
+  });
+
+  /* ---------- Musterlösungen freischalten (pro Aufgabe einzeln) ---------- */
+  var CODE='MATHE', input=document.getElementById('code'), msg=document.getElementById('msg');
+  function activateLocks(){
+    document.querySelectorAll('.sol-lock').forEach(function(lock){ lock.classList.add('active'); lock.textContent='👁 Musterlösung anzeigen'; });
+  }
+  function tryUnlock(){
+    var val=(input.value||'').trim().toUpperCase();
+    if (val===CODE){
+      document.body.classList.add('unlocked');
+      msg.textContent='✓ freigeschaltet – Musterlösungen jetzt einzeln aufklappbar'; msg.className='msg ok';
+      activateLocks();
+    } else { msg.textContent='✗ Code stimmt nicht'; msg.className='msg bad'; }
+  }
+  document.getElementById('btn-unlock').addEventListener('click', tryUnlock);
+  input.addEventListener('keydown', function(e){ if (e.key==='Enter') tryUnlock(); });
+  document.querySelectorAll('.sol-lock').forEach(function(lock){
+    lock.addEventListener('click', function(){
+      if (!document.body.classList.contains('unlocked')) return;
+      var sol=lock.nextElementSibling;
+      if (!sol || !sol.classList.contains('sol')) return;
+      var showing=sol.classList.toggle('shown');
+      lock.textContent = showing ? '🙈 Musterlösung wieder ausblenden' : '👁 Musterlösung anzeigen';
+      if (showing) sol.scrollIntoView({behavior:'smooth', block:'nearest'});
+    });
+  });
+
+  /* Erste Karte jedes Abschnitts geöffnet starten */
+  document.querySelectorAll('section[data-stufe]').forEach(function(sec){
+    var first=sec.querySelector('.card'); if (first) first.classList.add('open');
+  });
+});
+</script>
+
+</body>
+</html>
