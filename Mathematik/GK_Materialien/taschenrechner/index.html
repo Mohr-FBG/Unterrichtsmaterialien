@@ -77,14 +77,28 @@
     <h2>Vektoren eingeben und speichern <span class="tag tg">GRUNDLAGEN</span></h2>
     <p class="why">Fast alle Rechnungen beginnen damit, die Vektoren einzugeben. Speichert man sie unter einem Namen, kann man sie immer wieder verwenden.</p>
     <ol class="steps">
-      <li>Matrix-Vorlage öffnen: <span class="menu">menu ▸ Matrix und Vektor ▸ Erstellen ▸ Matrix</span></li>
-      <li><strong>3 Zeilen, 1 Spalte</strong> einstellen und mit OK bestätigen.</li>
-      <li>Koordinaten eintragen, mit <code>tab</code> zum nächsten Feld.</li>
-      <li>Zum Speichern dahinter <code>→a</code> eingeben (Taste <code>ctrl</code> + <code>var</code>) oder vorne <code>a:=</code> schreiben.</li>
+      <li>Eckige Klammern öffnen: <code>ctrl</code> + <code>(</code> &nbsp;→&nbsp; <code>[ ]</code></li>
+      <li>Erste Koordinate eintippen, dann mit der kleinen <strong>Zeilenumbruch-Taste</strong> <code>↵</code> (rechts unten im Buchstabenblock) eine neue Zeile anlegen. So weiter, bis alle drei Koordinaten untereinander stehen.</li>
+      <li>Zum Speichern vorne <code>a:=</code> schreiben (<code>:=</code> über <code>ctrl</code> + Vorlagen-Taste) oder dahinter <code>→a</code> (<code>ctrl</code> + <code>var</code>).</li>
+      <li>Mit <code>enter</code> bestätigen. Der Rechner zeigt den Spaltenvektor an.</li>
     </ol>
-    <div class="screen"><div class="in">a:=[2;1;0]</div><div class="out">[2;1;0]</div></div>
-    <div class="warn"><strong>Achtung:</strong> Vektoren nicht mit getippten Klammern eingeben – das führt zu einem Syntaxfehler. Immer die Matrix-Vorlage verwenden. (Die Darstellung oben ist nur eine Kurzschreibweise für den Spaltenvektor.)</div>
+    <div class="screen"><div class="in">\(a:=\begin{bmatrix}1\\2\\3\end{bmatrix}\)</div><div class="out">\(\begin{bmatrix}1\\2\\3\end{bmatrix}\)</div></div>
+    <div class="note"><strong>Wichtig:</strong> Die Zeilen mit <code>↵</code> trennen – <strong>nicht</strong> mit Komma. Mit Kommas entsteht ein Zeilenvektor <code>[1,2,3]</code>, der sich nicht mit Spaltenvektoren verrechnen lässt.</div>
+    <div class="note">Alternative: Matrix-Vorlage über <span class="menu">menu ▸ Matrix und Vektor ▸ Erstellen ▸ Matrix</span> mit 3 Zeilen und 1 Spalte.</div>
     <div class="note">Namen wie <code>a</code>, <code>b</code>, <code>u</code>, <code>v</code> eignen sich gut. <strong>Nicht</strong> <code>e</code> oder <code>i</code> verwenden – das sind Konstanten.</div>
+  </section>
+
+  <section class="help" id="vektorgleichung-solve" data-k="grund vi">
+    <h2>Vektorgleichungen direkt lösen mit solve <span class="tag tg">GRUNDLAGEN</span> <span class="tag t6">KAPITEL VI</span></h2>
+    <p class="why">Man muss die Vektorgleichung nicht erst in drei Gleichungen zerlegen: <code>solve</code> löst sie direkt nach mehreren Unbekannten.</p>
+    <ol class="steps">
+      <li><code>solve(</code> eintippen (oder <span class="menu">menu ▸ Algebra ▸ Löse</span>).</li>
+      <li>Die Vektorgleichung mit eckigen Klammern eingeben (siehe <a href="#vektor-eingeben">Vektoren eingeben</a>). Multiplikationspunkt nicht vergessen: <code>t·</code>, <code>r·</code>, <code>s·</code>.</li>
+      <li>Nach einem Komma die Unbekannten angeben: <code>,t,r,s)</code></li>
+    </ol>
+    <figure style="margin:10px 0"><img src="bilder/solve-vektorgleichung.png" alt="TI-Nspire: solve einer Vektorgleichung liefert t=2 and r=2 and s=1" style="max-width:100%;width:520px;border:1px solid #cfdccf;border-radius:10px">
+      <figcaption class="why" style="font-size:.88rem">Beispiel aus Szene 0: Wo trifft der Strahl das Dach? Ergebnis \(t=2,\ r=2,\ s=1\).</figcaption></figure>
+    <div class="note">Der Rechner antwortet mit <code>t=2 and r=2 and s=1</code>. Gibt es keine Lösung, erscheint <code>false</code>. Bei unendlich vielen Lösungen enthält das Ergebnis einen freien Parameter.</div>
   </section>
 
   <section class="help" id="vektor-rechnen" data-k="grund v">
@@ -95,7 +109,7 @@
       <li>Rechnen wie mit Zahlen: <code>b-a</code>, <code>3·a</code>, <code>a+b</code>.</li>
       <li>Ergebnis bei Bedarf wieder speichern: <code>ab:=b-a</code>.</li>
     </ol>
-    <div class="screen"><div class="in">ab:=b−a</div><div class="out">[1;2;1]</div></div>
+    <div class="screen"><div class="in">\(ab:=b-a\)</div><div class="out">\(\begin{bmatrix}1\\2\\1\end{bmatrix}\)</div></div>
   </section>
 
   <section class="help" id="betrag" data-k="v">
@@ -161,27 +175,32 @@
     <h2>Kollinearität prüfen <span class="tag t6">KAPITEL VI.2</span></h2>
     <p class="why">Legen drei Punkte eine Ebene fest? Dazu prüft man, ob es ein \(t\) gibt mit \(\vec{AC}=t\cdot\vec{AB}\).</p>
     <ol class="steps">
-      <li>Koordinatenweise ein LGS mit der einen Unbekannten \(t\) aufstellen.</li>
-      <li>Mit linSolve lösen (1 Variable <code>t</code>, 3 Gleichungen).</li>
+      <li>Die Vektorgleichung \(\vec{AC}=t\cdot\vec{AB}\) mit eckigen Klammern eingeben.</li>
+      <li>Mit <code>solve(…,t)</code> nach \(t\) lösen.</li>
     </ol>
-    <div class="screen"><div class="in">linSolve({−2=t·1, 1=t·2, 2=t·1},{t})</div><div class="out">keine Lösung → nicht kollinear</div></div>
+    <div class="screen"><div class="in">\(\text{solve}\left(\begin{bmatrix}-2\\1\\2\end{bmatrix}=t\cdot\begin{bmatrix}1\\2\\1\end{bmatrix},t\right)\)</div><div class="out">false &nbsp;→ nicht kollinear</div></div>
     <div class="note">Kommt eine Zahl heraus, sind die Vektoren kollinear – dann liegen die drei Punkte auf einer Geraden. Oft geht es von Hand schneller: Quotienten der Koordinaten vergleichen.</div>
   </section>
 
   <section class="help" id="punktprobe-ebene" data-k="vi">
     <h2>Punktprobe bei einer Ebene <span class="tag t6">KAPITEL VI.2</span></h2>
     <p class="why">Liegt \(P\) in \(E:\ \vec x=\vec p+r\cdot\vec u+s\cdot\vec v\)? Gesucht sind \(r\) und \(s\) – drei Gleichungen, zwei Unbekannte.</p>
-    <ol class="steps">
-      <li>Koordinatenweise aufschreiben: \(p_1+r\,u_1+s\,v_1=P_1\) usw.</li>
-      <li><span class="menu">menu ▸ Algebra ▸ Gleichungssystem lösen ▸ Lineares Gleichungssystem lösen …</span> mit <strong>3 Gleichungen</strong> und den <strong>Variablen r,s</strong>.</li>
-    </ol>
+    <p><strong>Weg 1 – Vektorgleichung mit solve</strong> (siehe <a href="#vektorgleichung-solve">Vektorgleichungen lösen</a>):</p>
+    <div class="screen"><div class="in">\(\text{solve}\left(\begin{bmatrix}1\\0\\2\end{bmatrix}+r\cdot\begin{bmatrix}2\\1\\0\end{bmatrix}+s\cdot\begin{bmatrix}1\\-1\\3\end{bmatrix}=\begin{bmatrix}3\\-2\\8\end{bmatrix},r,s\right)\)</div><div class="out">r=0 and s=2</div></div>
+    <p><strong>Weg 2 – drei Gleichungen mit linSolve:</strong> <span class="menu">menu ▸ Algebra ▸ Gleichungssystem lösen ▸ Lineares Gleichungssystem lösen …</span>, 3 Gleichungen, Variablen <code>r,s</code>.</p>
     <div class="screen"><div class="in">linSolve({1+2·r+s=3, r−s=−2, 2+3·s=8},{r,s})</div><div class="out">{0,2}</div></div>
-    <div class="note">Ergebnis \(\{0,2\}\): \(r=0,\ s=2\) – der Punkt liegt in der Ebene. Meldet der Rechner, dass es keine Lösung gibt, liegt der Punkt <strong>nicht</strong> in der Ebene.</div>
+    <div class="note">Mit \(r=0,\ s=2\) liegt der Punkt in der Ebene. Meldet der Rechner <code>false</code> bzw. keine Lösung, liegt der Punkt <strong>nicht</strong> in der Ebene.</div>
   </section>
 
   <section class="help" id="schnitt-gerade-ebene" data-k="vi">
-    <h2>Schnittpunkt Gerade – Ebene <span class="tag soon">FOLGT · KAPITEL VI.4</span></h2>
-    <p class="soonbox">Diese Hilfe wird ergänzt, sobald wir Kapitel VI.4 behandeln. Bis dahin: siehe <a href="#lgs-linsolve">LGS lösen mit linSolve</a> (Variablen <code>t,r,s</code>).</p>
+    <h2>Schnittpunkt Gerade – Ebene (Parameterform) <span class="tag t6">KAPITEL VI.1 / VI.4</span></h2>
+    <p class="why">Gerade und Ebene gleichsetzen: \(\vec{OL}+t\cdot\vec u=\vec p+r\cdot\vec{AB}+s\cdot\vec{AC}\) – drei Unbekannte \(t,r,s\).</p>
+    <ol class="steps">
+      <li>Mit <code>solve</code> nach <code>t,r,s</code> lösen (Bild oben bei <a href="#vektorgleichung-solve">solve</a>).</li>
+      <li>Den Wert für <code>t</code> in die Geradengleichung einsetzen. Am Rechner: Geradengleichung eingeben und <code>|t=2</code> anhängen (<code>ctrl</code> + <code>=</code> öffnet die Auswahl mit <code>|</code>).</li>
+    </ol>
+    <div class="screen"><div class="in">\(\begin{bmatrix}3\\3\\5\end{bmatrix}+t\cdot\begin{bmatrix}1\\-1\\-2\end{bmatrix}\,|\,t=2\)</div><div class="out">\(\begin{bmatrix}5\\1\\1\end{bmatrix}\)</div></div>
+    <div class="note">Der Strahl trifft das Dach in \(S(5\,|\,1\,|\,1)\). Ist die Ebene in Koordinatenform gegeben, folgt eine weitere Hilfe mit Kapitel VI.4.</div>
   </section>
 
   <section class="help" id="ebene-3d" data-k="vi">
