@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TI-Nspire-Hilfen</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+<style>
+  :root{
+    --gold:#e8a800; --gold-deep:#b98600; --gold-soft:#fff6dc;
+    --ink:#1f2933; --ink-soft:#5b6770; --line:#e3e6ea; --bg:#f7f7f4; --card:#fff; --navy:#1a3a6b;
+    --k5:#1a6b4a; --k5-bg:#e6f3ec; --k6:#1a3a6b; --k6-bg:#e7edf7; --warn:#c62828;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;background:var(--bg);color:var(--ink);line-height:1.55;font-size:17px}
+  header{background:var(--gold);color:#fff;padding:18px 20px 16px}
+  header .eyebrow{font-size:.82rem;letter-spacing:.06em;text-transform:uppercase;opacity:.92}
+  header h1{margin:4px 0 0;font-size:1.6rem;line-height:1.2}
+  header nav{margin-top:8px;font-size:.9rem}
+  header nav a{color:#fff;text-decoration:underline;margin-right:14px}
+  .wrap{max-width:980px;margin:0 auto;padding:16px}
+  .tools{display:flex;flex-wrap:wrap;gap:10px;align-items:center;background:#fff;border:1px solid var(--line);border-radius:12px;padding:10px 14px;margin-bottom:16px;position:sticky;top:0;z-index:5}
+  .tools input{flex:1 1 220px;font-size:1rem;padding:7px 10px;border:1px solid #c9ced4;border-radius:8px}
+  .chip{border:1px solid var(--line);background:#fff;border-radius:999px;padding:5px 12px;font-size:.88rem;cursor:pointer;color:var(--ink)}
+  .chip.on{background:var(--gold-soft);border-color:var(--gold);font-weight:700}
+  .toc{columns:2;column-gap:24px;font-size:.93rem;margin:0 0 16px;padding:12px 16px;background:#fff;border:1px solid var(--line);border-radius:12px}
+  @media (max-width:640px){.toc{columns:1}}
+  .toc a{display:block;color:var(--navy);text-decoration:none;padding:2px 0}
+  .toc a:hover{text-decoration:underline}
+  .help{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 18px;margin-bottom:14px;scroll-margin-top:80px}
+  .help h2{margin:0 0 6px;font-size:1.15rem;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+  .tag{font-size:.72rem;font-weight:800;letter-spacing:.05em;padding:2px 9px;border-radius:999px}
+  .t5{background:var(--k5-bg);color:var(--k5)} .t6{background:var(--k6-bg);color:var(--k6)} .tg{background:#f1f1f1;color:#555}
+  .tag.soon{background:#f3f3f3;color:#888}
+  .why{color:var(--ink-soft);margin:0 0 8px}
+  ol.steps{margin:6px 0 8px;padding-left:22px}
+  ol.steps li{margin:4px 0}
+  .menu{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:.86em;background:#f6f3e8;border:1px solid #eadfbf;border-radius:5px;padding:1px 6px;white-space:nowrap}
+  code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:.88em;background:#f1f3f8;border:1px solid var(--line);border-radius:4px;padding:1px 5px}
+  .screen{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:.9rem;background:#fbfcfb;border:2px solid #cfdccf;border-radius:10px;padding:10px 14px;margin:8px 0;overflow-x:auto}
+  .screen .in{color:#1f2933}
+  .screen .out{color:#1e6b35;text-align:right}
+  .warn{background:#fdecee;border-left:4px solid var(--warn);border-radius:6px;padding:7px 12px;margin:8px 0;font-size:.93rem}
+  .note{background:#eef4fb;border-left:4px solid #2c6fbb;border-radius:6px;padding:7px 12px;margin:8px 0;font-size:.93rem}
+  .soonbox{color:var(--ink-soft);font-style:italic}
+  .hidden{display:none!important}
+  footer{text-align:center;color:var(--ink-soft);font-size:.82rem;padding:20px}
+  @media (max-width:520px){ body{font-size:16px} .wrap{padding:10px} .help{padding:12px} }
+</style>
+</head>
+<body>
+<header>
+  <div class="eyebrow">Grundkurs Mathematik · Werkzeugkasten</div>
+  <h1>TI-Nspire CAS: Hilfen zur Vektorrechnung</h1>
+  <nav><a href="../index.html">← Übersicht GK</a></nav>
+</header>
+
+<div class="wrap">
+  <div class="tools">
+    <input id="q" type="search" placeholder="Suchen, z. B. Betrag, linSolve, Punktprobe …" aria-label="Hilfen durchsuchen">
+    <button class="chip on" data-f="alle">Alle</button>
+    <button class="chip" data-f="grund">Grundlagen</button>
+    <button class="chip" data-f="v">Kapitel V</button>
+    <button class="chip" data-f="vi">Kapitel VI</button>
+  </div>
+  <nav class="toc" id="toc"></nav>
+
+  <!-- ============================================================
+       NEUE HILFE ERGÄNZEN: Einen <section class="help">-Block kopieren,
+       id (für Links), data-k (grund | v | vi) und den Titel anpassen.
+       Das Inhaltsverzeichnis entsteht automatisch.
+       ============================================================ -->
+
+  <section class="help" id="vektor-eingeben" data-k="grund">
+    <h2>Vektoren eingeben und speichern <span class="tag tg">GRUNDLAGEN</span></h2>
+    <p class="why">Fast alle Rechnungen beginnen damit, die Vektoren einzugeben. Speichert man sie unter einem Namen, kann man sie immer wieder verwenden.</p>
+    <ol class="steps">
+      <li>Matrix-Vorlage öffnen: <span class="menu">menu ▸ Matrix und Vektor ▸ Erstellen ▸ Matrix</span></li>
+      <li><strong>3 Zeilen, 1 Spalte</strong> einstellen und mit OK bestätigen.</li>
+      <li>Koordinaten eintragen, mit <code>tab</code> zum nächsten Feld.</li>
+      <li>Zum Speichern dahinter <code>→a</code> eingeben (Taste <code>ctrl</code> + <code>var</code>) oder vorne <code>a:=</code> schreiben.</li>
+    </ol>
+    <div class="screen"><div class="in">a:=[2;1;0]</div><div class="out">[2;1;0]</div></div>
+    <div class="warn"><strong>Achtung:</strong> Vektoren nicht mit getippten Klammern eingeben – das führt zu einem Syntaxfehler. Immer die Matrix-Vorlage verwenden. (Die Darstellung oben ist nur eine Kurzschreibweise für den Spaltenvektor.)</div>
+    <div class="note">Namen wie <code>a</code>, <code>b</code>, <code>u</code>, <code>v</code> eignen sich gut. <strong>Nicht</strong> <code>e</code> oder <code>i</code> verwenden – das sind Konstanten.</div>
+  </section>
+
+  <section class="help" id="vektor-rechnen" data-k="grund v">
+    <h2>Mit Vektoren rechnen <span class="tag t5">KAPITEL V.1</span></h2>
+    <p class="why">Verbindungsvektoren, Vielfache und Summen – z. B. \(\vec{AB}=\vec{OB}-\vec{OA}\).</p>
+    <ol class="steps">
+      <li>Ortsvektoren der Punkte speichern, z. B. <code>a:=</code> für \(\vec{OA}\) und <code>b:=</code> für \(\vec{OB}\).</li>
+      <li>Rechnen wie mit Zahlen: <code>b-a</code>, <code>3·a</code>, <code>a+b</code>.</li>
+      <li>Ergebnis bei Bedarf wieder speichern: <code>ab:=b-a</code>.</li>
+    </ol>
+    <div class="screen"><div class="in">ab:=b−a</div><div class="out">[1;2;1]</div></div>
+  </section>
+
+  <section class="help" id="betrag" data-k="v">
+    <h2>Betrag (Länge) eines Vektors <span class="tag t5">KAPITEL V</span></h2>
+    <p class="why">Länge einer Strecke: \(|\vec{AB}|\).</p>
+    <ol class="steps">
+      <li><span class="menu">menu ▸ Matrix und Vektor ▸ Normen ▸ Norm</span> – oder einfach <code>norm(</code> eintippen.</li>
+      <li>Den gespeicherten Vektor einsetzen: <code>norm(ab)</code>.</li>
+    </ol>
+    <div class="screen"><div class="in">norm(ab)</div><div class="out">√6</div></div>
+    <div class="note">Für eine Dezimalzahl: <code>ctrl</code> + <code>enter</code> statt <code>enter</code>.</div>
+  </section>
+
+  <section class="help" id="skalarprodukt" data-k="v">
+    <h2>Skalarprodukt <span class="tag t5">KAPITEL V.2</span></h2>
+    <p class="why">Prüfen, ob zwei Vektoren orthogonal sind: \(\vec a\circ\vec b=0\).</p>
+    <ol class="steps">
+      <li><span class="menu">menu ▸ Matrix und Vektor ▸ Vektor ▸ Skalarprodukt</span> – oder <code>dotP(</code> eintippen.</li>
+      <li><code>dotP(a,b)</code> eingeben.</li>
+    </ol>
+    <div class="screen"><div class="in">dotP(a,b)</div><div class="out">0</div></div>
+    <div class="note">Ergebnis 0 ⇒ die Vektoren sind orthogonal.</div>
+  </section>
+
+  <section class="help" id="winkel" data-k="v">
+    <h2>Winkel und Schnittwinkel <span class="tag t5">KAPITEL V.3</span></h2>
+    <p class="why">\(\cos(\alpha)=\dfrac{\vec a\circ\vec b}{|\vec a|\cdot|\vec b|}\), für Schnittwinkel von Geraden mit Betrag im Zähler.</p>
+    <ol class="steps">
+      <li>Winkelmodus auf <strong>Grad</strong> stellen: <span class="menu">Dokumenteinstellungen ▸ Winkel ▸ Grad</span>.</li>
+      <li>Winkel zwischen Vektoren: <code>cos⁻¹(dotP(a,b)/(norm(a)·norm(b)))</code></li>
+      <li>Schnittwinkel zweier Geraden: <code>cos⁻¹(abs(dotP(u,v))/(norm(u)·norm(v)))</code></li>
+    </ol>
+    <div class="screen"><div class="in">cos⁻¹(dotP(a,b)/(norm(a)·norm(b)))</div><div class="out">45.</div></div>
+    <div class="warn">Steht der Rechner im Bogenmaß, kommen Werte wie <code>0.785…</code> heraus. Dann den Winkelmodus prüfen.</div>
+  </section>
+
+  <section class="help" id="lgs-linsolve" data-k="vi">
+    <h2>LGS lösen mit linSolve <span class="tag t6">KAPITEL VI.1</span></h2>
+    <p class="why">Ein lineares Gleichungssystem direkt aus den Gleichungen lösen – zur Kontrolle der Rechnung von Hand.</p>
+    <ol class="steps">
+      <li><span class="menu">menu ▸ Algebra ▸ Gleichungssystem lösen ▸ Lineares Gleichungssystem lösen …</span></li>
+      <li>Anzahl der Gleichungen (z. B. <code>3</code>) und die Variablen (z. B. <code>x1,x2,x3</code> oder <code>t,r,s</code>) eintragen.</li>
+      <li>Die Gleichungen in die Vorlage eintippen, mit <code>enter</code> bestätigen.</li>
+    </ol>
+    <div class="screen"><div class="in">linSolve({t−r+2·s=2, t+2·r+s=7, 2·t+s=5},{t,r,s})</div><div class="out">{2,2,1}</div></div>
+    <div class="note">Die Lösung erscheint in der Reihenfolge der Variablen. Gibt es keine Lösung, meldet der Rechner das. Bei unendlich vielen Lösungen erscheint ein freier Parameter (z. B. <code>c1</code>).</div>
+    <div class="warn">Multiplikationspunkt nicht vergessen: <code>2·s</code>, nicht <code>2s</code> – sonst hält der Rechner <code>2s</code> nicht für ein Produkt.</div>
+  </section>
+
+  <section class="help" id="lgs-rref" data-k="vi">
+    <h2>LGS lösen mit der Matrix (rref) <span class="tag t6">KAPITEL VI.1</span></h2>
+    <p class="why">Das LGS in Matrixschreibweise eingeben und in die reduzierte Stufenform bringen lassen.</p>
+    <ol class="steps">
+      <li>Matrix-Vorlage: <span class="menu">menu ▸ Matrix und Vektor ▸ Erstellen ▸ Matrix</span>, <strong>3 Zeilen × 4 Spalten</strong>.</li>
+      <li>Koeffizienten und rechte Seite zeilenweise eintragen (fehlende Unbekannte = 0), als <code>m:=</code> speichern.</li>
+      <li><span class="menu">menu ▸ Matrix und Vektor ▸ Reduzierte Diagonalform</span>: <code>rref(m)</code>.</li>
+    </ol>
+    <div class="screen"><div class="in">rref(m)</div><div class="out">[1 0 0 3; 0 1 0 4; 0 0 1 2]</div></div>
+    <div class="note">Ablesen: Jede Zeile ist eine Gleichung, z. B. \(1\cdot x_1+0\cdot x_2+0\cdot x_3=3\). Die letzte Spalte enthält also die Lösung \((3;\,4;\,2)\).</div>
+  </section>
+
+  <section class="help" id="kollinear" data-k="vi">
+    <h2>Kollinearität prüfen <span class="tag t6">KAPITEL VI.2</span></h2>
+    <p class="why">Legen drei Punkte eine Ebene fest? Dazu prüft man, ob es ein \(t\) gibt mit \(\vec{AC}=t\cdot\vec{AB}\).</p>
+    <ol class="steps">
+      <li>Koordinatenweise ein LGS mit der einen Unbekannten \(t\) aufstellen.</li>
+      <li>Mit linSolve lösen (1 Variable <code>t</code>, 3 Gleichungen).</li>
+    </ol>
+    <div class="screen"><div class="in">linSolve({−2=t·1, 1=t·2, 2=t·1},{t})</div><div class="out">keine Lösung → nicht kollinear</div></div>
+    <div class="note">Kommt eine Zahl heraus, sind die Vektoren kollinear – dann liegen die drei Punkte auf einer Geraden. Oft geht es von Hand schneller: Quotienten der Koordinaten vergleichen.</div>
+  </section>
+
+  <section class="help" id="punktprobe-ebene" data-k="vi">
+    <h2>Punktprobe bei einer Ebene <span class="tag t6">KAPITEL VI.2</span></h2>
+    <p class="why">Liegt \(P\) in \(E:\ \vec x=\vec p+r\cdot\vec u+s\cdot\vec v\)? Gesucht sind \(r\) und \(s\) – drei Gleichungen, zwei Unbekannte.</p>
+    <ol class="steps">
+      <li>Koordinatenweise aufschreiben: \(p_1+r\,u_1+s\,v_1=P_1\) usw.</li>
+      <li><span class="menu">menu ▸ Algebra ▸ Gleichungssystem lösen ▸ Lineares Gleichungssystem lösen …</span> mit <strong>3 Gleichungen</strong> und den <strong>Variablen r,s</strong>.</li>
+    </ol>
+    <div class="screen"><div class="in">linSolve({1+2·r+s=3, r−s=−2, 2+3·s=8},{r,s})</div><div class="out">{0,2}</div></div>
+    <div class="note">Ergebnis \(\{0,2\}\): \(r=0,\ s=2\) – der Punkt liegt in der Ebene. Meldet der Rechner, dass es keine Lösung gibt, liegt der Punkt <strong>nicht</strong> in der Ebene.</div>
+  </section>
+
+  <section class="help" id="schnitt-gerade-ebene" data-k="vi">
+    <h2>Schnittpunkt Gerade – Ebene <span class="tag soon">FOLGT · KAPITEL VI.4</span></h2>
+    <p class="soonbox">Diese Hilfe wird ergänzt, sobald wir Kapitel VI.4 behandeln. Bis dahin: siehe <a href="#lgs-linsolve">LGS lösen mit linSolve</a> (Variablen <code>t,r,s</code>).</p>
+  </section>
+
+  <section class="help" id="ebene-3d" data-k="vi">
+    <h2>Ebenen in 3D darstellen <span class="tag soon">FOLGT · KAPITEL VI.3</span></h2>
+    <p class="soonbox">Diese Hilfe wird mit Kapitel VI.3 ergänzt (vgl. MMS-Anleitung „3D-Darstellung von Ebenen“ im Buch).</p>
+  </section>
+</div>
+<footer>FBG Schwerte · Mathematik GK · TI-Nspire-Hilfen · wird laufend ergänzt</footer>
+
+<script>
+window.addEventListener('load',()=>{
+  renderMathInElement(document.body,{delimiters:[{left:'\\[',right:'\\]',display:true},{left:'\\(',right:'\\)',display:false}],throwOnError:false});
+  const secs=[...document.querySelectorAll('.help')], toc=document.getElementById('toc');
+  secs.forEach(s=>{ const a=document.createElement('a'); a.href='#'+s.id; a.textContent=s.querySelector('h2').firstChild.textContent.trim(); a.dataset.for=s.id; toc.append(a); });
+  let filt='alle';
+  const apply=()=>{ const q=document.getElementById('q').value.trim().toLowerCase();
+    secs.forEach(s=>{ const okK= filt==='alle' || (s.dataset.k||'').split(' ').includes(filt); const okQ= !q || s.textContent.toLowerCase().includes(q);
+      const show=okK&&okQ; s.classList.toggle('hidden',!show); toc.querySelector(`[data-for="${s.id}"]`).classList.toggle('hidden',!show); }); };
+  document.querySelectorAll('.chip').forEach(c=>c.onclick=()=>{ filt=c.dataset.f; document.querySelectorAll('.chip').forEach(x=>x.classList.toggle('on',x===c)); apply(); });
+  document.getElementById('q').addEventListener('input',apply);
+});
+</script>
+</body>
+</html>

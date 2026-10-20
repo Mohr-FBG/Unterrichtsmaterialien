@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>VI.2 Sicherung</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<style>
+  :root{ --gold:#e8a800; --gold-deep:#b98600; --gold-soft:#fff6dc; --ink:#1f2933; --ink-soft:#5b6770; --line:#e3e6ea; --bg:#f7f7f4; --navy:#1a3a6b; }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;background:var(--bg);color:var(--ink);line-height:1.55;font-size:19px}
+  header{background:var(--gold);color:#fff;padding:18px 20px 16px}
+  header .eyebrow{font-size:.8rem;letter-spacing:.06em;text-transform:uppercase;opacity:.92}
+  header h1{margin:4px 0 0;font-size:1.7rem;line-height:1.2}
+  header nav{margin-top:8px;font-size:.9rem}
+  header nav a{color:#fff;text-decoration:underline;margin-right:14px}
+  .wrap{max-width:1000px;margin:0 auto;padding:18px}
+  .lead{color:var(--ink-soft);font-size:1rem;margin:0 0 16px}
+  .card{background:#fff;border:1px solid var(--line);border-left:6px solid var(--gold);border-radius:14px;padding:18px 22px;margin-bottom:18px}
+  .card h2{margin:0 0 10px;font-size:1.25rem;color:var(--navy);display:flex;gap:12px;align-items:center}
+  .num{display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:50%;background:var(--gold);color:#fff;font-size:1.1rem;flex-shrink:0}
+  .card p{margin:6px 0}
+  .katex-display{margin:.5em 0}
+  .tag{display:inline-block;font-size:.75rem;font-weight:700;letter-spacing:.04em;padding:2px 10px;border-radius:999px;background:#eef2f8;color:var(--navy);margin-left:auto}
+  footer{text-align:center;color:var(--ink-soft);font-size:.82rem;padding:20px}
+  @media (max-width:520px){ body{font-size:17px} .katex{font-size:.95em} .wrap{padding:10px} .card{padding:14px} }
+</style>
+</head>
+<body>
+<header>
+  <div class="eyebrow">Kapitel VI.2 · Ebenen im Raum – die Parameterform · Sicherung</div>
+  <h1>Drei Aufgaben zur gemeinsamen Sicherung</h1>
+  <nav><a href="index.html">← Übersicht VI.2</a><a href="../simulationen/ebenen-explorer/szene-1-parameterform.html">Simulation Szene 1</a></nav>
+</header>
+
+<div class="wrap">
+  <p class="lead">Bearbeite die Aufgaben im Heft. Notiere jeden Schritt so, wie wir ihn gleich gemeinsam an der Tafel festhalten.</p>
+
+  <div class="card">
+    <h2><span class="num">1</span>Eine Ebenengleichung aufstellen <span class="tag">Aufstellen</span></h2>
+    <p>Gegeben sind die Punkte</p>
+    <div class="m d" data-tex="A(1\,|\,0\,|\,2),\qquad B(3\,|\,1\,|\,2),\qquad C(0\,|\,2\,|\,5)."></div>
+    <p>Bestimme eine Gleichung der Ebene <span class="m" data-tex="E"></span> durch <span class="m" data-tex="A"></span>, <span class="m" data-tex="B"></span> und <span class="m" data-tex="C"></span> in Parameterform. Begründe, dass die drei Punkte eine Ebene festlegen.</p>
+  </div>
+
+  <div class="card">
+    <h2><span class="num">2</span>Punktprobe <span class="tag">Punktprobe</span></h2>
+    <p>Gegeben ist die Ebene</p>
+    <div class="m d" data-tex="E:\ \vec x=\begin{pmatrix}1\\2\\0\end{pmatrix}+r\cdot\begin{pmatrix}2\\1\\1\end{pmatrix}+s\cdot\begin{pmatrix}0\\1\\-1\end{pmatrix}."></div>
+    <p>Untersuche, ob die Punkte <span class="m" data-tex="P(5\,|\,5\,|\,1)"></span> und <span class="m" data-tex="Q(3\,|\,4\,|\,3)"></span> in der Ebene <span class="m" data-tex="E"></span> liegen.</p>
+  </div>
+
+  <div class="card">
+    <h2><span class="num">3</span>Aufstellen und prüfen <span class="tag">Kombiniert</span></h2>
+    <p><strong>a)</strong> Die Ebene <span class="m" data-tex="E"></span> geht durch die Punkte <span class="m" data-tex="A(2\,|\,0\,|\,1)"></span>, <span class="m" data-tex="B(4\,|\,1\,|\,1)"></span> und <span class="m" data-tex="C(1\,|\,3\,|\,3)"></span>. Gib eine Gleichung von <span class="m" data-tex="E"></span> in Parameterform an und untersuche, ob der Punkt <span class="m" data-tex="D(3\,|\,4\,|\,3)"></span> in <span class="m" data-tex="E"></span> liegt.</p>
+    <p><strong>b)</strong> Untersuche, ob die Punkte <span class="m" data-tex="P(2\,|\,1\,|\,0)"></span>, <span class="m" data-tex="Q(4\,|\,2\,|\,-1)"></span> und <span class="m" data-tex="R(8\,|\,4\,|\,-3)"></span> eine Ebene eindeutig festlegen.</p>
+  </div>
+</div>
+<footer>FBG Schwerte · Mathematik GK · Kapitel VI.2 · Sicherungsaufgaben</footer>
+<script>
+window.addEventListener('load',()=>{ document.querySelectorAll('.m[data-tex]').forEach(el=>katex.render(el.dataset.tex,el,{throwOnError:false,displayMode:el.classList.contains('d')})); });
+</script>
+</body>
+</html>

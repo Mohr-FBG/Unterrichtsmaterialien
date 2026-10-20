@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ebenen-Explorer – Szene 1</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<style>
+  :root{
+    --gold:#e8a800; --gold-deep:#b98600; --gold-soft:#fff6dc;
+    --ink:#1f2933; --ink-soft:#5b6770; --line:#e3e6ea; --bg:#f7f7f4; --card:#ffffff;
+    --blue:#2c6fbb; --green:#2e9e4f; --purple:#8e44ad; --orange:#e67e22; --red:#d62828;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;background:var(--bg);color:var(--ink);line-height:1.5;font-size:17px}
+  header{background:var(--gold);color:#fff;padding:18px 20px 16px}
+  header .eyebrow{font-size:.82rem;letter-spacing:.06em;text-transform:uppercase;opacity:.92}
+  header h1{margin:4px 0 0;font-size:1.6rem;line-height:1.2}
+  header nav{margin-top:8px;font-size:.9rem}
+  header nav a{color:#fff;text-decoration:underline;margin-right:14px}
+  .wrap{max-width:1280px;margin:0 auto;padding:16px}
+  .layout{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:18px;align-items:start}
+  @media (max-width:900px){.layout{grid-template-columns:1fr}}
+  .stage{position:sticky;top:10px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:10px}
+  @media (max-width:900px){.stage{position:sticky;top:0;z-index:5;padding:6px;box-shadow:0 4px 10px rgba(0,0,0,.08)} #scene{max-height:40vh} .stage .legend{display:none}}
+  #scene{width:100%;height:auto;display:block;touch-action:none;cursor:grab;background:linear-gradient(#eef4fb,#fbfcfd);border-radius:10px}
+  #scene:active{cursor:grabbing}
+  .stage-bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:8px;font-size:.88rem;color:var(--ink-soft)}
+  .btn{border:1px solid var(--line);background:#fff;border-radius:8px;padding:6px 12px;font-size:.92rem;cursor:pointer;color:var(--ink)}
+  .btn:hover{border-color:var(--gold)}
+  .btn.primary{background:var(--gold);border-color:var(--gold);color:#fff;font-weight:600}
+  .btn.small{padding:3px 9px;font-size:.84rem}
+  .btn.on{background:var(--gold-soft);border-color:var(--gold);font-weight:600}
+  .btn:disabled{opacity:.45;cursor:default}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 18px;margin-bottom:14px}
+  .card h2{margin:0 0 8px;font-size:1.2rem;display:flex;align-items:center;gap:10px}
+  .num{display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:50%;background:var(--gold);color:#fff;font-size:1rem;flex-shrink:0}
+  .steps-nav{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
+  .steps-nav button{border:2px solid var(--line);background:#fff;border-radius:999px;padding:4px 12px;font-size:.86rem;cursor:pointer;color:var(--ink)}
+  .steps-nav button.active{border-color:var(--gold);background:var(--gold-soft);font-weight:700}
+  .steps-nav button.done{border-color:#b9e2c5}
+  .steps-nav button.done::after{content:" ✓";color:var(--green)}
+  .step{display:none}
+  .step.active{display:block}
+  .task{background:#f4f8fc;border-left:4px solid var(--blue);padding:8px 12px;border-radius:6px;margin:10px 0}
+  .merk{background:#eef4fb;border:1px solid #bcd3ec;border-radius:10px;padding:10px 14px;margin:10px 0}
+  .merk strong{color:#1d4f8c}
+  .book{background:var(--gold-soft);border:1px solid #f1dc9c;border-radius:10px;padding:10px 14px;margin:10px 0}
+  .formula{background:#fafafa;border:1px solid var(--line);border-radius:8px;padding:8px 10px;margin:8px 0;overflow-x:auto}
+  .formula .katex-display{margin:.3em 0}
+  .slider-row{display:grid;grid-template-columns:34px 1fr 56px;gap:10px;align-items:center;margin:6px 0}
+  .slider-row input[type=range]{width:100%}
+  .slider-row .val{font-variant-numeric:tabular-nums;text-align:right;font-weight:600}
+  .fb{margin-top:8px;padding:8px 10px;border-radius:8px;font-size:.95rem}
+  .fb:empty{display:none}
+  .fb.ok{background:#e8f6ec;color:#1e6b35;border:1px solid #b9e2c5}
+  .fb.no{background:#fdeeee;color:#8a1f1f;border:1px solid #f1c0c0}
+  .fb.info{background:#f4f8fc;color:#234;border:1px solid #cfe0f1}
+  .mc{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0}
+  .row{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:8px 0}
+  .vin{display:inline-flex;flex-direction:column;gap:3px;vertical-align:middle;border-left:2px solid #333;border-right:2px solid #333;border-radius:8px;padding:3px 6px}
+  .vin input,.pin input,.sin input{width:56px;padding:4px;font-size:1rem;text-align:center;border:1px solid #c9ced4;border-radius:6px}
+  input.good{border-color:var(--green)!important;background:#eefaf1}
+  input.bad{border-color:var(--red)!important;background:#fff1f1}
+  .pin{display:inline-flex;align-items:center;gap:3px}
+  select{font-size:.95rem;padding:4px 6px;border:1px solid #c9ced4;border-radius:6px;background:#fff}
+  .lueckentext{line-height:2.2}
+  .navbtns{display:flex;justify-content:space-between;margin-top:14px}
+  .legend{display:flex;flex-wrap:wrap;gap:10px;font-size:.84rem;color:var(--ink-soft)}
+  .legend > span::before{content:"";display:inline-block;width:12px;height:4px;border-radius:2px;margin-right:5px;vertical-align:middle;background:var(--c)}
+  .muted{color:var(--ink-soft);font-size:.9rem}
+  .hidden{display:none!important}
+  .lgs{display:grid;grid-template-columns:auto 1fr;gap:4px 10px;align-items:center}
+  .next{display:inline-block;background:var(--gold);color:#fff;text-decoration:none;font-weight:700;padding:10px 16px;border-radius:10px;margin:6px 6px 0 0}
+  footer{text-align:center;color:var(--ink-soft);font-size:.82rem;padding:20px}
+  @media (max-width:520px){ .katex{font-size:.95em} body{font-size:16px} .wrap{padding:10px} .card{padding:12px} }
+</style>
+</head>
+<body>
+<header>
+  <div class="eyebrow">Kapitel VI.2 · Ebenen im Raum · Simulation</div>
+  <h1>Ebenen-Explorer – Szene 1: Von der Geraden zur Ebene</h1>
+  <nav><a href="index.html">← Szene 0: Strahl &amp; Dach</a><a href="../../vi-2-ebenen-parameterform/index.html">Übersicht VI.2</a><a href="../../index.html">Übersicht GK</a></nav>
+</header>
+
+<div class="wrap">
+<div class="layout">
+
+  <!-- ===== 3D-Bühne ===== -->
+  <div class="stage">
+    <svg id="scene" viewBox="0 0 640 520" aria-label="3D-Ansicht"></svg>
+    <div class="stage-bar">
+      <button class="btn small" id="resetView">Ansicht zurücksetzen</button>
+      <button class="btn small" id="zoomIn">＋</button>
+      <button class="btn small" id="zoomOut">－</button>
+      <span>Wischen/Ziehen dreht die Ansicht.</span>
+    </div>
+    <div class="stage-bar legend">
+      <span style="--c:var(--blue)">Stützvektor</span>
+      <span style="--c:var(--green)">Vielfache von \(\vec u\)</span>
+      <span style="--c:var(--purple)">Vielfache von \(\vec v\)</span>
+      <span style="--c:var(--red)">Prüfpunkt</span>
+    </div>
+  </div>
+
+  <!-- ===== Schritte ===== -->
+  <div>
+    <div class="steps-nav" id="stepsNav"></div>
+
+    <!-- 1 -->
+    <section class="step card" data-step="1">
+      <h2><span class="num">1</span>Erinnerung: Eine Gerade</h2>
+      <div class="book"><strong>Einstieg (Buch S. 188):</strong> Beschreibe Vor- und Nachteile von Tischen mit einem, drei und vier Beinen. Warum braucht man für eine Tischplatte, die nicht wackelt, mindestens drei Auflagepunkte?</div>
+      <p>Aus Kapitel V kennst du Geraden. Ein <strong>Stützvektor</strong> <span class="m" data-tex="\vec p"></span> führt zu einem Startpunkt, ein <strong>Richtungsvektor</strong> <span class="m" data-tex="\vec u"></span> gibt die Richtung an:</p>
+      <div class="formula" id="f1"></div>
+      <div class="slider-row"><span class="m" data-tex="r"></span><input type="range" id="r1" min="-1" max="4" step="0.1" value="1"><span class="val" id="r1v">1</span></div>
+      <div class="task">Verändere <span class="m" data-tex="r"></span>. Welche Punkte erreicht der Punkt <span class="m" data-tex="X"></span>?</div>
+      <div class="mc" id="mc1"></div>
+      <div class="fb" id="fb1"></div>
+    </section>
+
+    <!-- 2 -->
+    <section class="step card" data-step="2">
+      <h2><span class="num">2</span>Ein zweiter Richtungsvektor</h2>
+      <p>Jetzt nehmen wir einen zweiten Vektor <span class="m" data-tex="\vec v"></span> hinzu und hängen auch von ihm ein Vielfaches an:</p>
+      <div class="formula" id="f2"></div>
+      <div class="slider-row"><span class="m" data-tex="r"></span><input type="range" id="r2" min="-1" max="4" step="0.1" value="1"><span class="val" id="r2v">1</span></div>
+      <div class="slider-row"><span class="m" data-tex="s"></span><input type="range" id="s2" min="-1" max="3" step="0.1" value="1"><span class="val" id="s2v">1</span></div>
+      <div class="row"><label class="muted"><input type="checkbox" id="trace" checked> Spur anzeigen</label>
+        <button class="btn small" id="clearTrace">Spur löschen</button>
+        <button class="btn small" id="showAll">Alle Punkte zeigen</button></div>
+      <div class="task">Bewege beide Regler kreuz und quer. Welche Form bilden alle Punkte, die <span class="m" data-tex="X"></span> erreichen kann?</div>
+      <div class="mc" id="mc2"></div>
+      <div class="fb" id="fb2"></div>
+    </section>
+
+    <!-- 3 -->
+    <section class="step card" data-step="3">
+      <h2><span class="num">3</span>Klappt das mit jedem zweiten Vektor?</h2>
+      <p>Wähle einen anderen Vektor <span class="m" data-tex="\vec v"></span> und bewege wieder beide Regler.</p>
+      <div class="mc" id="vChoice"></div>
+      <div class="formula" id="f3"></div>
+      <div class="slider-row"><span class="m" data-tex="r"></span><input type="range" id="r3" min="-1" max="4" step="0.1" value="1"><span class="val" id="r3v">1</span></div>
+      <div class="slider-row"><span class="m" data-tex="s"></span><input type="range" id="s3" min="-1" max="3" step="0.1" value="1"><span class="val" id="s3v">1</span></div>
+      <div class="task">Bei welchen Vektoren <span class="m" data-tex="\vec v"></span> entsteht <strong>keine</strong> Ebene? Was haben diese Vektoren gemeinsam?</div>
+      <div class="mc" id="mc3"></div>
+      <div class="fb" id="fb3"></div>
+    </section>
+
+    <!-- 4 -->
+    <section class="step card" data-step="4">
+      <h2><span class="num">4</span>Eine Ebene durch drei Punkte</h2>
+      <p>Drei Punkte <span class="m" data-tex="A,B,C"></span> legen eine Ebene fest – wie die drei Beine eines Tisches. Als Stützvektor nimmt man <span class="m" data-tex="\vec{OA}"></span>, als Spannvektoren <span class="m" data-tex="\vec{AB}"></span> und <span class="m" data-tex="\vec{AC}"></span>.</p>
+      <div class="row"><span class="muted">Beispiel wählen:</span><div class="mc" id="presets4" style="margin:0"></div></div>
+      <div class="formula" id="pts4"></div>
+      <div class="task">Berechne die Verbindungsvektoren und trage sie ein.</div>
+      <div class="row">
+        <span class="m" data-tex="\vec{AB}="></span><span class="vin" id="ab"></span>
+        <span style="width:16px"></span>
+        <span class="m" data-tex="\vec{AC}="></span><span class="vin" id="ac"></span>
+        <button class="btn primary" id="chk4">Prüfen</button>
+        <button class="btn" id="tip4">Tipp</button>
+      </div>
+      <div class="fb" id="fb4"></div>
+      <div id="res4" class="hidden">
+        <div class="formula" id="f4"></div>
+        <div class="task" id="q4">Sind <span class="m" data-tex="\vec{AB}"></span> und <span class="m" data-tex="\vec{AC}"></span> kollinear?</div>
+        <div class="mc" id="mc4"></div>
+        <div class="fb" id="fb4b"></div>
+      </div>
+    </section>
+
+    <!-- 5 -->
+    <section class="step card" data-step="5">
+      <h2><span class="num">5</span>Punktprobe: Liegt der Punkt in der Ebene?</h2>
+      <div class="formula" id="f5"></div>
+      <div class="row"><span class="muted">Prüfpunkt:</span><div class="mc" id="presets5" style="margin:0"></div></div>
+      <div class="task"><strong>a) Probieren:</strong> Versuche, mit den Reglern den roten Punkt <span class="m" data-tex="P"></span> zu treffen.</div>
+      <div class="slider-row"><span class="m" data-tex="r"></span><input type="range" id="r5" min="-1" max="4" step="0.1" value="0"><span class="val" id="r5v">0</span></div>
+      <div class="slider-row"><span class="m" data-tex="s"></span><input type="range" id="s5" min="-1" max="3" step="0.1" value="0"><span class="val" id="s5v">0</span></div>
+      <div class="fb" id="fb5a"></div>
+      <div class="task"><strong>b) Rechnen wie im Buch (Beispiel 2):</strong> Man prüft, ob es Zahlen <span class="m" data-tex="r"></span> und <span class="m" data-tex="s"></span> gibt mit <span class="m" data-tex="\vec p+r\cdot\vec u+s\cdot\vec v=\vec{OP}"></span>. Das ergibt ein LGS mit <strong>drei Gleichungen und zwei Unbekannten</strong>.</div>
+      <div class="formula" id="lgs5"></div>
+      <div class="row sin">
+        <span>Aus I und II:</span>
+        <span class="m" data-tex="r="></span><input id="r5in" inputmode="decimal">
+        <span class="m" data-tex="s="></span><input id="s5in" inputmode="decimal">
+        <button class="btn primary" id="chk5">Prüfen</button>
+        <button class="btn" id="tip5">Tipp</button>
+      </div>
+      <div class="fb" id="fb5"></div>
+      <div id="res5" class="hidden">
+        <div class="task">Setze <span class="m" data-tex="r"></span> und <span class="m" data-tex="s"></span> in Gleichung III ein. Ist sie erfüllt?</div>
+        <div class="formula" id="f5c"></div>
+        <div class="mc" id="mc5"></div>
+        <div class="fb" id="fb5b"></div>
+      </div>
+    </section>
+
+    <!-- 6 -->
+    <section class="step card" data-step="6">
+      <h2><span class="num">6</span>Sicherung: Das nehmen wir mit</h2>
+      <div class="task">Vervollständige den Merksatz. Prüfe am Ende.</div>
+      <div class="merk lueckentext" id="cloze">
+        Jede Ebene <span class="m" data-tex="E"></span> lässt sich durch eine Gleichung in <strong>Parameterform</strong>
+        <div class="formula" style="text-align:center"><span class="m" data-tex="E:\ \vec x=\vec p+r\cdot\vec u+s\cdot\vec v\qquad(r,s\in\mathbb R)"></span></div>
+        beschreiben. Der Vektor <span class="m" data-tex="\vec p"></span> heißt
+        <select data-ok="Stützvektor"><option></option><option>Stützvektor</option><option>Spannvektor</option><option>Normalenvektor</option></select>,
+        die Vektoren <span class="m" data-tex="\vec u"></span> und <span class="m" data-tex="\vec v"></span> heißen
+        <select data-ok="Spannvektoren"><option></option><option>Richtungsvektoren der Geraden</option><option>Spannvektoren</option><option>Ortsvektoren</option></select>.
+        Sie dürfen nicht
+        <select data-ok="kollinear"><option></option><option>orthogonal</option><option>kollinear</option><option>gleich lang</option></select>
+        sein und nicht der Nullvektor. Durch die Wahl von <span class="m" data-tex="r"></span> und <span class="m" data-tex="s"></span> erreicht man
+        <select data-ok="jeden Punkt der Ebene"><option></option><option>nur Punkte einer Geraden</option><option>jeden Punkt der Ebene</option><option>jeden Punkt im Raum</option></select>.<br>
+        Liegen drei Punkte <span class="m" data-tex="A,B,C"></span> nicht auf einer Geraden, ist
+        <span class="m" data-tex="\vec x=\vec{OA}+r\cdot\vec{AB}+s\cdot\vec{AC}"></span> eine Gleichung der Ebene durch <span class="m" data-tex="A,B,C"></span>.<br>
+        <strong>Punktprobe:</strong> Man setzt <span class="m" data-tex="\vec{OP}"></span> für <span class="m" data-tex="\vec x"></span> ein und erhält ein LGS mit
+        <select data-ok="drei Gleichungen und zwei Unbekannten"><option></option><option>zwei Gleichungen und drei Unbekannten</option><option>drei Gleichungen und zwei Unbekannten</option><option>drei Gleichungen und drei Unbekannten</option></select>.
+        Man berechnet <span class="m" data-tex="r"></span> und <span class="m" data-tex="s"></span> aus zwei Gleichungen und
+        <select data-ok="kontrolliert mit der dritten"><option></option><option>kontrolliert mit der dritten</option><option>ignoriert die dritte</option></select>.
+        Ergibt sich ein Widerspruch, liegt <span class="m" data-tex="P"></span>
+        <select data-ok="nicht in der Ebene"><option></option><option>in der Ebene</option><option>nicht in der Ebene</option></select>.
+      </div>
+      <button class="btn primary" id="chk6">Prüfen</button>
+      <div class="fb" id="fb6"></div>
+      <div class="muted" style="margin-top:10px">Eine Ebene hat <strong>unendlich viele</strong> Gleichungen in Parameterform: Jeder Punkt der Ebene kann Stützpunkt sein, und es gibt viele mögliche Paare von Spannvektoren.</div>
+      <div style="margin-top:12px">
+        <a class="next" href="../../vi-2-ebenen-parameterform/sicherung.html">Zu den Sicherungsaufgaben →</a>
+        <a class="next" href="../../vi-2-ebenen-parameterform/uebung.html">Zur Übungsseite →</a>
+      </div>
+    </section>
+
+    <div class="navbtns"><button class="btn" id="prev">← Zurück</button><button class="btn primary" id="next">Weiter →</button></div>
+  </div>
+</div>
+</div>
+<footer>FBG Schwerte · Mathematik GK · Kapitel VI.2 Ebenen im Raum – die Parameterform</footer>
+
+<script>
+/* ---------- Hilfen ---------- */
+const $=id=>document.getElementById(id);
+const add=(a,b)=>a.map((x,i)=>x+b[i]), mul=(k,a)=>a.map(x=>k*x), sub=(a,b)=>a.map((x,i)=>x-b[i]);
+const cross=(a,b)=>[a[1]*b[2]-a[2]*b[1],a[2]*b[0]-a[0]*b[2],a[0]*b[1]-a[1]*b[0]];
+const isZero=v=>v.every(x=>Math.abs(x)<1e-9);
+const collinear=(a,b)=>isZero(cross(a,b));
+const fmt=(x,d=2)=>{let v=Math.round(x*10**d)/10**d; if(Object.is(v,-0))v=0; return String(v).replace('.',',').replace('-','−');};
+const tn=(x,d=2)=>{let v=Math.round(x*10**d)/10**d; if(Object.is(v,-0))v=0; return String(v).replace('.','{,}');};
+const col=v=>`\\begin{pmatrix}${v.map(x=>tn(x)).join('\\\\')}\\end{pmatrix}`;
+const pt3=(n,v)=>`${n}(${v.map(x=>tn(x)).join('\\,|\\,')})`;
+function tex(el,s,d=false){ if(window.katex) katex.render(s,el,{throwOnError:false,displayMode:d}); else el.textContent=s; }
+function renderMath(root=document){ root.querySelectorAll('.m[data-tex]').forEach(el=>tex(el,el.dataset.tex));
+  root.querySelectorAll('.legend span').forEach(el=>{ if(el.dataset.done) return; el.dataset.done=1; el.innerHTML=el.innerHTML.replace(/\\\((.+?)\\\)/g,(m,t)=>{ try{return katex.renderToString(t);}catch(e){return t;} }); }); }
+function say(id,html,cls){ const e=$(id); e.className='fb '+cls; e.innerHTML=html; renderMath(e); }
+function readNum(s){ s=String(s??'').trim().replace(/−/g,'-').replace(',','.'); if(s==='') return null; if(/^[+-]?\d+\/\d+$/.test(s)){const [a,b]=s.split('/'); return +a/+b;} const v=Number(s); return isNaN(v)?null:v; }
+function mc(containerId,options,correct,fbId,okText,noTexts={},onOk){
+  const c=$(containerId); c.innerHTML='';
+  options.forEach(o=>{ const b=document.createElement('button'); b.className='btn'; b.textContent=o; b.onclick=()=>{
+    if(o===correct){ say(fbId,okText,'ok'); markDone(); onOk&&onOk(); }
+    else say(fbId,noTexts[o]||'Noch nicht. Beobachte die Bewegung im Bild noch einmal genau.','no'); }; c.append(b); });
+}
+
+/* ---------- Daten ---------- */
+const P0=[5,-4,0], U0=[1,2,0], V0=[-2,1,1];          // Dach aus Szene 0
+const VOPTS=[
+  {lab:'v = (−2|1|1)', v:[-2,1,1]},
+  {lab:'v = (2|4|0)', v:[2,4,0]},
+  {lab:'v = (0|1|2)', v:[0,1,2]},
+  {lab:'v = (−1|−2|0)', v:[-1,-2,0]},
+  {lab:'v = (0|0|0)', v:[0,0,0]},
+];
+const PRESETS4=[
+  {lab:'Dach aus Szene 0', A:[5,-4,0], B:[6,-2,0], C:[3,-3,1]},
+  {lab:'Beispiel 2', A:[1,1,0], B:[3,1,2], C:[1,4,1]},
+  {lab:'Beispiel 3', A:[2,0,1], B:[4,1,3], C:[8,3,7]},
+];
+const E5={p:[2,1,0], u:[1,0,1], v:[0,2,1]};
+const PRESETS5=[{lab:'P(4|3|3)', P:[4,3,3]},{lab:'P(3|3|4)', P:[3,3,4]}];
+
+/* ---------- Zustand ---------- */
+const st={phi:0.62,theta:0.38,zoom:1,step:1,trace:[],v3:VOPTS[0].v,preset4:0,abOk:false,preset5:0,showAll:false};
+const done=new Set();
+
+/* ---------- 3D ---------- */
+const W=640,H=520;
+let CENTER=[3,0,1], SCALE=30;
+function P(p){ const q=sub(p,CENTER); const sp=Math.sin(st.phi),cp=Math.cos(st.phi);
+  const h=-q[0]*sp+q[1]*cp, d=q[0]*cp+q[1]*sp; const v=q[2]*Math.cos(st.theta)-d*Math.sin(st.theta);
+  const s=SCALE*st.zoom; return [W/2+s*h, H/2+10-s*v]; }
+const pts=p=>P(p).map(v=>v.toFixed(1)).join(',');
+function line(a,b,c,w=2,dash=''){const[x1,y1]=P(a),[x2,y2]=P(b);return `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${c}" stroke-width="${w}" ${dash?`stroke-dasharray="${dash}"`:''} stroke-linecap="round"/>`;}
+function arrow(a,b,c,w=3,dash=''){const[x1,y1]=P(a),[x2,y2]=P(b);const dx=x2-x1,dy=y2-y1,L=Math.hypot(dx,dy);if(L<2)return'';
+  const ux=dx/L,uy=dy/L,hl=Math.min(13,L*.45),hw=hl*.5,bx=x2-ux*hl,by=y2-uy*hl;
+  return `<line x1="${x1}" y1="${y1}" x2="${bx}" y2="${by}" stroke="${c}" stroke-width="${w}" ${dash?`stroke-dasharray="${dash}"`:''} stroke-linecap="round"/><polygon points="${x2},${y2} ${bx-uy*hw},${by+ux*hw} ${bx+uy*hw},${by-ux*hw}" fill="${c}"/>`;}
+function label(p,t,c='#1f2933',dx=7,dy=-7,size=15){const[x,y]=P(p);return `<text x="${x+dx}" y="${y+dy}" fill="${c}" font-size="${size}" font-weight="600" font-family="Georgia,serif" paint-order="stroke" stroke="#fff" stroke-width="3">${t}</text>`;}
+function dot(p,c,r=5,fill=null){const[x,y]=P(p);return `<circle cx="${x}" cy="${y}" r="${r}" fill="${fill??c}" stroke="${c}" stroke-width="2"/>`;}
+function planePatch(p,u,v,r0,r1,s0,s1,steps=true){
+  const q=(r,s)=>add(p,add(mul(r,u),mul(s,v)));
+  let g=`<polygon points="${[q(r0,s0),q(r1,s0),q(r1,s1),q(r0,s1)].map(pts).join(' ')}" fill="rgba(232,168,0,0.13)" stroke="rgba(185,134,0,0.6)" stroke-width="1.2"/>`;
+  if(steps){ for(let r=Math.ceil(r0);r<=r1;r++) g+=line(q(r,s0),q(r,s1),'rgba(142,68,173,0.35)',1);
+             for(let s=Math.ceil(s0);s<=s1;s++) g+=line(q(r0,s),q(r1,s),'rgba(46,158,79,0.35)',1); }
+  return g;
+}
+function fit(points){
+  const all=points.concat([[0,0,0]]); const mn=[0,1,2].map(i=>Math.min(...all.map(p=>p[i]))), mx=[0,1,2].map(i=>Math.max(...all.map(p=>p[i])));
+  CENTER=mn.map((m,i)=>(m+mx[i])/2); const ext=Math.max(...mx.map((m,i)=>m-mn[i]),4);
+  SCALE=Math.max(16,Math.min(42,330/ext));
+}
+function axes(len){
+  const O=[0,0,0]; let g='';
+  g+=arrow(O,[len[0],0,0],'#555',1.5)+arrow(O,[0,len[1],0],'#555',1.5)+arrow(O,[0,0,len[2]],'#555',1.5);
+  g+=label([len[0],0,0],'x₁','#333',4,14)+label([0,len[1],0],'x₂','#333',4,-4)+label([0,0,len[2]],'x₃','#333',6,4);
+  return g;
+}
+function chain(p,u,v,r,s,lab='X'){
+  const O=[0,0,0], A=p, R=add(p,mul(r,u)), X=add(R,mul(s,v)); let g=arrow(O,A,'#2c6fbb',3);
+  if(Math.abs(r)>1e-9) g+=arrow(A,R,'#2e9e4f',3.5);
+  if(Math.abs(s)>1e-9) g+=arrow(R,X,'#8e44ad',3.5);
+  g+=dot(X,'#1f2933',5,'#fff')+label(X,lab,'#1f2933',8,-8); return g;
+}
+
+function render(){
+  let g='';
+  const s=st.step;
+  if(s===1){
+    const r=+$('r1').value; fit([P0,add(P0,mul(4,U0)),add(P0,mul(-1,U0))]);
+    g+=axes([8,6,4]);
+    g+=line(add(P0,mul(-1.5,U0)),add(P0,mul(4.5,U0)),'rgba(46,158,79,0.5)',2,'6 5');
+    g+=chain(P0,U0,V0,r,0);
+  }
+  if(s===2){
+    const r=+$('r2').value, ss=+$('s2').value; fit([P0,add(P0,mul(4,U0)),add(P0,mul(3,V0)),add(P0,add(mul(-1,U0),mul(-1,V0)))]);
+    g+=axes([8,6,4]);
+    if(st.showAll) g+=planePatch(P0,U0,V0,-1,4,-1,3);
+    st.trace.forEach(t=>{const[x,y]=P(t); g+=`<circle cx="${x}" cy="${y}" r="2.4" fill="rgba(185,134,0,0.75)"/>`;});
+    g+=chain(P0,U0,V0,r,ss);
+  }
+  if(s===3){
+    const r=+$('r3').value, ss=+$('s3').value, v=st.v3;
+    fit([P0,add(P0,mul(4,U0)),add(P0,mul(3,V0)),add(P0,mul(-1,U0))]);
+    g+=axes([8,6,4]);
+    if(!collinear(U0,v)) g+=planePatch(P0,U0,v,-1,4,-1,3,false);
+    else g+=line(add(P0,mul(-3,U0)),add(P0,mul(6,U0)),'rgba(214,40,40,0.55)',3,'7 5');
+    st.trace.forEach(t=>{const[x,y]=P(t); g+=`<circle cx="${x}" cy="${y}" r="2.4" fill="rgba(185,134,0,0.75)"/>`;});
+    g+=chain(P0,U0,v,r,ss);
+  }
+  if(s===4){
+    const pr=PRESETS4[st.preset4], AB=sub(pr.B,pr.A), AC=sub(pr.C,pr.A);
+    fit([pr.A,pr.B,pr.C,add(pr.A,add(AB,AC))]);
+    g+=axes([Math.max(6,...[pr.A,pr.B,pr.C].map(p=>p[0]+1)),Math.max(6,...[pr.A,pr.B,pr.C].map(p=>p[1]+1)),Math.max(4,...[pr.A,pr.B,pr.C].map(p=>p[2]+1))]);
+    if(st.abOk && !collinear(AB,AC)) g+=planePatch(pr.A,AB,AC,-0.6,1.6,-0.6,1.6,false);
+    if(st.abOk && collinear(AB,AC)) g+=line(add(pr.A,mul(-0.4,AC)),add(pr.A,mul(1.3,AC)),'rgba(214,40,40,0.6)',3,'7 5');
+    g+=arrow([0,0,0],pr.A,'#2c6fbb',2.5,'5 4');
+    if(st.abOk){ g+=arrow(pr.A,pr.B,'#2e9e4f',3.5); g+=arrow(pr.A,pr.C,'#8e44ad',3.5); }
+    [['A',pr.A],['B',pr.B],['C',pr.C]].forEach(([n,p])=>{ g+=dot(p,'#1f2933',4.5)+label(p,n,'#1f2933',8,-8); });
+  }
+  if(s===5){
+    const {p,u,v}=E5, Pp=PRESETS5[st.preset5].P, r=+$('r5').value, ss=+$('s5').value;
+    fit([p,add(p,mul(4,u)),add(p,mul(3,v)),Pp]);
+    g+=axes([6,8,5]);
+    g+=planePatch(p,u,v,-1,4,-1,3);
+    // Lot vom Prüfpunkt zur Ebene (nur Anzeige)
+    const n=cross(u,v), nn=n[0]**2+n[1]**2+n[2]**2, dist=( (Pp[0]-p[0])*n[0]+(Pp[1]-p[1])*n[1]+(Pp[2]-p[2])*n[2] )/nn;
+    const foot=sub(Pp,mul(dist,n));
+    if(Math.abs(dist)>1e-9) g+=line(Pp,foot,'rgba(214,40,40,0.6)',1.5,'3 4');
+    g+=chain(p,u,v,r,ss);
+    g+=`<circle cx="${P(Pp)[0]}" cy="${P(Pp)[1]}" r="8" fill="rgba(214,40,40,0.15)" stroke="#d62828" stroke-width="2.5"/>`+label(Pp,'P','#d62828',10,14);
+  }
+  if(s===6){
+    fit([P0,add(P0,mul(4,U0)),add(P0,mul(3,V0))]);
+    g+=axes([8,6,4]); g+=planePatch(P0,U0,V0,-1,4,-1,3); g+=chain(P0,U0,V0,2,1);
+    g+=label(add(P0,mul(4,U0)),'E','#b98600',6,16,18);
+  }
+  $('scene').innerHTML=g;
+}
+(function(){ const svg=$('scene'); let d=null;
+  svg.addEventListener('pointerdown',e=>{d={x:e.clientX,y:e.clientY,phi:st.phi,theta:st.theta}; svg.setPointerCapture(e.pointerId);});
+  svg.addEventListener('pointermove',e=>{ if(!d) return; st.phi=d.phi-(e.clientX-d.x)*0.008; st.theta=Math.max(-0.15,Math.min(1.45,d.theta+(e.clientY-d.y)*0.008)); render(); });
+  const end=()=>d=null; svg.addEventListener('pointerup',end); svg.addEventListener('pointercancel',end);
+  $('resetView').onclick=()=>{st.phi=0.62;st.theta=0.38;st.zoom=1;render();};
+  $('zoomIn').onclick=()=>{st.zoom=Math.min(2.2,st.zoom*1.15);render();};
+  $('zoomOut').onclick=()=>{st.zoom=Math.max(0.45,st.zoom/1.15);render();};
+})();
+
+/* ---------- Schritt-Navigation ---------- */
+const NAMES=['Gerade','Ebene','Kollinear?','Drei Punkte','Punktprobe','Sicherung'];
+function markDone(){ done.add(st.step); buildNav(); }
+function buildNav(){ const n=$('stepsNav'); n.innerHTML=''; NAMES.forEach((t,i)=>{ const b=document.createElement('button'); b.textContent=`${i+1} ${t}`; if(st.step===i+1) b.classList.add('active'); if(done.has(i+1)) b.classList.add('done'); b.onclick=()=>go(i+1); n.append(b); }); }
+function go(k){ st.step=k; st.trace=[]; document.querySelectorAll('.step').forEach(s=>s.classList.toggle('active',+s.dataset.step===k)); $('prev').disabled=k===1; $('next').disabled=k===6; buildNav(); updAll(); window.scrollTo({top:0,behavior:'smooth'}); }
+$('prev').onclick=()=>go(Math.max(1,st.step-1)); $('next').onclick=()=>go(Math.min(6,st.step+1));
+
+/* ---------- Schritt 1 ---------- */
+function upd1(){ const r=+$('r1').value; $('r1v').textContent=fmt(r,1); const X=add(P0,mul(r,U0));
+  tex($('f1'),`g:\\ \\vec x=\\vec p+r\\cdot\\vec u=${col(P0)}+${tn(r,1)}\\cdot${col(U0)}=${col(X)}`,true); render(); }
+$('r1').addEventListener('input',upd1);
+mc('mc1',['nur einen einzigen Punkt','Punkte auf einer Geraden','Punkte einer Fläche'],'Punkte auf einer Geraden','fb1',
+  'Genau. Mit <strong>einem</strong> Richtungsvektor bewegt man sich nur vor und zurück – auf einer Geraden. Für eine Tischplatte reicht das nicht.',
+  {'Punkte einer Fläche':'Bewege den Regler noch einmal: Kann X zur Seite ausweichen, oder bleibt X auf der gestrichelten Linie?'});
+
+/* ---------- Schritt 2 ---------- */
+function pushTrace(p){ if($('trace').checked){ st.trace.push(p); if(st.trace.length>900) st.trace.shift(); } }
+function upd2(){ const r=+$('r2').value, s=+$('s2').value; $('r2v').textContent=fmt(r,1); $('s2v').textContent=fmt(s,1);
+  const X=add(P0,add(mul(r,U0),mul(s,V0))); pushTrace(X);
+  tex($('f2'),`\\begin{aligned}\\vec x&=\\vec p+r\\cdot\\vec u+s\\cdot\\vec v\\\\&=${col(P0)}+${tn(r,1)}\\cdot${col(U0)}+${tn(s,1)}\\cdot${col(V0)}=${col(X)}\\end{aligned}`,true); render(); }
+['r2','s2'].forEach(id=>$(id).addEventListener('input',upd2));
+$('clearTrace').onclick=()=>{st.trace=[];render();};
+$('showAll').onclick=()=>{st.showAll=!st.showAll; $('showAll').classList.toggle('on',st.showAll); render();};
+mc('mc2',['eine Gerade','eine ebene Fläche','eine gekrümmte Fläche','einen Körper (Quader)'],'eine ebene Fläche','fb2',
+  'Richtig! Mit zwei Richtungen erreicht man alle Punkte einer <strong>Ebene</strong>. Es ist übrigens das Dach aus Szene 0 – nur ohne Ränder: Eine Ebene ist unbegrenzt. Mit „Alle Punkte zeigen“ siehst du einen Ausschnitt.',
+  {'eine gekrümmte Fläche':'Drehe die Ansicht so, dass du von der Seite auf die Spur schaust. Ist sie gebogen?','einen Körper (Quader)':'Drehe die Ansicht: Hat die Punktwolke eine Dicke?'});
+
+/* ---------- Schritt 3 ---------- */
+(function(){ const c=$('vChoice'); VOPTS.forEach((o,i)=>{ const b=document.createElement('button'); b.className='btn'+(i===0?' on':''); b.innerHTML=o.lab.replace('v =','v&#8407; ='); b.onclick=()=>{ st.v3=o.v; st.trace=[]; [...c.children].forEach(x=>x.classList.remove('on')); b.classList.add('on'); upd3(); }; c.append(b); }); })();
+function upd3(){ const r=+$('r3').value, s=+$('s3').value; $('r3v').textContent=fmt(r,1); $('s3v').textContent=fmt(s,1);
+  const X=add(P0,add(mul(r,U0),mul(s,st.v3))); pushTrace(X);
+  let note=''; if(isZero(st.v3)) note='\\quad\\text{(Nullvektor)}'; else if(collinear(U0,st.v3)) { const k=st.v3[0]/U0[0]; note=`\\quad\\vec v=${tn(k)}\\cdot\\vec u`; }
+  tex($('f3'),`\\vec x=${col(P0)}+r\\cdot${col(U0)}+s\\cdot${col(st.v3)}${note}`,true); render(); }
+['r3','s3'].forEach(id=>$(id).addEventListener('input',upd3));
+mc('mc3',['wenn v länger ist als u','wenn v ein Vielfaches von u ist (kollinear) oder der Nullvektor','wenn v nach unten zeigt'],'wenn v ein Vielfaches von u ist (kollinear) oder der Nullvektor','fb3',
+  'Genau. Ist <span class="m" data-tex="\\vec v=k\\cdot\\vec u"></span>, zeigen beide in dieselbe Richtung – man bleibt auf einer Geraden. Deshalb gilt: <strong>Die Spannvektoren dürfen nicht kollinear sein</strong> und nicht der Nullvektor.');
+
+/* ---------- Schritt 4 ---------- */
+function vinputs(id){ const c=$(id); c.innerHTML=''; for(let i=0;i<3;i++){ const inp=document.createElement('input'); inp.inputMode='numeric'; c.append(inp);} }
+(function(){ const c=$('presets4'); PRESETS4.forEach((o,i)=>{ const b=document.createElement('button'); b.className='btn small'+(i===0?' on':''); b.textContent=o.lab; b.onclick=()=>{ st.preset4=i; st.abOk=false; [...c.children].forEach(x=>x.classList.remove('on')); b.classList.add('on'); init4(); }; c.append(b); }); })();
+function init4(){ const pr=PRESETS4[st.preset4]; vinputs('ab'); vinputs('ac'); $('res4').classList.add('hidden'); say('fb4','',''); say('fb4b','','');
+  tex($('pts4'),`${pt3('A',pr.A)},\\quad ${pt3('B',pr.B)},\\quad ${pt3('C',pr.C)}`,true); render(); }
+$('tip4').onclick=()=>say('fb4','Verbindungsvektor = Ortsvektor des Endpunkts minus Ortsvektor des Anfangspunkts: <span class="m" data-tex="\\vec{AB}=\\vec{OB}-\\vec{OA}"></span>.','info');
+$('chk4').onclick=()=>{
+  const pr=PRESETS4[st.preset4], AB=sub(pr.B,pr.A), AC=sub(pr.C,pr.A); let ok=true;
+  [['ab',AB],['ac',AC]].forEach(([id,ref])=>[...$(id).children].forEach((inp,i)=>{ const v=readNum(inp.value); const g=v!==null&&Math.abs(v-ref[i])<1e-9; inp.className=g?'good':'bad'; ok=ok&&g; }));
+  if(!ok){ say('fb4','Noch nicht ganz – prüfe die rot markierten Koordinaten. Rechne „Ende minus Anfang“.','no'); return; }
+  st.abOk=true; say('fb4','Richtig berechnet!','ok'); $('res4').classList.remove('hidden');
+  tex($('f4'),`\\begin{aligned}E:\\ \\vec x&=\\vec{OA}+r\\cdot\\vec{AB}+s\\cdot\\vec{AC}\\\\&=${col(pr.A)}+r\\cdot${col(AB)}+s\\cdot${col(AC)}\\end{aligned}`,true);
+  const isC=collinear(AB,AC);
+  mc('mc4',['ja, kollinear','nein, nicht kollinear'], isC?'ja, kollinear':'nein, nicht kollinear','fb4b',
+    isC? `Richtig: <span class="m" data-tex="\\vec{AC}=${tn(AC[0]/AB[0])}\\cdot\\vec{AB}"></span>. Die Punkte A, B, C liegen auf einer Geraden – sie legen <strong>keine</strong> Ebene fest (wie ein Tisch, dessen drei Beine in einer Reihe stehen). Die Gleichung oben beschreibt keine Ebene.`
+       : `Richtig: Es gibt keine Zahl <span class="m" data-tex="k"></span> mit <span class="m" data-tex="\\vec{AC}=k\\cdot\\vec{AB}"></span> (die Quotienten der Koordinaten sind verschieden). Die Gleichung beschreibt die Ebene durch A, B und C.`,
+    {}, null);
+  render();
+};
+
+/* ---------- Schritt 5 ---------- */
+(function(){ const c=$('presets5'); PRESETS5.forEach((o,i)=>{ const b=document.createElement('button'); b.className='btn small'+(i===0?' on':''); b.textContent=o.lab; b.onclick=()=>{ st.preset5=i; [...c.children].forEach(x=>x.classList.remove('on')); b.classList.add('on'); init5(); }; c.append(b); }); })();
+function init5(){ const {p,u,v}=E5, Pp=PRESETS5[st.preset5].P;
+  tex($('f5'),`E:\\ \\vec x=${col(p)}+r\\cdot${col(u)}+s\\cdot${col(v)}`,true);
+  const rows=[0,1,2].map(i=>{ let t=p[i]?`${tn(p[i])}`:''; if(u[i]) t+=`${u[i]<0?'-':(t?'+':'')}${Math.abs(u[i])===1?'':Math.abs(u[i])}r`; if(v[i]) t+=`${v[i]<0?'-':(t?'+':'')}${Math.abs(v[i])===1?'':Math.abs(v[i])}s`; return `\\text{${['I','II','III'][i]}}: & ${t}=${tn(Pp[i])}`; });
+  tex($('lgs5'),`${col(p)}+r\\cdot${col(u)}+s\\cdot${col(v)}=${col(Pp)}\\\\[6pt]\\Rightarrow\\quad\\begin{array}{rl}${rows.join('\\\\')}\\end{array}`,true);
+  $('r5in').value=''; $('s5in').value=''; $('r5in').className=''; $('s5in').className=''; $('res5').classList.add('hidden'); say('fb5','',''); say('fb5b','',''); say('fb5a','','');
+  $('r5').value=0; $('s5').value=0; upd5(); }
+function upd5(){ const r=+$('r5').value, s=+$('s5').value; $('r5v').textContent=fmt(r,1); $('s5v').textContent=fmt(s,1);
+  const {p,u,v}=E5, Pp=PRESETS5[st.preset5].P, X=add(p,add(mul(r,u),mul(s,v)));
+  const d=Math.hypot(...sub(X,Pp));
+  if(d<0.06) say('fb5a',`Treffer! Mit r = ${fmt(r,1)} und s = ${fmt(s,1)} erreicht X den Punkt P – P liegt in der Ebene.`,'ok');
+  else if(st.preset5===1) say('fb5a','Tipp: Drehe die Ansicht von der Seite. Liegt P überhaupt auf der Ebene? Die gestrichelte rote Linie zeigt den Abstand zur Ebene.','info');
+  else say('fb5a','','');
+  render(); }
+['r5','s5'].forEach(id=>$(id).addEventListener('input',upd5));
+$('tip5').onclick=()=>say('fb5','Gleichung I enthält nur <span class="m" data-tex="r"></span>, Gleichung II nur <span class="m" data-tex="s"></span>. Löse beide nach der Unbekannten auf.','info');
+$('chk5').onclick=()=>{
+  const {p,u,v}=E5, Pp=PRESETS5[st.preset5].P; const r=Pp[0]-p[0], s=(Pp[1]-p[1])/2;
+  const ri=readNum($('r5in').value), si=readNum($('s5in').value);
+  const okr=ri!==null&&Math.abs(ri-r)<1e-9, oks=si!==null&&Math.abs(si-s)<1e-9;
+  $('r5in').className=okr?'good':'bad'; $('s5in').className=oks?'good':'bad';
+  if(!(okr&&oks)){ say('fb5','Noch nicht. Aus I: <span class="m" data-tex="2+r='+tn(Pp[0])+'"></span>. Aus II: <span class="m" data-tex="1+2s='+tn(Pp[1])+'"></span>.','no'); return; }
+  say('fb5','Richtig!','ok'); $('res5').classList.remove('hidden');
+  const lhs=r+s, okIII=Math.abs(lhs-Pp[2])<1e-9;
+  tex($('f5c'),`\\text{III}:\\ r+s=${tn(r)}+${tn(s)}=${tn(lhs)}\\quad\\text{soll sein:}\\ ${tn(Pp[2])}`,true);
+  mc('mc5',['ja, erfüllt','nein, Widerspruch'], okIII?'ja, erfüllt':'nein, Widerspruch','fb5b',
+     okIII? `Richtig: Mit <span class="m" data-tex="r=${tn(r)}"></span> und <span class="m" data-tex="s=${tn(s)}"></span> sind alle drei Gleichungen erfüllt. <strong>P liegt in der Ebene E.</strong>`
+          : `Richtig: <span class="m" data-tex="${tn(lhs)}\\neq ${tn(Pp[2])}"></span> – ein Widerspruch. Es gibt keine Zahlen r und s, die alle drei Gleichungen erfüllen. <strong>P liegt nicht in der Ebene E.</strong> Deshalb konntest du P mit den Reglern nicht treffen.`);
+};
+
+/* ---------- Schritt 6 ---------- */
+$('chk6').onclick=()=>{ let ok=true; document.querySelectorAll('#cloze select').forEach(s=>{ const g=s.value===s.dataset.ok; s.style.borderColor=g?'#2e9e4f':'#d62828'; s.style.background=g?'#eefaf1':'#fff1f1'; ok=ok&&g; });
+  if(ok){ say('fb6','Alles richtig! Übertrage den Merksatz in dein Heft.','ok'); markDone(); } else say('fb6','Rot markierte Lücken noch einmal prüfen.','no'); };
+
+function updAll(){ if(st.step===1) upd1(); if(st.step===2) upd2(); if(st.step===3) upd3(); if(st.step===4) init4(); if(st.step===5) init5(); if(st.step===6) render(); }
+window.addEventListener('load',()=>{ renderMath(); go(1); });
+</script>
+</body>
+</html>

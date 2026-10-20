@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>VI.2 Übung: Ebenen in Parameterform</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+<style>
+  :root{
+    --gold:#e8a800; --gold-deep:#b98600; --gold-soft:#fff6dc;
+    --ink:#1f2933; --ink-soft:#5b6770; --line:#e3e6ea; --bg:#f7f7f4; --card:#fff; --navy:#1a3a6b;
+    --a:#2e9e4f; --a-bg:#eaf7ef; --b:#e67e22; --b-bg:#fdf0e4; --c:#8e44ad; --c-bg:#f4ecf8; --blue:#2c6fbb;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;background:var(--bg);color:var(--ink);line-height:1.55;font-size:17px}
+  header{background:var(--gold);color:#fff;padding:18px 20px 16px}
+  header .eyebrow{font-size:.82rem;letter-spacing:.06em;text-transform:uppercase;opacity:.92}
+  header h1{margin:4px 0 0;font-size:1.6rem;line-height:1.2}
+  header nav{margin-top:8px;font-size:.9rem}
+  header nav a{color:#fff;text-decoration:underline;margin-right:14px}
+  .wrap{max-width:980px;margin:0 auto;padding:16px}
+  .toc{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 14px}
+  .toc a{border:1px solid var(--line);background:#fff;border-radius:999px;padding:5px 14px;text-decoration:none;color:var(--ink);font-size:.9rem}
+  .toc a .dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:6px;vertical-align:middle}
+  h2.sec{font-size:1.3rem;margin:26px 0 10px;color:var(--navy);border-bottom:2px solid var(--line);padding-bottom:6px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 18px;margin-bottom:14px}
+  .card h3{margin:0 0 8px;font-size:1.1rem;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+  .merk{background:#eef4fb;border:1px solid #bcd3ec;border-radius:12px;padding:12px 16px;margin:10px 0}
+  .merk h3{color:#1d4f8c;margin:0 0 6px;font-size:1.05rem}
+  .book{background:var(--gold-soft);border:1px solid #f1dc9c;border-radius:12px;padding:12px 16px;margin:10px 0}
+  .badge{font-size:.75rem;font-weight:800;letter-spacing:.05em;padding:2px 10px;border-radius:999px}
+  .bA{background:var(--a-bg);color:var(--a)} .bB{background:var(--b-bg);color:var(--b)} .bC{background:var(--c-bg);color:var(--c)} .bM{background:#eef2f8;color:var(--navy)}
+  .card.A{border-left:5px solid var(--a)} .card.B{border-left:5px solid var(--b)} .card.C{border-left:5px solid var(--c)} .card.M{border-left:5px solid var(--navy)}
+  .steps .st{display:none;border-left:3px solid #d8dde5;padding:4px 0 4px 12px;margin:8px 0}
+  .steps .st.show{display:block}
+  .steps .st b.lab{color:var(--navy)}
+  .stepbar{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+  .btn{border:1px solid var(--line);background:#fff;border-radius:8px;padding:6px 12px;font-size:.92rem;cursor:pointer;color:var(--ink)}
+  .btn:hover{border-color:var(--gold)}
+  .btn.primary{background:var(--gold);border-color:var(--gold);color:#fff;font-weight:600}
+  .btn:disabled{opacity:.45;cursor:default}
+  details{margin:8px 0;border:1px solid var(--line);border-radius:8px;padding:6px 12px;background:#fcfcfc}
+  details summary{cursor:pointer;font-weight:700}
+  details.tip summary{color:var(--gold-deep)}
+  details.sol summary{color:var(--a)}
+  details[open]{background:#fff}
+  .sub{margin:6px 0}
+  .ti{background:#f3f6f3;border:1px solid #cfdccf;border-radius:8px;padding:8px 12px;font-size:.93rem;margin:8px 0}
+  code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:.88em;background:#f1f3f8;border:1px solid var(--line);border-radius:4px;padding:1px 5px}
+  .fig{display:flex;gap:18px;align-items:flex-start;flex-wrap:wrap}
+  .fig svg{flex-shrink:0;max-width:100%;height:auto}
+  .katex-display{margin:.4em 0;overflow-x:auto;overflow-y:hidden;padding:2px 0}
+  .checklist{list-style:none;padding:0;margin:0}
+  .checklist li{display:flex;gap:10px;align-items:flex-start;padding:7px 0;border-bottom:1px solid var(--line)}
+  .checklist li:last-child{border-bottom:none}
+  .checklist input{width:18px;height:18px;margin-top:3px;accent-color:var(--gold-deep);flex-shrink:0}
+  .ztag{margin-left:auto;font-size:.75rem;font-weight:700;padding:1px 8px;border-radius:999px;white-space:nowrap}
+  .ok{color:var(--a);font-weight:700}
+  .no{color:#c62828;font-weight:700}
+  footer{text-align:center;color:var(--ink-soft);font-size:.82rem;padding:20px}
+  @media (max-width:520px){ .katex{font-size:.95em} body{font-size:16px} .wrap{padding:10px} .card{padding:12px} }
+</style>
+</head>
+<body>
+<header>
+  <div class="eyebrow">Kapitel VI.2 · Ebenen im Raum – die Parameterform · Übung</div>
+  <h1>Übung: Ebenengleichungen aufstellen und Punktprobe</h1>
+  <nav><a href="index.html">← Übersicht VI.2</a><a href="../simulationen/ebenen-explorer/szene-1-parameterform.html">Simulation Szene 1</a><a href="../taschenrechner/index.html">TI-Nspire-Hilfen</a></nav>
+</header>
+
+<div class="wrap">
+
+  <div class="toc">
+    <a href="#wissen">Grundwissen</a>
+    <a href="#muster"><span class="dot" style="background:var(--navy)"></span>Musteraufgaben</a>
+    <a href="#stufeA"><span class="dot" style="background:var(--a)"></span>Stufe A</a>
+    <a href="#stufeB"><span class="dot" style="background:var(--b)"></span>Stufe B</a>
+    <a href="#stufeC"><span class="dot" style="background:var(--c)"></span>Stufe C</a>
+    <a href="#check">Das kann ich</a>
+  </div>
+
+  <!-- ================= GRUNDWISSEN ================= -->
+  <h2 class="sec" id="wissen">Grundwissen</h2>
+  <div class="book"><strong>Einstieg aus dem Buch (S. 188):</strong> Beschreibe Vor- und Nachteile von Tischen mit einem, drei und vier Beinen. – Drei Beine stehen immer fest auf dem Boden: <em>Drei Punkte, die nicht auf einer Geraden liegen, legen genau eine Ebene fest.</em></div>
+  <div class="merk">
+    <h3>Ebenengleichung in Parameterform</h3>
+    Jede Ebene lässt sich durch eine Gleichung in Parameterform
+    \[E:\ \vec x=\vec p+r\cdot\vec u+s\cdot\vec v\qquad(r,s\in\mathbb R;\ \vec u\neq\vec o,\ \vec v\neq\vec o;\ \vec u\text{ und }\vec v\text{ nicht kollinear})\]
+    beschreiben. \(\vec p\) heißt <strong>Stützvektor</strong>, \(\vec u\) und \(\vec v\) heißen <strong>Spannvektoren</strong>. Die Parameter \(r\) und \(s\) legen jeden Punkt der Ebene eindeutig fest.<br>
+    <strong>Ebene durch drei Punkte</strong> \(A,B,C\) (nicht auf einer Geraden): \(\ E:\ \vec x=\vec{OA}+r\cdot\vec{AB}+s\cdot\vec{AC}\).<br>
+    <strong>Punktprobe:</strong> \(\vec{OP}\) für \(\vec x\) einsetzen → LGS mit drei Gleichungen und zwei Unbekannten. Zwei Gleichungen liefern \(r\) und \(s\), die dritte dient zur Kontrolle.
+  </div>
+
+  <!-- ================= MUSTERAUFGABEN ================= -->
+  <h2 class="sec" id="muster">Musteraufgaben – vorgerechnet</h2>
+  <p class="muted" style="color:var(--ink-soft);margin-top:0">Decke die Lösung Schritt für Schritt auf. Überlege vor jedem Klick, was als Nächstes kommt.</p>
+
+  <div class="card M">
+    <h3><span class="badge bM">MUSTER 1</span> Eine Ebenengleichung aus drei Punkten aufstellen</h3>
+    <p>Geben Sie, falls die Punkte \(A\), \(B\) und \(C\) eine Ebene eindeutig festlegen, eine Gleichung dieser Ebene in Parameterform an.<br>
+    a) \(A(2\,|\,1\,|\,0),\ B(3\,|\,3\,|\,1),\ C(0\,|\,2\,|\,2)\)&emsp;&emsp; b) \(A(1\,|\,0\,|\,-1),\ B(2\,|\,2\,|\,0),\ C(4\,|\,6\,|\,2)\)</p>
+    <div class="steps">
+      <div class="st"><b class="lab">a) Schritt 1 – Vektoren wählen:</b> Man wählt als Stützvektor \(\vec{OA}\) und als Spannvektoren \(\vec{AB}\) und \(\vec{AC}\):
+        \[\vec{AB}=\begin{pmatrix}3-2\\3-1\\1-0\end{pmatrix}=\begin{pmatrix}1\\2\\1\end{pmatrix},\qquad \vec{AC}=\begin{pmatrix}0-2\\2-1\\2-0\end{pmatrix}=\begin{pmatrix}-2\\1\\2\end{pmatrix}\]</div>
+      <div class="st"><b class="lab">a) Schritt 2 – Kollinearität prüfen:</b> Gäbe es ein \(t\) mit \(\begin{pmatrix}-2\\1\\2\end{pmatrix}=t\cdot\begin{pmatrix}1\\2\\1\end{pmatrix}\), müsste aus der 1. Koordinate \(t=-2\) und aus der 2. Koordinate \(t=\tfrac12\) folgen – ein Widerspruch. Also gilt \(\vec{AC}\neq t\cdot\vec{AB}\) für alle \(t\in\mathbb R\): Die Spannvektoren sind <strong>nicht kollinear</strong>.</div>
+      <div class="st"><b class="lab">a) Schritt 3 – Gleichung notieren:</b>
+        \[E:\ \vec x=\begin{pmatrix}2\\1\\0\end{pmatrix}+r\cdot\begin{pmatrix}1\\2\\1\end{pmatrix}+s\cdot\begin{pmatrix}-2\\1\\2\end{pmatrix}\]</div>
+      <div class="st"><b class="lab">b) Schritt 1 – Vektoren berechnen:</b> \(\vec{AB}=\begin{pmatrix}1\\2\\1\end{pmatrix}\) und \(\vec{AC}=\begin{pmatrix}3\\6\\3\end{pmatrix}\).</div>
+      <div class="st"><b class="lab">b) Schritt 2 – Kollinearität prüfen:</b> \(\vec{AC}=3\cdot\vec{AB}\), denn \(3\cdot\begin{pmatrix}1\\2\\1\end{pmatrix}=\begin{pmatrix}3\\6\\3\end{pmatrix}\). Die Vektoren sind <strong>kollinear</strong>. Die Punkte \(A\), \(B\) und \(C\) liegen somit auf einer Geraden. Sie legen <strong>keine Ebene</strong> fest.</div>
+    </div>
+    <div class="stepbar"><button class="btn primary" data-next>Nächster Schritt</button><button class="btn" data-all>Alles zeigen</button></div>
+  </div>
+
+  <div class="card M">
+    <h3><span class="badge bM">MUSTER 2</span> Eine Punktprobe durchführen</h3>
+    <p>Gegeben ist die Ebene \(E:\ \vec x=\begin{pmatrix}1\\0\\2\end{pmatrix}+r\cdot\begin{pmatrix}2\\1\\0\end{pmatrix}+s\cdot\begin{pmatrix}1\\-1\\3\end{pmatrix}\).<br>
+    a) Untersuchen Sie, ob der Punkt \(A(6\,|\,0\,|\,5)\) in der Ebene liegt.<br>
+    b) Untersuchen Sie, ob der Punkt \(B(3\,|\,-2\,|\,8)\) in der Ebene liegt.</p>
+    <div class="steps">
+      <div class="st"><b class="lab">a) Schritt 1 – Ansatz:</b> Es wird geprüft, ob es reelle Zahlen \(r\) und \(s\) gibt mit
+        \[\begin{pmatrix}1\\0\\2\end{pmatrix}+r\cdot\begin{pmatrix}2\\1\\0\end{pmatrix}+s\cdot\begin{pmatrix}1\\-1\\3\end{pmatrix}=\begin{pmatrix}6\\0\\5\end{pmatrix}.\]</div>
+      <div class="st"><b class="lab">a) Schritt 2 – LGS aufstellen</b> (drei Gleichungen, zwei Unbekannte):
+        \[\begin{array}{rrcl}\text{I}: & 1+2r+s & = & 6\\ \text{II}: & r-s & = & 0\\ \text{III}: & 2+3s & = & 5\end{array}\quad\longrightarrow\quad\begin{array}{rrcl}\text{I}: & 2r+s & = & 5\\ \text{II}: & r-s & = & 0\\ \text{III}: & 3s & = & 3\end{array}\]</div>
+      <div class="st"><b class="lab">a) Schritt 3 – \(r\) und \(s\) aus zwei Gleichungen:</b> Mit den Gleichungen II und III berechnet man \(r\) und \(s\), die man mit Gleichung I kontrolliert. Aus III: \(s=1\). Einsetzen in II: \(r-1=0\), also \(r=1\).</div>
+      <div class="st"><b class="lab">a) Schritt 4 – Kontrolle:</b> Einsetzen von \(r=1\) und \(s=1\) in I: \(2\cdot1+1=3\neq5\). Aufgrund dieses <strong>Widerspruchs</strong> liegt der Punkt \(A\) <strong>nicht</strong> in der Ebene \(E\).</div>
+      <div class="st"><b class="lab">b) LGS:</b>
+        \[\begin{array}{rrcl}\text{I}: & 1+2r+s & = & 3\\ \text{II}: & r-s & = & -2\\ \text{III}: & 2+3s & = & 8\end{array}\]
+        Aus III: \(3s=6\), also \(s=2\). Einsetzen in II: \(r-2=-2\), also \(r=0\). Kontrolle mit I: \(1+2\cdot0+2=3\) ✓.<br>
+        Mit \(r=0\) und \(s=2\) lässt sich der Punkt \(B\) berechnen. Der Punkt \(B\) <strong>liegt in der Ebene</strong> \(E\).</div>
+      <div class="st"><b class="lab">Kontrolle mit dem MMS:</b>
+        <div class="ti"><code>linSolve({1+2·r+s=3, r−s=−2, 2+3·s=8},{r,s})</code> → <code>{0,2}</code>. Bei Punkt \(A\) meldet der Rechner, dass es keine Lösung gibt.</div></div>
+    </div>
+    <div class="stepbar"><button class="btn primary" data-next>Nächster Schritt</button><button class="btn" data-all>Alles zeigen</button></div>
+  </div>
+
+  <div class="card M">
+    <h3><span class="badge bM">MUSTER 3</span> Weitere Punkte und eine zweite Ebenengleichung</h3>
+    <p>Die Ebene \(E\) geht durch die Punkte \(A(1\,|\,1\,|\,0)\), \(B(3\,|\,1\,|\,2)\) und \(C(1\,|\,4\,|\,1)\).<br>
+    a) Geben Sie eine Gleichung von \(E\) in Parameterform an.<br>
+    b) Geben Sie drei weitere Punkte von \(E\) an.<br>
+    c) Geben Sie eine zweite Gleichung von \(E\) an, bei der weder der Stützvektor noch die Spannvektoren mit a) übereinstimmen.</p>
+    <div class="steps">
+      <div class="st"><b class="lab">a)</b> \(\vec{AB}=\begin{pmatrix}2\\0\\2\end{pmatrix}\), \(\vec{AC}=\begin{pmatrix}0\\3\\1\end{pmatrix}\). Aus der 1. Koordinate müsste \(0=t\cdot2\), also \(t=0\) gelten; dann wäre die 2. Koordinate \(3=0\cdot0\) falsch. Die Vektoren sind nicht kollinear.
+        \[E:\ \vec x=\begin{pmatrix}1\\1\\0\end{pmatrix}+r\cdot\begin{pmatrix}2\\0\\2\end{pmatrix}+s\cdot\begin{pmatrix}0\\3\\1\end{pmatrix}\]</div>
+      <div class="st"><b class="lab">b)</b> Man setzt für \(r\) und \(s\) beliebige Zahlen ein, z. B.
+        \(r=1,\ s=1:\ \ (3\,|\,4\,|\,3)\);&emsp;&emsp; \(r=-1,\ s=0:\ \ (-1\,|\,1\,|\,-2)\);&emsp;&emsp; \(r=0,\ s=2:\ \ (1\,|\,7\,|\,2)\).</div>
+      <div class="st"><b class="lab">c)</b> Jeder Punkt der Ebene kann Stützpunkt sein, und je zwei nicht kollineare Verbindungsvektoren zwischen Punkten der Ebene sind Spannvektoren. Mit Stützvektor \(\vec{OB}\) und den Spannvektoren \(\vec{BC}\) und \(\vec{BA}\):
+        \[E:\ \vec x=\begin{pmatrix}3\\1\\2\end{pmatrix}+r\cdot\begin{pmatrix}-2\\3\\-1\end{pmatrix}+s\cdot\begin{pmatrix}-2\\0\\-2\end{pmatrix}\]
+        Für eine Ebene gibt es <strong>unendlich viele</strong> verschiedene Gleichungen in Parameterform.</div>
+    </div>
+    <div class="stepbar"><button class="btn primary" data-next>Nächster Schritt</button><button class="btn" data-all>Alles zeigen</button></div>
+  </div>
+
+  <!-- ================= STUFE A ================= -->
+  <h2 class="sec" id="stufeA">Stufe A · Grundlagen</h2>
+
+  <div class="card A">
+    <h3><span class="badge bA">A1</span> Ebene aus drei Punkten <span style="color:var(--ink-soft);font-size:.85rem;font-weight:400">→ wie Muster 1</span></h3>
+    <p>Geben Sie, falls die Punkte \(A\), \(B\) und \(C\) eine Ebene eindeutig festlegen, eine Gleichung dieser Ebene in Parameterform an.</p>
+    <div class="sub">a) \(A(1\,|\,2\,|\,0),\ B(3\,|\,2\,|\,1),\ C(0\,|\,4\,|\,2)\)&emsp;&emsp; b) \(A(0\,|\,1\,|\,3),\ B(2\,|\,0\,|\,4),\ C(-4\,|\,3\,|\,1)\)&emsp;&emsp; c) \(A(2\,|\,0\,|\,0),\ B(0\,|\,3\,|\,0),\ C(0\,|\,0\,|\,4)\)</div>
+    <details class="tip"><summary>Tipp</summary>Berechne \(\vec{AB}=\vec{OB}-\vec{OA}\) und \(\vec{AC}=\vec{OC}-\vec{OA}\). Prüfe dann, ob es eine Zahl \(t\) gibt mit \(\vec{AC}=t\cdot\vec{AB}\). Vergleiche dazu die Koordinaten einzeln. Nur wenn es kein solches \(t\) gibt, legen die Punkte eine Ebene fest.</details>
+    <details class="sol"><summary>Lösung</summary>
+      a) \(\vec{AB}=\begin{pmatrix}2\\0\\1\end{pmatrix},\ \vec{AC}=\begin{pmatrix}-1\\2\\2\end{pmatrix}\). 1. Koordinate: \(t=-\tfrac12\), 2. Koordinate: \(2=t\cdot0\) unmöglich → nicht kollinear.
+      \[E:\ \vec x=\begin{pmatrix}1\\2\\0\end{pmatrix}+r\cdot\begin{pmatrix}2\\0\\1\end{pmatrix}+s\cdot\begin{pmatrix}-1\\2\\2\end{pmatrix}\]
+      b) \(\vec{AB}=\begin{pmatrix}2\\-1\\1\end{pmatrix},\ \vec{AC}=\begin{pmatrix}-4\\2\\-2\end{pmatrix}=-2\cdot\vec{AB}\) → kollinear. Die Punkte liegen auf einer Geraden und legen <strong>keine Ebene</strong> fest.<br>
+      c) \(\vec{AB}=\begin{pmatrix}-2\\3\\0\end{pmatrix},\ \vec{AC}=\begin{pmatrix}-2\\0\\4\end{pmatrix}\). 1. Koordinate: \(t=1\), 2. Koordinate: \(0=1\cdot3\) falsch → nicht kollinear.
+      \[E:\ \vec x=\begin{pmatrix}2\\0\\0\end{pmatrix}+r\cdot\begin{pmatrix}-2\\3\\0\end{pmatrix}+s\cdot\begin{pmatrix}-2\\0\\4\end{pmatrix}\]
+    </details>
+  </div>
+
+  <div class="card A">
+    <h3><span class="badge bA">A2</span> Punktprobe <span style="color:var(--ink-soft);font-size:.85rem;font-weight:400">→ wie Muster 2</span></h3>
+    <p>Gegeben ist die Ebene \(E:\ \vec x=\begin{pmatrix}2\\1\\-1\end{pmatrix}+r\cdot\begin{pmatrix}1\\0\\2\end{pmatrix}+s\cdot\begin{pmatrix}0\\1\\1\end{pmatrix}\). Untersuchen Sie, ob der Punkt in der Ebene \(E\) liegt.</p>
+    <div class="sub">a) \(P(4\,|\,3\,|\,5)\)&emsp;&emsp; b) \(Q(3\,|\,-1\,|\,0)\)&emsp;&emsp; c) \(R(0\,|\,1\,|\,-5)\)</div>
+    <details class="tip"><summary>Tipp</summary>Stelle das LGS auf: \(\text{I}:\ 2+r=p_1\), \(\text{II}:\ 1+s=p_2\), \(\text{III}:\ -1+2r+s=p_3\). Gleichung I liefert sofort \(r\), Gleichung II sofort \(s\). Setze beide in III ein: Stimmt die Gleichung, liegt der Punkt in \(E\).</details>
+    <details class="sol"><summary>Lösung</summary>
+      a) I: \(2+r=4\Rightarrow r=2\); II: \(1+s=3\Rightarrow s=2\); III: \(-1+2\cdot2+2=5\) ✓ → <span class="ok">\(P\) liegt in \(E\).</span><br>
+      b) I: \(r=1\); II: \(1+s=-1\Rightarrow s=-2\); III: \(-1+2\cdot1+(-2)=-1\neq0\) → Widerspruch, <span class="no">\(Q\) liegt nicht in \(E\).</span><br>
+      c) I: \(r=-2\); II: \(s=0\); III: \(-1+2\cdot(-2)+0=-5\) ✓ → <span class="ok">\(R\) liegt in \(E\).</span>
+    </details>
+  </div>
+
+  <div class="card A">
+    <h3><span class="badge bA">A3</span> Punkte einer Ebene angeben</h3>
+    <p>Gegeben ist die Ebene \(E:\ \vec x=\begin{pmatrix}1\\0\\3\end{pmatrix}+r\cdot\begin{pmatrix}2\\1\\0\end{pmatrix}+s\cdot\begin{pmatrix}-1\\0\\2\end{pmatrix}\).</p>
+    <div class="sub">a) Geben Sie die Koordinaten von drei Punkten der Ebene \(E\) an.<br>b) Untersuchen Sie, ob der Koordinatenursprung in der Ebene \(E\) liegt.</div>
+    <details class="tip"><summary>Tipp</summary>a) Wähle Werte für \(r\) und \(s\), z. B. \(r=0,\ s=0\) oder \(r=1,\ s=0\), und berechne \(\vec x\).<br>b) Punktprobe mit \(O(0\,|\,0\,|\,0)\). In Gleichung II kommt nur \(r\) vor.</details>
+    <details class="sol"><summary>Lösung</summary>
+      a) z. B. \(r=0,s=0:\ (1\,|\,0\,|\,3)\); \(r=1,s=0:\ (3\,|\,1\,|\,3)\); \(r=0,s=1:\ (0\,|\,0\,|\,5)\); \(r=1,s=1:\ (2\,|\,1\,|\,5)\).<br>
+      b) \(\text{I}:\ 1+2r-s=0,\quad \text{II}:\ r=0,\quad \text{III}:\ 3+2s=0\).<br>
+      Aus II: \(r=0\). Einsetzen in I: \(1-s=0\), also \(s=1\). Kontrolle mit III: \(3+2\cdot1=5\neq0\) → Widerspruch. <span class="no">Der Ursprung liegt nicht in \(E\).</span>
+    </details>
+  </div>
+
+  <!-- ================= STUFE B ================= -->
+  <h2 class="sec" id="stufeB">Stufe B · Anwendung</h2>
+
+  <div class="card B">
+    <h3><span class="badge bB">B1</span> Ebenen im Quader</h3>
+    <div class="fig">
+      <svg viewBox="0 0 360 250" width="340" height="236" font-family="Georgia,serif" font-size="13" aria-label="Quader mit den Ebenen E1 und E2">
+<defs><marker id="ar" markerWidth="7" markerHeight="7" refX="5" refY="3" orient="auto"><path d="M0,0 L0,6 L6,3 z" fill="#999"/></marker></defs>
+<line x1="115" y1="165" x2="19.8" y2="237.8" stroke="#999" stroke-width="1" marker-end="url(#ar)"/><text x="5.8" y="241.8" fill="#666" font-size="12">x₁</text>
+<line x1="115" y1="165" x2="352.6" y2="165.0" stroke="#999" stroke-width="1" marker-end="url(#ar)"/><text x="356.6" y="169.0" fill="#666" font-size="12">x₂</text>
+<line x1="115" y1="165" x2="115.0" y2="9.2" stroke="#999" stroke-width="1" marker-end="url(#ar)"/><text x="120.0" y="13.2" fill="#666" font-size="12">x₃</text>
+<polygon points="115.0,165.0 295.0,165.0 227.0,103.0 47.0,103.0" fill="rgba(46,158,79,0.18)" stroke="#2e9e4f" stroke-width="1.6"/>
+<polygon points="47.0,217.0 295.0,165.0 115.0,51.0" fill="rgba(44,111,187,0.22)" stroke="#2c6fbb" stroke-width="1.6"/>
+<line x1="115" y1="165" x2="47" y2="217" stroke="#333" stroke-width="1.2" stroke-dasharray="4 3"/>
+<line x1="115" y1="165" x2="295" y2="165" stroke="#333" stroke-width="1.2" stroke-dasharray="4 3"/>
+<line x1="115" y1="165" x2="115" y2="51" stroke="#333" stroke-width="1.2" stroke-dasharray="4 3"/>
+<line x1="47" y1="217" x2="227" y2="217" stroke="#333" stroke-width="1.6"/>
+<line x1="227" y1="217" x2="295" y2="165" stroke="#333" stroke-width="1.6"/>
+<line x1="295" y1="165" x2="295" y2="51" stroke="#333" stroke-width="1.6"/>
+<line x1="295" y1="51" x2="115" y2="51" stroke="#333" stroke-width="1.6"/>
+<line x1="115" y1="51" x2="47" y2="103" stroke="#333" stroke-width="1.6"/>
+<line x1="47" y1="103" x2="47" y2="217" stroke="#333" stroke-width="1.6"/>
+<line x1="47" y1="103" x2="227" y2="103" stroke="#333" stroke-width="1.6"/>
+<line x1="227" y1="103" x2="295" y2="51" stroke="#333" stroke-width="1.6"/>
+<line x1="227" y1="217" x2="227" y2="103" stroke="#333" stroke-width="1.6"/>
+<circle cx="115" cy="165" r="2.6" fill="#222"/><text x="99" y="160" fill="#222" font-style="italic">O</text>
+<circle cx="47" cy="217" r="2.6" fill="#222"/><text x="31" y="221" fill="#222" font-style="italic">A</text>
+<circle cx="227" cy="217" r="2.6" fill="#222"/><text x="231" y="233" fill="#222" font-style="italic">B</text>
+<circle cx="295" cy="165" r="2.6" fill="#222"/><text x="301" y="179" fill="#222" font-style="italic">C</text>
+<circle cx="115" cy="51" r="2.6" fill="#222"/><text x="99" y="49" fill="#222" font-style="italic">D</text>
+<circle cx="47" cy="103" r="2.6" fill="#222"/><text x="31" y="101" fill="#222" font-style="italic">E</text>
+<circle cx="227" cy="103" r="2.6" fill="#222"/><text x="232" y="97" fill="#222" font-style="italic">F</text>
+<circle cx="295" cy="51" r="2.6" fill="#222"/><text x="300" y="45" fill="#222" font-style="italic">G</text>
+<text x="125.0" y="182.4" fill="#2c6fbb" font-weight="bold">E₁</text>
+<text x="235.0" y="142.6" fill="#2e9e4f" font-weight="bold">E₂</text>
+</svg>
+      <div style="flex:1;min-width:260px">
+        <p>Der abgebildete Quader hat die Eckpunkte \(O(0\,|\,0\,|\,0)\), \(A(4\,|\,0\,|\,0)\), \(B(4\,|\,5\,|\,0)\), \(C(0\,|\,5\,|\,0)\), \(D(0\,|\,0\,|\,3)\), \(E(4\,|\,0\,|\,3)\), \(F(4\,|\,5\,|\,3)\) und \(G(0\,|\,5\,|\,3)\).</p>
+        <div class="sub">a) Bestimmen Sie eine Gleichung der Ebene \(E_1\) durch \(A\), \(C\) und \(D\) in Parameterform.<br>
+        b) Bestimmen Sie eine Gleichung der Ebene \(E_2\) durch \(E\), \(F\) und \(C\) in Parameterform.<br>
+        c) Untersuchen Sie, ob der Mittelpunkt \(M(2\,|\,2{,}5\,|\,0)\) der Strecke \(\overline{AC}\) in \(E_1\) liegt und ob der Punkt \(G\) in \(E_1\) liegt.</div>
+      </div>
+    </div>
+    <details class="tip"><summary>Tipp</summary>Lies die Koordinaten der drei Punkte ab und gehe vor wie in Muster 1. Für c) wie in Muster 2: Beginne mit der Gleichung, in der nur ein Parameter vorkommt.</details>
+    <details class="sol"><summary>Lösung</summary>
+      a) \(\vec{AC}=\begin{pmatrix}-4\\5\\0\end{pmatrix},\ \vec{AD}=\begin{pmatrix}-4\\0\\3\end{pmatrix}\) (nicht kollinear): \(\ E_1:\ \vec x=\begin{pmatrix}4\\0\\0\end{pmatrix}+r\cdot\begin{pmatrix}-4\\5\\0\end{pmatrix}+s\cdot\begin{pmatrix}-4\\0\\3\end{pmatrix}\)<br>
+      b) \(\vec{EF}=\begin{pmatrix}0\\5\\0\end{pmatrix},\ \vec{EC}=\begin{pmatrix}-4\\5\\-3\end{pmatrix}\) (nicht kollinear): \(\ E_2:\ \vec x=\begin{pmatrix}4\\0\\3\end{pmatrix}+r\cdot\begin{pmatrix}0\\5\\0\end{pmatrix}+s\cdot\begin{pmatrix}-4\\5\\-3\end{pmatrix}\)<br>
+      c) \(M\): \(\text{I}:\ 4-4r-4s=2,\ \text{II}:\ 5r=2{,}5,\ \text{III}:\ 3s=0\). Aus III: \(s=0\), aus II: \(r=0{,}5\). Kontrolle I: \(4-2-0=2\) ✓ → <span class="ok">\(M\) liegt in \(E_1\).</span><br>
+      \(G\): \(\text{I}:\ 4-4r-4s=0,\ \text{II}:\ 5r=5,\ \text{III}:\ 3s=3\). Aus II: \(r=1\), aus III: \(s=1\). Kontrolle I: \(4-4-4=-4\neq0\) → <span class="no">\(G\) liegt nicht in \(E_1\).</span>
+    </details>
+  </div>
+
+  <div class="card B">
+    <h3><span class="badge bB">B2</span> Zwei Gleichungen – eine Ebene <span style="color:var(--ink-soft);font-size:.85rem;font-weight:400">→ wie Muster 3</span></h3>
+    <p>Die Ebene \(E\) geht durch die Punkte \(A(1\,|\,0\,|\,0)\), \(B(0\,|\,2\,|\,0)\) und \(C(0\,|\,0\,|\,3)\). Geben Sie zwei Gleichungen von \(E\) in Parameterform an, bei denen weder die Stützvektoren noch die Spannvektoren übereinstimmen.</p>
+    <details class="tip"><summary>Tipp</summary>Erste Gleichung mit \(\vec{OA}\), \(\vec{AB}\), \(\vec{AC}\). Für die zweite Gleichung startest du in einem anderen Punkt, z. B. in \(B\), und nimmst die Verbindungsvektoren von \(B\) zu den anderen beiden Punkten.</details>
+    <details class="sol"><summary>Lösung</summary>
+      \[E:\ \vec x=\begin{pmatrix}1\\0\\0\end{pmatrix}+r\cdot\begin{pmatrix}-1\\2\\0\end{pmatrix}+s\cdot\begin{pmatrix}-1\\0\\3\end{pmatrix}\qquad\text{und}\qquad E:\ \vec x=\begin{pmatrix}0\\2\\0\end{pmatrix}+r\cdot\begin{pmatrix}0\\-2\\3\end{pmatrix}+s\cdot\begin{pmatrix}1\\-2\\0\end{pmatrix}\]
+      Die zweite Gleichung verwendet \(\vec{OB}\), \(\vec{BC}\) und \(\vec{BA}\). Probe: Mit \(r=0,s=1\) erhält man \(A\), mit \(r=1,s=0\) erhält man \(C\) – alle drei Punkte liegen also auch in der zweiten Darstellung. (Andere Lösungen sind möglich.)
+    </details>
+  </div>
+
+  <div class="card B">
+    <h3><span class="badge bB">B3</span> Ebene aus einem Punkt und einer Geraden</h3>
+    <p>Durch den Punkt \(P(3\,|\,4\,|\,1)\) und die Gerade \(g:\ \vec x=\begin{pmatrix}1\\0\\2\end{pmatrix}+t\cdot\begin{pmatrix}2\\1\\-1\end{pmatrix}\) ist eine Ebene \(E\) eindeutig festgelegt.</p>
+    <div class="sub">a) Zeigen Sie, dass \(P\) nicht auf \(g\) liegt.<br>b) Geben Sie eine Gleichung der Ebene \(E\) in Parameterform an.</div>
+    <details class="tip"><summary>Tipp</summary>a) Punktprobe mit der Geraden (Kapitel V): Aus der 1. Koordinate erhältst du \(t\), dann die anderen Koordinaten prüfen.<br>b) Der Stützvektor der Geraden kann Stützvektor der Ebene sein, ihr Richtungsvektor ein Spannvektor. Den zweiten Spannvektor bildest du vom Stützpunkt der Geraden zu \(P\).</details>
+    <details class="sol"><summary>Lösung</summary>
+      a) \(1+2t=3\Rightarrow t=1\). 2. Koordinate: \(0+1=1\neq4\) → Widerspruch, \(P\) liegt nicht auf \(g\).<br>
+      b) Stützpunkt \(Q(1\,|\,0\,|\,2)\) der Geraden, \(\vec{QP}=\begin{pmatrix}2\\4\\-1\end{pmatrix}\) (nicht kollinear zu \(\begin{pmatrix}2\\1\\-1\end{pmatrix}\)):
+      \[E:\ \vec x=\begin{pmatrix}1\\0\\2\end{pmatrix}+r\cdot\begin{pmatrix}2\\1\\-1\end{pmatrix}+s\cdot\begin{pmatrix}2\\4\\-1\end{pmatrix}\]
+    </details>
+  </div>
+
+  <div class="card B">
+    <h3><span class="badge bB">B4</span> Ein Punkt mit Parameter</h3>
+    <p>Gegeben ist die Ebene \(E:\ \vec x=\begin{pmatrix}1\\2\\0\end{pmatrix}+r\cdot\begin{pmatrix}1\\0\\1\end{pmatrix}+s\cdot\begin{pmatrix}0\\1\\2\end{pmatrix}\). Untersuchen Sie, für welchen Wert von \(p\) der Punkt in der Ebene liegt.</p>
+    <div class="sub">a) \(P(3\,|\,p\,|\,4)\)&emsp;&emsp; b) \(Q(p\,|\,1\,|\,3)\)</div>
+    <details class="tip"><summary>Tipp</summary>Stelle das LGS auf. Benutze die beiden Gleichungen <strong>ohne</strong> \(p\), um \(r\) und \(s\) zu berechnen. Setze sie dann in die Gleichung mit \(p\) ein.</details>
+    <details class="sol"><summary>Lösung</summary>
+      a) \(\text{I}:\ 1+r=3,\ \text{II}:\ 2+s=p,\ \text{III}:\ r+2s=4\). Aus I: \(r=2\); aus III: \(2+2s=4\Rightarrow s=1\). In II: \(p=2+1=3\). → \(P(3\,|\,3\,|\,4)\) liegt in \(E\) für <strong>\(p=3\)</strong>.<br>
+      b) \(\text{I}:\ 1+r=p,\ \text{II}:\ 2+s=1,\ \text{III}:\ r+2s=3\). Aus II: \(s=-1\); aus III: \(r-2=3\Rightarrow r=5\). In I: \(p=1+5=6\). → <strong>\(p=6\)</strong>.
+    </details>
+  </div>
+
+  <!-- ================= STUFE C ================= -->
+  <h2 class="sec" id="stufeC">Stufe C · Vertiefung</h2>
+
+  <div class="card C">
+    <h3><span class="badge bC">C1</span> Wahr oder falsch?</h3>
+    <p>Beurteilen Sie, ob die Aussage wahr oder falsch ist. Begründen Sie.</p>
+    <div class="sub">a) Die Ebene \(E:\ \vec x=\begin{pmatrix}0\\0\\2\end{pmatrix}+r\cdot\begin{pmatrix}1\\0\\0\end{pmatrix}+s\cdot\begin{pmatrix}0\\3\\0\end{pmatrix}\) verläuft parallel zur \(x_1x_2\)-Ebene.<br>
+      b) Die Ebene \(E:\ \vec x=r\cdot\begin{pmatrix}0\\0\\1\end{pmatrix}+s\cdot\begin{pmatrix}2\\1\\0\end{pmatrix}\) enthält die \(x_3\)-Achse.<br>
+      c) Die Ebene \(E:\ \vec x=\begin{pmatrix}1\\1\\0\end{pmatrix}+r\cdot\begin{pmatrix}1\\0\\1\end{pmatrix}+s\cdot\begin{pmatrix}0\\1\\1\end{pmatrix}\) enthält den Koordinatenursprung.</div>
+    <details class="tip"><summary>Tipp</summary>a) Welche \(x_3\)-Koordinate haben alle Punkte der Ebene?<br>b) Was erhältst du für \(s=0\)? Welcher Stützvektor liegt vor?<br>c) Punktprobe mit \(O(0\,|\,0\,|\,0)\).</details>
+    <details class="sol"><summary>Lösung</summary>
+      a) <strong>Wahr.</strong> Beide Spannvektoren haben die \(x_3\)-Koordinate 0. Alle Punkte haben daher \(x_3=2\): Die Ebene liegt parallel zur \(x_1x_2\)-Ebene im Abstand 2.<br>
+      b) <strong>Wahr.</strong> Der Stützvektor ist \(\vec o\). Für \(s=0\) erhält man \(\vec x=r\cdot\begin{pmatrix}0\\0\\1\end{pmatrix}\) – das sind genau die Punkte der \(x_3\)-Achse.<br>
+      c) <strong>Falsch.</strong> \(\text{I}:\ 1+r=0\Rightarrow r=-1\); \(\text{II}:\ 1+s=0\Rightarrow s=-1\); \(\text{III}:\ r+s=-2\neq0\) → Widerspruch.
+    </details>
+  </div>
+
+  <div class="card C">
+    <h3><span class="badge bC">C2</span> Zwei Geraden spannen eine Ebene auf</h3>
+    <p>Gegeben sind \(g_1:\ \vec x=\begin{pmatrix}1\\0\\2\end{pmatrix}+t\cdot\begin{pmatrix}1\\1\\0\end{pmatrix}\) und \(g_2:\ \vec x=\begin{pmatrix}3\\0\\4\end{pmatrix}+k\cdot\begin{pmatrix}0\\1\\-1\end{pmatrix}\).</p>
+    <div class="sub">a) Zeigen Sie, dass sich \(g_1\) und \(g_2\) schneiden, und bestimmen Sie den Schnittpunkt.<br>b) Geben Sie eine Gleichung der Ebene an, die beide Geraden enthält.</div>
+    <details class="tip"><summary>Tipp</summary>a) Gleichsetzen wie in Kapitel V: drei Gleichungen für \(t\) und \(k\). Zwei Gleichungen lösen, die dritte zur Kontrolle.<br>b) Stützvektor einer Geraden, die beiden Richtungsvektoren als Spannvektoren. Sind sie kollinear?</details>
+    <details class="sol"><summary>Lösung</summary>
+      a) \(\text{I}:\ 1+t=3,\ \text{II}:\ t=k,\ \text{III}:\ 2=4-k\). Aus I: \(t=2\); aus III: \(k=2\). Kontrolle II: \(2=2\) ✓. Schnittpunkt \(S(3\,|\,2\,|\,2)\).<br>
+      b) Die Richtungsvektoren \(\begin{pmatrix}1\\1\\0\end{pmatrix}\) und \(\begin{pmatrix}0\\1\\-1\end{pmatrix}\) sind nicht kollinear.
+      \[E:\ \vec x=\begin{pmatrix}1\\0\\2\end{pmatrix}+r\cdot\begin{pmatrix}1\\1\\0\end{pmatrix}+s\cdot\begin{pmatrix}0\\1\\-1\end{pmatrix}\]
+      Für \(s=0\) erhält man \(g_1\). Da \(S\) in \(E\) liegt und \(E\) die Richtung von \(g_2\) enthält, liegt auch \(g_2\) in \(E\).
+    </details>
+  </div>
+
+  <div class="card C">
+    <h3><span class="badge bC">C3</span> Gilt immer – gilt nie – es kommt darauf an</h3>
+    <p>Untersuchen Sie, ob die Aussage immer gilt, nie stimmt oder nur in bestimmten Fällen richtig ist. Geben Sie gegebenenfalls die Bedingungen an.</p>
+    <div class="sub">a) Drei Punkte legen eine Ebene eindeutig fest.<br>b) Eine Gerade und ein Punkt legen eine Ebene eindeutig fest.<br>c) Zwei verschiedene, zueinander parallele Geraden legen eine Ebene eindeutig fest.</div>
+    <details class="tip"><summary>Tipp</summary>Denke an die Tische: Wann wackelt etwas, wann steht es fest? Fertige Skizzen an. Wie würdest du jeweils die Spannvektoren wählen?</details>
+    <details class="sol"><summary>Lösung</summary>
+      a) <strong>Es kommt darauf an:</strong> nur, wenn die drei Punkte nicht auf einer Geraden liegen (\(\vec{AB}\) und \(\vec{AC}\) nicht kollinear).<br>
+      b) <strong>Es kommt darauf an:</strong> nur, wenn der Punkt nicht auf der Geraden liegt. Sonst gibt es unendlich viele Ebenen durch die Gerade.<br>
+      c) <strong>Gilt immer:</strong> Stützvektor einer Geraden, Spannvektoren: der gemeinsame Richtungsvektor und der Verbindungsvektor der beiden Stützpunkte. Diese sind nicht kollinear, da die Geraden verschieden sind.
+    </details>
+  </div>
+
+  <!-- ================= CHECKLISTE ================= -->
+  <h2 class="sec" id="check">Das kann ich</h2>
+  <div class="card">
+    <ul class="checklist">
+      <li><input type="checkbox"><span>Ich kann erklären, was Stützvektor und Spannvektoren einer Ebene sind.</span><span class="ztag bM">Grundwissen</span></li>
+      <li><input type="checkbox"><span>Ich kann prüfen, ob zwei Vektoren kollinear sind.</span><span class="ztag bA">A1</span></li>
+      <li><input type="checkbox"><span>Ich kann eine Ebenengleichung aus drei Punkten aufstellen oder begründen, warum es keine Ebene gibt.</span><span class="ztag bA">A1 · B1</span></li>
+      <li><input type="checkbox"><span>Ich kann mit einer Punktprobe entscheiden, ob ein Punkt in einer Ebene liegt.</span><span class="ztag bA">A2 · A3 · B1</span></li>
+      <li><input type="checkbox"><span>Ich kann Punkte einer Ebene angeben und eine zweite Gleichung derselben Ebene aufstellen.</span><span class="ztag bB">A3 · B2</span></li>
+      <li><input type="checkbox"><span>Ich kann eine Ebene aus Punkt und Gerade oder aus zwei sich schneidenden Geraden aufstellen.</span><span class="ztag bB">B3 · C2</span></li>
+      <li><input type="checkbox"><span>Ich kann einen Parameter so bestimmen, dass ein Punkt in der Ebene liegt.</span><span class="ztag bB">B4</span></li>
+      <li><input type="checkbox"><span>Ich kann Aussagen über Ebenen begründet beurteilen.</span><span class="ztag bC">C1 · C3</span></li>
+    </ul>
+  </div>
+</div>
+<footer>FBG Schwerte · Mathematik GK · Kapitel VI.2 · Aufgaben orientiert an Buch S. 188–191</footer>
+
+<script>
+window.addEventListener('load',()=>{
+  renderMathInElement(document.body,{delimiters:[{left:'\\[',right:'\\]',display:true},{left:'\\(',right:'\\)',display:false}],throwOnError:false});
+  document.querySelectorAll('.card.M').forEach(card=>{
+    const steps=[...card.querySelectorAll('.st')]; let k=0;
+    const nb=card.querySelector('[data-next]'), ab=card.querySelector('[data-all]');
+    const upd=()=>{ steps.forEach((s,i)=>s.classList.toggle('show',i<k)); nb.disabled=k>=steps.length; nb.textContent=k>=steps.length?'Alle Schritte gezeigt':`Nächster Schritt (${k+1}/${steps.length})`; };
+    nb.onclick=()=>{ k=Math.min(steps.length,k+1); upd(); };
+    ab.onclick=()=>{ k=steps.length; upd(); };
+    upd();
+  });
+});
+</script>
+</body>
+</html>
