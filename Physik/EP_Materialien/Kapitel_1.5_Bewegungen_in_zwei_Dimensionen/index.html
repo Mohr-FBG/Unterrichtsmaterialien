@@ -157,7 +157,9 @@ body.unlocked .sol-lock{display:none}
 .tool{border:1px solid var(--border); border-radius:8px; padding:10px 12px; background:#fbfcfd}
 .tool h4{margin:0 0 4px; font-size:.92rem; color:var(--teal-dark)}
 .tool p{margin:.3em 0; font-size:.88rem}
-.tool svg{display:block; width:100%; height:auto; margin-top:6px}
+.tool > svg{display:block; width:100%; height:auto; margin-top:6px}
+.tool > svg text{font-family:"Times New Roman",serif; font-size:15px}
+.tool > svg .v{font-style:italic}
 
 .dl{display:flex; flex-wrap:wrap; gap:10px; margin-top:10px}
 .dl a{display:inline-flex; align-items:center; gap:8px; background:var(--teal); color:#fff; text-decoration:none;
@@ -378,11 +380,11 @@ body.unlocked #tippReveal{display:inline-block}
           <defs><marker id="hb" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#2c5f8a"/></marker>
           <marker id="hp" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#7b3fb5"/></marker></defs>
           <line x1="10" y1="16" x2="70" y2="16" stroke="#2c5f8a" stroke-width="3" marker-end="url(#hb)"/>
-          <text x="80" y="21" font-size="13" font-style="italic" fill="#2c5f8a">a</text>
+          <text x="80" y="22" fill="#2c5f8a"><tspan class="v">a</tspan></text>
           <line x1="10" y1="40" x2="130" y2="40" stroke="#7b3fb5" stroke-width="3" marker-end="url(#hp)"/>
-          <text x="140" y="45" font-size="13" fill="#7b3fb5">2·a</text>
+          <text x="140" y="46" fill="#7b3fb5">2 · <tspan class="v">a</tspan></text>
           <line x1="70" y1="62" x2="40" y2="62" stroke="#7b3fb5" stroke-width="3" marker-end="url(#hp)"/>
-          <text x="80" y="67" font-size="13" fill="#7b3fb5">−½·a</text>
+          <text x="78" y="68" fill="#7b3fb5">−½ · <tspan class="v">a</tspan></text>
         </svg>
       </div>
       <div class="tool">
@@ -392,11 +394,11 @@ body.unlocked #tippReveal{display:inline-block}
           <defs><marker id="hr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#c0392b"/></marker>
           <marker id="hg" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#0f6e56"/></marker></defs>
           <line x1="15" y1="70" x2="120" y2="70" stroke="#2c5f8a" stroke-width="3" marker-end="url(#hb)"/>
-          <text x="60" y="66" font-size="13" font-style="italic" fill="#2c5f8a">a</text>
+          <text x="62" y="64" fill="#2c5f8a"><tspan class="v">a</tspan></text>
           <line x1="122" y1="70" x2="160" y2="18" stroke="#c0392b" stroke-width="3" marker-end="url(#hr)"/>
-          <text x="148" y="52" font-size="13" font-style="italic" fill="#c0392b">b</text>
+          <text x="150" y="54" fill="#c0392b"><tspan class="v">b</tspan></text>
           <line x1="15" y1="70" x2="157" y2="20" stroke="#0f6e56" stroke-width="3" marker-end="url(#hg)"/>
-          <text x="50" y="40" font-size="13" fill="#0f6e56">a + b</text>
+          <text x="44" y="42" fill="#0f6e56"><tspan class="v">a</tspan> + <tspan class="v">b</tspan></text>
         </svg>
       </div>
       <div class="tool">
@@ -404,11 +406,11 @@ body.unlocked #tippReveal{display:inline-block}
         <p>Beide Pfeile vom selben Punkt aus zeichnen. Der Differenzpfeil führt von der Spitze von $\vec a$ zur Spitze von $\vec b$.</p>
         <svg viewBox="0 0 220 80" aria-hidden="true">
           <line x1="15" y1="70" x2="140" y2="70" stroke="#7fa7c9" stroke-width="3" marker-end="url(#hb)"/>
-          <text x="70" y="66" font-size="13" font-style="italic" fill="#7fa7c9">a</text>
+          <text x="72" y="64" fill="#7fa7c9"><tspan class="v">a</tspan></text>
           <line x1="15" y1="70" x2="120" y2="18" stroke="#2c5f8a" stroke-width="3" marker-end="url(#hb)"/>
-          <text x="55" y="38" font-size="13" font-style="italic" fill="#2c5f8a">b</text>
+          <text x="52" y="40" fill="#2c5f8a"><tspan class="v">b</tspan></text>
           <line x1="142" y1="68" x2="122" y2="22" stroke="#c0392b" stroke-width="3" marker-end="url(#hr)"/>
-          <text x="140" y="44" font-size="13" fill="#c0392b">b − a</text>
+          <text x="140" y="48" fill="#c0392b"><tspan class="v">b</tspan> − <tspan class="v">a</tspan></text>
         </svg>
       </div>
       <div class="tool">
@@ -416,11 +418,11 @@ body.unlocked #tippReveal{display:inline-block}
         <p>Ein Pfeil lässt sich in einen waagerechten und einen senkrechten Anteil zerlegen: $\vec v=\vec v_x+\vec v_y$.</p>
         <svg viewBox="0 0 220 80" aria-hidden="true">
           <line x1="20" y1="70" x2="150" y2="70" stroke="#7fa7c9" stroke-width="3" stroke-dasharray="6 4" marker-end="url(#hb)"/>
-          <text x="80" y="66" font-size="12" fill="#5c6472">vₓ</text>
+          <text x="78" y="64" fill="#5c6472"><tspan class="v">v</tspan><tspan dy="4" font-size="11">x</tspan></text>
           <line x1="152" y1="70" x2="152" y2="16" stroke="#7fa7c9" stroke-width="3" stroke-dasharray="6 4" marker-end="url(#hb)"/>
-          <text x="158" y="46" font-size="12" fill="#5c6472">vᵧ</text>
+          <text x="160" y="46" fill="#5c6472"><tspan class="v">v</tspan><tspan dy="4" font-size="11">y</tspan></text>
           <line x1="20" y1="70" x2="149" y2="18" stroke="#2c5f8a" stroke-width="3" marker-end="url(#hb)"/>
-          <text x="70" y="38" font-size="13" font-style="italic" fill="#2c5f8a">v</text>
+          <text x="70" y="40" fill="#2c5f8a"><tspan class="v">v</tspan></text>
         </svg>
       </div>
     </div>
@@ -591,6 +593,30 @@ document.addEventListener('DOMContentLoaded', function () {
     sol.parentNode.insertBefore(b, sol);
     sol._btn = b;
   });
+
+  /* ---------- Vektorpfeile über Buchstaben in den Werkzeug-Grafiken ---------- */
+  function vecArrows(){
+    document.querySelectorAll('.tool > svg text').forEach(function(t){
+      if (t._done) return;
+      var idx = 0, svg = t.ownerSVGElement, col = t.getAttribute('fill');
+      Array.prototype.forEach.call(t.childNodes, function(n){
+        var len = n.textContent.length;
+        if (n.nodeType === 1 && n.classList.contains('v') && len){
+          try{
+            var st = t.getStartPositionOfChar(idx), en = t.getEndPositionOfChar(idx + len - 1);
+            var y = st.y - 13, x1 = st.x + 1.5, x2 = en.x + 2.5;
+            var g = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+            g.setAttribute('d', 'M' + x1 + ',' + y + ' L' + x2 + ',' + y + ' M' + (x2 - 3) + ',' + (y - 2.2) + ' L' + x2 + ',' + y + ' L' + (x2 - 3) + ',' + (y + 2.2));
+            g.setAttribute('stroke', col); g.setAttribute('stroke-width', '1.1'); g.setAttribute('fill', 'none');
+            g.setAttribute('stroke-linecap', 'round'); g.setAttribute('stroke-linejoin', 'round');
+            svg.appendChild(g);
+          }catch(e){}
+        }
+        idx += len;
+      });
+      t._done = true;
+    });
+  }
 
   /* ---------- Karten auf/zu ---------- */
   document.querySelectorAll('.card-head').forEach(function(h){
@@ -1124,7 +1150,7 @@ document.addEventListener('DOMContentLoaded', function () {
     document.getElementById('stepinfo').textContent = 'Schritt ' + (cur+1) + ' von ' + steps.length;
     try { history.replaceState(null, '', '#schritt-' + (cur+1)); } catch(e){}
     if (!noScroll) window.scrollTo({top:0, behavior:'smooth'});
-    setTimeout(function(){ resize1(); resize2(); sceneResize(); }, 30);
+    setTimeout(function(){ resize1(); resize2(); sceneResize(); vecArrows(); }, 30);
   }
   document.querySelectorAll('.navprev').forEach(function(b){ b.addEventListener('click', function(){ show(cur-1); }); });
   document.querySelectorAll('.navnext').forEach(function(b){ b.addEventListener('click', function(){ show(cur+1); }); });
