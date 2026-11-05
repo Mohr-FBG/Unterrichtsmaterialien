@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rate-Quiz · Simulation · LK Q2 Stochastik</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,400;0,600;1,400&display=swap">
+<style>
+  :root {
+    --gold:#b87500; --gold-pale:#fdf3dc;
+    --bg:#f5f4f0; --surface:#ffffff; --surface-2:#faf9f6;
+    --border:#ddd8cc; --text:#1c1a16; --muted:#6b6456;
+    --link:#2c5f8a; --link-pale:#e5eef7;
+    --win:#1a7a4c; --win-pale:#e3f3ea;
+    --bad:#c0392b; --bad-pale:#fdecea;
+    --class:#d4760a;
+    --hl:#e8a800;
+    --r:6px;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --gold:#d4a030; --gold-pale:#2a2010;
+      --bg:#1a1814; --surface:#242018; --surface-2:#2a251c;
+      --border:#38332a; --text:#ede8de; --muted:#9e9482;
+      --link:#6a9fd8; --link-pale:#0f1e30;
+      --win:#3fbf82; --win-pale:#0f2a1c;
+      --bad:#ef6b5b; --bad-pale:#3d2420;
+      --class:#f0a050;
+      --hl:#e8b830;
+    }
+  }
+  :root[data-theme="dark"] {
+    --gold:#d4a030; --gold-pale:#2a2010;
+    --bg:#1a1814; --surface:#242018; --surface-2:#2a251c;
+    --border:#38332a; --text:#ede8de; --muted:#9e9482;
+    --link:#6a9fd8; --link-pale:#0f1e30;
+    --win:#3fbf82; --win-pale:#0f2a1c;
+    --bad:#ef6b5b; --bad-pale:#3d2420;
+    --class:#f0a050;
+    --hl:#e8b830;
+  }
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;font-size:16px;line-height:1.55;min-height:100vh}
+  button,select,input{font:inherit;color:inherit}
+
+  .topbar{background:var(--surface);border-bottom:1px solid var(--border);padding:0 20px}
+  .topbar-inner{max-width:960px;margin:0 auto;min-height:46px;display:flex;flex-wrap:wrap;align-items:center;gap:6px;font-size:.82rem;color:var(--muted)}
+  .topbar-inner a{color:var(--link);text-decoration:none}
+  .topbar-inner a:hover{text-decoration:underline}
+  .sep{opacity:.45}
+  header.page-head{background:var(--surface);border-bottom:3px solid var(--link);padding:28px 20px 24px;margin-bottom:28px}
+  header.page-head .inner{max-width:960px;margin:0 auto}
+  .head-eyebrow{font-size:.78rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--link);margin-bottom:6px}
+  h1{font-family:"Crimson Pro",Georgia,serif;font-size:2.2rem;font-weight:600;line-height:1.15}
+  header.page-head p{font-size:.95rem;color:var(--muted);margin-top:6px;max-width:720px}
+
+  .wrap{max-width:960px;margin:0 auto;padding:0 16px 80px}
+  .panel{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:20px;margin-bottom:24px}
+  .panel-head{display:flex;align-items:baseline;gap:10px;margin-bottom:4px}
+  .step{display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:50%;background:var(--link);color:#fff;font-weight:700;font-size:.85rem;flex-shrink:0}
+  h2{font-family:"Crimson Pro",Georgia,serif;font-size:1.45rem;font-weight:600}
+  h3{font-size:1rem;margin-bottom:8px}
+  .panel-sub{color:var(--muted);font-size:.9rem;margin:0 0 16px 36px}
+  .muted{color:var(--muted)}
+  .hide{display:none!important}
+
+  .rules{display:flex;gap:14px;align-items:flex-start;background:var(--gold-pale);border-left:3px solid var(--gold);border-radius:var(--r);padding:14px 18px;margin-bottom:24px}
+  .rules .who{font-weight:700;color:var(--gold);font-size:.85rem;text-transform:uppercase;letter-spacing:.05em}
+  .task-box{background:var(--gold-pale);border-left:3px solid var(--gold);border-radius:var(--r);padding:12px 16px;font-size:.92rem;margin:16px 0 0}
+  .task-box b{color:var(--gold)}
+  .task-box ol{margin:6px 0 0 20px}
+  .task-box li{margin:3px 0}
+
+  .btn{border:1px solid var(--border);background:var(--surface);border-radius:var(--r);padding:8px 14px;cursor:pointer;font-weight:600;font-size:.9rem}
+  .btn:hover{background:var(--surface-2)}
+  .btn:disabled{opacity:.45;cursor:not-allowed}
+  .btn-primary{background:var(--gold);border-color:var(--gold);color:#fff}
+  .btn-primary:hover{background:var(--gold);filter:brightness(1.07)}
+  .btn-blue{background:var(--link);border-color:var(--link);color:#fff}
+  .btn-blue:hover{background:var(--link);filter:brightness(1.1)}
+  .btn-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+  .ctl{display:flex;align-items:center;gap:8px;font-size:.9rem}
+  .ctl label{color:var(--muted);font-weight:600}
+  select,input[type=number],input[type=password]{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:6px 9px}
+  input[type=range]{accent-color:var(--gold);width:160px}
+  .nval{display:inline-block;min-width:2em;text-align:center;font-weight:700;background:var(--gold-pale);color:var(--gold);border-radius:20px;padding:1px 8px}
+
+  /* ---------- Quiz-Bühne (Beamer) ---------- */
+  .stage{background:var(--surface-2);border:1px solid var(--border);border-radius:10px;padding:22px;display:flex;flex-direction:column;gap:18px;min-height:380px}
+  .stage:fullscreen{background:var(--bg);padding:5vh 6vw;justify-content:center;border:none;border-radius:0}
+  .stage-top{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+  .qnum{font-weight:700;color:var(--link);letter-spacing:.06em;text-transform:uppercase;font-size:.85rem}
+  .stage:fullscreen .qnum{font-size:1.6rem}
+  .dots{display:flex;gap:6px}
+  .dots i{width:12px;height:12px;border-radius:50%;background:var(--border)}
+  .dots i.done{background:var(--link)}
+  .dots i.cur{background:var(--gold);box-shadow:0 0 0 3px var(--gold-pale)}
+  .stage:fullscreen .dots i{width:20px;height:20px}
+  .lang{text-align:center;color:var(--muted);font-size:1.05rem}
+  .stage:fullscreen .lang{font-size:2rem}
+  .word{text-align:center;font-family:"Crimson Pro",Georgia,serif;font-size:3.6rem;font-weight:600;line-height:1.1;letter-spacing:.01em}
+  .stage:fullscreen .word{font-size:9vh}
+  .ask{text-align:center;font-size:1rem;color:var(--muted)}
+  .stage:fullscreen .ask{font-size:1.7rem}
+  .opts{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+  .opt{background:var(--surface);border:2px solid var(--border);border-radius:10px;padding:16px 12px;display:flex;align-items:center;gap:14px;font-size:1.35rem;font-weight:600}
+  .opt .L{display:inline-flex;align-items:center;justify-content:center;width:42px;height:42px;border-radius:50%;background:var(--link);color:#fff;font-weight:800;flex-shrink:0}
+  .stage:fullscreen .opt{font-size:3.2vh;padding:3vh 2vw}
+  .stage:fullscreen .opt .L{width:6vh;height:6vh;font-size:3vh}
+  .timer{height:8px;background:var(--border);border-radius:4px;overflow:hidden}
+  .timer div{height:100%;background:var(--gold);width:100%}
+  .timer.over div{background:var(--bad)}
+  .stage-nav{display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px}
+  .start-msg{text-align:center;padding:30px 10px}
+  .start-msg .big{font-family:"Crimson Pro",Georgia,serif;font-size:2.4rem;font-weight:600;margin-bottom:8px}
+  .stage:fullscreen .start-msg .big{font-size:6vh}
+  .stage:fullscreen .start-msg p{font-size:2.4vh}
+  table.sol{border-collapse:collapse;width:100%;font-size:1.05rem}
+  table.sol td,table.sol th{border-bottom:1px solid var(--border);padding:7px 10px;text-align:left}
+  table.sol th{font-size:.75rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+  table.sol td.c{font-weight:800;color:var(--win);font-size:1.25rem;text-align:center}
+  .stage:fullscreen table.sol{font-size:2.3vh}
+  .stage:fullscreen table.sol td.c{font-size:3vh}
+
+  /* ---------- Klassenergebnis ---------- */
+  .tally{display:grid;grid-template-columns:repeat(9,1fr);gap:6px;margin-top:8px}
+  .tcell{border:1px solid var(--border);border-radius:var(--r);background:var(--surface-2);text-align:center;padding:6px 2px;min-width:0}
+  .tcell .k{font-size:.72rem;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.04em}
+  .tcell .n{font-size:1.5rem;font-weight:800;font-variant-numeric:tabular-nums;color:var(--class)}
+  .tcell .pm{display:flex;justify-content:center;gap:4px}
+  .tcell .pm button{width:30px;height:28px;border:1px solid var(--border);background:var(--surface);border-radius:5px;cursor:pointer;font-weight:800}
+  .tcell .pm button:hover{background:var(--gold-pale)}
+
+  .stat-row{display:flex;flex-wrap:wrap;gap:10px;margin:12px 0 10px}
+  .stat{background:var(--surface-2);border:1px solid var(--border);border-radius:var(--r);padding:8px 14px;min-width:130px}
+  .stat .k{font-size:.72rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:600}
+  .stat .v{font-size:1.3rem;font-weight:700;font-variant-numeric:tabular-nums}
+
+  .chart-wrap{position:relative;margin-top:6px;border:1px solid var(--border);border-radius:var(--r);background:var(--surface-2)}
+  svg.chart{display:block;width:100%;height:auto}
+  .chart text{fill:var(--muted);font-size:11px;font-family:inherit}
+  .legend{display:flex;flex-wrap:wrap;gap:16px;font-size:.8rem;color:var(--muted);margin-top:6px}
+  .legend i{display:inline-block;width:14px;height:10px;margin-right:5px;border-radius:2px}
+
+  /* ---------- Rate-Roboter ---------- */
+  .cand{display:flex;flex-wrap:wrap;gap:6px;align-items:center;min-height:48px;margin:12px 0}
+  .ans{width:38px;height:38px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:1.1rem;animation:pop .3s ease-out both}
+  .ans.ok{background:var(--win-pale);color:var(--win);border:2px solid var(--win)}
+  .ans.no{background:var(--bad-pale);color:var(--bad);border:2px solid var(--bad)}
+  @keyframes pop{0%{transform:scale(.4);opacity:0}100%{transform:none;opacity:1}}
+  .cand .res{margin-left:10px;font-size:1.05rem}
+  .cand .res b{font-size:1.3rem}
+  .bits{font-family:ui-monospace,Menlo,Consolas,monospace;letter-spacing:.15em;color:var(--muted);font-size:.9rem}
+
+  table.mw{border-collapse:collapse;width:100%;font-size:.88rem;margin-top:10px;font-variant-numeric:tabular-nums}
+  table.mw th,table.mw td{border-bottom:1px solid var(--border);padding:5px 6px;text-align:center}
+  table.mw th{font-size:.72rem;letter-spacing:.05em;text-transform:uppercase;color:var(--muted)}
+  table.mw td:first-child,table.mw th:first-child{text-align:left}
+  .scroll-x{overflow-x:auto}
+
+  /* ---------- Baum ---------- */
+  .kpick{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0 10px}
+  .kpick button{border:1px solid var(--border);background:var(--surface);border-radius:20px;padding:6px 14px;cursor:pointer;font-weight:700;font-size:.9rem}
+  .kpick button.on{background:var(--hl);border-color:var(--hl);color:#1c1a16}
+  .tree-box{overflow-x:auto;border:1px solid var(--border);border-radius:var(--r);background:var(--surface-2)}
+  svg.tree{display:block;width:100%;min-width:640px;height:auto}
+  .tree text{font-family:inherit}
+  .info{border:1px solid var(--border);border-radius:var(--r);padding:12px 16px;background:var(--surface-2);font-size:.95rem;margin-top:10px;font-variant-numeric:tabular-nums}
+  .frac{display:inline-flex;flex-direction:column;vertical-align:middle;text-align:center;font-size:.85em;line-height:1.1;margin:0 2px}
+  .frac span:first-child{border-bottom:1px solid currentColor;padding:0 2px}
+
+  .lock-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:16px}
+  .merk{border:2px solid var(--link);border-radius:var(--r);padding:14px 18px;margin-top:14px;background:var(--link-pale);font-size:.95rem}
+  .merk b{color:var(--link)}
+  .merk p{margin:6px 0}
+  .formula{font-family:"Cambria Math","Times New Roman",serif;font-size:1.25rem;text-align:center;margin:10px 0}
+  .binom{display:inline-flex;align-items:center;vertical-align:middle}
+  .binom .br{font-size:2.1em;font-weight:200;line-height:1;transform:scaleX(.6)}
+  .binom .st{display:inline-flex;flex-direction:column;font-size:.8em;line-height:1.05;text-align:center}
+  .ti{border:2px solid var(--text);border-radius:10px;overflow:hidden;background:var(--surface);margin-top:10px;max-width:520px}
+  .ti .bar{background:var(--link);color:#fff;font-size:.75rem;font-weight:700;padding:3px 10px}
+  .ti .ln{display:flex;justify-content:space-between;padding:6px 12px;border-bottom:1px solid var(--border);font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.88rem}
+  .ti .ln span:last-child{font-weight:700}
+  .tag-class{color:var(--class);font-weight:700}
+  .tag-sim{color:var(--link);font-weight:700}
+  .tag-ex{color:var(--win);font-weight:700}
+
+  footer{text-align:center;color:var(--muted);font-size:.82rem;margin-top:48px;padding-top:20px;border-top:1px solid var(--border)}
+  @media (max-width:640px){
+    h1{font-size:1.8rem}
+    .panel{padding:14px}
+    .panel-sub{margin-left:0}
+    .opts{grid-template-columns:1fr}
+    .word{font-size:2.6rem}
+    .tally{grid-template-columns:repeat(3,1fr)}
+    .ans{width:32px;height:32px}
+  }
+</style>
+</head>
+<body>
+
+<nav class="topbar" aria-label="Breadcrumb">
+  <div class="topbar-inner">
+    <a href="../../../../../index.html">Unterrichtsmaterialien</a><span class="sep">›</span>
+    <a href="../../../../index.html">Mathematik</a><span class="sep">›</span>
+    <a href="../../../index.html">Leistungskurs</a><span class="sep">›</span>
+    <a href="../../index.html#simulationen">Stochastik</a><span class="sep">›</span>
+    <span>Rate-Quiz</span>
+  </div>
+</nav>
+
+<header class="page-head">
+  <div class="inner">
+    <div class="head-eyebrow">Simulation · Kapitel IX.1</div>
+    <h1>Rate-Quiz: Wörter aus fremden Sprachen</h1>
+    <p>Acht Wörter, je drei Antworten, keine Ahnung – wie viele Treffer schafft man durch reines Raten, und wie wahrscheinlich ist genau eine bestimmte Trefferzahl?</p>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <div class="rules">
+    <div style="font-size:2rem">🌍</div>
+    <div>
+      <div class="who">So läuft das Quiz</div>
+      <div style="font-size:.98rem">Am Beamer erscheinen nacheinander <b>8 Wörter</b> aus Sprachen, die (vermutlich) niemand im Kurs spricht.
+      Zu jedem Wort gibt es <b>drei Übersetzungen</b>, genau eine ist richtig. Jede und jeder kreuzt auf dem Antwortbogen spontan an – <b>ohne Absprache und ohne Nachschlagen</b>.</div>
+    </div>
+  </div>
+
+  <!-- 1 · Quiz -->
+  <section class="panel">
+    <div class="panel-head"><span class="step">1</span><h2>Das Quiz</h2></div>
+    <p class="panel-sub">Für den Beamer: Mit „Vollbild“ füllt die Frage den ganzen Bildschirm. Spricht jemand eine der Sprachen, kann die Frage getauscht werden.</p>
+
+    <div class="btn-row" style="margin-bottom:12px">
+      <button class="btn btn-primary" id="btnNew">🎲 Neues Quiz zusammenstellen</button>
+      <button class="btn" id="btnFull">⛶ Vollbild</button>
+      <div class="ctl" style="margin-left:6px"><label for="selTime">Zeit pro Frage</label>
+        <select id="selTime"><option value="0">ohne</option><option value="10">10 s</option><option value="15" selected>15 s</option><option value="20">20 s</option></select></div>
+    </div>
+
+    <div class="stage" id="stage"></div>
+
+    <div class="task-box">
+      <b>Bevor aufgelöst wird</b>
+      <ol>
+        <li>Wie viele Treffer erzielt man durch reines Raten typischerweise?</li>
+        <li>Wie viele aus unserem Kurs werden wohl alle 8 Wörter richtig haben?</li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- 2 · Klassenergebnis -->
+  <section class="panel">
+    <div class="panel-head"><span class="step">2</span><h2>Unser Kursergebnis</h2></div>
+    <p class="panel-sub">Für jede Trefferzahl k wird eingetragen, wie viele Personen genau k Treffer hatten (Melden lassen und mit + zählen).</p>
+    <div class="tally" id="tally"></div>
+    <div class="stat-row">
+      <div class="stat"><div class="k">Teilnehmende</div><div class="v" id="cN">0</div></div>
+      <div class="stat"><div class="k">mittlere Trefferzahl</div><div class="v" id="cMean">–</div></div>
+      <div class="stat"><div class="k">häufigste Trefferzahl</div><div class="v" id="cMode">–</div></div>
+    </div>
+    <div class="chart-wrap"><svg class="chart" id="cChart" viewBox="0 0 720 240" role="img" aria-label="Säulendiagramm des Kursergebnisses"></svg></div>
+    <div class="btn-row" style="margin-top:10px"><button class="btn" id="btnCReset">↺ Kursergebnis löschen</button></div>
+  </section>
+
+  <!-- 3 · Rate-Roboter -->
+  <section class="panel">
+    <div class="panel-head"><span class="step">3</span><h2>Der Rate-Roboter</h2></div>
+    <p class="panel-sub">Ein Roboter rät bei jeder Frage zufällig eine der Antworten. Was passiert, wenn tausende Roboter das Quiz machen?</p>
+
+    <div class="btn-row" style="gap:16px;margin-bottom:6px">
+      <div class="ctl"><label for="nSl">Fragen n</label><input type="range" id="nSl" min="1" max="12" value="8"><span class="nval" id="nVal">8</span></div>
+      <div class="ctl"><label for="mSel">Antworten je Frage</label>
+        <select id="mSel"><option>2</option><option selected>3</option><option>4</option><option>5</option></select></div>
+    </div>
+
+    <div class="cand" id="cand"><span class="muted" style="font-size:.9rem">Noch kein Roboter angetreten.</span></div>
+    <div class="btn-row">
+      <button class="btn btn-primary" id="btnOne">🤖 Ein Roboter rät</button>
+      <button class="btn btn-blue" data-k="100">+ 100 Roboter</button>
+      <button class="btn btn-blue" data-k="1000">+ 1 000</button>
+      <button class="btn btn-blue" data-k="10000">+ 10 000</button>
+      <button class="btn" id="btnSReset">↺ Zurücksetzen</button>
+    </div>
+
+    <div class="stat-row">
+      <div class="stat"><div class="k">Roboter</div><div class="v" id="sN">0</div></div>
+      <div class="stat"><div class="k">mittlere Trefferzahl</div><div class="v" id="sMean">–</div></div>
+      <div class="stat"><div class="k">Trefferwahrscheinlichkeit je Frage</div><div class="v" id="sP">1/3</div></div>
+    </div>
+    <div class="btn-row">
+      <label class="ctl"><input type="checkbox" id="showClass" checked> Kursergebnis einblenden</label>
+      <label class="ctl hide" id="exWrap"><input type="checkbox" id="showExact"> exakte Wahrscheinlichkeiten</label>
+    </div>
+    <div class="chart-wrap" style="margin-top:8px"><svg class="chart" id="sChart" viewBox="0 0 720 280" role="img" aria-label="Relative Häufigkeiten der Trefferzahlen"></svg></div>
+    <div class="legend">
+      <span><i style="background:var(--link)"></i>Roboter (relative Häufigkeit)</span>
+      <span id="legC"><i style="background:var(--class)"></i>unser Kurs (relative Häufigkeit)</span>
+      <span id="legE" class="hide"><i style="background:var(--win)"></i>exakte Wahrscheinlichkeit</span>
+    </div>
+    <div class="scroll-x"><table class="mw" id="sTbl"></table></div>
+    <p class="muted" id="classNote" style="font-size:.82rem;margin-top:6px"></p>
+  </section>
+
+  <!-- 4 · Baum -->
+  <section class="panel">
+    <div class="panel-head"><span class="step">4</span><h2>Ein Mini-Quiz mit 3 Fragen</h2></div>
+    <p class="panel-sub">Bei 3 Fragen passt der Baum noch auf den Bildschirm. 1 steht für „richtig“ (Treffer), 0 für „falsch“ (Niete). Wähle eine Trefferzahl k.</p>
+    <div class="kpick" id="kpick"></div>
+    <div class="tree-box"><svg class="tree" id="tree" viewBox="0 0 760 420" role="img" aria-label="Baumdiagramm für drei Fragen"></svg></div>
+    <div class="info" id="tInfo"></div>
+    <div class="btn-row" style="margin-top:10px"><button class="btn" id="btnCalc">Rechnung anzeigen</button></div>
+    <div class="info hide" id="tCalc"></div>
+  </section>
+
+  <!-- 5 · Formel (gesperrt) -->
+  <section class="panel">
+    <div class="panel-head"><span class="step">5</span><h2>Die Formel – und der TI-Nspire</h2></div>
+    <p class="panel-sub">Erst freischalten, wenn ihr das Muster aus dem Baum selbst formuliert habt.</p>
+    <div class="lock-row" id="lockRow">
+      <input type="password" id="code" placeholder="Code" autocomplete="off" style="width:110px">
+      <button class="btn" id="btnUnlock">🔒 Freischalten</button>
+      <span class="muted" id="codeMsg" style="font-size:.85rem">Freigabe durch die Lehrkraft.</span>
+    </div>
+    <div id="locked" class="hide">
+      <div class="merk">
+        <p><b>Bernoulli-Kette.</b> Ein Zufallsexperiment mit nur zwei interessierenden Ergebnissen – Treffer (1) und Niete (0) – heißt <b>Bernoulli-Experiment</b>.
+        Wird es n-mal so wiederholt, dass die Durchführungen sich nicht gegenseitig beeinflussen und die Trefferwahrscheinlichkeit p jedes Mal gleich ist, entsteht eine <b>Bernoulli-Kette der Länge n</b>.</p>
+        <p><b>Bernoulli-Formel.</b> Zählt X die Treffer, so gilt für k = 0, 1, …, n:</p>
+        <div class="formula">P(X = k) = <span class="binom"><span class="br">(</span><span class="st"><span>n</span><span>k</span></span><span class="br">)</span></span> · p<sup>k</sup> · (1 − p)<sup>n − k</sup></div>
+        <p>Dabei ist <span class="binom"><span class="br">(</span><span class="st"><span>n</span><span>k</span></span><span class="br">)</span></span> (lies „n über k“) die <b>Anzahl der Pfade mit genau k Treffern</b>, p<sup>k</sup>·(1−p)<sup>n−k</sup> die Wahrscheinlichkeit eines solchen Pfades.
+        Die Verteilung von X heißt <b>Binomialverteilung</b> B<sub>n;&thinsp;p</sub>.</p>
+      </div>
+      <h3 style="margin-top:16px">Im TI-Nspire (Calculator)</h3>
+      <div class="ti" id="tiBox"></div>
+      <p class="muted" style="font-size:.85rem;margin-top:6px">Befehle über <b>menu ▸ Wahrscheinlichkeit ▸ Kombinationen</b> bzw. <b>▸ Verteilungen ▸ Binomial Pdf</b>. In Lists &amp; Spreadsheet liefert die Spaltenformel <code>=binompdf(8,1/3)</code> alle Werte für k = 0 bis 8 auf einmal.</p>
+      <h3 style="margin-top:16px">Vergleich für die eingestellten Werte aus Schritt 3</h3>
+      <div class="scroll-x"><table class="mw" id="exTbl"></table></div>
+    </div>
+  </section>
+
+</div>
+
+<footer>Unterrichtsmaterialien · Friedrich-Bährens-Gymnasium Schwerte</footer>
+
+<script>
+(() => {
+  const $=id=>document.getElementById(id);
+  const fmt=n=>n.toLocaleString('de-DE');
+  const dec=(x,d=3)=>x.toLocaleString('de-DE',{minimumFractionDigits:d,maximumFractionDigits:d});
+  const NS='http://www.w3.org/2000/svg';
+  function el(t,a,p){const e=document.createElementNS(NS,t);for(const k in a)e.setAttribute(k,a[k]);if(p)p.appendChild(e);return e;}
+  function txt(p,a,s){const t=el('text',a,p);t.textContent=s;return t;}
+  const shuffle=a=>{for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;};
+  const nCr=(n,k)=>{if(k<0||k>n)return 0;let r=1;for(let i=1;i<=k;i++)r=r*(n-k+i)/i;return Math.round(r);};
+  const bin=(n,p,k)=>nCr(n,k)*Math.pow(p,k)*Math.pow(1-p,n-k);
+
+  // =========== 1 · Quiz ===========
+  // Wort, Sprache, richtige Übersetzung, zwei Ablenker (gleiches Themenfeld, keine Ähnlichkeit zum Wort)
+  const POOL=[
+    ['lumi','Finnisch','Schnee',['Regen','Wind']],
+    ['kutya','Ungarisch','Hund',['Pferd','Ziege']],
+    ['maji','Swahili','Wasser',['Feuer','Erde']],
+    ['burung','Indonesisch','Vogel',['Fisch','Schlange']],
+    ['tungl','Isländisch','Mond',['Stern','Wolke']],
+    ['zuhaitz','Baskisch','Baum',['Fluss','Berg']],
+    ['päike','Estnisch','Sonne',['Himmel','Regenbogen']],
+    ['kai','Māori','Essen',['Schlaf','Musik']],
+    ['honu','Hawaiianisch','Schildkröte',['Delfin','Krabbe']],
+    ['llyfr','Walisisch','Buch',['Tisch','Stuhl']],
+    ['virág','Ungarisch','Blume',['Gras','Blatt']],
+    ['duona','Litauisch','Brot',['Käse','Milch']],
+    ['juna','Finnisch','Zug',['Schiff','Fahrrad']],
+    ['szem','Ungarisch','Auge',['Ohr','Nase']],
+    ['talo','Finnisch','Haus',['Garten','Straße']],
+    ['itsaso','Baskisch','Meer',['See','Insel']]
+  ];
+  const QN=8, LET=['A','B','C'];
+  let quiz=[], used=new Set(), qi=-1, state='start', tmr=null;
+  function makeQ(idx){ const [w,l,c,d]=POOL[idx]; const opts=shuffle([c,...d]); return {idx,w,l,c,opts,ans:opts.indexOf(c)}; }
+  function newQuiz(){ const ids=shuffle([...POOL.keys()]).slice(0,QN); used=new Set(ids); quiz=ids.map(makeQ); qi=-1; state='start'; renderStage(); }
+  function swapQ(){ const free=[...POOL.keys()].filter(i=>!used.has(i)); if(!free.length) return;
+    const ni=free[Math.floor(Math.random()*free.length)]; used.add(ni); quiz[qi]=makeQ(ni); renderStage(); }
+  function stopTimer(){ if(tmr){clearInterval(tmr);tmr=null;} }
+  function startTimer(){ stopTimer(); const T=+$('selTime').value; if(!T) return;
+    const bar=$('tBar'); const box=$('tBox'); if(!bar) return; const t0=Date.now();
+    tmr=setInterval(()=>{ const f=Math.max(0,1-(Date.now()-t0)/(T*1000)); bar.style.width=(f*100)+'%'; if(f<=0){box.classList.add('over');stopTimer();} },100); }
+  function dots(){ return '<div class="dots">'+quiz.map((_,i)=>`<i class="${i<qi?'done':i===qi?'cur':''}"></i>`).join('')+'</div>'; }
+  function renderStage(){
+    stopTimer(); const S=$('stage');
+    if(state==='start'){
+      S.innerHTML=`<div class="start-msg"><div class="big">Rate-Quiz · 8 Wörter</div><p class="muted">Antwortbogen bereitlegen. Bei jeder Frage <b>genau einen</b> Buchstaben ankreuzen.</p></div>
+        <div class="stage-nav"><span></span><button class="btn btn-primary" id="go">Los geht's ▶</button></div>`;
+      $('go').onclick=()=>{qi=0;state='q';renderStage();}; return;
+    }
+    if(state==='q'){
+      const q=quiz[qi];
+      S.innerHTML=`<div class="stage-top"><span class="qnum">Frage ${qi+1} von ${QN}</span>${dots()}</div>
+        <div class="lang">${q.l}</div><div class="word">${q.w}</div><div class="ask">Was bedeutet dieses Wort?</div>
+        <div class="opts">${q.opts.map((o,i)=>`<div class="opt"><span class="L">${LET[i]}</span>${o}</div>`).join('')}</div>
+        ${+$('selTime').value?'<div class="timer" id="tBox"><div id="tBar"></div></div>':''}
+        <div class="stage-nav"><div class="btn-row"><button class="btn" id="prev" ${qi===0?'disabled':''}>◀ zurück</button><button class="btn" id="swap" title="Falls jemand die Sprache spricht">⇄ Frage tauschen</button></div>
+        <button class="btn btn-primary" id="next">${qi===QN-1?'Fertig ▶':'Weiter ▶'}</button></div>`;
+      $('prev').onclick=()=>{qi--;renderStage();};
+      $('next').onclick=()=>{ if(qi===QN-1){state='end';} else qi++; renderStage(); };
+      $('swap').onclick=swapQ; startTimer(); return;
+    }
+    if(state==='end'){
+      S.innerHTML=`<div class="start-msg"><div class="big">Alle 8 Fragen beantwortet</div><p class="muted">Erst Vermutungen sammeln – dann auflösen.</p></div>
+        <div class="stage-nav"><button class="btn" id="back">◀ zur letzten Frage</button><button class="btn btn-primary" id="reveal">✓ Auflösung zeigen</button></div>`;
+      $('back').onclick=()=>{qi=QN-1;state='q';renderStage();};
+      $('reveal').onclick=()=>{state='sol';renderStage();}; return;
+    }
+    if(state==='sol'){
+      S.innerHTML=`<div class="stage-top"><span class="qnum">Auflösung – zählt eure Treffer</span></div>
+        <div class="scroll-x"><table class="sol"><tr><th>Nr.</th><th>Wort</th><th>Sprache</th><th style="text-align:center">richtig</th><th>Bedeutung</th></tr>
+        ${quiz.map((q,i)=>`<tr><td>${i+1}</td><td><b>${q.w}</b></td><td class="muted">${q.l}</td><td class="c">${LET[q.ans]}</td><td>${q.c}</td></tr>`).join('')}</table></div>
+        <div class="stage-nav"><button class="btn" id="back2">◀ Fragen ansehen</button><span class="muted">Weiter mit Schritt 2: Kursergebnis eintragen</span></div>`;
+      $('back2').onclick=()=>{qi=0;state='q';renderStage();};
+    }
+  }
+  $('btnNew').onclick=newQuiz;
+  $('btnFull').onclick=()=>{ const S=$('stage'); if(document.fullscreenElement) document.exitFullscreen(); else if(S.requestFullscreen) S.requestFullscreen(); };
+  document.addEventListener('keydown',e=>{ if(!document.fullscreenElement) return;
+    if(e.key==='ArrowRight'||e.key===' '){ const b=$('next')||$('go')||$('reveal'); if(b){e.preventDefault();b.click();} }
+    if(e.key==='ArrowLeft'){ const b=$('prev'); if(b&&!b.disabled) b.click(); } });
+
+  // =========== 2 · Kursergebnis ===========
+  const cls=new Array(QN+1).fill(0);
+  function renderTally(){
+    $('tally').innerHTML=cls.map((v,k)=>`<div class="tcell"><div class="k">${k} Tr.</div><div class="n">${v}</div><div class="pm"><button data-m="${k}" aria-label="minus">−</button><button data-p="${k}" aria-label="plus">+</button></div></div>`).join('');
+    $('tally').querySelectorAll('[data-p]').forEach(b=>b.onclick=()=>{cls[+b.dataset.p]++;renderClass();});
+    $('tally').querySelectorAll('[data-m]').forEach(b=>b.onclick=()=>{const k=+b.dataset.m;if(cls[k]>0)cls[k]--;renderClass();});
+  }
+  function classTotal(){return cls.reduce((a,b)=>a+b,0);}
+  function renderClass(){
+    renderTally(); const N=classTotal();
+    $('cN').textContent=N;
+    $('cMean').textContent=N?dec(cls.reduce((a,v,k)=>a+v*k,0)/N,2):'–';
+    const mx=Math.max(...cls); $('cMode').textContent=N?cls.map((v,k)=>v===mx?k:null).filter(x=>x!==null).join(' und '):'–';
+    const svg=$('cChart'); svg.innerHTML='';
+    const W=720,H=240,m={l:40,r:12,t:20,b:34},iw=W-m.l-m.r,ih=H-m.t-m.b,band=iw/(QN+1),bw=band*.6;
+    const YM=Math.max(4,mx+1); const y=v=>m.t+ih*(1-v/YM);
+    const step=YM>12?Math.ceil(YM/6):1;
+    for(let v=0;v<=YM;v+=step){ el('line',{x1:m.l,x2:W-m.r,y1:y(v),y2:y(v),stroke:'var(--border)'},svg); txt(svg,{x:m.l-6,y:y(v)+4,'text-anchor':'end'},v); }
+    txt(svg,{x:6,y:12},'Anzahl Personen');
+    cls.forEach((v,k)=>{ const cx=m.l+band*(k+.5);
+      if(v){ el('rect',{x:cx-bw/2,y:y(v),width:bw,height:y(0)-y(v),rx:3,fill:'var(--class)'},svg); txt(svg,{x:cx,y:y(v)-5,'text-anchor':'middle','font-size':11,'font-weight':700},v); }
+      txt(svg,{x:cx,y:H-16,'text-anchor':'middle'},k); });
+    txt(svg,{x:m.l+iw/2,y:H-2,'text-anchor':'middle'},'Anzahl der Treffer k');
+    renderSim();
+  }
+  $('btnCReset').onclick=()=>{cls.fill(0);renderClass();};
+
+  // =========== 3 · Rate-Roboter ===========
+  let n=8, mOpt=3, cnt=new Array(n+1).fill(0), total=0, sumHits=0;
+  const p=()=>1/mOpt;
+  function resetSim(){ cnt=new Array(n+1).fill(0); total=0; sumHits=0; $('cand').innerHTML='<span class="muted" style="font-size:.9rem">Noch kein Roboter angetreten.</span>'; renderSim(); }
+  function oneRun(){ const r=[]; for(let i=0;i<n;i++) r.push(Math.random()<p()?1:0); return r; }
+  function addRuns(K){ for(let j=0;j<K;j++){ let h=0; for(let i=0;i<n;i++) if(Math.random()<p()) h++; cnt[h]++; total++; sumHits+=h; } }
+  function classComparable(){ return n===QN && mOpt===3 && classTotal()>0; }
+  function renderSim(){
+    $('sN').textContent=fmt(total); $('sMean').textContent=total?dec(sumHits/total,2):'–'; $('sP').textContent='1/'+mOpt;
+    const showC=$('showClass').checked && classComparable(), showE=unlocked && $('showExact').checked;
+    $('legC').classList.toggle('hide',!showC); $('legE').classList.toggle('hide',!showE);
+    $('classNote').textContent = $('showClass').checked && classTotal()>0 && !classComparable() ? 'Das Kursergebnis wird nur bei n = 8 und 3 Antworten eingeblendet.' : '';
+    const N=classTotal();
+    const rS=cnt.map(v=>total?v/total:0), rC=cls.map(v=>N?v/N:0), rE=cnt.map((_,k)=>bin(n,p(),k));
+    let mx=Math.max(...rS, showC?Math.max(...rC):0, showE?Math.max(...rE):0, .1);
+    const YM=Math.min(1,Math.ceil(mx*10+0.5)/10);
+    const svg=$('sChart'); svg.innerHTML='';
+    const W=720,H=280,m={l:46,r:12,t:22,b:34},iw=W-m.l-m.r,ih=H-m.t-m.b,band=iw/(n+1);
+    const y=v=>m.t+ih*(1-v/YM);
+    const st=YM>0.5?0.1:0.05;
+    for(let v=0;v<=YM+1e-9;v+=st){ el('line',{x1:m.l,x2:W-m.r,y1:y(v),y2:y(v),stroke:'var(--border)'},svg); txt(svg,{x:m.l-6,y:y(v)+4,'text-anchor':'end'},dec(v,2)); }
+    txt(svg,{x:8,y:12},'relative Häufigkeit');
+    const nb=showC?2:1, bw=band*(nb===2?.36:.6);
+    for(let k=0;k<=n;k++){ const cx=m.l+band*(k+.5);
+      const x0= nb===2 ? cx-bw : cx-bw/2;
+      if(total) el('rect',{x:x0,y:y(rS[k]),width:bw,height:y(0)-y(rS[k]),rx:2,fill:'var(--link)'},svg);
+      if(showC) el('rect',{x:cx,y:y(rC[k]),width:bw,height:y(0)-y(rC[k]),rx:2,fill:'var(--class)'},svg);
+      if(showE){ el('line',{x1:cx-band*.42,x2:cx+band*.42,y1:y(rE[k]),y2:y(rE[k]),stroke:'var(--win)','stroke-width':3.2,'stroke-linecap':'round'},svg); }
+      txt(svg,{x:cx,y:H-16,'text-anchor':'middle'},k); }
+    txt(svg,{x:m.l+iw/2,y:H-2,'text-anchor':'middle'},'Anzahl der Treffer k');
+    let h='<tr><th>Treffer k</th>'+cnt.map((_,k)=>`<th>${k}</th>`).join('')+'</tr>';
+    h+='<tr><td class="tag-sim">Roboter: Anzahl</td>'+cnt.map(v=>`<td>${fmt(v)}</td>`).join('')+'</tr>';
+    h+='<tr><td class="tag-sim">Roboter: rel. Häufigkeit</td>'+rS.map(v=>`<td>${total?dec(v):'–'}</td>`).join('')+'</tr>';
+    if(showC) h+='<tr><td class="tag-class">Kurs: rel. Häufigkeit</td>'+rC.map(v=>`<td>${dec(v)}</td>`).join('')+'</tr>';
+    if(showE) h+='<tr><td class="tag-ex">exakt P(X = k)</td>'+rE.map(v=>`<td>${dec(v,4)}</td>`).join('')+'</tr>';
+    $('sTbl').innerHTML=h;
+    if(unlocked) renderEx();
+  }
+  $('btnOne').onclick=()=>{ const r=oneRun(), h=r.reduce((a,b)=>a+b,0); cnt[h]++; total++; sumHits+=h;
+    $('cand').innerHTML=r.map((v,i)=>`<div class="ans ${v?'ok':'no'}" style="animation-delay:${i*.07}s">${v?'✓':'✗'}</div>`).join('')+
+      `<span class="res">→ <b>${h}</b> Treffer &nbsp;<span class="bits">${r.join('')}</span></span>`; renderSim(); };
+  document.querySelectorAll('[data-k]').forEach(b=>b.onclick=()=>{ addRuns(+b.dataset.k); renderSim(); });
+  $('btnSReset').onclick=resetSim;
+  $('nSl').oninput=e=>{ n=+e.target.value; $('nVal').textContent=n; resetSim(); };
+  $('mSel').onchange=e=>{ mOpt=+e.target.value; resetSim(); };
+  $('showClass').onchange=renderSim; $('showExact').onchange=renderSim;
+
+  // =========== 4 · Baum n = 3 ===========
+  let selK=2;
+  const FR=(a,b)=>`<span class="frac"><span>${a}</span><span>${b}</span></span>`;
+  function renderKpick(){ $('kpick').innerHTML=[0,1,2,3].map(k=>`<button class="${k===selK?'on':''}" data-t="${k}">k = ${k}</button>`).join('');
+    $('kpick').querySelectorAll('[data-t]').forEach(b=>b.onclick=()=>{selK=+b.dataset.t;renderTree();}); }
+  function renderTree(){
+    renderKpick();
+    const svg=$('tree'); svg.innerHTML='';
+    const X=[40,200,360,520], leafY=i=>30+i*50, nodeY=(lvl,idx)=>{ const span=8/Math.pow(2,lvl); return leafY(idx*span+(span-1)/2); };
+    const paths=[]; for(let i=0;i<8;i++){ const b=[(i>>2)&1,(i>>1)&1,i&1].map(v=>1-v); paths.push(b); } // 111 oben
+    const hit=b=>b.reduce((a,c)=>a+c,0)===selK;
+    // Kanten
+    for(let lvl=0;lvl<3;lvl++){ const cnt=Math.pow(2,lvl);
+      for(let j=0;j<cnt;j++) for(let c=0;c<2;c++){
+        const child=j*2+c, bit=1-c;
+        const x1=X[lvl]+14,y1=nodeY(lvl,j),x2=X[lvl+1]-14,y2=nodeY(lvl+1,child);
+        const span=8/Math.pow(2,lvl+1); let on=false;
+        for(let i=child*span;i<child*span+span;i++) if(hit(paths[i])) on=true;
+        el('line',{x1,y1,x2,y2,stroke:on?'var(--hl)':'var(--border)','stroke-width':on?4:2},svg);
+        txt(svg,{x:(x1+x2)/2,y:(y1+y2)/2+(bit?-8:16),'text-anchor':'middle','font-size':13,fill:bit?'var(--win)':'var(--bad)','font-weight':700},bit?'p':'q');
+      } }
+    // Knoten
+    for(let lvl=0;lvl<=3;lvl++){ const cnt=Math.pow(2,lvl);
+      for(let j=0;j<cnt;j++){ const cx=X[lvl],cy=nodeY(lvl,j);
+        if(lvl===0){ el('circle',{cx,cy,r:7,fill:'var(--text)'},svg); continue; }
+        const bit=1-(j%2);
+        el('circle',{cx,cy,r:13,fill:'var(--surface)',stroke:bit?'var(--win)':'var(--bad)','stroke-width':2},svg);
+        txt(svg,{x:cx,y:cy+5,'text-anchor':'middle','font-size':14,'font-weight':700,fill:'var(--text)'},bit);
+      } }
+    // Blätter
+    txt(svg,{x:575,y:14,'font-size':11,fill:'var(--muted)'},'Pfad');
+    txt(svg,{x:640,y:14,'font-size':11,fill:'var(--muted)'},'Treffer');
+    paths.forEach((b,i)=>{ const yy=leafY(i)+5, on=hit(b);
+      if(on) el('rect',{x:566,y:leafY(i)-14,width:180,height:28,rx:5,fill:'var(--gold-pale)',stroke:'var(--hl)'},svg);
+      txt(svg,{x:575,y:yy,'font-size':15,'font-weight':700,fill:'var(--text)','font-family':'ui-monospace,Menlo,Consolas,monospace'},b.join(''));
+      txt(svg,{x:660,y:yy,'font-size':14,'text-anchor':'middle',fill:'var(--text)'},b.reduce((a,c)=>a+c,0));
+    });
+    const sel=paths.filter(hit);
+    $('tInfo').innerHTML=`Pfade mit genau <b>${selK}</b> Treffer${selK===1?'':'n'}: <b>${sel.map(b=>b.join('')).join(', ')}</b> &nbsp;→&nbsp; <b>${sel.length}</b> Pfad${sel.length===1?'':'e'}.
+      <span class="muted">Trefferwahrscheinlichkeit je Frage: p = ${FR(1,3)}, Nietenwahrscheinlichkeit q = 1 − p = ${FR(2,3)}.</span>`;
+    const pw=(a,e)=>e===0?'':e===1?a:`${a}<sup>${e}</sup>`;
+    const fac=[pw('p',selK),pw('q',3-selK)].filter(Boolean).join(' · ');
+    const one=Math.pow(1,selK)*Math.pow(2,3-selK); // Zähler eines Pfades (Nenner 27)
+    $('tCalc').innerHTML=`Jeder dieser Pfade enthält ${selK}-mal p und ${3-selK}-mal q. Pfadregel: Wahrscheinlichkeit eines Pfades = ${fac} = ${FR(one,27)}.<br>
+      Summenregel: P(X = ${selK}) = ${sel.length} · ${FR(one,27)} = ${FR(sel.length*one,27)} ≈ <b>${dec(sel.length*one/27,3)}</b>`;
+  }
+  $('btnCalc').onclick=()=>{ const c=$('tCalc'); c.classList.toggle('hide'); $('btnCalc').textContent=c.classList.contains('hide')?'Rechnung anzeigen':'Rechnung ausblenden'; };
+
+  // =========== 5 · gesperrt ===========
+  let unlocked=false;
+  function renderEx(){
+    const pp=p();
+    $('tiBox').innerHTML=`<div class="bar">1.1 &nbsp; Calculator</div>
+      <div class="ln"><span>nCr(8,4)</span><span>70</span></div>
+      <div class="ln"><span>nCr(8,4)·(1/3)^4·(2/3)^4</span><span>0.170705</span></div>
+      <div class="ln"><span>binomPdf(8,1/3,4)</span><span>0.170705</span></div>
+      <div class="ln"><span>binomPdf(8,1/3)</span><span>{0.039,0.156,0.273,…}</span></div>`;
+    let h='<tr><th>Treffer k</th><th>Anzahl Pfade (n über k)</th><th>Wkt. eines Pfades</th><th class="tag-ex">P(X = k)</th><th class="tag-sim">Roboter</th></tr>';
+    for(let k=0;k<=n;k++){ const r=total?cnt[k]/total:null;
+      h+=`<tr><td><b>${k}</b></td><td>${fmt(nCr(n,k))}</td><td>${Math.pow(pp,k)*Math.pow(1-pp,n-k)<1e-4?(Math.pow(pp,k)*Math.pow(1-pp,n-k)).toExponential(2).replace('.',','):dec(Math.pow(pp,k)*Math.pow(1-pp,n-k),4)}</td><td class="tag-ex">${dec(bin(n,pp,k),4)}</td><td>${r===null?'–':dec(r,4)}</td></tr>`; }
+    $('exTbl').innerHTML=`<caption style="text-align:left;font-size:.85rem;color:var(--muted);padding-bottom:4px">n = ${n}, p = 1/${mOpt}</caption>`+h;
+  }
+  function unlock(){
+    if(($('code').value||'').trim().toUpperCase()==='MATHE'){ unlocked=true; $('lockRow').classList.add('hide'); $('locked').classList.remove('hide'); $('exWrap').classList.remove('hide'); renderSim(); }
+    else { $('codeMsg').textContent='Code nicht korrekt.'; $('codeMsg').style.color='var(--gold)'; }
+  }
+  $('btnUnlock').onclick=unlock;
+  $('code').addEventListener('keydown',e=>{ if(e.key==='Enter') unlock(); });
+
+  newQuiz(); renderClass(); renderTree();
+})();
+</script>
+</body>
+</html>
