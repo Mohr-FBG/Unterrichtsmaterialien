@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Galton-Brett · Simulation · LK Q2 Stochastik</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,400;0,600;1,400&display=swap">
+<style>
+  :root {
+    --gold:#b87500; --gold-pale:#fdf3dc;
+    --bg:#f5f4f0; --surface:#ffffff; --surface-2:#faf9f6;
+    --border:#ddd8cc; --text:#1c1a16; --muted:#6b6456;
+    --link:#2c5f8a; --link-pale:#e5eef7;
+    --win:#1a7a4c; --win-pale:#e3f3ea;
+    --bad:#c0392b; --bad-pale:#fdecea;
+    --nail:#6b6456; --ball:#d4760a;
+    --hl:#e8a800;
+    --r:6px;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --gold:#d4a030; --gold-pale:#2a2010;
+      --bg:#1a1814; --surface:#242018; --surface-2:#2a251c;
+      --border:#38332a; --text:#ede8de; --muted:#9e9482;
+      --link:#6a9fd8; --link-pale:#0f1e30;
+      --win:#3fbf82; --win-pale:#0f2a1c;
+      --bad:#ef6b5b; --bad-pale:#3d2420;
+      --nail:#b8ad98; --ball:#f0a050;
+      --hl:#e8b830;
+    }
+  }
+  :root[data-theme="dark"] {
+    --gold:#d4a030; --gold-pale:#2a2010;
+    --bg:#1a1814; --surface:#242018; --surface-2:#2a251c;
+    --border:#38332a; --text:#ede8de; --muted:#9e9482;
+    --link:#6a9fd8; --link-pale:#0f1e30;
+    --win:#3fbf82; --win-pale:#0f2a1c;
+    --bad:#ef6b5b; --bad-pale:#3d2420;
+    --nail:#b8ad98; --ball:#f0a050;
+    --hl:#e8b830;
+  }
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;font-size:16px;line-height:1.55;min-height:100vh}
+  button,select,input{font:inherit;color:inherit}
+
+  .topbar{background:var(--surface);border-bottom:1px solid var(--border);padding:0 20px}
+  .topbar-inner{max-width:960px;margin:0 auto;min-height:46px;display:flex;flex-wrap:wrap;align-items:center;gap:6px;font-size:.82rem;color:var(--muted)}
+  .topbar-inner a{color:var(--link);text-decoration:none}
+  .topbar-inner a:hover{text-decoration:underline}
+  .sep{opacity:.45}
+  header.page-head{background:var(--surface);border-bottom:3px solid var(--link);padding:28px 20px 24px;margin-bottom:28px}
+  header.page-head .inner{max-width:960px;margin:0 auto}
+  .head-eyebrow{font-size:.78rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--link);margin-bottom:6px}
+  h1{font-family:"Crimson Pro",Georgia,serif;font-size:2.2rem;font-weight:600;line-height:1.15}
+  header.page-head p{font-size:.95rem;color:var(--muted);margin-top:6px;max-width:720px}
+
+  .wrap{max-width:960px;margin:0 auto;padding:0 16px 80px}
+  .panel{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:20px;margin-bottom:24px}
+  .panel-head{display:flex;align-items:baseline;gap:10px;margin-bottom:4px}
+  .step{display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:50%;background:var(--link);color:#fff;font-weight:700;font-size:.85rem;flex-shrink:0}
+  h2{font-family:"Crimson Pro",Georgia,serif;font-size:1.45rem;font-weight:600}
+  h3{font-size:1rem;margin-bottom:8px}
+  .panel-sub{color:var(--muted);font-size:.9rem;margin:0 0 16px 36px}
+  .muted{color:var(--muted)}
+  .hide{display:none!important}
+
+  .rules{display:flex;gap:14px;align-items:flex-start;background:var(--gold-pale);border-left:3px solid var(--gold);border-radius:var(--r);padding:14px 18px;margin-bottom:24px}
+  .rules .who{font-weight:700;color:var(--gold);font-size:.85rem;text-transform:uppercase;letter-spacing:.05em}
+  .task-box{background:var(--gold-pale);border-left:3px solid var(--gold);border-radius:var(--r);padding:12px 16px;font-size:.92rem;margin:16px 0 0}
+  .task-box b{color:var(--gold)}
+  .task-box ol{margin:6px 0 0 20px}
+  .task-box li{margin:3px 0}
+
+  .btn{border:1px solid var(--border);background:var(--surface);border-radius:var(--r);padding:8px 14px;cursor:pointer;font-weight:600;font-size:.9rem}
+  .btn:hover{background:var(--surface-2)}
+  .btn:disabled{opacity:.45;cursor:not-allowed}
+  .btn-primary{background:var(--gold);border-color:var(--gold);color:#fff}
+  .btn-primary:hover{background:var(--gold);filter:brightness(1.07)}
+  .btn-blue{background:var(--link);border-color:var(--link);color:#fff}
+  .btn-blue:hover{background:var(--link);filter:brightness(1.1)}
+  .btn-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+  .ctl{display:flex;align-items:center;gap:8px;font-size:.9rem}
+  .ctl label{color:var(--muted);font-weight:600}
+  select,input[type=password]{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:6px 9px}
+  input[type=range]{accent-color:var(--gold);width:150px}
+  .nval{display:inline-block;min-width:2.4em;text-align:center;font-weight:700;background:var(--gold-pale);color:var(--gold);border-radius:20px;padding:1px 8px}
+
+  .board-wrap{border:1px solid var(--border);border-radius:10px;background:var(--surface-2);overflow:hidden;margin-top:12px}
+  svg.board{display:block;width:100%;height:auto;max-height:640px}
+  svg.board text{font-family:inherit}
+  .stat-row{display:flex;flex-wrap:wrap;gap:10px;margin:12px 0 4px}
+  .stat{background:var(--surface-2);border:1px solid var(--border);border-radius:var(--r);padding:8px 14px;min-width:120px}
+  .stat .k{font-size:.72rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:600}
+  .stat .v{font-size:1.3rem;font-weight:700;font-variant-numeric:tabular-nums}
+  .lastpath{font-family:ui-monospace,Menlo,Consolas,monospace;letter-spacing:.12em}
+
+  table.mw{border-collapse:collapse;width:100%;font-size:.88rem;margin-top:10px;font-variant-numeric:tabular-nums}
+  table.mw th,table.mw td{border-bottom:1px solid var(--border);padding:5px 6px;text-align:center}
+  table.mw th{font-size:.72rem;letter-spacing:.05em;text-transform:uppercase;color:var(--muted)}
+  table.mw td:first-child,table.mw th:first-child{text-align:left}
+  .scroll-x{overflow-x:auto}
+
+  .paths{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+  .paths span{font-family:ui-monospace,Menlo,Consolas,monospace;background:var(--win-pale);color:var(--win);border:1px solid var(--win);border-radius:5px;padding:2px 8px;font-weight:700;letter-spacing:.08em}
+  .msg{min-height:26px;font-size:.93rem;margin-top:8px}
+  .msg .ok{color:var(--win);font-weight:700} .msg .no{color:var(--bad);font-weight:700}
+  .bigbtn{font-size:1.05rem;padding:10px 22px}
+
+  .lock-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:16px}
+  .merk{border:2px solid var(--link);border-radius:var(--r);padding:14px 18px;margin-top:14px;background:var(--link-pale);font-size:.95rem}
+  .merk b{color:var(--link)}
+  .merk p{margin:6px 0}
+  .formula{font-family:"Cambria Math","Times New Roman",serif;font-size:1.25rem;text-align:center;margin:10px 0}
+  .binom{display:inline-flex;align-items:center;vertical-align:middle}
+  .binom .br{font-size:2.1em;font-weight:200;line-height:1;transform:scaleX(.6)}
+  .binom .st{display:inline-flex;flex-direction:column;font-size:.8em;line-height:1.05;text-align:center}
+  .frac{display:inline-flex;flex-direction:column;vertical-align:middle;text-align:center;line-height:1.15;margin:0 3px}
+  .frac span:first-child{border-bottom:1px solid currentColor;padding:0 3px}
+  .pascal{overflow-x:auto;margin-top:10px}
+  .prow{display:flex;justify-content:center;gap:4px;margin:3px 0}
+  .pc{min-width:42px;padding:4px 2px;text-align:center;border-radius:5px;background:var(--surface);border:1px solid var(--border);font-variant-numeric:tabular-nums;font-size:.85rem;cursor:pointer}
+  .pc.sel{background:var(--hl);border-color:var(--hl);color:#1c1a16;font-weight:800}
+  .pc.par{background:var(--gold-pale);border-color:var(--gold);font-weight:700}
+  .prow .ln{min-width:30px;color:var(--muted);font-size:.75rem;align-self:center;text-align:right;padding-right:4px}
+  .ti{border:2px solid var(--text);border-radius:10px;overflow:hidden;background:var(--surface);margin-top:10px;max-width:520px}
+  .ti .bar{background:var(--link);color:#fff;font-size:.75rem;font-weight:700;padding:3px 10px}
+  .ti .ln{display:flex;justify-content:space-between;padding:6px 12px;border-bottom:1px solid var(--border);font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.88rem}
+  .ti .ln span:last-child{font-weight:700}
+
+  footer{text-align:center;color:var(--muted);font-size:.82rem;margin-top:48px;padding-top:20px;border-top:1px solid var(--border)}
+  @media (max-width:640px){
+    h1{font-size:1.8rem}
+    .panel{padding:14px}
+    .panel-sub{margin-left:0}
+    .pc{min-width:30px;font-size:.72rem}
+  }
+</style>
+</head>
+<body>
+
+<nav class="topbar" aria-label="Breadcrumb">
+  <div class="topbar-inner">
+    <a href="../../../../../index.html">Unterrichtsmaterialien</a><span class="sep">›</span>
+    <a href="../../../../index.html">Mathematik</a><span class="sep">›</span>
+    <a href="../../../index.html">Leistungskurs</a><span class="sep">›</span>
+    <a href="../../index.html#simulationen">Stochastik</a><span class="sep">›</span>
+    <span>Galton-Brett</span>
+  </div>
+</nav>
+
+<header class="page-head">
+  <div class="inner">
+    <div class="head-eyebrow">Simulation · Kapitel IX.2</div>
+    <h1>Das Galton-Brett</h1>
+    <p>Jede Kugel prallt an jeder Nagelreihe nach links oder rechts. Warum landen so wenige Kugeln am Rand – und wie viele Wege führen in jedes Fach?</p>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <div class="rules">
+    <div style="font-size:2rem">⚪</div>
+    <div>
+      <div class="who">So funktioniert das Brett</div>
+      <div style="font-size:.98rem">Eine Kugel fällt durch <b>n Nagelreihen</b>. An jedem Nagel geht sie mit gleicher Chance nach <b>links (0)</b> oder <b>rechts (1)</b>.
+      Unten landet sie im Fach <b>k</b> – das ist genau die <b>Anzahl der Rechts-Schritte</b>. Jeder Weg ist also eine 0-1-Folge der Länge n, wie im Rate-Quiz.</div>
+    </div>
+  </div>
+
+  <!-- 1 · Brett -->
+  <section class="panel">
+    <div class="panel-head"><span class="step">1</span><h2>Kugeln fallen lassen</h2></div>
+    <p class="panel-sub">Erst vermuten: In welchem Fach landen die meisten Kugeln, und wie viele landen ganz außen?</p>
+    <div class="btn-row" style="gap:16px">
+      <div class="ctl"><label for="nSl">Nagelreihen n</label><input type="range" id="nSl" min="2" max="12" value="6"><span class="nval" id="nVal">6</span></div>
+      <div class="ctl"><label for="pSl">Neigung p</label><input type="range" id="pSl" min="0.05" max="0.95" step="0.05" value="0.5"><span class="nval" id="pVal">0,50</span></div>
+      <label class="ctl"><input type="checkbox" id="showNum"> Anzahl der Wege an den Nägeln</label>
+    </div>
+    <p class="muted" style="font-size:.8rem;margin-top:4px">p ist die Wahrscheinlichkeit für „rechts“. Für IX.2 bleibt p = 0,5; die Neigung wird in IX.3 wichtig.</p>
+
+    <div class="board-wrap"><svg class="board" id="board" viewBox="0 0 720 560" role="img" aria-label="Galton-Brett mit Fächern"></svg></div>
+
+    <div class="btn-row" style="margin-top:12px">
+      <button class="btn btn-primary" id="b1">⚪ 1 Kugel</button>
+      <button class="btn btn-primary" id="b10">10 Kugeln</button>
+      <button class="btn btn-blue" id="b100">+ 100 (schnell)</button>
+      <button class="btn btn-blue" id="b1000">+ 1 000 (sofort)</button>
+      <button class="btn" id="bReset">↺ Leeren</button>
+    </div>
+    <div class="stat-row">
+      <div class="stat"><div class="k">Kugeln</div><div class="v" id="sN">0</div></div>
+      <div class="stat"><div class="k">Weg der letzten Kugel</div><div class="v lastpath" id="sLast">–</div></div>
+      <div class="stat"><div class="k">in den beiden Randfächern</div><div class="v" id="sEdge">–</div></div>
+    </div>
+    <div class="scroll-x"><table class="mw" id="binTbl"></table></div>
+
+    <div class="task-box">
+      <b>Arbeitsauftrag</b>
+      <ol>
+        <li>Lasst bei n = 6 zuerst 10 Kugeln einzeln fallen und verfolgt ihre Wege. Lasst dann 1 000 Kugeln fallen.</li>
+        <li>Ganz links landet eine Kugel nur auf einem einzigen Weg: 000000. Wie viele Wege führen ins Fach k = 1, wie viele ins Fach k = 2?</li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- 2 · Wege zählen -->
+  <section class="panel">
+    <div class="panel-head"><span class="step">2</span><h2>Wege zählen</h2></div>
+    <p class="panel-sub">Lenke eine Kugel selbst durch das Brett. Findest du alle Wege, die in das gewählte Fach führen?</p>
+    <div class="btn-row" style="gap:16px">
+      <div class="ctl"><label for="wN">Nagelreihen</label><select id="wN"><option>2</option><option>3</option><option selected>4</option><option>5</option><option>6</option></select></div>
+      <div class="ctl"><label for="wK">Zielfach k</label><select id="wK"></select></div>
+      <label class="ctl"><input type="checkbox" id="wNum"> Zahlen an den Nägeln</label>
+    </div>
+    <div class="board-wrap"><svg class="board" id="wBoard" viewBox="0 0 720 420" role="img" aria-label="Brett zum Wege-Zählen"></svg></div>
+    <div class="btn-row" style="margin-top:12px">
+      <button class="btn btn-blue bigbtn" id="wL">◀ links (0)</button>
+      <button class="btn btn-blue bigbtn" id="wR">rechts (1) ▶</button>
+      <button class="btn" id="wUndo">↶ Schritt zurück</button>
+      <button class="btn" id="wClear">↺ Neu</button>
+      <button class="btn" id="wAll">Alle Wege zeigen</button>
+    </div>
+    <div class="msg" id="wMsg"></div>
+    <div><b>Gefundene Wege:</b> <span id="wCount">0</span></div>
+    <div class="paths" id="wPaths"></div>
+    <div class="task-box">
+      <b>Entdecken</b>
+      <ol>
+        <li>Schreibt an jeden Nagel, auf wie vielen Wegen eine Kugel ihn erreichen kann. Erst danach „Zahlen an den Nägeln“ einschalten.</li>
+        <li>Wie entsteht die Zahl an einem Nagel aus den Zahlen in der Reihe darüber? Begründet mit den Wegen.</li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- 3 · Formel (gesperrt) -->
+  <section class="panel">
+    <div class="panel-head"><span class="step">3</span><h2>Pascal-Dreieck und Formel</h2></div>
+    <p class="panel-sub">Erst freischalten, wenn ihr das Dreieck und das Platzkarten-Argument vom Arbeitsblatt selbst erarbeitet habt.</p>
+    <div class="lock-row" id="lockRow">
+      <input type="password" id="code" placeholder="Code" autocomplete="off" style="width:110px">
+      <button class="btn" id="btnUnlock">🔒 Freischalten</button>
+      <span class="muted" id="codeMsg" style="font-size:.85rem">Freigabe durch die Lehrkraft.</span>
+    </div>
+    <div id="locked" class="hide">
+      <p class="muted" style="font-size:.88rem">Tippe auf eine Zahl im Dreieck: Die beiden Zahlen darüber, aus denen sie entsteht, werden markiert.</p>
+      <div class="pascal" id="pascal"></div>
+      <div class="info" id="pInfo" style="border:1px solid var(--border);border-radius:var(--r);padding:12px 16px;background:var(--surface-2);margin-top:10px;font-variant-numeric:tabular-nums"></div>
+      <div class="merk">
+        <p><b>Binomialkoeffizient.</b> <span class="binom"><span class="br">(</span><span class="st"><span>n</span><span>k</span></span><span class="br">)</span></span> (lies „n über k“) ist</p>
+        <p>• die Anzahl der Wege durch ein Brett mit n Reihen ins Fach k, also die Anzahl der Pfade mit genau k Treffern in einer Bernoulli-Kette der Länge n,<br>
+        • die Anzahl der Möglichkeiten, k Einsen auf n Plätze zu verteilen,<br>
+        • die Anzahl der Möglichkeiten, aus n Dingen k auszuwählen (ohne Beachtung der Reihenfolge).</p>
+        <div class="formula"><span class="binom"><span class="br">(</span><span class="st"><span>n</span><span>k</span></span><span class="br">)</span></span> = <span class="frac"><span>n · (n−1) · … · (n−k+1)</span><span>k · (k−1) · … · 1</span></span> = <span class="frac"><span>n!</span><span>k! · (n−k)!</span></span></div>
+        <p>mit n! = n · (n−1) · … · 2 · 1 (lies „n Fakultät“) und 0! = 1. Jede Zahl im Pascal-Dreieck ist die Summe der beiden darüber:
+        <span class="binom"><span class="br">(</span><span class="st"><span>n</span><span>k−1</span></span><span class="br">)</span></span> + <span class="binom"><span class="br">(</span><span class="st"><span>n</span><span>k</span></span><span class="br">)</span></span> = <span class="binom"><span class="br">(</span><span class="st"><span>n+1</span><span>k</span></span><span class="br">)</span></span>.</p>
+      </div>
+      <h3 style="margin-top:16px">Im TI-Nspire (Calculator)</h3>
+      <div class="ti">
+        <div class="bar">1.1 &nbsp; Calculator</div>
+        <div class="ln"><span>nCr(6,2)</span><span>15</span></div>
+        <div class="ln"><span>6!/(2!·4!)</span><span>15</span></div>
+        <div class="ln"><span>nCr(6,2)·0.5^6</span><span>0.234375</span></div>
+      </div>
+      <p class="muted" style="font-size:.85rem;margin-top:6px">Das Zeichen ! findet man über <b>menu ▸ Wahrscheinlichkeit ▸ Fakultät</b> oder die Taste <b>?!▸</b>.</p>
+      <h3 style="margin-top:16px">Theorie und Brett im Vergleich</h3>
+      <div class="scroll-x"><table class="mw" id="cmpTbl"></table></div>
+    </div>
+  </section>
+
+</div>
+
+<footer>Unterrichtsmaterialien · Friedrich-Bährens-Gymnasium Schwerte</footer>
+
+<script>
+(() => {
+  const $=id=>document.getElementById(id);
+  const fmt=n=>n.toLocaleString('de-DE');
+  const dec=(x,d=3)=>x.toLocaleString('de-DE',{minimumFractionDigits:d,maximumFractionDigits:d});
+  const NS='http://www.w3.org/2000/svg';
+  function el(t,a,p){const e=document.createElementNS(NS,t);for(const k in a)e.setAttribute(k,a[k]);if(p)p.appendChild(e);return e;}
+  function txt(p,a,s){const t=el('text',a,p);t.textContent=s;return t;}
+  const nCr=(n,k)=>{if(k<0||k>n)return 0;let r=1;for(let i=1;i<=k;i++)r=r*(n-k+i)/i;return Math.round(r);};
+
+  // ================= 1 · Brett =================
+  let n=6, p=0.5, bins=[], total=0, edge=0;
+  const W=720, H=560;
+  let G={};               // Geometrie
+  let ballLayer=null, binBars=[], binLabels=[];
+  function geom(){
+    const top=46, binH=170, boardBottom=H-binH-20;
+    const dy=(boardBottom-top)/Math.max(n,1);
+    const dx=Math.min(56, (W-60)/(n+1));
+    G={top,dy,dx,cx:W/2,boardBottom,binTop:boardBottom+18,binBottom:H-26};
+  }
+  const nailX=(r,j)=>G.cx+(j-r/2)*G.dx, nailY=r=>G.top+r*G.dy+G.dy*0.5;
+  const binX=k=>G.cx+(k-n/2)*G.dx;
+  function drawBoard(){
+    geom(); const svg=$('board'); svg.innerHTML='';
+    // Trichter
+    el('path',{d:`M ${G.cx-60} 6 L ${G.cx-10} ${G.top-8} M ${G.cx+60} 6 L ${G.cx+10} ${G.top-8}`,stroke:'var(--muted)','stroke-width':2,fill:'none'},svg);
+    const show=$('showNum').checked;
+    for(let r=0;r<n;r++) for(let j=0;j<=r;j++){
+      const x=nailX(r,j), y=nailY(r);
+      el('circle',{cx:x,cy:y,r:4.5,fill:'var(--nail)'},svg);
+      if(show) txt(svg,{x,y:y-9,'text-anchor':'middle','font-size':Math.min(12,G.dx*0.32),'font-weight':700,fill:'var(--link)'},fmt(nCr(r,j)));
+    }
+    // Fächer
+    for(let k=0;k<=n+1;k++){ const x=binX(k)-G.dx/2;
+      el('line',{x1:x,x2:x,y1:G.binTop,y2:G.binBottom,stroke:'var(--border)','stroke-width':2},svg); }
+    el('line',{x1:binX(0)-G.dx/2,x2:binX(n)+G.dx/2,y1:G.binBottom,y2:G.binBottom,stroke:'var(--muted)','stroke-width':2},svg);
+    binBars=[]; binLabels=[];
+    for(let k=0;k<=n;k++){
+      binBars.push(el('rect',{x:binX(k)-G.dx*0.38,width:G.dx*0.76,y:G.binBottom,height:0,rx:3,fill:'var(--ball)',opacity:.85},svg));
+      binLabels.push(txt(svg,{x:binX(k),y:G.binTop-4,'text-anchor':'middle','font-size':11,fill:'var(--muted)'},''));
+      txt(svg,{x:binX(k),y:H-8,'text-anchor':'middle','font-size':12,'font-weight':700,fill:'var(--text)'},k);
+      if(show) txt(svg,{x:binX(k),y:G.binTop-19,'text-anchor':'middle','font-size':Math.min(12,G.dx*0.32),'font-weight':800,fill:'var(--link)'},fmt(nCr(n,k)));
+    }
+    txt(svg,{x:binX(0)-G.dx/2-4,y:H-8,'text-anchor':'end','font-size':11,fill:'var(--muted)'},'Fach k');
+    if(show) txt(svg,{x:binX(0)-G.dx/2-4,y:G.binTop-19,'text-anchor':'end','font-size':11,fill:'var(--link)'},'Wege');
+    txt(svg,{x:binX(0)-G.dx/2-4,y:G.binTop-4,'text-anchor':'end','font-size':11,fill:'var(--muted)'},'Kugeln');
+    ballLayer=el('g',{},svg);
+    renderBins();
+  }
+  function renderBins(){
+    const mx=Math.max(1,...bins), h=G.binBottom-G.binTop-14;
+    bins.forEach((v,k)=>{ const hh=h*v/mx; binBars[k].setAttribute('y',G.binBottom-hh); binBars[k].setAttribute('height',hh); binLabels[k].textContent=v?fmt(v):''; });
+    $('sN').textContent=fmt(total);
+    $('sEdge').textContent= total? `${fmt(bins[0]+bins[n])} (${dec((bins[0]+bins[n])/total*100,1)} %)` : '–';
+    let h2='<tr><th>Fach k</th>'+bins.map((_,k)=>`<th>${k}</th>`).join('')+'</tr>';
+    h2+='<tr><td>Anzahl Kugeln</td>'+bins.map(v=>`<td>${fmt(v)}</td>`).join('')+'</tr>';
+    h2+='<tr><td>rel. Häufigkeit</td>'+bins.map(v=>`<td>${total?dec(v/total):'–'}</td>`).join('')+'</tr>';
+    $('binTbl').innerHTML=h2;
+    if(unlocked) renderCmp();
+  }
+  function reset(){ bins=new Array(n+1).fill(0); total=0; flying.forEach(f=>f.node.remove()); flying=[]; $('sLast').textContent='–'; drawBoard(); }
+  function randPath(){ const r=[]; for(let i=0;i<n;i++) r.push(Math.random()<p?1:0); return r; }
+  function land(path){ const k=path.reduce((a,b)=>a+b,0); bins[k]++; total++; $('sLast').textContent=path.join(''); }
+
+  // Animation
+  let flying=[], raf=null;
+  function waypoints(path){
+    const pts=[[G.cx,8]]; let R=0;
+    for(let r=0;r<n;r++){ pts.push([nailX(r,R),nailY(r)-9]); R+=path[r]; }
+    pts.push([binX(R),G.binTop+4]);
+    return pts;
+  }
+  function launch(path,speed){
+    const node=el('circle',{r:6,fill:'var(--ball)',stroke:'var(--surface)','stroke-width':1.5},ballLayer);
+    flying.push({path,node,pts:waypoints(path),t:0,seg:speed});
+    if(!raf) raf=requestAnimationFrame(tick);
+  }
+  let last=0;
+  function tick(ts){
+    const dt=last?Math.min(50,ts-last):16; last=ts;
+    flying=flying.filter(f=>{
+      f.t+=dt/f.seg; const i=Math.floor(f.t);
+      if(i>=f.pts.length-1){ f.node.remove(); land(f.path); renderBins(); return false; }
+      const a=f.pts[i], b=f.pts[i+1], u=f.t-i;
+      const x=a[0]+(b[0]-a[0])*u, y=a[1]+(b[1]-a[1])*u - (i>0&&i<f.pts.length-2?Math.sin(u*Math.PI)*G.dy*0.25:0);
+      f.node.setAttribute('cx',x); f.node.setAttribute('cy',y); return true; });
+    if(flying.length) raf=requestAnimationFrame(tick); else {raf=null; last=0;}
+  }
+  $('b1').onclick=()=>launch(randPath(),180);
+  $('b10').onclick=()=>{ for(let i=0;i<10;i++) setTimeout(()=>launch(randPath(),150),i*260); };
+  $('b100').onclick=()=>{ for(let i=0;i<100;i++) setTimeout(()=>launch(randPath(),45),i*28); };
+  $('b1000').onclick=()=>{ for(let i=0;i<1000;i++) land(randPath()); renderBins(); };
+  $('bReset').onclick=reset;
+  $('nSl').oninput=e=>{ n=+e.target.value; $('nVal').textContent=n; reset(); };
+  $('pSl').oninput=e=>{ p=+e.target.value; $('pVal').textContent=dec(p,2); reset(); };
+  $('showNum').onchange=drawBoard;
+
+  // ================= 2 · Wege zählen =================
+  let wn=4, wk=2, cur=[], found=new Set(), showAll=false;
+  function fillK(){ $('wK').innerHTML=[...Array(wn+1).keys()].map(k=>`<option ${k===wk?'selected':''}>${k}</option>`).join(''); }
+  function wGeom(){ const top=40, bottom=330, dy=(bottom-top)/wn, dx=Math.min(110,(W-80)/(wn+1)); return {top,dy,dx,cx:W/2,bottom}; }
+  function wDraw(){
+    const g=wGeom(), svg=$('wBoard'); svg.innerHTML='';
+    const nx=(r,j)=>g.cx+(j-r/2)*g.dx, ny=r=>g.top+r*g.dy;
+    const bx=k=>g.cx+(k-wn/2)*g.dx, byy=g.bottom+30;
+    const pointAt=(path)=>{ const pts=[[g.cx,g.top-28]]; let R=0; for(let r=0;r<path.length;r++){ pts.push([nx(r,R),ny(r)]); R+=path[r]; }
+      if(path.length===wn) pts.push([bx(R),byy]); else pts.push([nx(path.length,R),ny(path.length)]); return pts; };
+    // Fach-Markierung
+    for(let k=0;k<=wn;k++){ const on=k===wk;
+      el('rect',{x:bx(k)-g.dx*0.4,y:byy-14,width:g.dx*0.8,height:40,rx:6,fill:on?'var(--gold-pale)':'var(--surface)',stroke:on?'var(--hl)':'var(--border)','stroke-width':on?2.5:1},svg);
+      txt(svg,{x:bx(k),y:byy+12,'text-anchor':'middle','font-size':14,'font-weight':700,fill:'var(--text)'},'k = '+k);
+      if($('wNum').checked) txt(svg,{x:bx(k),y:byy-20,'text-anchor':'middle','font-size':14,'font-weight':800,fill:'var(--link)'},nCr(wn,k));
+    }
+    // alle Wege
+    if(showAll){ allPaths(wn).filter(b=>b.reduce((a,c)=>a+c,0)===wk).forEach(b=>{
+        el('polyline',{points:pointAt(b).map(q=>q.join(',')).join(' '),fill:'none',stroke:'var(--hl)','stroke-width':3,opacity:.45,'stroke-linejoin':'round'},svg); }); }
+    // gefundene Wege
+    found.forEach(s=>{ const b=s.split('').map(Number);
+      el('polyline',{points:pointAt(b).map(q=>q.join(',')).join(' '),fill:'none',stroke:'var(--win)','stroke-width':2.5,opacity:.55,'stroke-linejoin':'round'},svg); });
+    // Nägel
+    for(let r=0;r<wn;r++) for(let j=0;j<=r;j++){
+      el('circle',{cx:nx(r,j),cy:ny(r),r:7,fill:'var(--nail)'},svg);
+      if($('wNum').checked) txt(svg,{x:nx(r,j),y:ny(r)-13,'text-anchor':'middle','font-size':14,'font-weight':800,fill:'var(--link)'},nCr(r,j));
+    }
+    // aktueller Weg
+    const pts=pointAt(cur);
+    el('polyline',{points:pts.map(q=>q.join(',')).join(' '),fill:'none',stroke:'var(--ball)','stroke-width':4,'stroke-linejoin':'round','stroke-linecap':'round'},svg);
+    const e=pts[pts.length-1]; el('circle',{cx:e[0],cy:e[1]-(cur.length===wn?0:10),r:9,fill:'var(--ball)',stroke:'var(--surface)','stroke-width':2},svg);
+    $('wCount').textContent=`${found.size}`+(showAll?` von ${nCr(wn,wk)}`:'');
+    $('wPaths').innerHTML=[...found].sort().reverse().map(s=>`<span>${s}</span>`).join('');
+    $('wL').disabled=$('wR').disabled=cur.length>=wn; $('wUndo').disabled=!cur.length;
+  }
+  function allPaths(m){ const out=[]; for(let i=0;i<(1<<m);i++){ const b=[]; for(let r=m-1;r>=0;r--) b.push((i>>r)&1); out.push(b);} return out; }
+  function stepW(bit){
+    if(cur.length>=wn) return; cur.push(bit); $('wMsg').innerHTML='';
+    if(cur.length===wn){
+      const k=cur.reduce((a,b)=>a+b,0), s=cur.join('');
+      if(k!==wk) $('wMsg').innerHTML=`<span class="no">Fach ${k}</span> – nicht das Zielfach ${wk}.`;
+      else if(found.has(s)) $('wMsg').innerHTML=`Den Weg <b>${s}</b> hattest du schon.`;
+      else { found.add(s); $('wMsg').innerHTML=`<span class="ok">Neuer Weg ${s}!</span>` + (found.size===nCr(wn,wk)?' Damit hast du alle gefunden.':''); }
+      setTimeout(()=>{ if(cur.length===wn){ cur=[]; wDraw(); } },900);
+    }
+    wDraw();
+  }
+  $('wL').onclick=()=>stepW(0); $('wR').onclick=()=>stepW(1);
+  $('wUndo').onclick=()=>{ cur.pop(); $('wMsg').innerHTML=''; wDraw(); };
+  $('wClear').onclick=()=>{ cur=[]; found=new Set(); showAll=false; $('wAll').textContent='Alle Wege zeigen'; $('wMsg').innerHTML=''; wDraw(); };
+  $('wAll').onclick=()=>{ showAll=!showAll; $('wAll').textContent=showAll?'Alle Wege ausblenden':'Alle Wege zeigen'; wDraw(); };
+  $('wN').onchange=e=>{ wn=+e.target.value; wk=Math.min(wk,wn); fillK(); $('wClear').onclick(); };
+  $('wK').onchange=e=>{ wk=+e.target.value; $('wClear').onclick(); };
+  $('wNum').onchange=wDraw;
+  document.addEventListener('keydown',e=>{ if(e.target.tagName==='INPUT'||e.target.tagName==='SELECT') return;
+    const r=$('wBoard').getBoundingClientRect(); if(r.bottom<0||r.top>innerHeight) return;
+    if(e.key==='ArrowLeft'){ e.preventDefault(); stepW(0);} if(e.key==='ArrowRight'){ e.preventDefault(); stepW(1);} });
+
+  // ================= 3 · Pascal (gesperrt) =================
+  let unlocked=false, sel=[6,2];
+  const PN=12;
+  function renderPascal(){
+    let h='';
+    for(let r=0;r<=PN;r++){ h+=`<div class="prow"><span class="ln">n=${r}</span>`;
+      for(let k=0;k<=r;k++){ const c=(r===sel[0]&&k===sel[1])?'sel':(r===sel[0]-1&&(k===sel[1]||k===sel[1]-1))?'par':'';
+        h+=`<span class="pc ${c}" data-r="${r}" data-k="${k}">${nCr(r,k)}</span>`; }
+      h+='<span class="ln"></span></div>'; }
+    $('pascal').innerHTML=h;
+    $('pascal').querySelectorAll('.pc').forEach(b=>b.onclick=()=>{ sel=[+b.dataset.r,+b.dataset.k]; renderPascal(); });
+    const [r,k]=sel;
+    const fall=[...Array(k).keys()].map(i=>r-i).join(' · ')||'1', kf=[...Array(k).keys()].map(i=>k-i).join(' · ')||'1';
+    let s=`<b>(${r} über ${k}) = ${fmt(nCr(r,k))}</b>`;
+    if(r>0&&k>0&&k<r) s+=` &nbsp;=&nbsp; ${nCr(r-1,k-1)} + ${nCr(r-1,k)} &nbsp;<span class="muted">(Summe der beiden darüber)</span>`;
+    s+=`<br>Formel: <span class="frac"><span>${fall}</span><span>${kf}</span></span> = ${fmt(nCr(r,k))}`;
+    s+=`<br><span class="muted">Brett mit ${r} Reihen: P(Fach ${k}) = ${fmt(nCr(r,k))} · 0,5<sup>${r}</sup> = ${fmt(nCr(r,k))}/${fmt(Math.pow(2,r))} ≈ ${dec(nCr(r,k)/Math.pow(2,r),4)}</span>`;
+    $('pInfo').innerHTML=s;
+  }
+  function renderCmp(){
+    const B=k=>nCr(n,k)*Math.pow(p,k)*Math.pow(1-p,n-k);
+    let h=`<caption style="text-align:left;font-size:.85rem;color:var(--muted);padding-bottom:4px">Brett aus Schritt 1: n = ${n}, p = ${dec(p,2)}</caption><tr><th>Fach k</th>`+bins.map((_,k)=>`<th>${k}</th>`).join('')+'</tr>';
+    h+='<tr><td>Anzahl Wege (n über k)</td>'+bins.map((_,k)=>`<td>${fmt(nCr(n,k))}</td>`).join('')+'</tr>';
+    h+='<tr><td style="color:var(--win);font-weight:700">P(Fach k)</td>'+bins.map((_,k)=>`<td>${dec(B(k),4)}</td>`).join('')+'</tr>';
+    h+='<tr><td>rel. Häufigkeit Brett</td>'+bins.map(v=>`<td>${total?dec(v/total,4):'–'}</td>`).join('')+'</tr>';
+    $('cmpTbl').innerHTML=h;
+  }
+  function unlock(){
+    if(($('code').value||'').trim().toUpperCase()==='MATHE'){ unlocked=true; $('lockRow').classList.add('hide'); $('locked').classList.remove('hide'); renderPascal(); renderCmp(); }
+    else { $('codeMsg').textContent='Code nicht korrekt.'; $('codeMsg').style.color='var(--gold)'; }
+  }
+  $('btnUnlock').onclick=unlock;
+  $('code').addEventListener('keydown',e=>{ if(e.key==='Enter') unlock(); });
+
+  reset(); fillK(); wDraw();
+})();
+</script>
+</body>
+</html>
