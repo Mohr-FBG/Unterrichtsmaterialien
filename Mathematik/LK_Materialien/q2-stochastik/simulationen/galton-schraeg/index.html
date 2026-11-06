@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Schiefes Galton-Brett · Simulation · LK Q2 Stochastik</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,400;0,600;1,400&display=swap">
+<style>
+  :root {
+    --gold:#b87500; --gold-pale:#fdf3dc;
+    --bg:#f5f4f0; --surface:#ffffff; --surface-2:#faf9f6;
+    --border:#ddd8cc; --text:#1c1a16; --muted:#6b6456;
+    --link:#2c5f8a; --link-pale:#e5eef7;
+    --win:#1a7a4c; --win-pale:#e3f3ea;
+    --bad:#c0392b; --bad-pale:#fdecea;
+    --nail:#6b6456; --ball:#d4760a;
+    --hl:#e8a800;
+    --r:6px;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --gold:#d4a030; --gold-pale:#2a2010;
+      --bg:#1a1814; --surface:#242018; --surface-2:#2a251c;
+      --border:#38332a; --text:#ede8de; --muted:#9e9482;
+      --link:#6a9fd8; --link-pale:#0f1e30;
+      --win:#3fbf82; --win-pale:#0f2a1c;
+      --bad:#ef6b5b; --bad-pale:#3d2420;
+      --nail:#b8ad98; --ball:#f0a050;
+      --hl:#e8b830;
+    }
+  }
+  :root[data-theme="dark"] {
+    --gold:#d4a030; --gold-pale:#2a2010;
+    --bg:#1a1814; --surface:#242018; --surface-2:#2a251c;
+    --border:#38332a; --text:#ede8de; --muted:#9e9482;
+    --link:#6a9fd8; --link-pale:#0f1e30;
+    --win:#3fbf82; --win-pale:#0f2a1c;
+    --bad:#ef6b5b; --bad-pale:#3d2420;
+    --nail:#b8ad98; --ball:#f0a050;
+    --hl:#e8b830;
+  }
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;font-size:16px;line-height:1.55;min-height:100vh}
+  button,select,input{font:inherit;color:inherit}
+
+  .topbar{background:var(--surface);border-bottom:1px solid var(--border);padding:0 20px}
+  .topbar-inner{max-width:960px;margin:0 auto;min-height:46px;display:flex;flex-wrap:wrap;align-items:center;gap:6px;font-size:.82rem;color:var(--muted)}
+  .topbar-inner a{color:var(--link);text-decoration:none}
+  .topbar-inner a:hover{text-decoration:underline}
+  .sep{opacity:.45}
+  header.page-head{background:var(--surface);border-bottom:3px solid var(--link);padding:28px 20px 24px;margin-bottom:28px}
+  header.page-head .inner{max-width:960px;margin:0 auto}
+  .head-eyebrow{font-size:.78rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--link);margin-bottom:6px}
+  h1{font-family:"Crimson Pro",Georgia,serif;font-size:2.2rem;font-weight:600;line-height:1.15}
+  header.page-head p{font-size:.95rem;color:var(--muted);margin-top:6px;max-width:720px}
+
+  .wrap{max-width:960px;margin:0 auto;padding:0 16px 80px}
+  .panel{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:20px;margin-bottom:24px}
+  .panel-head{display:flex;align-items:baseline;gap:10px;margin-bottom:4px}
+  .step{display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:50%;background:var(--link);color:#fff;font-weight:700;font-size:.85rem;flex-shrink:0}
+  h2{font-family:"Crimson Pro",Georgia,serif;font-size:1.45rem;font-weight:600}
+  h3{font-size:1rem;margin-bottom:8px}
+  .panel-sub{color:var(--muted);font-size:.9rem;margin:0 0 16px 36px}
+  .muted{color:var(--muted)}
+  .hide{display:none!important}
+
+  .rules{display:flex;gap:14px;align-items:flex-start;background:var(--gold-pale);border-left:3px solid var(--gold);border-radius:var(--r);padding:14px 18px;margin-bottom:24px}
+  .rules .who{font-weight:700;color:var(--gold);font-size:.85rem;text-transform:uppercase;letter-spacing:.05em}
+  .task-box{background:var(--gold-pale);border-left:3px solid var(--gold);border-radius:var(--r);padding:12px 16px;font-size:.92rem;margin:16px 0 0}
+  .task-box b{color:var(--gold)}
+  .task-box ol{margin:6px 0 0 20px}
+  .task-box li{margin:3px 0}
+
+  .btn{border:1px solid var(--border);background:var(--surface);border-radius:var(--r);padding:8px 14px;cursor:pointer;font-weight:600;font-size:.9rem}
+  .btn:hover{background:var(--surface-2)}
+  .btn:disabled{opacity:.45;cursor:not-allowed}
+  .btn-primary{background:var(--gold);border-color:var(--gold);color:#fff}
+  .btn-primary:hover{background:var(--gold);filter:brightness(1.07)}
+  .btn-blue{background:var(--link);border-color:var(--link);color:#fff}
+  .btn-blue:hover{background:var(--link);filter:brightness(1.1)}
+  .btn-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+  .ctl{display:flex;align-items:center;gap:8px;font-size:.9rem}
+  .ctl label{color:var(--muted);font-weight:600}
+  select,input[type=password]{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:6px 9px}
+  input[type=range]{accent-color:var(--gold);width:150px}
+  .nval{display:inline-block;min-width:2.4em;text-align:center;font-weight:700;background:var(--gold-pale);color:var(--gold);border-radius:20px;padding:1px 8px}
+
+  .board-wrap{border:1px solid var(--border);border-radius:10px;background:var(--surface-2);overflow:hidden;margin-top:12px}
+  svg.board{display:block;width:100%;height:auto;max-height:640px}
+  svg.board text{font-family:inherit}
+  .stat-row{display:flex;flex-wrap:wrap;gap:10px;margin:12px 0 4px}
+  .stat{background:var(--surface-2);border:1px solid var(--border);border-radius:var(--r);padding:8px 14px;min-width:120px}
+  .stat .k{font-size:.72rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:600}
+  .stat .v{font-size:1.3rem;font-weight:700;font-variant-numeric:tabular-nums}
+  .lastpath{font-family:ui-monospace,Menlo,Consolas,monospace;letter-spacing:.12em}
+
+  table.mw{border-collapse:collapse;width:100%;font-size:.88rem;margin-top:10px;font-variant-numeric:tabular-nums}
+  table.mw th,table.mw td{border-bottom:1px solid var(--border);padding:5px 6px;text-align:center}
+  table.mw th{font-size:.72rem;letter-spacing:.05em;text-transform:uppercase;color:var(--muted)}
+  table.mw td:first-child,table.mw th:first-child{text-align:left}
+  .scroll-x{overflow-x:auto}
+
+  .paths{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+  .paths span{font-family:ui-monospace,Menlo,Consolas,monospace;background:var(--win-pale);color:var(--win);border:1px solid var(--win);border-radius:5px;padding:2px 8px;font-weight:700;letter-spacing:.08em}
+  .msg{min-height:26px;font-size:.93rem;margin-top:8px}
+  .msg .ok{color:var(--win);font-weight:700} .msg .no{color:var(--bad);font-weight:700}
+  .bigbtn{font-size:1.05rem;padding:10px 22px}
+
+  .lock-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:16px}
+  .merk{border:2px solid var(--link);border-radius:var(--r);padding:14px 18px;margin-top:14px;background:var(--link-pale);font-size:.95rem}
+  .merk b{color:var(--link)}
+  .merk p{margin:6px 0}
+  .formula{font-family:"Cambria Math","Times New Roman",serif;font-size:1.25rem;text-align:center;margin:10px 0}
+  .binom{display:inline-flex;align-items:center;vertical-align:middle}
+  .binom .br{font-size:2.1em;font-weight:200;line-height:1;transform:scaleX(.6)}
+  .binom .st{display:inline-flex;flex-direction:column;font-size:.8em;line-height:1.05;text-align:center}
+  .frac{display:inline-flex;flex-direction:column;vertical-align:middle;text-align:center;line-height:1.15;margin:0 3px}
+  .frac span:first-child{border-bottom:1px solid currentColor;padding:0 3px}
+  .pascal{overflow-x:auto;margin-top:10px}
+  .prow{display:flex;justify-content:center;gap:4px;margin:3px 0}
+  .pc{min-width:42px;padding:4px 2px;text-align:center;border-radius:5px;background:var(--surface);border:1px solid var(--border);font-variant-numeric:tabular-nums;font-size:.85rem;cursor:pointer}
+  .pc.sel{background:var(--hl);border-color:var(--hl);color:#1c1a16;font-weight:800}
+  .pc.par{background:var(--gold-pale);border-color:var(--gold);font-weight:700}
+  .prow .ln{min-width:30px;color:var(--muted);font-size:.75rem;align-self:center;text-align:right;padding-right:4px}
+  .ti{border:2px solid var(--text);border-radius:10px;overflow:hidden;background:var(--surface);margin-top:10px;max-width:520px}
+  .ti .bar{background:var(--link);color:#fff;font-size:.75rem;font-weight:700;padding:3px 10px}
+  .ti .ln{display:flex;justify-content:space-between;padding:6px 12px;border-bottom:1px solid var(--border);font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.88rem}
+  .ti .ln span:last-child{font-weight:700}
+
+  footer{text-align:center;color:var(--muted);font-size:.82rem;margin-top:48px;padding-top:20px;border-top:1px solid var(--border)}
+  @media (max-width:640px){
+    h1{font-size:1.8rem}
+    .panel{padding:14px}
+    .panel-sub{margin-left:0}
+    .pc{min-width:30px;font-size:.72rem}
+  }
+  .round-head{margin-top:12px;font-size:1.15rem;padding:10px 14px;border-radius:var(--r);background:var(--link-pale);border-left:3px solid var(--link)}
+  .chart-wrap{position:relative;margin-top:10px;border:1px solid var(--border);border-radius:var(--r);background:var(--surface-2)}
+  svg.chart{display:block;width:100%;height:auto}
+  svg.chart text{font-family:inherit}
+  details summary{margin-top:4px}
+</style>
+</head>
+<body>
+
+<nav class="topbar" aria-label="Breadcrumb">
+  <div class="topbar-inner">
+    <a href="../../../../../index.html">Unterrichtsmaterialien</a><span class="sep">›</span>
+    <a href="../../../../index.html">Mathematik</a><span class="sep">›</span>
+    <a href="../../../index.html">Leistungskurs</a><span class="sep">›</span>
+    <a href="../../index.html#simulationen">Stochastik</a><span class="sep">›</span>
+    <span>Galton-Brett mit Schräglage</span>
+  </div>
+</nav>
+
+<header class="page-head">
+  <div class="inner">
+    <div class="head-eyebrow">Simulation · Kapitel IX.3</div>
+    <h1>Das schiefe Galton-Brett</h1>
+    <p>Kippt man das Brett, springen die Kugeln häufiger nach rechts. Wo landen dann die meisten Kugeln – und lässt sich das vorhersagen, bevor die erste Kugel fällt?</p>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <div class="rules">
+    <div style="font-size:2rem">📐</div>
+    <div>
+      <div class="who">Was sich ändert</div>
+      <div style="font-size:.98rem">Das Brett ist geneigt: An jedem Nagel springt die Kugel mit der Wahrscheinlichkeit <b>p</b> nach rechts (1) und mit <b>1 − p</b> nach links (0).
+      Die Fachnummer X zählt weiterhin die Rechts-Schritte – X ist also <b>binomialverteilt</b> mit den Parametern n und p.</div>
+    </div>
+  </div>
+
+  <!-- 1 · Vorhersage-Spiel -->
+  <section class="panel">
+    <div class="panel-head"><span class="step">1</span><h2>Das Vorhersage-Spiel</h2></div>
+    <p class="panel-sub">Für den Beamer: Eine Runde zeigt n und p. Alle tippen, in welchem Fach die meisten Kugeln landen. Dann fallen 1 000 Kugeln.</p>
+    <div class="btn-row">
+      <button class="btn btn-primary" id="gNew">🎲 Neue Runde</button>
+      <div class="ctl"><label for="gTip">Tipp des Kurses: Fach</label><select id="gTip"></select></div>
+      <button class="btn btn-blue" id="gDrop" disabled>⚪ 1 000 Kugeln fallen lassen</button>
+      <span class="stat" style="padding:4px 12px;min-width:0"><span class="k">Treffer</span> <b id="gScore">0 von 0</b></span>
+    </div>
+    <div class="round-head" id="gHead">Starte eine Runde.</div>
+    <div class="board-wrap"><svg class="board" id="board" viewBox="0 0 720 560" role="img" aria-label="Geneigtes Galton-Brett"></svg></div>
+    <div class="msg" id="gMsg"></div>
+    <div class="scroll-x"><table class="mw" id="gLog"></table></div>
+    <details style="margin-top:12px">
+      <summary class="muted" style="cursor:pointer;font-size:.9rem">Freies Experimentieren (n und p selbst einstellen)</summary>
+      <div class="btn-row" style="gap:16px;margin-top:10px">
+        <div class="ctl"><label for="fN">n</label><input type="range" id="fN" min="2" max="20" value="10"><span class="nval" id="fNv">10</span></div>
+        <div class="ctl"><label for="fP">p</label><input type="range" id="fP" min="0.05" max="0.95" step="0.05" value="0.7"><span class="nval" id="fPv">0,70</span></div>
+        <button class="btn" id="fGo">Übernehmen</button>
+      </div>
+    </details>
+  </section>
+
+  <!-- 2 · Histogramm-Labor -->
+  <section class="panel">
+    <div class="panel-head"><span class="step">2</span><h2>Histogramm-Labor</h2></div>
+    <p class="panel-sub">Hier stehen nicht die gezählten Kugeln, sondern die exakten Wahrscheinlichkeiten B<sub>n;&thinsp;p</sub>(k). Jede Säule ist 1 breit – ihre Fläche ist also gleich ihrer Höhe.</p>
+    <div class="btn-row" style="gap:16px">
+      <div class="ctl"><label for="hN">n</label><input type="range" id="hN" min="1" max="60" value="10"><span class="nval" id="hNv">10</span></div>
+      <div class="ctl"><label for="hP">p</label><input type="range" id="hP" min="0.01" max="0.99" step="0.01" value="0.6"><span class="nval" id="hPv">0,60</span></div>
+    </div>
+    <div class="btn-row" style="gap:14px;margin-top:8px">
+      <label class="ctl"><input type="checkbox" id="hArea"> Fläche markieren von</label>
+      <select id="hA"></select><span class="muted">bis</span><select id="hB"></select>
+    </div>
+    <div class="chart-wrap"><svg class="chart" id="hist" viewBox="0 0 720 300" role="img" aria-label="Histogramm der Binomialverteilung"></svg></div>
+    <div class="stat-row">
+      <div class="stat"><div class="k">höchste Säule bei k =</div><div class="v" id="hMode">–</div></div>
+      <div class="stat"><div class="k">ihre Höhe</div><div class="v" id="hModeV">–</div></div>
+      <div class="stat" id="hAreaStat"><div class="k">markierte Fläche</div><div class="v" id="hAreaV">–</div></div>
+      <div class="stat hide" id="hMuStat"><div class="k" style="text-transform:none;letter-spacing:0">μ = n · p</div><div class="v" id="hMu">–</div></div>
+    </div>
+    <p class="muted" id="hInfo" style="font-size:.88rem">Tippe auf eine Säule, um ihren Wert zu sehen.</p>
+  </section>
+
+  <!-- 3 · Geheimes Brett -->
+  <section class="panel">
+    <div class="panel-head"><span class="step">3</span><h2>Das geheime Brett</h2></div>
+    <p class="panel-sub">Die Neigung p ist versteckt. Lasst Kugeln fallen und schätzt p – mit möglichst wenigen Kugeln.</p>
+    <div class="btn-row">
+      <div class="ctl"><label for="mN">Reihen n</label><select id="mN"><option>10</option><option selected>20</option><option>50</option></select></div>
+      <button class="btn btn-primary" id="mNew">🔒 Neues geheimes Brett</button>
+      <button class="btn btn-blue" data-m="1">+ 1 Kugel</button>
+      <button class="btn btn-blue" data-m="10">+ 10</button>
+      <button class="btn btn-blue" data-m="100">+ 100</button>
+    </div>
+    <div class="stat-row">
+      <div class="stat"><div class="k">Kugeln</div><div class="v" id="mCnt">0</div></div>
+      <div class="stat"><div class="k">mittlere Fachnummer</div><div class="v" id="mMean">–</div></div>
+      <div class="stat"><div class="k">Fach der letzten Kugel</div><div class="v" id="mLast">–</div></div>
+    </div>
+    <div class="chart-wrap"><svg class="chart" id="mChart" viewBox="0 0 720 220" role="img" aria-label="Verteilung der Kugeln auf dem geheimen Brett"></svg></div>
+    <div class="btn-row" style="margin-top:10px">
+      <div class="ctl"><label for="mGuess">Unsere Schätzung p ≈</label><input type="text" id="mGuess" placeholder="z. B. 0,35" style="width:100px;background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:6px 9px"></div>
+      <button class="btn" id="mReveal">Auflösen</button>
+    </div>
+    <div class="msg" id="mMsg"></div>
+  </section>
+
+  <!-- 4 · gesperrt -->
+  <section class="panel">
+    <div class="panel-head"><span class="step">4</span><h2>Der Erwartungswert</h2></div>
+    <p class="panel-sub">Erst freischalten, wenn ihr eure Vermutung zur Lage der höchsten Säule formuliert habt.</p>
+    <div class="lock-row" id="lockRow">
+      <input type="password" id="code" placeholder="Code" autocomplete="off" style="width:110px">
+      <button class="btn" id="btnUnlock">🔒 Freischalten</button>
+      <span class="muted" id="codeMsg" style="font-size:.85rem">Freigabe durch die Lehrkraft.</span>
+    </div>
+    <div id="locked" class="hide">
+      <label class="ctl" style="margin-top:6px"><input type="checkbox" id="showMu" checked> μ = n · p in allen Diagrammen einblenden (grüne Linie)</label>
+      <div class="merk">
+        <p><b>Erwartungswert.</b> Für eine Zufallsgröße X mit den Werten 0, 1, …, n ist
+        μ = E(X) = 0 · P(X = 0) + 1 · P(X = 1) + … + n · P(X = n).</p>
+        <p>Ist X binomialverteilt mit den Parametern n und p, so gilt einfach</p>
+        <div class="formula">μ = E(X) = n · p</div>
+        <p>Bei einer Bernoulli-Kette der Länge n mit Trefferwahrscheinlichkeit p erwartet man also im Mittel n · p Treffer.</p>
+        <p><b>Lage der höchsten Säule.</b> Ist μ ganzzahlig, liegt die höchste Säule genau bei μ. Sonst liegt sie bei einer der beiden ganzen Zahlen links oder rechts von μ – manchmal sind beide gleich hoch.</p>
+        <p><b>Histogramm.</b> Jede Säule ist 1 breit und steht über k von k − 0,5 bis k + 0,5. Ihre Fläche ist P(X = k). Eine Wahrscheinlichkeit wie P(4 ≤ X ≤ 6) ist die Fläche über dem Intervall von 3,5 bis 6,5.</p>
+      </div>
+      <h3 style="margin-top:16px">Im TI-Nspire (Lists &amp; Spreadsheet)</h3>
+      <div class="ti">
+        <div class="bar">1.1 &nbsp; Lists &amp; Spreadsheet</div>
+        <div class="ln"><span>A treffer  =seq(t,t,0,20)</span><span>{0,1,…,20}</span></div>
+        <div class="ln"><span>B wkt      =binompdf(20,0.3)</span><span>{0.0008,…}</span></div>
+        <div class="ln"><span>sum(treffer·wkt)</span><span>6.</span></div>
+        <div class="ln"><span>menu ▸ Daten ▸ Ergebnisdiagramm</span><span>Histogramm</span></div>
+      </div>
+      <p class="muted" style="font-size:.85rem;margin-top:6px">Beim Ergebnisdiagramm als X-Liste <code>treffer</code> und als Ergebnisliste <code>wkt</code> wählen.</p>
+    </div>
+  </section>
+
+</div>
+
+<footer>Unterrichtsmaterialien · Friedrich-Bährens-Gymnasium Schwerte</footer>
+
+<script>
+(() => {
+  const $=id=>document.getElementById(id);
+  const fmt=n=>n.toLocaleString('de-DE');
+  const dec=(x,d=3)=>x.toLocaleString('de-DE',{minimumFractionDigits:d,maximumFractionDigits:d});
+  const NS='http://www.w3.org/2000/svg';
+  function el(t,a,p){const e=document.createElementNS(NS,t);for(const k in a)e.setAttribute(k,a[k]);if(p)p.appendChild(e);return e;}
+  function txt(p,a,s){const t=el('text',a,p);t.textContent=s;return t;}
+  const nCr=(n,k)=>{if(k<0||k>n)return 0;let r=1;for(let i=1;i<=k;i++)r=r*(n-k+i)/i;return r;};
+  const B=(n,p,k)=>nCr(n,k)*Math.pow(p,k)*Math.pow(1-p,n-k);
+  const modes=(n,p)=>{ const v=[...Array(n+1).keys()].map(k=>B(n,p,k)); const m=Math.max(...v); return v.map((x,k)=>Math.abs(x-m)<1e-12*Math.max(1,m)?k:null).filter(x=>x!==null); };
+  let unlocked=false; const muOn=()=>unlocked&&$('showMu').checked;
+
+  // ================= 1 · Spiel mit Brett =================
+  const W=720,H=560;
+  let n=10,p=0.7,bins=[],total=0,G={},ballLayer=null,binBars=[],binLabels=[],flying=[],raf=null,last=0;
+  let roundOpen=false, rounds=0, hits=0, log=[];
+  function geom(){ const top=58,binH=170,boardBottom=H-binH-20,dy=(boardBottom-top)/n,dx=Math.min(56,(W-60)/(n+1));
+    G={top,dy,dx,cx:W/2,boardBottom,binTop:boardBottom+18,binBottom:H-26}; }
+  const nailX=(r,j)=>G.cx+(j-r/2)*G.dx, nailY=r=>G.top+r*G.dy+G.dy*.5, binX=k=>G.cx+(k-n/2)*G.dx;
+  function drawBoard(){
+    geom(); const svg=$('board'); svg.innerHTML='';
+    // Neigungsanzeige
+    const ang=(p-0.5)*30;
+    const g=el('g',{transform:`translate(${W/2},26) rotate(${ang})`},svg);
+    el('rect',{x:-120,y:-6,width:240,height:12,rx:6,fill:'var(--gold-pale)',stroke:'var(--gold)'},g);
+    el('circle',{cx:0,cy:-14,r:7,fill:'var(--ball)'},g);
+    txt(svg,{x:W/2+150,y:30,'font-size':14,'font-weight':700,fill:'var(--text)'},`p = ${dec(p,2)}`);
+    txt(svg,{x:W/2-150,y:30,'font-size':14,'font-weight':700,fill:'var(--text)','text-anchor':'end'},`n = ${n}`);
+    const nr=n>14?2.6:4;
+    for(let r=0;r<n;r++) for(let j=0;j<=r;j++) el('circle',{cx:nailX(r,j),cy:nailY(r),r:nr,fill:'var(--nail)'},svg);
+    for(let k=0;k<=n+1;k++){ const x=binX(k)-G.dx/2; el('line',{x1:x,x2:x,y1:G.binTop,y2:G.binBottom,stroke:'var(--border)','stroke-width':2},svg); }
+    el('line',{x1:binX(0)-G.dx/2,x2:binX(n)+G.dx/2,y1:G.binBottom,y2:G.binBottom,stroke:'var(--muted)','stroke-width':2},svg);
+    binBars=[];binLabels=[];
+    for(let k=0;k<=n;k++){
+      binBars.push(el('rect',{x:binX(k)-G.dx*.38,width:G.dx*.76,y:G.binBottom,height:0,rx:3,fill:'var(--ball)',opacity:.85},svg));
+      binLabels.push(txt(svg,{x:binX(k),y:G.binTop-4,'text-anchor':'middle','font-size':n>14?9:11,fill:'var(--muted)'},''));
+      txt(svg,{x:binX(k),y:H-8,'text-anchor':'middle','font-size':n>14?10:12,'font-weight':700,fill:'var(--text)'},k);
+    }
+    const tip=+$('gTip').value; if(roundOpen||log.length){ if(!isNaN(tip)&&tip<=n) el('path',{d:`M ${binX(tip)-7} ${G.binBottom+4} l 7 -9 l 7 9 z`,fill:'var(--gold)'},svg); }
+    if(muOn()){ const x=binX(n*p); el('line',{x1:x,x2:x,y1:G.binTop-14,y2:G.binBottom,stroke:'var(--win)','stroke-width':3,'stroke-dasharray':'6 4'},svg);
+      txt(svg,{x:x+5,y:G.binTop-16,'font-size':12,'font-weight':700,fill:'var(--win)'},`μ = ${dec(n*p,2)}`); }
+    ballLayer=el('g',{},svg); renderBins();
+  }
+  function renderBins(){ const mx=Math.max(1,...bins), h=G.binBottom-G.binTop-14;
+    bins.forEach((v,k)=>{ const hh=h*v/mx; binBars[k].setAttribute('y',G.binBottom-hh); binBars[k].setAttribute('height',hh); binLabels[k].textContent=v?fmt(v):''; }); }
+  function setBoard(nn,pp){ n=nn;p=pp;bins=new Array(n+1).fill(0);total=0; flying.forEach(f=>f.node.remove()); flying=[];
+    $('gTip').innerHTML=[...Array(n+1).keys()].map(k=>`<option>${k}</option>`).join(''); $('gTip').selectedIndex=-1; drawBoard(); }
+  const randPath=()=>{const r=[];for(let i=0;i<n;i++)r.push(Math.random()<p?1:0);return r;};
+  function land(path){ const k=path.reduce((a,b)=>a+b,0); bins[k]++; total++; }
+  function wp(path){ const pts=[[G.cx,40]]; let R=0; for(let r=0;r<n;r++){ pts.push([nailX(r,R),nailY(r)-7]); R+=path[r]; } pts.push([binX(R),G.binTop+4]); return pts; }
+  function launch(path,seg){ const node=el('circle',{r:n>14?4:6,fill:'var(--ball)'},ballLayer); flying.push({path,node,pts:wp(path),t:0,seg}); if(!raf) raf=requestAnimationFrame(tick); }
+  function tick(ts){ const dt=last?Math.min(50,ts-last):16; last=ts;
+    flying=flying.filter(f=>{ f.t+=dt/f.seg; const i=Math.floor(f.t);
+      if(i>=f.pts.length-1){ f.node.remove(); land(f.path); renderBins(); return false; }
+      const a=f.pts[i],b=f.pts[i+1],u=f.t-i; f.node.setAttribute('cx',a[0]+(b[0]-a[0])*u); f.node.setAttribute('cy',a[1]+(b[1]-a[1])*u); return true; });
+    if(flying.length) raf=requestAnimationFrame(tick); else { raf=null; last=0; if(pendingFinish){ const f=pendingFinish; pendingFinish=null; f(); } } }
+  let pendingFinish=null;
+  function dropThousand(after){
+    const anim=120; for(let i=0;i<anim;i++) setTimeout(()=>launch(randPath(),Math.max(18,40-n)),i*22);
+    setTimeout(()=>{ pendingFinish=()=>{ for(let i=0;i<1000-anim;i++) land(randPath()); renderBins(); after&&after(); }; if(!flying.length&&!raf){ const f=pendingFinish; pendingFinish=null; f(); } }, anim*22+50);
+  }
+  const NS_=[6,8,10,12,15,20], PS=[0.2,0.25,0.3,0.35,0.4,0.6,0.65,0.7,0.75,0.8];
+  $('gNew').onclick=()=>{ const nn=NS_[Math.floor(Math.random()*NS_.length)], pp=PS[Math.floor(Math.random()*PS.length)];
+    roundOpen=true; setBoard(nn,pp); $('gHead').innerHTML=`Runde ${rounds+1}: &nbsp;<b>n = ${nn}</b> Reihen, Neigung <b>p = ${dec(pp,2)}</b>. In welchem Fach landen die meisten Kugeln?`;
+    $('gMsg').innerHTML=''; $('gDrop').disabled=true; };
+  $('gTip').onchange=()=>{ if(roundOpen){ $('gDrop').disabled=false; drawBoard(); } };
+  $('gDrop').onclick=()=>{ if(!roundOpen) return; roundOpen=false; $('gDrop').disabled=true; const tip=+$('gTip').value;
+    dropThousand(()=>{ const mx=Math.max(...bins); const best=bins.map((v,k)=>v===mx?k:null).filter(x=>x!==null);
+      const ok=best.includes(tip); rounds++; if(ok) hits++;
+      $('gScore').textContent=`${hits} von ${rounds}`;
+      binBars.forEach((b,k)=>b.setAttribute('fill',best.includes(k)?'var(--link)':'var(--ball)'));
+      $('gMsg').innerHTML= ok?`<span class="ok">Treffer!</span> Die meisten Kugeln (blau) liegen in Fach ${best.join(' und ')}.`:`<span class="no">Daneben.</span> Die meisten Kugeln liegen in Fach ${best.join(' und ')}, getippt war ${tip}.`;
+      log.push({n,p,tip,best:best.join('/')}); renderLog(); }); };
+  function renderLog(){ if(!log.length){$('gLog').innerHTML='';return;}
+    $('gLog').innerHTML='<tr><th>Runde</th><th>n</th><th>p</th><th>Tipp</th><th>meiste Kugeln in Fach</th>'+(muOn()?'<th style="color:var(--win)">n · p</th>':'')+'</tr>'+
+      log.map((r,i)=>`<tr><td>${i+1}</td><td>${r.n}</td><td>${dec(r.p,2)}</td><td>${r.tip}</td><td><b>${r.best}</b></td>${muOn()?`<td>${dec(r.n*r.p,2)}</td>`:''}</tr>`).join(''); }
+  $('fN').oninput=e=>$('fNv').textContent=e.target.value;
+  $('fP').oninput=e=>$('fPv').textContent=dec(+e.target.value,2);
+  $('fGo').onclick=()=>{ roundOpen=false; setBoard(+$('fN').value,+$('fP').value); $('gHead').innerHTML=`Freies Experiment: n = ${n}, p = ${dec(p,2)}`; $('gDrop').disabled=false;
+    $('gDrop').onclick2=null; freeMode=true; };
+  let freeMode=false;
+  const origDrop=$('gDrop').onclick;
+  $('gDrop').onclick=()=>{ if(freeMode&&!roundOpen){ $('gDrop').disabled=true; dropThousand(()=>{ $('gDrop').disabled=false; const mx=Math.max(...bins);
+      binBars.forEach((b,k)=>b.setAttribute('fill',bins[k]===mx?'var(--link)':'var(--ball)')); }); return; } freeMode=false; origDrop(); };
+  $('gNew').addEventListener('click',()=>{freeMode=false;});
+
+  // ================= 2 · Histogramm =================
+  let hn=10, hp=0.6, sel=null;
+  function fillAB(){ const o=[...Array(hn+1).keys()].map(k=>`<option>${k}</option>`).join('');
+    const a=Math.min(+$('hA').value||0,hn), b=Math.min(+$('hB').value||hn,hn);
+    $('hA').innerHTML=o; $('hB').innerHTML=o; $('hA').value=a; $('hB').value=b; }
+  function drawHist(){
+    const svg=$('hist'); svg.innerHTML=''; const Wd=720,Hd=300,m={l:48,r:14,t:20,b:38},iw=Wd-m.l-m.r,ih=Hd-m.t-m.b;
+    const v=[...Array(hn+1).keys()].map(k=>B(hn,hp,k)); const mx=Math.max(...v);
+    const YM=Math.min(1,Math.ceil(mx*20+0.5)/20); const y=t=>m.t+ih*(1-t/YM);
+    const x=t=>m.l+iw*(t+0.5)/(hn+1); const bw=iw/(hn+1);
+    const st=YM>0.4?0.1:YM>0.2?0.05:0.02;
+    for(let t=0;t<=YM+1e-9;t+=st){ el('line',{x1:m.l,x2:Wd-m.r,y1:y(t),y2:y(t),stroke:'var(--border)'},svg); txt(svg,{x:m.l-6,y:y(t)+4,'text-anchor':'end','font-size':11,fill:'var(--muted)'},dec(t,2)); }
+    txt(svg,{x:8,y:12,'font-size':11,fill:'var(--muted)'},'P(X = k)');
+    const area=$('hArea').checked, A=+$('hA').value, Bb=+$('hB').value; const mo=modes(hn,hp);
+    let sum=0;
+    v.forEach((val,k)=>{ const inA=area&&k>=Math.min(A,Bb)&&k<=Math.max(A,Bb); if(inA) sum+=val;
+      const r=el('rect',{x:x(k)-bw/2,y:y(val),width:bw,height:y(0)-y(val),fill:inA?'var(--hl)':mo.includes(k)?'var(--ball)':'var(--link)',stroke:'var(--surface)','stroke-width':bw>8?1:0.3,opacity:inA||!area?1:.45,style:'cursor:pointer'},svg);
+      r.onclick=()=>{ sel=k; $('hInfo').innerHTML=`P(X = ${k}) = B<sub>${hn};&thinsp;${dec(hp,2)}</sub>(${k}) ≈ <b>${dec(val,4)}</b> &nbsp;– Säule von ${dec(k-0.5,1)} bis ${dec(k+0.5,1)}`; };
+    });
+    const every=hn>40?10:hn>20?5:hn>12?2:1;
+    for(let k=0;k<=hn;k+=every) txt(svg,{x:x(k),y:Hd-22,'text-anchor':'middle','font-size':11,fill:'var(--muted)'},k);
+    txt(svg,{x:m.l+iw/2,y:Hd-4,'text-anchor':'middle','font-size':11,fill:'var(--muted)'},'k');
+    if(muOn()){ const xm=x(hn*hp); el('line',{x1:xm,x2:xm,y1:m.t,y2:y(0),stroke:'var(--win)','stroke-width':3,'stroke-dasharray':'6 4'},svg);
+      txt(svg,{x:xm+5,y:m.t+12,'font-size':12,'font-weight':700,fill:'var(--win)'},`μ = ${dec(hn*hp,2)}`); }
+    $('hMode').textContent=mo.join(' und '); $('hModeV').textContent=dec(mx,4);
+    $('hAreaV').textContent=area?`${dec(sum,4)}  (${dec(Math.min(A,Bb)-0.5,1)} bis ${dec(Math.max(A,Bb)+0.5,1)})`:'–';
+    $('hMuStat').classList.toggle('hide',!muOn()); $('hMu').textContent=dec(hn*hp,2);
+  }
+  $('hN').oninput=e=>{ hn=+e.target.value; $('hNv').textContent=hn; fillAB(); drawHist(); };
+  $('hP').oninput=e=>{ hp=+e.target.value; $('hPv').textContent=dec(hp,2); drawHist(); };
+  ['hArea','hA','hB'].forEach(id=>$(id).onchange=drawHist);
+
+  // ================= 3 · Geheimes Brett =================
+  let mn=20, mp=0.35, mb=[], mt=0, msum=0, revealed=false;
+  function mNew(){ mn=+$('mN').value; mp=Math.round((0.1+Math.random()*0.8)*20)/20; mb=new Array(mn+1).fill(0); mt=0; msum=0; revealed=false;
+    $('mMsg').innerHTML=''; $('mLast').textContent='–'; $('mGuess').value=''; mDraw(); }
+  function mDraw(){
+    $('mCnt').textContent=fmt(mt); $('mMean').textContent=mt?dec(msum/mt,2):'–';
+    const svg=$('mChart'); svg.innerHTML=''; const Wd=720,Hd=220,m={l:40,r:12,t:16,b:30},iw=Wd-m.l-m.r,ih=Hd-m.t-m.b;
+    const mx=Math.max(1,...mb), x=k=>m.l+iw*(k+0.5)/(mn+1), bw=iw/(mn+1)*0.8, y=t=>m.t+ih*(1-t/mx);
+    el('line',{x1:m.l,x2:Wd-m.r,y1:y(0),y2:y(0),stroke:'var(--muted)'},svg);
+    mb.forEach((v,k)=>{ if(v) el('rect',{x:x(k)-bw/2,y:y(v),width:bw,height:y(0)-y(v),rx:2,fill:'var(--ball)'},svg); });
+    const every=mn>20?5:mn>10?2:1; for(let k=0;k<=mn;k+=every) txt(svg,{x:x(k),y:Hd-12,'text-anchor':'middle','font-size':11,fill:'var(--muted)'},k);
+    if(mt){ const xm=x(msum/mt); el('line',{x1:xm,x2:xm,y1:m.t,y2:y(0),stroke:'var(--link)','stroke-width':2.5},svg); txt(svg,{x:xm+4,y:m.t+10,'font-size':11,'font-weight':700,fill:'var(--link)'},'Mittelwert'); }
+    if(revealed){ const xm=x(mn*mp); el('line',{x1:xm,x2:xm,y1:m.t,y2:y(0),stroke:'var(--win)','stroke-width':3,'stroke-dasharray':'6 4'},svg); txt(svg,{x:xm-4,y:m.t+10,'text-anchor':'end','font-size':11,'font-weight':700,fill:'var(--win)'},'n · p'); }
+  }
+  document.querySelectorAll('[data-m]').forEach(b=>b.onclick=()=>{ const K=+b.dataset.m; let k=0;
+    for(let j=0;j<K;j++){ k=0; for(let i=0;i<mn;i++) if(Math.random()<mp) k++; mb[k]++; mt++; msum+=k; }
+    $('mLast').textContent=k; mDraw(); });
+  $('mNew').onclick=mNew; $('mN').onchange=mNew;
+  $('mReveal').onclick=()=>{ if(!mt){ $('mMsg').innerHTML='Erst ein paar Kugeln fallen lassen.'; return; }
+    revealed=true; const g=parseFloat(($('mGuess').value||'').replace(',','.'));
+    const est=msum/mt/mn;
+    $('mMsg').innerHTML=`Geheime Neigung: <b>p = ${dec(mp,2)}</b>. Aus ${fmt(mt)} Kugeln: mittlere Fachnummer ${dec(msum/mt,2)}, geteilt durch n = ${mn} ergibt ${dec(est,3)}.`+
+      (isNaN(g)?'':` Eure Schätzung ${dec(g,2)} liegt ${dec(Math.abs(g-mp),2)} daneben.`); mDraw(); };
+
+  // ================= 4 · gesperrt =================
+  function refreshAll(){ drawBoard(); drawHist(); renderLog(); }
+  function unlock(){ if(($('code').value||'').trim().toUpperCase()==='MATHE'){ unlocked=true; $('lockRow').classList.add('hide'); $('locked').classList.remove('hide'); refreshAll(); }
+    else { $('codeMsg').textContent='Code nicht korrekt.'; $('codeMsg').style.color='var(--gold)'; } }
+  $('btnUnlock').onclick=unlock; $('code').addEventListener('keydown',e=>{ if(e.key==='Enter') unlock(); });
+  $('showMu').onchange=refreshAll;
+
+  setBoard(10,0.7); fillAB(); $('hA').value=4; $('hB').value=6; drawHist(); mNew();
+})();
+</script>
+</body>
+</html>
