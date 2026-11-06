@@ -297,20 +297,24 @@
   const W=720,H=560;
   let n=10,p=0.7,bins=[],total=0,G={},ballLayer=null,binBars=[],binLabels=[],flying=[],raf=null,last=0;
   let roundOpen=false, rounds=0, hits=0, log=[];
-  function geom(){ const top=58,binH=170,boardBottom=H-binH-20,dy=(boardBottom-top)/n,dx=Math.min(56,(W-60)/(n+1));
-    G={top,dy,dx,cx:W/2,boardBottom,binTop:boardBottom+18,binBottom:H-26}; }
+  const tiltDeg=()=>(p-0.5)*20;
+  function geom(){ const top=58,binH=170,dx=Math.min(56,(W-60)/(n+1));
+    const th=Math.abs(tiltDeg())*Math.PI/180, extra=(n/2*dx+12)*Math.sin(th);
+    const boardBottom=H-binH-20-extra, dy=(boardBottom-top)/n;
+    G={top,dy,dx,cx:W/2,boardBottom,binTop:H-binH-2,binBottom:H-26,ang:tiltDeg()}; G.py=G.top+(n-1)*G.dy+G.dy*.5; }
+  // Drehung des Nagelfelds um die Mitte der untersten Nagelreihe (Fächer bleiben gerade)
+  function rot(x,y){ const a=G.ang*Math.PI/180, c=Math.cos(a), s_=Math.sin(a), dx=x-G.cx, dy=y-G.py; return [G.cx+dx*c-dy*s_, G.py+dx*s_+dy*c]; }
   const nailX=(r,j)=>G.cx+(j-r/2)*G.dx, nailY=r=>G.top+r*G.dy+G.dy*.5, binX=k=>G.cx+(k-n/2)*G.dx;
   function drawBoard(){
     geom(); const svg=$('board'); svg.innerHTML='';
     // Neigungsanzeige
-    const ang=(p-0.5)*30;
-    const g=el('g',{transform:`translate(${W/2},26) rotate(${ang})`},svg);
-    el('rect',{x:-120,y:-6,width:240,height:12,rx:6,fill:'var(--gold-pale)',stroke:'var(--gold)'},g);
-    el('circle',{cx:0,cy:-14,r:7,fill:'var(--ball)'},g);
+    const ang=G.ang;
     txt(svg,{x:W/2+150,y:30,'font-size':14,'font-weight':700,fill:'var(--text)'},`p = ${dec(p,2)}`);
     txt(svg,{x:W/2-150,y:30,'font-size':14,'font-weight':700,fill:'var(--text)','text-anchor':'end'},`n = ${n}`);
     const nr=n>14?2.6:4;
-    for(let r=0;r<n;r++) for(let j=0;j<=r;j++) el('circle',{cx:nailX(r,j),cy:nailY(r),r:nr,fill:'var(--nail)'},svg);
+    const field=el('g',{transform:`rotate(${G.ang} ${G.cx} ${G.py})`},svg);
+    { const w=n/2*G.dx+G.dx*0.6; el('path',{d:`M ${G.cx} ${G.top-G.dy*0.4} L ${G.cx+w} ${G.py+G.dy*0.45} L ${G.cx-w} ${G.py+G.dy*0.45} Z`,fill:'var(--gold-pale)',stroke:'var(--gold)','stroke-width':1.2,opacity:.55},field); }
+    for(let r=0;r<n;r++) for(let j=0;j<=r;j++) el('circle',{cx:nailX(r,j),cy:nailY(r),r:nr,fill:'var(--nail)'},field);
     for(let k=0;k<=n+1;k++){ const x=binX(k)-G.dx/2; el('line',{x1:x,x2:x,y1:G.binTop,y2:G.binBottom,stroke:'var(--border)','stroke-width':2},svg); }
     el('line',{x1:binX(0)-G.dx/2,x2:binX(n)+G.dx/2,y1:G.binBottom,y2:G.binBottom,stroke:'var(--muted)','stroke-width':2},svg);
     binBars=[];binLabels=[];
@@ -330,7 +334,7 @@
     $('gTip').innerHTML=[...Array(n+1).keys()].map(k=>`<option>${k}</option>`).join(''); $('gTip').selectedIndex=-1; drawBoard(); }
   const randPath=()=>{const r=[];for(let i=0;i<n;i++)r.push(Math.random()<p?1:0);return r;};
   function land(path){ const k=path.reduce((a,b)=>a+b,0); bins[k]++; total++; }
-  function wp(path){ const pts=[[G.cx,40]]; let R=0; for(let r=0;r<n;r++){ pts.push([nailX(r,R),nailY(r)-7]); R+=path[r]; } pts.push([binX(R),G.binTop+4]); return pts; }
+  function wp(path){ const pts=[rot(G.cx,G.top-G.dy*0.9)]; let R=0; for(let r=0;r<n;r++){ pts.push(rot(nailX(r,R),nailY(r)-7)); R+=path[r]; } pts.push(rot(binX(R),G.py+G.dy*0.6)); pts.push([binX(R),G.binTop+4]); return pts; }
   function launch(path,seg){ const node=el('circle',{r:n>14?4:6,fill:'var(--ball)'},ballLayer); flying.push({path,node,pts:wp(path),t:0,seg}); if(!raf) raf=requestAnimationFrame(tick); }
   function tick(ts){ const dt=last?Math.min(50,ts-last):16; last=ts;
     flying=flying.filter(f=>{ f.t+=dt/f.seg; const i=Math.floor(f.t);
