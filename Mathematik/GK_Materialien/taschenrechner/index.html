@@ -203,9 +203,42 @@
     <div class="note">Der Strahl trifft das Dach in \(S(5\,|\,1\,|\,1)\). Ist die Ebene in Koordinatenform gegeben, folgt eine weitere Hilfe mit Kapitel VI.4.</div>
   </section>
 
+  <section class="help" id="normalenvektor" data-k="vi">
+    <h2>Normalenvektor bestimmen <span class="tag t6">KAPITEL VI.3</span></h2>
+    <p class="why">Gesucht ist \(\vec n\) mit \(\vec n\circ\vec u=0\) und \(\vec n\circ\vec v=0\). Weil zwei Gleichungen für drei Unbekannte nicht reichen, legt man eine Koordinate fest, z. B. \(a=1\).</p>
+    <ol class="steps">
+      <li>Spannvektoren speichern, z. B. <code>u:=</code> und <code>v:=</code> (siehe <a href="#vektor-eingeben">Vektoren eingeben</a>).</li>
+      <li>Den gesuchten Normalenvektor mit den Unbekannten <code>a</code>, <code>b</code>, <code>c</code> schreiben: \(\begin{bmatrix}a\\b\\c\end{bmatrix}\).</li>
+      <li><code>solve(</code> mit beiden Skalarprodukten und der Festlegung <code>a=1</code>, verbunden mit <code>and</code>; danach <code>,a,b,c)</code>.</li>
+    </ol>
+    <div class="screen"><div class="in">\(\text{solve}\left(\text{dotP}\left(\begin{bmatrix}a\\b\\c\end{bmatrix},u\right)=0\ \text{and}\ \text{dotP}\left(\begin{bmatrix}a\\b\\c\end{bmatrix},v\right)=0\ \text{and}\ a=1,\ a,b,c\right)\)</div><div class="out">a=1 and b=2 and c=2</div></div>
+    <div class="note">Beispiel: \(\vec u=\begin{pmatrix}2\\-1\\0\end{pmatrix},\ \vec v=\begin{pmatrix}0\\1\\-1\end{pmatrix}\) ergibt \(\vec n=\begin{pmatrix}1\\2\\2\end{pmatrix}\). Meldet der Rechner <code>false</code>, war die gewählte Koordinate ungünstig (sie muss 0 sein) – dann z. B. <code>c=1</code> festlegen.</div>
+    <div class="note">Alternative mit linSolve (Gleichungen von Hand aufgestellt): <code>linSolve({2·a−b=0, b−c=0, a=1},{a,b,c})</code> → <code>{1,2,2}</code>.</div>
+  </section>
+
+  <section class="help" id="koordinatenform" data-k="vi">
+    <h2>Koordinatengleichung aufstellen und Punktprobe <span class="tag t6">KAPITEL VI.3</span></h2>
+    <p class="why">Ansatz \(n_1x_1+n_2x_2+n_3x_3=d\) mit \(d=\vec p\circ\vec n\).</p>
+    <ol class="steps">
+      <li>Stützvektor <code>p:=</code> und Normalenvektor <code>n:=</code> speichern.</li>
+      <li>\(d\) berechnen: <code>dotP(p,n)</code>.</li>
+      <li>Punktprobe: Koordinaten des Punktes in die linke Seite einsetzen und mit \(d\) vergleichen – am schnellsten direkt eintippen, z. B. <code>4+2·1+2·0</code>.</li>
+    </ol>
+    <div class="screen"><div class="in">dotP(p,n)</div><div class="out">6</div></div>
+    <div class="note">Ergebnis: \(E:\ x_1+2x_2+2x_3=6\). Die Punktprobe ist in der Koordinatenform so einfach, dass man sie meist ohne Rechner macht.</div>
+  </section>
+
   <section class="help" id="ebene-3d" data-k="vi">
-    <h2>Ebenen in 3D darstellen <span class="tag soon">FOLGT · KAPITEL VI.3</span></h2>
-    <p class="soonbox">Diese Hilfe wird mit Kapitel VI.3 ergänzt (vgl. MMS-Anleitung „3D-Darstellung von Ebenen“ im Buch).</p>
+    <h2>Ebenen in 3D darstellen <span class="tag t6">KAPITEL VI.3</span></h2>
+    <p class="why">Zur Kontrolle einer Zeichnung kann man eine Ebene in der 3D-Ansicht des Graphs-Programms anzeigen lassen.</p>
+    <ol class="steps">
+      <li>Koordinatengleichung nach \(x_3\) auflösen, z. B. \(x_1+2x_2+2x_3=6\ \Rightarrow\ x_3=\dfrac{6-x_1-2x_2}{2}\).</li>
+      <li>Neue Seite mit <strong>Graphs</strong> öffnen, dann <span class="menu">menu ▸ Ansicht ▸ 3D-Grafik</span>.</li>
+      <li>In der Eingabezeile mit \(x\) für \(x_1\) und \(y\) für \(x_2\) eingeben: <code>z1(x,y)=(6−x−2·y)/2</code> und mit <code>enter</code> bestätigen.</li>
+      <li>Mit den Pfeiltasten die Ansicht drehen.</li>
+    </ol>
+    <div class="warn">Kommt \(x_3\) in der Gleichung nicht vor (z. B. \(x_1+x_2=3\)), steht die Ebene „senkrecht“ und lässt sich so nicht nach \(x_3\) auflösen. Dann hilft nur die Zeichnung mit den Spurpunkten.</div>
+    <div class="note">Menünamen können je nach Betriebssystemversion des Rechners leicht abweichen.</div>
   </section>
 </div>
 <footer>FBG Schwerte · Mathematik GK · TI-Nspire-Hilfen · wird laufend ergänzt</footer>

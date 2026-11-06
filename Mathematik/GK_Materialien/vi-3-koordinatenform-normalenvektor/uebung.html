@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>VI.3 Übung: Normalenvektor und Koordinatengleichung</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+<style>
+  :root{
+    --gold:#e8a800; --gold-deep:#b98600; --gold-soft:#fff6dc;
+    --ink:#1f2933; --ink-soft:#5b6770; --line:#e3e6ea; --bg:#f7f7f4; --card:#fff; --navy:#1a3a6b;
+    --a:#2e9e4f; --a-bg:#eaf7ef; --b:#e67e22; --b-bg:#fdf0e4; --c:#8e44ad; --c-bg:#f4ecf8; --blue:#2c6fbb;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;background:var(--bg);color:var(--ink);line-height:1.55;font-size:17px}
+  header{background:var(--gold);color:#fff;padding:18px 20px 16px}
+  header .eyebrow{font-size:.82rem;letter-spacing:.06em;text-transform:uppercase;opacity:.92}
+  header h1{margin:4px 0 0;font-size:1.6rem;line-height:1.2}
+  header nav{margin-top:8px;font-size:.9rem}
+  header nav a{color:#fff;text-decoration:underline;margin-right:14px}
+  .wrap{max-width:980px;margin:0 auto;padding:16px}
+  .toc{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 14px}
+  .toc a{border:1px solid var(--line);background:#fff;border-radius:999px;padding:5px 14px;text-decoration:none;color:var(--ink);font-size:.9rem}
+  .toc a .dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:6px;vertical-align:middle}
+  h2.sec{font-size:1.3rem;margin:26px 0 10px;color:var(--navy);border-bottom:2px solid var(--line);padding-bottom:6px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 18px;margin-bottom:14px}
+  .card h3{margin:0 0 8px;font-size:1.1rem;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+  .merk{background:#eef4fb;border:1px solid #bcd3ec;border-radius:12px;padding:12px 16px;margin:10px 0}
+  .merk h3{color:#1d4f8c;margin:0 0 6px;font-size:1.05rem}
+  .book{background:var(--gold-soft);border:1px solid #f1dc9c;border-radius:12px;padding:12px 16px;margin:10px 0}
+  .badge{font-size:.75rem;font-weight:800;letter-spacing:.05em;padding:2px 10px;border-radius:999px}
+  .bA{background:var(--a-bg);color:var(--a)} .bB{background:var(--b-bg);color:var(--b)} .bC{background:var(--c-bg);color:var(--c)} .bM{background:#eef2f8;color:var(--navy)}
+  .card.A{border-left:5px solid var(--a)} .card.B{border-left:5px solid var(--b)} .card.C{border-left:5px solid var(--c)} .card.M{border-left:5px solid var(--navy)}
+  .steps .st{display:none;border-left:3px solid #d8dde5;padding:4px 0 4px 12px;margin:8px 0}
+  .steps .st.show{display:block}
+  .steps .st b.lab{color:var(--navy)}
+  .stepbar{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+  .btn{border:1px solid var(--line);background:#fff;border-radius:8px;padding:6px 12px;font-size:.92rem;cursor:pointer;color:var(--ink)}
+  .btn:hover{border-color:var(--gold)}
+  .btn.primary{background:var(--gold);border-color:var(--gold);color:#fff;font-weight:600}
+  .btn:disabled{opacity:.45;cursor:default}
+  details{margin:8px 0;border:1px solid var(--line);border-radius:8px;padding:6px 12px;background:#fcfcfc}
+  details summary{cursor:pointer;font-weight:700}
+  details.tip summary{color:var(--gold-deep)}
+  details.sol summary{color:var(--a)}
+  details[open]{background:#fff}
+  .sub{margin:6px 0}
+  .ti{background:#f3f6f3;border:1px solid #cfdccf;border-radius:8px;padding:8px 12px;font-size:.93rem;margin:8px 0}
+  code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:.88em;background:#f1f3f8;border:1px solid var(--line);border-radius:4px;padding:1px 5px}
+  .fig{display:flex;gap:18px;align-items:flex-start;flex-wrap:wrap}
+  .fig svg{flex-shrink:0;max-width:100%;height:auto}
+  .katex-display{margin:.4em 0;overflow-x:auto;overflow-y:hidden;padding:2px 0}
+  .checklist{list-style:none;padding:0;margin:0}
+  .checklist li{display:flex;gap:10px;align-items:flex-start;padding:7px 0;border-bottom:1px solid var(--line)}
+  .checklist li:last-child{border-bottom:none}
+  .checklist input{width:18px;height:18px;margin-top:3px;accent-color:var(--gold-deep);flex-shrink:0}
+  .ztag{margin-left:auto;font-size:.75rem;font-weight:700;padding:1px 8px;border-radius:999px;white-space:nowrap}
+  .ok{color:var(--a);font-weight:700}
+  .no{color:#c62828;font-weight:700}
+  footer{text-align:center;color:var(--ink-soft);font-size:.82rem;padding:20px}
+  @media (max-width:520px){ .katex{font-size:.95em} body{font-size:16px} .wrap{padding:10px} .card{padding:12px} }
+  .fig svg{max-width:100%;height:auto}
+</style>
+</head>
+<body>
+<header>
+  <div class="eyebrow">Kapitel VI.3 · Koordinatenform und Normalenvektor · Übung</div>
+  <h1>Übung: Normalenvektor und Koordinatengleichung</h1>
+  <nav><a href="index.html">← Übersicht VI.3</a><a href="../simulationen/ebenen-explorer/szene-2-normalenvektor.html">Simulation Szene 2</a><a href="../taschenrechner/index.html#normalenvektor">TI-Nspire-Hilfen</a></nav>
+</header>
+
+<div class="wrap">
+
+  <div class="toc">
+    <a href="#wissen">Grundwissen</a>
+    <a href="#muster"><span class="dot" style="background:var(--navy)"></span>Musteraufgaben</a>
+    <a href="#stufeA"><span class="dot" style="background:var(--a)"></span>Stufe A</a>
+    <a href="#stufeB"><span class="dot" style="background:var(--b)"></span>Stufe B</a>
+    <a href="#stufeC"><span class="dot" style="background:var(--c)"></span>Stufe C</a>
+    <a href="#check">Das kann ich</a>
+  </div>
+
+  <!-- ================= GRUNDWISSEN ================= -->
+  <h2 class="sec" id="wissen">Grundwissen</h2>
+  <div class="book"><strong>Einstieg aus dem Buch (S. 192):</strong> Emil behauptet: „Die Gleichung \(2x_1-x_2+x_3=0\) beschreibt eine Ebene.“ – Er hat recht: Es ist eine Koordinatengleichung mit dem Normalenvektor \(\vec n=\begin{pmatrix}2\\-1\\1\end{pmatrix}\). Wie man darauf kommt, zeigt die Simulation Szene 2.</div>
+  <div class="merk">
+    <h3>Normalenvektor, Normalenform und Koordinatenform</h3>
+    Ein Vektor \(\vec n\neq\vec o\), der zu beiden Spannvektoren \(\vec u\) und \(\vec v\) der Ebene orthogonal ist (\(\vec n\circ\vec u=0\) und \(\vec n\circ\vec v=0\)), heißt <strong>Normalenvektor</strong> der Ebene. Ein Punkt und ein Normalenvektor legen die Ebene eindeutig fest.<br>
+    <strong>Normalenform:</strong> \(E:\ (\vec x-\vec p)\circ\vec n=0\).  &emsp; 
+    <strong>Koordinatenform:</strong> \(E:\ ax_1+bx_2+cx_3=d\) mit \(\vec n=\begin{pmatrix}a\\b\\c\end{pmatrix}\) und \(d=\vec p\circ\vec n\).<br>
+    <strong>Punktprobe:</strong> Koordinaten des Punktes einsetzen – kommt \(d\) heraus, liegt der Punkt in der Ebene.
+  </div>
+  <div class="merk" style="background:#fff8e6;border-color:#f0d890">
+    <h3 style="color:#8a6200">Rezept: Parameterform → Koordinatenform</h3>
+    ① \(\vec n\circ\vec u=0\) und \(\vec n\circ\vec v=0\) als LGS aufschreiben. ② Eine Koordinate von \(\vec n\) frei wählen, die anderen berechnen. ③ Ansatz \(n_1x_1+n_2x_2+n_3x_3=d\), Stützpunkt einsetzen → \(d\). ④ Probe mit einem zweiten Punkt.
+  </div>
+
+  <!-- ================= MUSTERAUFGABEN ================= -->
+  <h2 class="sec" id="muster">Musteraufgaben – vorgerechnet</h2>
+  <p style="color:var(--ink-soft);margin-top:0">Decke die Lösung Schritt für Schritt auf. Überlege vor jedem Klick, was als Nächstes kommt.</p>
+
+  <div class="card M">
+    <h3><span class="badge bM">MUSTER 1</span> Parameterform in Koordinatenform umformen <span style="color:var(--ink-soft);font-size:.85rem;font-weight:400">wie Buch Beispiel 1</span></h3>
+    <p>Gegeben ist die Ebene \(E:\ \vec x=\begin{pmatrix}3\\1\\2\end{pmatrix}+r\cdot\begin{pmatrix}1\\1\\0\end{pmatrix}+s\cdot\begin{pmatrix}2\\0\\-1\end{pmatrix}\).<br>
+    a) Bestimmen Sie eine Ebenengleichung von \(E\) in Koordinatenform.<br>
+    b) Prüfen Sie, ob die Punkte \(A(2\,|\,0\,|\,2)\) und \(B(1\,|\,1\,|\,1)\) in der Ebene \(E\) liegen.</p>
+    <div class="steps">
+      <div class="st"><b class="lab">a) Schritt 1 – Bedingungen:</b> Ein Normalenvektor \(\vec n=\begin{pmatrix}n_1\\n_2\\n_3\end{pmatrix}\) muss zu beiden Spannvektoren orthogonal sein:
+        \[\begin{pmatrix}n_1\\n_2\\n_3\end{pmatrix}\circ\begin{pmatrix}1\\1\\0\end{pmatrix}=0\quad\text{und}\quad\begin{pmatrix}n_1\\n_2\\n_3\end{pmatrix}\circ\begin{pmatrix}2\\0\\-1\end{pmatrix}=0\]</div>
+      <div class="st"><b class="lab">a) Schritt 2 – LGS:</b>
+        \[\begin{array}{rrcl}\text{I}: & n_1+n_2 & = & 0\\ \text{II}: & 2n_1-n_3 & = & 0\end{array}\]
+        Weil ein Normalenvektor beliebig lang ist, kann man eine Koordinate frei wählen. Wählt man \(n_1=1\), so erhält man aus I: \(n_2=-1\) und aus II: \(n_3=2\). Also \(\vec n=\begin{pmatrix}1\\-1\\2\end{pmatrix}\).</div>
+      <div class="st"><b class="lab">a) Schritt 3 – \(d\) bestimmen:</b> Ansatz \(x_1-x_2+2x_3=d\). Einsetzen des Stützpunkts \((3\,|\,1\,|\,2)\): \(3-1+2\cdot2=6=d\).
+        \[E:\ x_1-x_2+2x_3=6\]</div>
+      <div class="st"><b class="lab">a) Schritt 4 – Probe:</b> Mit \(r=1,\ s=0\) erhält man den Punkt \((4\,|\,2\,|\,2)\): \(4-2+4=6\) ✓.</div>
+      <div class="st"><b class="lab">b) Punktprobe:</b> \(A\): \(2-0+2\cdot2=6\) ✓ → \(A\) liegt in \(E\).  &emsp;  \(B\): \(1-1+2\cdot1=2\neq6\) → \(B\) liegt nicht in \(E\).<br>
+        <span style="color:var(--ink-soft)">Vergleich: In der Parameterform hätte man dafür jeweils ein LGS lösen müssen.</span></div>
+    </div>
+    <div class="stepbar"><button class="btn primary" data-next>Nächster Schritt</button><button class="btn" data-all>Alles zeigen</button></div>
+  </div>
+
+  <div class="card M">
+    <h3><span class="badge bM">MUSTER 2</span> Koordinatengleichung einer Ebene durch drei Punkte</h3>
+    <p>Die Punkte \(A(2\,|\,0\,|\,0)\), \(B(0\,|\,4\,|\,0)\) und \(C(0\,|\,0\,|\,2)\) legen eine Ebene \(E\) fest. Bestimmen Sie eine Koordinatengleichung von \(E\).</p>
+    <div class="steps">
+      <div class="st"><b class="lab">Schritt 1 – Spannvektoren:</b> \(\vec{AB}=\begin{pmatrix}-2\\4\\0\end{pmatrix}\), \(\vec{AC}=\begin{pmatrix}-2\\0\\2\end{pmatrix}\) (nicht kollinear).</div>
+      <div class="st"><b class="lab">Schritt 2 – Normalenvektor:</b>
+        \[\begin{array}{rrcl}\text{I}: & -2n_1+4n_2 & = & 0\\ \text{II}: & -2n_1+2n_3 & = & 0\end{array}\]
+        Wählt man \(n_1=2\), folgt aus I: \(n_2=1\), aus II: \(n_3=2\). Also \(\vec n=\begin{pmatrix}2\\1\\2\end{pmatrix}\).</div>
+      <div class="st"><b class="lab">Schritt 3 – \(d\) bestimmen:</b> Ansatz \(2x_1+x_2+2x_3=d\); Einsetzen von \(A\): \(4=d\).
+        \[E:\ 2x_1+x_2+2x_3=4\]
+        Probe mit \(B\): \(0+4+0=4\) ✓, mit \(C\): \(0+0+4=4\) ✓.</div>
+    </div>
+    <div class="stepbar"><button class="btn primary" data-next>Nächster Schritt</button><button class="btn" data-all>Alles zeigen</button></div>
+  </div>
+
+  <div class="card M">
+    <h3><span class="badge bM">MUSTER 3</span> Eine Ebene zeichnen – mit Spurpunkten <span style="color:var(--ink-soft);font-size:.85rem;font-weight:400">vgl. Buch Aufgabe 7 (Max)</span></h3>
+    <p>Veranschaulichen Sie die Ebene in einem Koordinatensystem.<br>
+    a) \(E:\ 2x_1+3x_2+6x_3=12\)  &emsp;  b) \(F:\ x_1+2x_3=4\)</p>
+    <div class="steps">
+      <div class="st"><b class="lab">Idee:</b> Die Schnittpunkte der Ebene mit den Koordinatenachsen heißen <strong>Spurpunkte</strong>. Auf der \(x_1\)-Achse gilt \(x_2=x_3=0\), auf der \(x_2\)-Achse \(x_1=x_3=0\) usw.</div>
+      <div class="st"><b class="lab">a) Spurpunkte berechnen:</b>
+        \(x_2=x_3=0\): \(2x_1=12\Rightarrow S_1(6\,|\,0\,|\,0)\);  &emsp; 
+        \(x_1=x_3=0\): \(3x_2=12\Rightarrow S_2(0\,|\,4\,|\,0)\);  &emsp; 
+        \(x_1=x_2=0\): \(6x_3=12\Rightarrow S_3(0\,|\,0\,|\,2)\).</div>
+      <div class="st"><b class="lab">a) Zeichnen:</b> Spurpunkte eintragen und zu einem Dreieck verbinden. Das Dreieck ist der Teil der Ebene, der im ersten Achtel des Koordinatensystems liegt.
+        <div class="fig"><svg viewBox="0 0 277 207" width="277" height="207" font-family="Georgia,serif" font-size="12" role="img" aria-label="Ebene mit Spurpunkten 6, 4, 2"><defs><marker id="ahM3a" markerWidth="7" markerHeight="7" refX="5" refY="3" orient="auto"><path d="M0,0 L0,6 L6,3 z" fill="#555"/></marker></defs><line x1="88.2" y1="119.2" x2="20.0" y2="187.4" stroke="#555" stroke-width="1.2" marker-end="url(#ahM3a)"/><text x="6.0" y="195.4" fill="#444">x₁</text><line x1="75.5" y1="128.95" x2="81.5" y2="128.95" stroke="#777"/><line x1="65.75" y1="138.7" x2="71.75" y2="138.7" stroke="#777"/><text x="54.75" y="142.7" fill="#888" font-size="9">2</text><line x1="56.0" y1="148.45" x2="62.0" y2="148.45" stroke="#777"/><line x1="46.25" y1="158.2" x2="52.25" y2="158.2" stroke="#777"/><text x="35.25" y="162.2" fill="#888" font-size="9">4</text><line x1="36.5" y1="167.95" x2="42.5" y2="167.95" stroke="#777"/><line x1="26.75" y1="177.7" x2="32.75" y2="177.7" stroke="#777"/><text x="15.75" y="181.7" fill="#888" font-size="9">6</text><line x1="88.2" y1="119.2" x2="244.2" y2="119.2" stroke="#555" stroke-width="1.2" marker-end="url(#ahM3a)"/><text x="248.2" y="123.2" fill="#444">x₂</text><line x1="114.25" y1="116.2" x2="114.25" y2="122.2" stroke="#777"/><line x1="140.25" y1="116.2" x2="140.25" y2="122.2" stroke="#777"/><text x="137.25" y="133.2" fill="#888" font-size="9">2</text><line x1="166.25" y1="116.2" x2="166.25" y2="122.2" stroke="#777"/><line x1="192.25" y1="116.2" x2="192.25" y2="122.2" stroke="#777"/><text x="189.25" y="133.2" fill="#888" font-size="9">4</text><line x1="218.25" y1="116.2" x2="218.25" y2="122.2" stroke="#777"/><line x1="88.2" y1="119.2" x2="88.2" y2="15.2" stroke="#555" stroke-width="1.2" marker-end="url(#ahM3a)"/><text x="93.2" y="19.2" fill="#444">x₃</text><line x1="85.25" y1="93.2" x2="91.25" y2="93.2" stroke="#777"/><line x1="85.25" y1="67.2" x2="91.25" y2="67.2" stroke="#777"/><text x="74.25" y="70.2" fill="#888" font-size="9">2</text><line x1="85.25" y1="41.2" x2="91.25" y2="41.2" stroke="#777"/><polygon points="29.8,177.7 192.2,119.2 88.2,67.2" fill="rgba(232,168,0,0.30)" stroke="#b98600" stroke-width="1.8"/><circle cx="29.8" cy="177.7" r="3" fill="#d62828"/><circle cx="192.2" cy="119.2" r="3" fill="#d62828"/><circle cx="88.2" cy="67.2" r="3" fill="#d62828"/><text x="269" y="199" text-anchor="end" fill="#b98600" font-weight="bold">E: 2x₁+3x₂+6x₃=12</text></svg></div></div>
+      <div class="st"><b class="lab">b) Sonderfall:</b> In \(F:\ x_1+2x_3=4\) fehlt \(x_2\). Setzt man \(x_1=x_3=0\), erhält man \(0=4\) – es gibt <strong>keinen</strong> Spurpunkt auf der \(x_2\)-Achse. Die Ebene verläuft <strong>parallel zur \(x_2\)-Achse</strong> (der Normalenvektor \(\begin{pmatrix}1\\0\\2\end{pmatrix}\) ist orthogonal zu \(\begin{pmatrix}0\\1\\0\end{pmatrix}\)).<br>
+        Spurpunkte: \(S_1(4\,|\,0\,|\,0)\), \(S_3(0\,|\,0\,|\,2)\). Man verbindet sie und verschiebt die Strecke parallel zur \(x_2\)-Achse:
+        <div class="fig"><svg viewBox="0 0 257 187" width="257" height="187" font-family="Georgia,serif" font-size="12" role="img" aria-label="Ebene parallel zur x2-Achse"><defs><marker id="ahM3b" markerWidth="7" markerHeight="7" refX="5" refY="3" orient="auto"><path d="M0,0 L0,6 L6,3 z" fill="#555"/></marker></defs><line x1="68.8" y1="119.2" x2="20.0" y2="167.9" stroke="#555" stroke-width="1.2" marker-end="url(#ahM3b)"/><text x="6.0" y="175.9" fill="#444">x₁</text><line x1="56.0" y1="128.95" x2="62.0" y2="128.95" stroke="#777"/><line x1="46.25" y1="138.7" x2="52.25" y2="138.7" stroke="#777"/><text x="35.25" y="142.7" fill="#888" font-size="9">2</text><line x1="36.5" y1="148.45" x2="42.5" y2="148.45" stroke="#777"/><line x1="26.75" y1="158.2" x2="32.75" y2="158.2" stroke="#777"/><text x="15.75" y="162.2" fill="#888" font-size="9">4</text><line x1="68.8" y1="119.2" x2="224.8" y2="119.2" stroke="#555" stroke-width="1.2" marker-end="url(#ahM3b)"/><text x="228.8" y="123.2" fill="#444">x₂</text><line x1="94.75" y1="116.2" x2="94.75" y2="122.2" stroke="#777"/><line x1="120.75" y1="116.2" x2="120.75" y2="122.2" stroke="#777"/><text x="117.75" y="133.2" fill="#888" font-size="9">2</text><line x1="146.75" y1="116.2" x2="146.75" y2="122.2" stroke="#777"/><line x1="172.75" y1="116.2" x2="172.75" y2="122.2" stroke="#777"/><text x="169.75" y="133.2" fill="#888" font-size="9">4</text><line x1="198.75" y1="116.2" x2="198.75" y2="122.2" stroke="#777"/><line x1="68.8" y1="119.2" x2="68.8" y2="15.2" stroke="#555" stroke-width="1.2" marker-end="url(#ahM3b)"/><text x="73.8" y="19.2" fill="#444">x₃</text><line x1="65.75" y1="93.2" x2="71.75" y2="93.2" stroke="#777"/><line x1="65.75" y1="67.2" x2="71.75" y2="67.2" stroke="#777"/><text x="54.75" y="70.2" fill="#888" font-size="9">2</text><line x1="65.75" y1="41.2" x2="71.75" y2="41.2" stroke="#777"/><polygon points="29.8,158.2 68.8,67.2 172.8,67.2 133.8,158.2" fill="rgba(232,168,0,0.30)" stroke="#b98600" stroke-width="1.8" stroke-dasharray="0"/><circle cx="29.8" cy="158.2" r="3" fill="#d62828"/><circle cx="68.8" cy="67.2" r="3" fill="#d62828"/><text x="249" y="179" text-anchor="end" fill="#b98600" font-weight="bold">E: x₁+2x₃=4</text></svg></div></div>
+    </div>
+    <div class="stepbar"><button class="btn primary" data-next>Nächster Schritt</button><button class="btn" data-all>Alles zeigen</button></div>
+  </div>
+
+  <!-- ================= STUFE A ================= -->
+  <h2 class="sec" id="stufeA">Stufe A · Grundlagen</h2>
+
+  <div class="card A">
+    <h3><span class="badge bA">A1</span> Normalenvektor ablesen und Punktprobe</h3>
+    <p>Gegeben ist die Ebene \(E:\ 3x_1-2x_2+x_3=5\).</p>
+    <div class="sub">a) Geben Sie einen Normalenvektor von \(E\) an.<br>b) Prüfen Sie, ob die Punkte \(P(1\,|\,0\,|\,2)\), \(Q(2\,|\,1\,|\,0)\) und \(R(0\,|\,-1\,|\,3)\) in \(E\) liegen.</div>
+    <details class="tip"><summary>Tipp</summary>a) Die Koeffizienten vor \(x_1,x_2,x_3\) – mit Vorzeichen – bilden einen Normalenvektor.<br>b) Koordinaten einsetzen und prüfen, ob 5 herauskommt.</details>
+    <details class="sol"><summary>Lösung</summary>
+      a) \(\vec n=\begin{pmatrix}3\\-2\\1\end{pmatrix}\) (auch jedes Vielfache \(k\cdot\vec n,\ k\neq0\)).<br>
+      b) \(P\): \(3\cdot1-2\cdot0+2=5\) ✓ <span class="ok">liegt in \(E\)</span>;  &emsp;  \(Q\): \(6-2+0=4\neq5\) <span class="no">liegt nicht in \(E\)</span>;  &emsp;  \(R\): \(0+2+3=5\) ✓ <span class="ok">liegt in \(E\)</span>.
+    </details>
+  </div>
+
+  <div class="card A">
+    <h3><span class="badge bA">A2</span> Parameterform → Koordinatenform <span style="color:var(--ink-soft);font-size:.85rem;font-weight:400">→ wie Muster 1</span></h3>
+    <p>Bestimmen Sie eine Gleichung der Ebene \(E\) in Koordinatenform.</p>
+    <div class="sub">a) \(E:\ \vec x=\begin{pmatrix}1\\1\\1\end{pmatrix}+r\cdot\begin{pmatrix}1\\0\\2\end{pmatrix}+s\cdot\begin{pmatrix}0\\1\\1\end{pmatrix}\)<br>
+      b) \(E:\ \vec x=\begin{pmatrix}2\\0\\1\end{pmatrix}+r\cdot\begin{pmatrix}1\\-1\\0\end{pmatrix}+s\cdot\begin{pmatrix}1\\0\\-1\end{pmatrix}\)<br>
+      c) \(E:\ \vec x=r\cdot\begin{pmatrix}1\\2\\0\end{pmatrix}+s\cdot\begin{pmatrix}0\\1\\3\end{pmatrix}\)</div>
+    <details class="tip"><summary>Tipp</summary>LGS aus \(\vec n\circ\vec u=0\) und \(\vec n\circ\vec v=0\) aufstellen. Wähle die Koordinate frei, die in <strong>beiden</strong> Gleichungen vorkommt (a: \(n_3\), b: \(n_1\), c: \(n_2\) oder \(n_3\)). Dann Stützpunkt einsetzen, um \(d\) zu bestimmen. Bei c) ist der Stützvektor der Nullvektor.</details>
+    <details class="sol"><summary>Lösung</summary>
+      a) I: \(n_1+2n_3=0\), II: \(n_2+n_3=0\). Mit \(n_3=-1\): \(n_1=2,\ n_2=1\). \(\vec n=\begin{pmatrix}2\\1\\-1\end{pmatrix}\), \(d=2+1-1=2\): \(\ E:\ 2x_1+x_2-x_3=2\).<br>
+      b) I: \(n_1-n_2=0\), II: \(n_1-n_3=0\). Mit \(n_1=1\): \(n_2=1,\ n_3=1\). \(d=2+0+1=3\): \(\ E:\ x_1+x_2+x_3=3\).<br>
+      c) I: \(n_1+2n_2=0\), II: \(n_2+3n_3=0\). Mit \(n_3=1\): \(n_2=-3,\ n_1=6\). \(d=0\): \(\ E:\ 6x_1-3x_2+x_3=0\) – die Ebene geht durch den Ursprung.<br>
+      <span style="color:var(--ink-soft)">Andere Normalenvektoren (Vielfache) führen zu gleichwertigen Gleichungen, z. B. \(-2x_1-x_2+x_3=-2\) bei a).</span>
+    </details>
+  </div>
+
+  <div class="card A">
+    <h3><span class="badge bA">A3</span> Ebene durch drei Punkte <span style="color:var(--ink-soft);font-size:.85rem;font-weight:400">→ wie Muster 2</span></h3>
+    <p>Die Punkte \(A\), \(B\) und \(C\) legen eine Ebene \(E\) fest. Bestimmen Sie eine Gleichung von \(E\) in Parameterform und in Koordinatenform.</p>
+    <div class="sub">a) \(A(1\,|\,0\,|\,0),\ B(0\,|\,1\,|\,0),\ C(0\,|\,0\,|\,1)\)  &emsp;  b) \(A(1\,|\,2\,|\,0),\ B(3\,|\,2\,|\,1),\ C(1\,|\,4\,|\,1)\)</div>
+    <details class="tip"><summary>Tipp</summary>Erst \(\vec x=\vec{OA}+r\cdot\vec{AB}+s\cdot\vec{AC}\) aufstellen (VI.2), dann wie in Muster 1 umformen. Probe: Alle drei Punkte müssen die Koordinatengleichung erfüllen.</details>
+    <details class="sol"><summary>Lösung</summary>
+      a) \(E:\ \vec x=\begin{pmatrix}1\\0\\0\end{pmatrix}+r\cdot\begin{pmatrix}-1\\1\\0\end{pmatrix}+s\cdot\begin{pmatrix}-1\\0\\1\end{pmatrix}\). I: \(-n_1+n_2=0\), II: \(-n_1+n_3=0\); mit \(n_1=1\): \(\vec n=\begin{pmatrix}1\\1\\1\end{pmatrix}\), \(d=1\): \(\ E:\ x_1+x_2+x_3=1\).<br>
+      b) \(E:\ \vec x=\begin{pmatrix}1\\2\\0\end{pmatrix}+r\cdot\begin{pmatrix}2\\0\\1\end{pmatrix}+s\cdot\begin{pmatrix}0\\2\\1\end{pmatrix}\). I: \(2n_1+n_3=0\), II: \(2n_2+n_3=0\); mit \(n_3=-2\): \(n_1=1,\ n_2=1\). \(d=1+2+0=3\): \(\ E:\ x_1+x_2-2x_3=3\). Probe \(B\): \(3+2-2=3\) ✓, \(C\): \(1+4-2=3\) ✓.
+    </details>
+  </div>
+
+  <!-- ================= STUFE B ================= -->
+  <h2 class="sec" id="stufeB">Stufe B · Anwendung</h2>
+
+  <div class="card B">
+    <h3><span class="badge bB">B1</span> Ebenen zeichnen <span style="color:var(--ink-soft);font-size:.85rem;font-weight:400">→ wie Muster 3</span></h3>
+    <p>Berechnen Sie die Spurpunkte und veranschaulichen Sie die Ebene in einem Koordinatensystem.</p>
+    <div class="sub">a) \(E:\ 2x_1+2x_2+3x_3=6\)  &emsp;  b) \(E:\ x_1+2x_2+4x_3=4\)  &emsp;  c) \(E:\ 2x_1+x_3=4\)</div>
+    <details class="tip"><summary>Tipp</summary>Jeweils zwei Koordinaten 0 setzen. Fehlt eine Variable in der Gleichung, gibt es auf dieser Achse keinen Spurpunkt – die Ebene ist parallel zu dieser Achse.</details>
+    <details class="sol"><summary>Lösung</summary>
+      <div class="fig" style="gap:10px">
+        <div>a) \(S_1(3|0|0),\ S_2(0|3|0),\ S_3(0|0|2)\)<br><svg viewBox="0 0 222 178" width="222" height="178" font-family="Georgia,serif" font-size="12" role="img" aria-label="B1a"><defs><marker id="ahB1a" markerWidth="7" markerHeight="7" refX="5" refY="3" orient="auto"><path d="M0,0 L0,6 L6,3 z" fill="#555"/></marker></defs><line x1="59.0" y1="119.2" x2="20.0" y2="158.2" stroke="#555" stroke-width="1.2" marker-end="url(#ahB1a)"/><text x="6.0" y="166.2" fill="#444">x₁</text><line x1="46.25" y1="128.95" x2="52.25" y2="128.95" stroke="#777"/><line x1="36.5" y1="138.7" x2="42.5" y2="138.7" stroke="#777"/><text x="25.5" y="142.7" fill="#888" font-size="9">2</text><line x1="26.75" y1="148.45" x2="32.75" y2="148.45" stroke="#777"/><line x1="59.0" y1="119.2" x2="189.0" y2="119.2" stroke="#555" stroke-width="1.2" marker-end="url(#ahB1a)"/><text x="193.0" y="123.2" fill="#444">x₂</text><line x1="85.0" y1="116.2" x2="85.0" y2="122.2" stroke="#777"/><line x1="111.0" y1="116.2" x2="111.0" y2="122.2" stroke="#777"/><text x="108.0" y="133.2" fill="#888" font-size="9">2</text><line x1="137.0" y1="116.2" x2="137.0" y2="122.2" stroke="#777"/><line x1="163.0" y1="116.2" x2="163.0" y2="122.2" stroke="#777"/><text x="160.0" y="133.2" fill="#888" font-size="9">4</text><line x1="59.0" y1="119.2" x2="59.0" y2="15.2" stroke="#555" stroke-width="1.2" marker-end="url(#ahB1a)"/><text x="64.0" y="19.2" fill="#444">x₃</text><line x1="56.0" y1="93.2" x2="62.0" y2="93.2" stroke="#777"/><line x1="56.0" y1="67.2" x2="62.0" y2="67.2" stroke="#777"/><text x="45.0" y="70.2" fill="#888" font-size="9">2</text><line x1="56.0" y1="41.2" x2="62.0" y2="41.2" stroke="#777"/><polygon points="29.8,148.4 137.0,119.2 59.0,67.2" fill="rgba(232,168,0,0.30)" stroke="#b98600" stroke-width="1.8"/><circle cx="29.8" cy="148.4" r="3" fill="#d62828"/><circle cx="137.0" cy="119.2" r="3" fill="#d62828"/><circle cx="59.0" cy="67.2" r="3" fill="#d62828"/><text x="214" y="170" text-anchor="end" fill="#b98600" font-weight="bold">2x₁+2x₂+3x₃=6</text></svg></div>
+        <div>b) \(S_1(4|0|0),\ S_2(0|2|0),\ S_3(0|0|1)\)<br><svg viewBox="0 0 205 161" width="205" height="161" font-family="Georgia,serif" font-size="12" role="img" aria-label="B1b"><defs><marker id="ahB1b" markerWidth="7" markerHeight="7" refX="5" refY="3" orient="auto"><path d="M0,0 L0,6 L6,3 z" fill="#555"/></marker></defs><line x1="68.8" y1="93.2" x2="20.0" y2="141.9" stroke="#555" stroke-width="1.2" marker-end="url(#ahB1b)"/><text x="6.0" y="149.9" fill="#444">x₁</text><line x1="56.0" y1="102.95" x2="62.0" y2="102.95" stroke="#777"/><line x1="46.25" y1="112.7" x2="52.25" y2="112.7" stroke="#777"/><text x="35.25" y="116.7" fill="#888" font-size="9">2</text><line x1="36.5" y1="122.45" x2="42.5" y2="122.45" stroke="#777"/><line x1="26.75" y1="132.2" x2="32.75" y2="132.2" stroke="#777"/><text x="15.75" y="136.2" fill="#888" font-size="9">4</text><line x1="68.8" y1="93.2" x2="172.8" y2="93.2" stroke="#555" stroke-width="1.2" marker-end="url(#ahB1b)"/><text x="176.8" y="97.2" fill="#444">x₂</text><line x1="94.75" y1="90.2" x2="94.75" y2="96.2" stroke="#777"/><line x1="120.75" y1="90.2" x2="120.75" y2="96.2" stroke="#777"/><text x="117.75" y="107.2" fill="#888" font-size="9">2</text><line x1="146.75" y1="90.2" x2="146.75" y2="96.2" stroke="#777"/><line x1="68.8" y1="93.2" x2="68.8" y2="15.2" stroke="#555" stroke-width="1.2" marker-end="url(#ahB1b)"/><text x="73.8" y="19.2" fill="#444">x₃</text><line x1="65.75" y1="67.2" x2="71.75" y2="67.2" stroke="#777"/><line x1="65.75" y1="41.2" x2="71.75" y2="41.2" stroke="#777"/><text x="54.75" y="44.2" fill="#888" font-size="9">2</text><polygon points="29.8,132.2 120.8,93.2 68.8,67.2" fill="rgba(232,168,0,0.30)" stroke="#b98600" stroke-width="1.8"/><circle cx="29.8" cy="132.2" r="3" fill="#d62828"/><circle cx="120.8" cy="93.2" r="3" fill="#d62828"/><circle cx="68.8" cy="67.2" r="3" fill="#d62828"/><text x="197" y="153" text-anchor="end" fill="#b98600" font-weight="bold">x₁+2x₂+4x₃=4</text></svg></div>
+        <div>c) \(S_1(2|0|0),\ S_3(0|0|4)\), parallel zur \(x_2\)-Achse<br><svg viewBox="0 0 212 194" width="212" height="194" font-family="Georgia,serif" font-size="12" role="img" aria-label="B1c"><defs><marker id="ahB1c" markerWidth="7" markerHeight="7" refX="5" refY="3" orient="auto"><path d="M0,0 L0,6 L6,3 z" fill="#555"/></marker></defs><line x1="49.2" y1="145.2" x2="20.0" y2="174.5" stroke="#555" stroke-width="1.2" marker-end="url(#ahB1c)"/><text x="6.0" y="182.5" fill="#444">x₁</text><line x1="36.5" y1="154.95000000000002" x2="42.5" y2="154.95000000000002" stroke="#777"/><line x1="26.75" y1="164.70000000000002" x2="32.75" y2="164.70000000000002" stroke="#777"/><text x="15.75" y="168.70000000000002" fill="#888" font-size="9">2</text><line x1="49.2" y1="145.2" x2="179.2" y2="145.2" stroke="#555" stroke-width="1.2" marker-end="url(#ahB1c)"/><text x="183.2" y="149.2" fill="#444">x₂</text><line x1="75.25" y1="142.20000000000002" x2="75.25" y2="148.20000000000002" stroke="#777"/><line x1="101.25" y1="142.20000000000002" x2="101.25" y2="148.20000000000002" stroke="#777"/><text x="98.25" y="159.20000000000002" fill="#888" font-size="9">2</text><line x1="127.25" y1="142.20000000000002" x2="127.25" y2="148.20000000000002" stroke="#777"/><line x1="153.25" y1="142.20000000000002" x2="153.25" y2="148.20000000000002" stroke="#777"/><text x="150.25" y="159.20000000000002" fill="#888" font-size="9">4</text><line x1="49.2" y1="145.2" x2="49.2" y2="15.2" stroke="#555" stroke-width="1.2" marker-end="url(#ahB1c)"/><text x="54.2" y="19.2" fill="#444">x₃</text><line x1="46.25" y1="119.20000000000002" x2="52.25" y2="119.20000000000002" stroke="#777"/><line x1="46.25" y1="93.20000000000002" x2="52.25" y2="93.20000000000002" stroke="#777"/><text x="35.25" y="96.20000000000002" fill="#888" font-size="9">2</text><line x1="46.25" y1="67.20000000000002" x2="52.25" y2="67.20000000000002" stroke="#777"/><line x1="46.25" y1="41.20000000000002" x2="52.25" y2="41.20000000000002" stroke="#777"/><text x="35.25" y="44.20000000000002" fill="#888" font-size="9">4</text><polygon points="29.8,164.7 49.2,41.2 127.2,41.2 107.8,164.7" fill="rgba(232,168,0,0.30)" stroke="#b98600" stroke-width="1.8" stroke-dasharray="0"/><circle cx="29.8" cy="164.7" r="3" fill="#d62828"/><circle cx="49.2" cy="41.2" r="3" fill="#d62828"/><text x="204" y="186" text-anchor="end" fill="#b98600" font-weight="bold">2x₁+x₃=4</text></svg></div>
+      </div>
+    </details>
+  </div>
+
+  <div class="card B">
+    <h3><span class="badge bB">B2</span> Besondere Lage im Koordinatensystem <span style="color:var(--ink-soft);font-size:.85rem;font-weight:400">vgl. Buch Aufgaben 6 und 9</span></h3>
+    <div class="sub">a) Geben Sie eine Koordinatengleichung an: (1) der \(x_1x_2\)-Ebene, (2) der \(x_2x_3\)-Ebene, (3) der Ebene, die parallel zur \(x_1x_2\)-Ebene ist und den Punkt \(P(1\,|\,-2\,|\,4)\) enthält.<br>
+      b) Beschreiben Sie die Lage der Ebene im Koordinatensystem: (1) \(x_2=3\), (2) \(x_1+x_3=0\).</div>
+    <details class="tip"><summary>Tipp</summary>Auf der \(x_1x_2\)-Ebene haben alle Punkte die Koordinate \(x_3=0\). Ein Normalenvektor der \(x_1x_2\)-Ebene ist \(\begin{pmatrix}0\\0\\1\end{pmatrix}\). Fehlt eine Variable, ist die Ebene parallel zur zugehörigen Achse.</details>
+    <details class="sol"><summary>Lösung</summary>
+      a) (1) \(x_3=0\); (2) \(x_1=0\); (3) \(x_3=4\).<br>
+      b) (1) Alle Punkte haben \(x_2=3\): Die Ebene ist parallel zur \(x_1x_3\)-Ebene und schneidet die \(x_2\)-Achse in \((0|3|0)\).<br>
+      (2) \(x_2\) fehlt → parallel zur \(x_2\)-Achse; \(d=0\) → der Ursprung liegt in der Ebene. Also <strong>enthält</strong> die Ebene die \(x_2\)-Achse. Sie enthält z. B. auch den Punkt \((1|0|-1)\) und halbiert den Winkel zwischen der \(x_1x_2\)- und der \(x_2x_3\)-Ebene.
+    </details>
+  </div>
+
+  <div class="card B">
+    <h3><span class="badge bB">B3</span> Dieselbe Ebene? <span style="color:var(--ink-soft);font-size:.85rem;font-weight:400">vgl. Buch Aufgabe 8</span></h3>
+    <p>Gegeben sind \(E_1:\ 2x_1+4x_2-2x_3=6\), \(E_2:\ x_1+2x_2-x_3=3\) und \(E_3:\ -x_1-2x_2+x_3=3\). Prüfen Sie, ob die Gleichungen verschiedene oder identische Ebenen beschreiben.</p>
+    <details class="tip"><summary>Tipp</summary>Vergleiche zuerst die Normalenvektoren (Vielfache?). Prüfe dann mit einem Punkt einer Ebene, ob er auch die andere Gleichung erfüllt.</details>
+    <details class="sol"><summary>Lösung</summary>
+      Die Normalenvektoren \(\begin{pmatrix}2\\4\\-2\end{pmatrix},\ \begin{pmatrix}1\\2\\-1\end{pmatrix},\ \begin{pmatrix}-1\\-2\\1\end{pmatrix}\) sind Vielfache voneinander – die Ebenen sind parallel oder identisch.<br>
+      \(E_1\) ist das Doppelte von \(E_2\) (auch \(6=2\cdot3\)) → <strong>\(E_1=E_2\)</strong>.<br>
+      Punkt \((3|0|0)\) liegt in \(E_2\); in \(E_3\): \(-3\neq3\) → \(E_3\) ist eine <strong>andere, zu \(E_2\) parallele</strong> Ebene. (Identisch wäre \(-x_1-2x_2+x_3=-3\).)
+    </details>
+  </div>
+
+  <div class="card B">
+    <h3><span class="badge bB">B4</span> Zurück zum Quader aus VI.2</h3>
+    <p>Der Quader aus VI.2 (Aufgabe B1) hat die Eckpunkte \(A(4\,|\,0\,|\,0)\), \(C(0\,|\,5\,|\,0)\) und \(D(0\,|\,0\,|\,3)\). Die Ebene \(E_1\) geht durch \(A\), \(C\) und \(D\).</p>
+    <div class="sub">a) Bestimmen Sie eine Koordinatengleichung von \(E_1\).<br>b) Was fällt Ihnen an den Spurpunkten auf? Prüfen Sie damit Ihr Ergebnis.<br>c) Liegt \(M(2\,|\,2{,}5\,|\,0)\) in \(E_1\)?</div>
+    <details class="tip"><summary>Tipp</summary>\(\vec{AC}=\begin{pmatrix}-4\\5\\0\end{pmatrix}\), \(\vec{AD}=\begin{pmatrix}-4\\0\\3\end{pmatrix}\). Wähle bei \(\vec n\) die erste Koordinate so, dass keine Brüche entstehen (z. B. \(n_1=15\)).</details>
+    <details class="sol"><summary>Lösung</summary>
+      a) I: \(-4n_1+5n_2=0\), II: \(-4n_1+3n_3=0\). Mit \(n_1=15\): \(n_2=12,\ n_3=20\). \(d=15\cdot4=60\): \(\ E_1:\ 15x_1+12x_2+20x_3=60\).<br>
+      b) Die Spurpunkte sind genau \(A\), \(C\) und \(D\): \(15\cdot4=60\) ✓, \(12\cdot5=60\) ✓, \(20\cdot3=60\) ✓.<br>
+      c) \(15\cdot2+12\cdot2{,}5+0=30+30=60\) ✓ → \(M\) liegt in \(E_1\) (vgl. VI.2 – dort war ein LGS nötig).
+    </details>
+  </div>
+
+  <!-- ================= STUFE C ================= -->
+  <h2 class="sec" id="stufeC">Stufe C · Vertiefung</h2>
+
+  <div class="card C">
+    <h3><span class="badge bC">C1</span> Eine Ebenenschar <span style="color:var(--ink-soft);font-size:.85rem;font-weight:400">vgl. Buch Aufgabe 12</span></h3>
+    <p>Gegeben ist für \(a\in\mathbb R\) die Ebenenschar \(E_a:\ x_1+ax_2+x_3=4\).</p>
+    <div class="sub">a) Ermitteln Sie, für welchen Wert von \(a\) der Punkt \(P(2\,|\,1\,|\,1)\) in \(E_a\) liegt.<br>b) Geben Sie für \(a=0\) und \(a=2\) jeweils einen Normalenvektor an.<br>c) Für welches \(a\) ist \(E_a\) parallel zur \(x_2\)-Achse? Begründen Sie.</div>
+    <details class="tip"><summary>Tipp</summary>a) Einsetzen und nach \(a\) auflösen. c) Parallel zur \(x_2\)-Achse heißt: Der Normalenvektor ist orthogonal zu \(\begin{pmatrix}0\\1\\0\end{pmatrix}\).</details>
+    <details class="sol"><summary>Lösung</summary>
+      a) \(2+a+1=4\Rightarrow a=1\).<br>
+      b) \(a=0\): \(\vec n=\begin{pmatrix}1\\0\\1\end{pmatrix}\); \(a=2\): \(\vec n=\begin{pmatrix}1\\2\\1\end{pmatrix}\).<br>
+      c) \(\begin{pmatrix}1\\a\\1\end{pmatrix}\circ\begin{pmatrix}0\\1\\0\end{pmatrix}=a=0\). Für \(a=0\) fehlt \(x_2\) in der Gleichung: \(E_0:\ x_1+x_3=4\) ist parallel zur \(x_2\)-Achse.
+    </details>
+  </div>
+
+  <div class="card C">
+    <h3><span class="badge bC">C2</span> Von der Koordinatenform zurück zur Parameterform <span style="color:var(--ink-soft);font-size:.85rem;font-weight:400">vgl. Buch-Einstieg S. 192</span></h3>
+    <p>Gegeben ist \(E:\ 2x_1-x_2+x_3=4\). Geben Sie eine Gleichung von \(E\) in Parameterform an. Beschreiben Sie Ihr Vorgehen.</p>
+    <details class="tip"><summary>Tipp</summary>Bestimme drei Punkte, die die Gleichung erfüllen – am einfachsten die Spurpunkte. Stelle dann wie in VI.2 die Ebene durch drei Punkte auf.</details>
+    <details class="sol"><summary>Lösung</summary>
+      Spurpunkte: \(S_1(2|0|0)\), \(S_2(0|-4|0)\), \(S_3(0|0|4)\).<br>
+      \(E:\ \vec x=\begin{pmatrix}2\\0\\0\end{pmatrix}+r\cdot\begin{pmatrix}-2\\-4\\0\end{pmatrix}+s\cdot\begin{pmatrix}-2\\0\\4\end{pmatrix}\).<br>
+      Kontrolle: \(\begin{pmatrix}2\\-1\\1\end{pmatrix}\circ\begin{pmatrix}-2\\-4\\0\end{pmatrix}=0\) und \(\begin{pmatrix}2\\-1\\1\end{pmatrix}\circ\begin{pmatrix}-2\\0\\4\end{pmatrix}=0\) ✓
+    </details>
+  </div>
+
+  <div class="card C">
+    <h3><span class="badge bC">C3</span> Wahr oder falsch?</h3>
+    <p>Beurteilen Sie die Aussage und begründen Sie.</p>
+    <div class="sub">a) \(\vec n=\begin{pmatrix}1\\2\\2\end{pmatrix}\) ist ein Normalenvektor von \(E:\ \vec x=\begin{pmatrix}2\\1\\1\end{pmatrix}+r\cdot\begin{pmatrix}2\\-1\\0\end{pmatrix}+s\cdot\begin{pmatrix}0\\1\\-1\end{pmatrix}\).<br>
+      b) Die Gleichungen \(x_1+2x_2+2x_3=6\) und \(2x_1+4x_2+4x_3=6\) beschreiben dieselbe Ebene.<br>
+      c) Die Ebene \(E:\ 3x_2=6\) ist parallel zur \(x_1x_3\)-Ebene.</div>
+    <details class="tip"><summary>Tipp</summary>a) Zwei Skalarprodukte berechnen. b) Gleichung mit 2 multiplizieren und vergleichen. c) Welche Koordinate haben alle Punkte?</details>
+    <details class="sol"><summary>Lösung</summary>
+      a) <strong>Wahr:</strong> \(2-2+0=0\) und \(0+2-2=0\).<br>
+      b) <strong>Falsch:</strong> Das Doppelte der ersten Gleichung ist \(2x_1+4x_2+4x_3=12\). Gleicher Normalenvektor, aber andere rechte Seite → parallele, verschiedene Ebenen.<br>
+      c) <strong>Wahr:</strong> \(3x_2=6\Leftrightarrow x_2=2\). Alle Punkte haben \(x_2=2\).
+    </details>
+  </div>
+
+  <!-- ================= CHECKLISTE ================= -->
+  <h2 class="sec" id="check">Das kann ich</h2>
+  <div class="card">
+    <ul class="checklist">
+      <li><input type="checkbox"><span>Ich kann erklären, was ein Normalenvektor ist und warum er zu beiden Spannvektoren orthogonal sein muss.</span><span class="ztag bM">Grundwissen</span></li>
+      <li><input type="checkbox"><span>Ich kann einen Normalenvektor aus einer Koordinatengleichung ablesen.</span><span class="ztag bA">A1</span></li>
+      <li><input type="checkbox"><span>Ich kann mit der Koordinatengleichung eine Punktprobe durchführen.</span><span class="ztag bA">A1 · B4</span></li>
+      <li><input type="checkbox"><span>Ich kann eine Ebene von der Parameterform in die Koordinatenform umformen.</span><span class="ztag bA">A2 · A3</span></li>
+      <li><input type="checkbox"><span>Ich kann Spurpunkte berechnen und eine Ebene zeichnen – auch wenn sie zu einer Achse parallel ist.</span><span class="ztag bB">B1</span></li>
+      <li><input type="checkbox"><span>Ich erkenne besondere Lagen (Koordinatenebenen, parallele Ebenen, gleiche Ebenen).</span><span class="ztag bB">B2 · B3 · C3</span></li>
+      <li><input type="checkbox"><span>Ich kann mit Ebenenscharen umgehen und eine Koordinatenform in eine Parameterform umwandeln.</span><span class="ztag bC">C1 · C2</span></li>
+    </ul>
+  </div>
+</div>
+<footer>FBG Schwerte · Mathematik GK · Kapitel VI.3 · Aufgaben orientiert an Buch S. 192–194</footer>
+
+
+<script>
+window.addEventListener('load',()=>{
+  renderMathInElement(document.body,{delimiters:[{left:'\\[',right:'\\]',display:true},{left:'\\(',right:'\\)',display:false}],throwOnError:false});
+  document.querySelectorAll('.card.M').forEach(card=>{
+    const steps=[...card.querySelectorAll('.st')]; let k=0;
+    const nb=card.querySelector('[data-next]'), ab=card.querySelector('[data-all]');
+    const upd=()=>{ steps.forEach((s,i)=>s.classList.toggle('show',i<k)); nb.disabled=k>=steps.length; nb.textContent=k>=steps.length?'Alle Schritte gezeigt':`Nächster Schritt (${k+1}/${steps.length})`; };
+    nb.onclick=()=>{ k=Math.min(steps.length,k+1); upd(); };
+    ab.onclick=()=>{ k=steps.length; upd(); };
+    upd();
+  });
+});
+</script>
+</body>
+</html>

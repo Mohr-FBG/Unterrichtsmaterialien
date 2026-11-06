@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ebenen-Explorer – Szene 2</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+<style>
+  :root{
+    --gold:#e8a800; --gold-deep:#b98600; --gold-soft:#fff6dc;
+    --ink:#1f2933; --ink-soft:#5b6770; --line:#e3e6ea; --bg:#f7f7f4; --card:#ffffff;
+    --blue:#2c6fbb; --green:#2e9e4f; --purple:#8e44ad; --orange:#e67e22; --red:#d62828;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;background:var(--bg);color:var(--ink);line-height:1.5;font-size:17px}
+  header{background:var(--gold);color:#fff;padding:18px 20px 16px}
+  header .eyebrow{font-size:.82rem;letter-spacing:.06em;text-transform:uppercase;opacity:.92}
+  header h1{margin:4px 0 0;font-size:1.6rem;line-height:1.2}
+  header nav{margin-top:8px;font-size:.9rem}
+  header nav a{color:#fff;text-decoration:underline;margin-right:14px}
+  .wrap{max-width:1280px;margin:0 auto;padding:16px}
+  .layout{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:18px;align-items:start}
+  @media (max-width:900px){.layout{grid-template-columns:1fr}}
+  .stage{position:sticky;top:10px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:10px}
+  @media (max-width:900px){.stage{position:sticky;top:0;z-index:5;padding:6px;box-shadow:0 4px 10px rgba(0,0,0,.08)} #scene{max-height:40vh} .stage .legend{display:none}}
+  #scene{width:100%;height:auto;display:block;touch-action:none;cursor:grab;background:linear-gradient(#eef4fb,#fbfcfd);border-radius:10px}
+  #scene:active{cursor:grabbing}
+  .stage-bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:8px;font-size:.88rem;color:var(--ink-soft)}
+  .btn{border:1px solid var(--line);background:#fff;border-radius:8px;padding:6px 12px;font-size:.92rem;cursor:pointer;color:var(--ink)}
+  .btn:hover{border-color:var(--gold)}
+  .btn.primary{background:var(--gold);border-color:var(--gold);color:#fff;font-weight:600}
+  .btn.small{padding:3px 9px;font-size:.84rem}
+  .btn.on{background:var(--gold-soft);border-color:var(--gold);font-weight:600}
+  .btn:disabled{opacity:.45;cursor:default}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 18px;margin-bottom:14px}
+  .card h2{margin:0 0 8px;font-size:1.2rem;display:flex;align-items:center;gap:10px}
+  .num{display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:50%;background:var(--gold);color:#fff;font-size:1rem;flex-shrink:0}
+  .steps-nav{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
+  .steps-nav button{border:2px solid var(--line);background:#fff;border-radius:999px;padding:4px 12px;font-size:.86rem;cursor:pointer;color:var(--ink)}
+  .steps-nav button.active{border-color:var(--gold);background:var(--gold-soft);font-weight:700}
+  .steps-nav button.done{border-color:#b9e2c5}
+  .steps-nav button.done::after{content:" ✓";color:var(--green)}
+  .step{display:none}
+  .step.active{display:block}
+  .task{background:#f4f8fc;border-left:4px solid var(--blue);padding:8px 12px;border-radius:6px;margin:10px 0}
+  .merk{background:#eef4fb;border:1px solid #bcd3ec;border-radius:10px;padding:10px 14px;margin:10px 0}
+  .merk strong{color:#1d4f8c}
+  .book{background:var(--gold-soft);border:1px solid #f1dc9c;border-radius:10px;padding:10px 14px;margin:10px 0}
+  .formula{background:#fafafa;border:1px solid var(--line);border-radius:8px;padding:8px 10px;margin:8px 0;overflow-x:auto}
+  .formula .katex-display{margin:.3em 0}
+  .slider-row{display:grid;grid-template-columns:34px 1fr 56px;gap:10px;align-items:center;margin:6px 0}
+  .slider-row input[type=range]{width:100%}
+  .slider-row .val{font-variant-numeric:tabular-nums;text-align:right;font-weight:600}
+  .fb{margin-top:8px;padding:8px 10px;border-radius:8px;font-size:.95rem}
+  .fb:empty{display:none}
+  .fb.ok{background:#e8f6ec;color:#1e6b35;border:1px solid #b9e2c5}
+  .fb.no{background:#fdeeee;color:#8a1f1f;border:1px solid #f1c0c0}
+  .fb.info{background:#f4f8fc;color:#234;border:1px solid #cfe0f1}
+  .mc{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0}
+  .row{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:8px 0}
+  .vin{display:inline-flex;flex-direction:column;gap:3px;vertical-align:middle;border-left:2px solid #333;border-right:2px solid #333;border-radius:8px;padding:3px 6px}
+  .vin input,.pin input,.sin input{width:56px;padding:4px;font-size:1rem;text-align:center;border:1px solid #c9ced4;border-radius:6px}
+  input.good{border-color:var(--green)!important;background:#eefaf1}
+  input.bad{border-color:var(--red)!important;background:#fff1f1}
+  .pin{display:inline-flex;align-items:center;gap:3px}
+  select{font-size:.95rem;padding:4px 6px;border:1px solid #c9ced4;border-radius:6px;background:#fff}
+  .lueckentext{line-height:2.2}
+  .navbtns{display:flex;justify-content:space-between;margin-top:14px}
+  .legend{display:flex;flex-wrap:wrap;gap:10px;font-size:.84rem;color:var(--ink-soft)}
+  .legend > span::before{content:"";display:inline-block;width:12px;height:4px;border-radius:2px;margin-right:5px;vertical-align:middle;background:var(--c)}
+  .muted{color:var(--ink-soft);font-size:.9rem}
+  .hidden{display:none!important}
+  .lgs{display:grid;grid-template-columns:auto 1fr;gap:4px 10px;align-items:center}
+  .next{display:inline-block;background:var(--gold);color:#fff;text-decoration:none;font-weight:700;padding:10px 16px;border-radius:10px;margin:6px 6px 0 0}
+  footer{text-align:center;color:var(--ink-soft);font-size:.82rem;padding:20px}
+  @media (max-width:520px){ .katex{font-size:.95em} body{font-size:16px} .wrap{padding:10px} .card{padding:12px} }
+  .lgs3 .row{margin:4px 0}
+  .derive .st{display:none;padding:4px 0 4px 12px;border-left:3px solid #d8dde5;margin:6px 0}
+  .derive .st.show{display:block}
+  .found{margin:8px 0;font-size:.92rem;color:var(--ink-soft)}
+  .pill{display:inline-block;background:#eaf7ef;color:#1e6b35;border:1px solid #b9e2c5;border-radius:999px;padding:1px 9px;margin:2px;font-weight:600}
+</style>
+</head>
+<body>
+<header>
+  <div class="eyebrow">Kapitel VI.3 · Koordinatenform und Normalenvektor · Simulation</div>
+  <h1>Ebenen-Explorer – Szene 2: Der Normalenvektor</h1>
+  <nav><a href="szene-1-parameterform.html">← Szene 1: Parameterform</a><a href="../../vi-3-koordinatenform-normalenvektor/index.html">Übersicht VI.3</a><a href="../../index.html">Übersicht GK</a></nav>
+</header>
+
+<div class="wrap">
+<div class="layout">
+
+  <!-- ===== 3D-Bühne ===== -->
+  <div class="stage">
+    <svg id="scene" viewBox="0 0 640 520" aria-label="3D-Ansicht"></svg>
+    <div class="stage-bar">
+      <button class="btn small" id="resetView">Ansicht zurücksetzen</button>
+      <button class="btn small" id="zoomIn">＋</button>
+      <button class="btn small" id="zoomOut">－</button>
+      <button class="btn small" id="sideView">Blick von der Seite</button>
+      <span>Wischen/Ziehen dreht die Ansicht.</span>
+    </div>
+    <div class="stage-bar legend">
+      <span style="--c:#d62828">Normalenvektor \(\vec n\)</span>
+      <span style="--c:var(--green)">\(\vec u\)</span>
+      <span style="--c:var(--purple)">\(\vec v\)</span>
+      <span style="--c:var(--orange)">\(\vec x-\vec p\)</span>
+    </div>
+  </div>
+
+  <!-- ===== Schritte ===== -->
+  <div>
+    <div class="steps-nav" id="stepsNav"></div>
+
+    <!-- 1 -->
+    <section class="step card" data-step="1">
+      <h2><span class="num">1</span>Ein Vektor, der senkrecht auf der Ebene steht</h2>
+      <div class="book"><strong>Leitfrage aus dem Buch (S. 192):</strong> Emil behauptet: „Die Gleichung \(2x_1-x_2+x_3=0\) beschreibt eine Ebene.“ Kann eine einzige Gleichung ohne Parameter eine Ebene beschreiben? Darauf kommen wir am Ende zurück.</div>
+      <p>Gegeben ist die Ebene</p>
+      <div class="formula" id="f1E"></div>
+      <p>Stell dir die Ebene als Tischplatte vor und einen Bleistift, der senkrecht darauf steht. Der rote Vektor \(\vec n\) startet im Stützpunkt \(P\).</p>
+      <div class="slider-row"><span class="m" data-tex="n_1"></span><input type="range" id="n1" min="-3" max="3" step="1" value="0"><span class="val" id="n1v">0</span></div>
+      <div class="slider-row"><span class="m" data-tex="n_2"></span><input type="range" id="n2" min="-3" max="3" step="1" value="0"><span class="val" id="n2v">0</span></div>
+      <div class="slider-row"><span class="m" data-tex="n_3"></span><input type="range" id="n3" min="-3" max="3" step="1" value="2"><span class="val" id="n3v">2</span></div>
+      <div class="formula" id="f1dots"></div>
+      <div class="task">Stelle \(\vec n\) so ein, dass er <strong>senkrecht auf der Ebene</strong> steht. Nutze auch „Blick von der Seite“. Achte auf die beiden Skalarprodukte.</div>
+      <div class="fb" id="fb1a"></div>
+      <div id="q1" class="hidden">
+        <div class="task">Woran erkennt man <strong>rechnerisch</strong>, dass \(\vec n\) senkrecht auf der Ebene steht?</div>
+        <div class="mc" id="mc1"></div>
+        <div class="fb" id="fb1"></div>
+      </div>
+    </section>
+
+    <!-- 2 -->
+    <section class="step card" data-step="2">
+      <h2><span class="num">2</span>Wie viele Normalenvektoren gibt es?</h2>
+      <p>Ein Vektor \(\vec n\neq\vec o\), der zu beiden Spannvektoren orthogonal ist, heißt <strong>Normalenvektor</strong> der Ebene. Im Bild: \(\vec n=\begin{pmatrix}1\\2\\2\end{pmatrix}\).</p>
+      <div class="task">Multipliziere \(\vec n\) mit verschiedenen Zahlen \(k\). Steht \(k\cdot\vec n\) immer noch senkrecht auf der Ebene?</div>
+      <div class="mc" id="kChoice"></div>
+      <div class="formula" id="f2"></div>
+      <div class="mc" id="mc2"></div>
+      <div class="fb" id="fb2"></div>
+    </section>
+
+    <!-- 3 -->
+    <section class="step card" data-step="3">
+      <h2><span class="num">3</span>Den Normalenvektor berechnen</h2>
+      <p>Probieren ist mühsam. So geht das Buch vor (Beispiel 1, S. 193): Ein Normalenvektor \(\vec n=\begin{pmatrix}n_1\\n_2\\n_3\end{pmatrix}\) muss zu \(\vec u\) <em>und</em> zu \(\vec v\) orthogonal sein:</p>
+      <div class="formula" id="f3a"></div>
+      <div class="task"><strong>a)</strong> Rechne die beiden Skalarprodukte aus und trage die Koeffizienten ein.</div>
+      <div class="lgs3" id="lgs3"></div>
+      <div class="row"><button class="btn primary" id="chk3a">Prüfen</button><button class="btn" id="tip3a">Tipp</button></div>
+      <div class="fb" id="fb3a"></div>
+      <div id="part3b" class="hidden">
+        <div class="task"><strong>b)</strong> Zwei Gleichungen, drei Unbekannte – eine Koordinate darf man frei wählen, weil ein Normalenvektor beliebig lang sein darf. Wähle \(n_1=1\) und berechne \(n_2\) und \(n_3\).</div>
+        <div class="row sin"><span class="m" data-tex="n_1=1,"></span><span class="m" data-tex="n_2="></span><input id="n2in" inputmode="decimal"><span class="m" data-tex="n_3="></span><input id="n3in" inputmode="decimal"><button class="btn primary" id="chk3b">Prüfen</button><button class="btn" id="tip3b">Tipp</button></div>
+        <div class="fb" id="fb3b"></div>
+      </div>
+    </section>
+
+    <!-- 4 -->
+    <section class="step card" data-step="4">
+      <h2><span class="num">4</span>Punkt und Normalenvektor legen die Ebene fest</h2>
+      <p>Eine Ebene hat viele Paare von Spannvektoren. Wähle ein anderes Paar – alle sind orthogonal zu \(\vec n=\begin{pmatrix}1\\2\\2\end{pmatrix}\).</p>
+      <div class="mc" id="pairChoice"></div>
+      <div class="formula" id="f4"></div>
+      <p>Jetzt bleibt \(\vec n\) gleich, aber der Stützpunkt ändert sich:</p>
+      <div class="mc" id="pChoice"></div>
+      <div class="task">Was legt eine Ebene eindeutig fest?</div>
+      <div class="mc" id="mc4"></div>
+      <div class="fb" id="fb4"></div>
+    </section>
+
+    <!-- 5 -->
+    <section class="step card" data-step="5">
+      <h2><span class="num">5</span>Liegt der Punkt X in der Ebene? Das Skalarprodukt verrät es</h2>
+      <p>Verbinde den Stützpunkt \(P\) mit einem Punkt \(X\). Der orange Verbindungsvektor ist \(\vec{PX}=\vec x-\vec p\).</p>
+      <div class="row"><span class="muted">Punkt wählen:</span><div class="mc" id="xPresets" style="margin:0"></div></div>
+      <div class="slider-row"><span class="m" data-tex="x_1"></span><input type="range" id="x1" min="-1" max="6" step="0.5" value="4"><span class="val" id="x1v">4</span></div>
+      <div class="slider-row"><span class="m" data-tex="x_2"></span><input type="range" id="x2" min="-1" max="6" step="0.5" value="3"><span class="val" id="x2v">3</span></div>
+      <div class="slider-row"><span class="m" data-tex="x_3"></span><input type="range" id="x3" min="-1" max="6" step="0.5" value="2"><span class="val" id="x3v">2</span></div>
+      <div class="formula" id="f5"></div>
+      <div class="fb" id="fb5a"></div>
+      <div class="task">Finde mit den Reglern <strong>drei verschiedene</strong> Punkte, die in der Ebene liegen. Beobachte dabei das Skalarprodukt \((\vec x-\vec p)\circ\vec n\) und den Winkel zwischen den Vektoren.</div>
+      <div class="found" id="found"></div>
+      <div id="q5" class="hidden">
+        <div class="task">Wann liegt \(X\) in der Ebene?</div>
+        <div class="mc" id="mc5"></div>
+        <div class="fb" id="fb5"></div>
+      </div>
+    </section>
+
+    <!-- 6 -->
+    <section class="step card" data-step="6">
+      <h2><span class="num">6</span>Normalenform und Koordinatengleichung</h2>
+      <div class="merk"><strong>Normalenform:</strong> Ist \(\vec p\) ein Stützvektor und \(\vec n\) ein Normalenvektor der Ebene \(E\), dann gilt für alle Punkte \(X\) der Ebene
+        <div style="text-align:center;margin:6px 0"><span class="m" data-tex="E:\ (\vec x-\vec p)\circ\vec n=0"></span></div></div>
+      <p>Diese Gleichung kann man umformen (wie im Buch S. 192). Decke Schritt für Schritt auf:</p>
+      <div class="derive" id="derive">
+        <div class="st"><span class="m" data-tex="(\vec x-\vec p)\circ\vec n=0\qquad|\ \text{ausmultiplizieren}"></span></div>
+        <div class="st"><span class="m" data-tex="\vec x\circ\vec n-\vec p\circ\vec n=0\qquad|\ +\vec p\circ\vec n"></span></div>
+        <div class="st"><span class="m" data-tex="\vec x\circ\vec n=\vec p\circ\vec n"></span></div>
+        <div class="st"><span class="m" data-tex="\begin{pmatrix}x_1\\x_2\\x_3\end{pmatrix}\circ\begin{pmatrix}1\\2\\2\end{pmatrix}=\begin{pmatrix}2\\1\\1\end{pmatrix}\circ\begin{pmatrix}1\\2\\2\end{pmatrix}"></span></div>
+      </div>
+      <div class="row"><button class="btn primary" id="nextDer">Nächster Schritt</button></div>
+      <div id="part6b" class="hidden">
+        <div class="task">Rechne beide Skalarprodukte aus. Wie lautet die Gleichung?</div>
+        <div class="row sin"><input id="ca" inputmode="decimal"><span class="m" data-tex="x_1+"></span><input id="cb" inputmode="decimal"><span class="m" data-tex="x_2+"></span><input id="cc" inputmode="decimal"><span class="m" data-tex="x_3="></span><input id="cd" inputmode="decimal"><button class="btn primary" id="chk6">Prüfen</button><button class="btn" id="tip6">Tipp</button></div>
+        <div class="fb" id="fb6"></div>
+      </div>
+      <div id="part6c" class="hidden">
+        <div class="merk"><strong>Koordinatenform:</strong> \(E:\ ax_1+bx_2+cx_3=d\). Die Koeffizienten \(a,b,c\) sind die Koordinaten eines Normalenvektors: \(\vec n=\begin{pmatrix}a\\b\\c\end{pmatrix}\). Die Zahl \(d\) erhält man, indem man einen Punkt der Ebene einsetzt: \(d=\vec p\circ\vec n\).</div>
+        <div class="task"><strong>Punktprobe jetzt ganz schnell:</strong> Koordinaten einsetzen und prüfen, ob 6 herauskommt. Liegt der Punkt in \(E:\ x_1+2x_2+2x_3=6\)?</div>
+        <div id="pp6"></div>
+        <div class="task">Lies einen Normalenvektor der Ebene \(F:\ 3x_1-x_2+4x_3=7\) ab.</div>
+        <div class="mc" id="mc6"></div>
+        <div class="fb" id="fb6c"></div>
+      </div>
+    </section>
+
+    <!-- 7 -->
+    <section class="step card" data-step="7">
+      <h2><span class="num">7</span>Das Rezept: Von der Parameterform zur Koordinatengleichung</h2>
+      <div class="merk"><strong>So geht's (Buch Beispiel 1):</strong><br>
+        ① Normalenvektor bestimmen: \(\vec n\circ\vec u=0\) und \(\vec n\circ\vec v=0\) aufstellen, eine Koordinate frei wählen, die anderen berechnen.<br>
+        ② Ansatz \(n_1x_1+n_2x_2+n_3x_3=d\).<br>
+        ③ \(d\) berechnen, indem man den Stützpunkt einsetzt.</div>
+      <p>Probiere es an einer neuen Ebene:</p>
+      <div class="formula" id="f7E"></div>
+      <div class="task"><strong>① a)</strong> Stelle die beiden Gleichungen auf.</div>
+      <div class="lgs3" id="lgs7"></div>
+      <div class="row"><button class="btn primary" id="chk7a">Prüfen</button><button class="btn" id="tip7a">Tipp</button></div>
+      <div class="fb" id="fb7a"></div>
+      <div id="part7b" class="hidden">
+        <div class="task"><strong>① b)</strong> Wähle \(n_2=1\) und berechne \(n_1\) und \(n_3\).</div>
+        <div class="row sin"><span class="m" data-tex="n_1="></span><input id="m1in" inputmode="decimal"><span class="m" data-tex="n_2=1,"></span><span class="m" data-tex="n_3="></span><input id="m3in" inputmode="decimal"><button class="btn primary" id="chk7b">Prüfen</button><button class="btn" id="tip7b">Tipp</button></div>
+        <div class="fb" id="fb7b"></div>
+      </div>
+      <div id="part7c" class="hidden">
+        <div class="task"><strong>② und ③</strong> Setze den Stützpunkt in den Ansatz ein und berechne \(d\).</div>
+        <div class="row sin"><span class="m" data-tex="-x_1+x_2+x_3=d,\quad d="></span><input id="d7in" inputmode="decimal"><button class="btn primary" id="chk7c">Prüfen</button><button class="btn" id="tip7c">Tipp</button></div>
+        <div class="fb" id="fb7c"></div>
+      </div>
+      <div id="part7d" class="hidden">
+        <div class="task"><strong>Zurück zu Emil:</strong> Beschreibt \(2x_1-x_2+x_3=0\) eine Ebene?</div>
+        <div class="mc" id="mc7"></div>
+        <div class="fb" id="fb7"></div>
+      </div>
+      <div class="muted" style="margin-top:12px">Weiter geht es mit dem Übungspaket zu VI.3.</div>
+    </section>
+
+    <div class="navbtns"><button class="btn" id="prev">← Zurück</button><button class="btn primary" id="next">Weiter →</button></div>
+  </div>
+</div>
+</div>
+<footer>FBG Schwerte · Mathematik GK · Kapitel VI.3 Koordinatenform und Normalenvektor</footer>
+
+<script type="module">
+/* ---------- Hilfen ---------- */
+const $=id=>document.getElementById(id);
+const add=(a,b)=>a.map((x,i)=>x+b[i]), mul=(k,a)=>a.map(x=>k*x), sub=(a,b)=>a.map((x,i)=>x-b[i]);
+const cross=(a,b)=>[a[1]*b[2]-a[2]*b[1],a[2]*b[0]-a[0]*b[2],a[0]*b[1]-a[1]*b[0]];
+const isZero=v=>v.every(x=>Math.abs(x)<1e-9);
+const collinear=(a,b)=>isZero(cross(a,b));
+const fmt=(x,d=2)=>{let v=Math.round(x*10**d)/10**d; if(Object.is(v,-0))v=0; return String(v).replace('.',',').replace('-','−');};
+const tn=(x,d=2)=>{let v=Math.round(x*10**d)/10**d; if(Object.is(v,-0))v=0; return String(v).replace('.','{,}');};
+const col=v=>`\\begin{pmatrix}${v.map(x=>tn(x)).join('\\\\')}\\end{pmatrix}`;
+const pt3=(n,v)=>`${n}(${v.map(x=>tn(x)).join('\\,|\\,')})`;
+function tex(el,s,d=false){ if(window.katex) katex.render(s,el,{throwOnError:false,displayMode:d}); else el.textContent=s; }
+function renderMath(root=document){ root.querySelectorAll('.m[data-tex]').forEach(el=>tex(el,el.dataset.tex));
+  root.querySelectorAll('.legend span').forEach(el=>{ if(el.dataset.done) return; el.dataset.done=1; el.innerHTML=el.innerHTML.replace(/\\\((.+?)\\\)/g,(m,t)=>{ try{return katex.renderToString(t);}catch(e){return t;} }); }); }
+function say(id,html,cls){ const e=$(id); e.className='fb '+cls; e.innerHTML=html; renderMath(e); if(window.renderMathInElement) renderMathInElement(e,{delimiters:[{left:'\\(',right:'\\)',display:false}],throwOnError:false}); }
+function readNum(s){ s=String(s??'').trim().replace(/−/g,'-').replace(',','.'); if(s==='') return null; if(/^[+-]?\d+\/\d+$/.test(s)){const [a,b]=s.split('/'); return +a/+b;} const v=Number(s); return isNaN(v)?null:v; }
+function mc(containerId,options,correct,fbId,okText,noTexts={},onOk){
+  const c=$(containerId); c.innerHTML='';
+  options.forEach(o=>{ const b=document.createElement('button'); b.className='btn'; b.textContent=o; b.onclick=()=>{
+    if(o===correct){ say(fbId,okText,'ok'); markDone(); onOk&&onOk(); }
+    else say(fbId,noTexts[o]||'Noch nicht. Beobachte die Bewegung im Bild noch einmal genau.','no'); }; c.append(b); });
+}
+/* ---------- 3D ---------- */
+const W=640,H=520;
+let CENTER=[3,0,1], SCALE=30;
+function P(p){ const q=sub(p,CENTER); const sp=Math.sin(st.phi),cp=Math.cos(st.phi);
+  const h=-q[0]*sp+q[1]*cp, d=q[0]*cp+q[1]*sp; const v=q[2]*Math.cos(st.theta)-d*Math.sin(st.theta);
+  const s=SCALE*st.zoom; return [W/2+s*h, H/2+10-s*v]; }
+const pts=p=>P(p).map(v=>v.toFixed(1)).join(',');
+function line(a,b,c,w=2,dash=''){const[x1,y1]=P(a),[x2,y2]=P(b);return `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${c}" stroke-width="${w}" ${dash?`stroke-dasharray="${dash}"`:''} stroke-linecap="round"/>`;}
+function arrow(a,b,c,w=3,dash=''){const[x1,y1]=P(a),[x2,y2]=P(b);const dx=x2-x1,dy=y2-y1,L=Math.hypot(dx,dy);if(L<2)return'';
+  const ux=dx/L,uy=dy/L,hl=Math.min(13,L*.45),hw=hl*.5,bx=x2-ux*hl,by=y2-uy*hl;
+  return `<line x1="${x1}" y1="${y1}" x2="${bx}" y2="${by}" stroke="${c}" stroke-width="${w}" ${dash?`stroke-dasharray="${dash}"`:''} stroke-linecap="round"/><polygon points="${x2},${y2} ${bx-uy*hw},${by+ux*hw} ${bx+uy*hw},${by-ux*hw}" fill="${c}"/>`;}
+function label(p,t,c='#1f2933',dx=7,dy=-7,size=15){const[x,y]=P(p);return `<text x="${x+dx}" y="${y+dy}" fill="${c}" font-size="${size}" font-weight="600" font-family="Georgia,serif" paint-order="stroke" stroke="#fff" stroke-width="3">${t}</text>`;}
+function dot(p,c,r=5,fill=null){const[x,y]=P(p);return `<circle cx="${x}" cy="${y}" r="${r}" fill="${fill??c}" stroke="${c}" stroke-width="2"/>`;}
+function planePatch(p,u,v,r0,r1,s0,s1,steps=true){
+  const q=(r,s)=>add(p,add(mul(r,u),mul(s,v)));
+  let g=`<polygon points="${[q(r0,s0),q(r1,s0),q(r1,s1),q(r0,s1)].map(pts).join(' ')}" fill="rgba(232,168,0,0.13)" stroke="rgba(185,134,0,0.6)" stroke-width="1.2"/>`;
+  if(steps){ for(let r=Math.ceil(r0);r<=r1;r++) g+=line(q(r,s0),q(r,s1),'rgba(142,68,173,0.35)',1);
+             for(let s=Math.ceil(s0);s<=s1;s++) g+=line(q(r0,s),q(r1,s),'rgba(46,158,79,0.35)',1); }
+  return g;
+}
+function fit(points){
+  const all=points.concat([[0,0,0]]); const mn=[0,1,2].map(i=>Math.min(...all.map(p=>p[i]))), mx=[0,1,2].map(i=>Math.max(...all.map(p=>p[i])));
+  CENTER=mn.map((m,i)=>(m+mx[i])/2); const ext=Math.max(...mx.map((m,i)=>m-mn[i]),4);
+  SCALE=Math.max(16,Math.min(42,330/ext));
+}
+function axes(len){
+  const O=[0,0,0]; let g='';
+  g+=arrow(O,[len[0],0,0],'#555',1.5)+arrow(O,[0,len[1],0],'#555',1.5)+arrow(O,[0,0,len[2]],'#555',1.5);
+  g+=label([len[0],0,0],'x₁','#333',4,14)+label([0,len[1],0],'x₂','#333',4,-4)+label([0,0,len[2]],'x₃','#333',6,4);
+  return g;
+}
+
+/* ---------- Daten ---------- */
+const PP=[2,1,1], UU=[2,-1,0], VV=[0,1,-1], NN=[1,2,2], DD=6;
+const PAIRS=[
+  {lab:'u = (2|−1|0), v = (0|1|−1)', u:[2,-1,0], v:[0,1,-1]},
+  {lab:'u = (2|0|−1), v = (2|−2|1)', u:[2,0,-1], v:[2,-2,1]},
+  {lab:'u = (0|1|−1), v = (2|−2|1)', u:[0,1,-1], v:[2,-2,1]},
+];
+const PCHOICE=[{lab:'Stützpunkt P(2|1|1)', p:[2,1,1]},{lab:'anderer Punkt Q(2|1|3)', p:[2,1,3]}];
+const XPRE=[[4,3,2],[4,1,0],[0,0,3],[1,0,0]];
+const E7={p:[1,0,2], u:[1,1,0], v:[0,1,-1]};
+
+/* ---------- Zustand ---------- */
+const st={phi:0.62,theta:0.38,zoom:1,step:1,k:1,pair:0,pch:0,found:[],der:0,lastPair:[]};
+const done=new Set();
+const dot3=(a,b)=>a[0]*b[0]+a[1]*b[1]+a[2]*b[2];
+const len=a=>Math.hypot(...a);
+const unit=a=>{const l=len(a); return l<1e-12?[0,0,0]:mul(1/l,a);};
+
+/* ---------- 3D-Zusätze ---------- */
+function rightAngle(p,a,b,s=0.35,c='#d62828'){
+  const A=add(p,mul(s,unit(a))), B=add(p,mul(s,unit(b))), C=add(A,mul(s,unit(b)));
+  return `<polyline points="${[A,C,B].map(pts).join(' ')}" fill="none" stroke="${c}" stroke-width="1.6"/>`;
+}
+function plane(p,u,v,r0=-1.2,r1=2.2,s0=-2,s1=2,fill='rgba(232,168,0,0.15)',stroke='rgba(185,134,0,0.6)'){
+  const q=(r,s)=>add(p,add(mul(r,u),mul(s,v)));
+  return `<polygon points="${[q(r0,s0),q(r1,s0),q(r1,s1),q(r0,s1)].map(pts).join(' ')}" fill="${fill}" stroke="${stroke}" stroke-width="1.2"/>`;
+}
+function nScaled(n){ const l=len(n); return l<1e-9?n:mul(Math.min(1, 2.4/l)*1,n); }
+
+function render(){
+  let g=''; const s=st.step;
+  fit([[0,0,0],[6,0,0],[0,4,0],[0,0,4],add(PP,mul(1.2,NN))]);
+  g+=axes([6.5,4.5,4.5]);
+  if(s===1||s===2||s===3){
+    g+=plane(PP,UU,VV);
+    g+=arrow(PP,add(PP,UU),'#2e9e4f',3)+label(add(PP,UU),'u⃗','#2e9e4f',6,12);
+    g+=arrow(PP,add(PP,VV),'#8e44ad',3)+label(add(PP,VV),'v⃗','#8e44ad',6,14);
+    let n = s===1 ? [+$('n1').value,+$('n2').value,+$('n3').value] : (s===2? mul(st.k,NN) : NN);
+    if(s===3 && !st.ok3) n=null;
+    if(n && !isZero(n)){
+      const shown = s===2 ? n : nScaled(n);
+      if(Math.abs(dot3(n,UU))<1e-9) g+=rightAngle(PP,n,UU);
+      if(Math.abs(dot3(n,VV))<1e-9) g+=rightAngle(PP,n,VV);
+      g+=arrow(PP,add(PP,shown),'#d62828',4)+label(add(PP,shown),'n⃗','#d62828',8,-6);
+    }
+    g+=dot(PP,'#1f2933',4)+label(PP,'P','#1f2933',-16,14);
+  }
+  if(s===4){
+    const pr=PAIRS[st.pair], p=PCHOICE[st.pch].p;
+    if(st.pch===1) g+=plane(PP,UU,VV,-1.2,2.2,-2,2,'rgba(150,150,150,0.08)','rgba(120,120,120,0.45)');
+    g+=plane(p,pr.u,pr.v,-1,1.5,-1.3,1.3);
+    g+=arrow(p,add(p,pr.u),'#2e9e4f',3)+arrow(p,add(p,pr.v),'#8e44ad',3);
+    g+=rightAngle(p,NN,pr.u)+rightAngle(p,NN,pr.v);
+    g+=arrow(p,add(p,NN),'#d62828',4)+label(add(p,NN),'n⃗','#d62828',8,-6);
+    g+=dot(p,'#1f2933',4)+label(p,st.pch?'Q':'P','#1f2933',-16,14);
+  }
+  if(s===5){
+    const X=[+$('x1').value,+$('x2').value,+$('x3').value], w=sub(X,PP), sc=dot3(w,NN);
+    g+=plane(PP,UU,VV,-1.5,2.4,-2.2,2.2);
+    g+=arrow(PP,add(PP,NN),'#d62828',4)+label(add(PP,NN),'n⃗','#d62828',8,-6);
+    // Lot von X auf die Ebene (Orientierung)
+    const foot=sub(X,mul(sc/dot3(NN,NN),NN));
+    if(Math.abs(sc)>1e-9) g+=line(X,foot,'rgba(80,80,80,0.5)',1.2,'3 4')+dot(foot,'#888',2.5);
+    if(!isZero(w)){ g+=arrow(PP,X,'#e67e22',3.5); if(Math.abs(sc)<1e-9) g+=rightAngle(PP,NN,w,0.35,'#e67e22'); }
+    st.found.forEach(f=>g+=dot(f,'#2e9e4f',3.5,'#2e9e4f'));
+    g+=dot(PP,'#1f2933',4)+label(PP,'P','#1f2933',-16,14);
+    g+=dot(X,Math.abs(sc)<1e-9?'#2e9e4f':'#1f2933',5,'#fff')+label(X,'X','#1f2933',8,-8);
+  }
+  if(s===6){
+    g+=plane(PP,UU,VV,-1.5,2.4,-2.2,2.2);
+    // Spurpunkte (6|0|0), (0|3|0), (0|0|3)
+    [[6,0,0],[0,3,0],[0,0,3]].forEach(q=>g+=dot(q,'#b98600',3.5,'#fff'));
+    g+=arrow(PP,add(PP,NN),'#d62828',4)+label(add(PP,NN),'n⃗','#d62828',8,-6);
+    g+=dot(PP,'#1f2933',4)+label(PP,'P','#1f2933',-16,14);
+    g+=label([5,-1,0],'E: x₁+2x₂+2x₃=6','#b98600',0,22,14);
+  }
+  if(s===7){
+    fit([[0,0,0],[3,0,0],[0,3,0],[0,0,3],add(E7.p,[0,2,1])]);
+    g=axes([3.5,3.5,3.5]);
+    g+=plane(E7.p,E7.u,E7.v,-1.5,1.5,-1.5,1.5);
+    g+=arrow(E7.p,add(E7.p,E7.u),'#2e9e4f',3)+arrow(E7.p,add(E7.p,E7.v),'#8e44ad',3);
+    if(st.ok7b){ const n=[-1,1,1]; g+=rightAngle(E7.p,n,E7.u)+rightAngle(E7.p,n,E7.v)+arrow(E7.p,add(E7.p,n),'#d62828',4)+label(add(E7.p,n),'n⃗','#d62828',8,-6); }
+    g+=dot(E7.p,'#1f2933',4)+label(E7.p,'P','#1f2933',-16,14);
+  }
+  $('scene').innerHTML=g;
+}
+(function(){ const svg=$('scene'); let d=null;
+  svg.addEventListener('pointerdown',e=>{d={x:e.clientX,y:e.clientY,phi:st.phi,theta:st.theta}; svg.setPointerCapture(e.pointerId);});
+  svg.addEventListener('pointermove',e=>{ if(!d) return; st.phi=d.phi-(e.clientX-d.x)*0.008; st.theta=Math.max(-0.15,Math.min(1.45,d.theta+(e.clientY-d.y)*0.008)); render(); });
+  const end=()=>d=null; svg.addEventListener('pointerup',end); svg.addEventListener('pointercancel',end);
+  $('resetView').onclick=()=>{st.phi=0.62;st.theta=0.38;st.zoom=1;render();};
+  $('zoomIn').onclick=()=>{st.zoom=Math.min(2.2,st.zoom*1.15);render();};
+  $('zoomOut').onclick=()=>{st.zoom=Math.max(0.45,st.zoom/1.15);render();};
+  // Blick genau entlang einer Spannrichtung: Ebene erscheint als Linie
+  $('sideView').onclick=()=>{ const u=unit(UU); st.phi=Math.atan2(UU[1],UU[0]); st.theta=0; render(); };
+})();
+
+/* ---------- Navigation ---------- */
+const NAMES=['Senkrecht','Viele n','Berechnen','Festlegen','Punktprobe','Gleichung','Rezept'];
+function markDone(){ done.add(st.step); buildNav(); }
+function buildNav(){ const n=$('stepsNav'); n.innerHTML=''; NAMES.forEach((t,i)=>{ const b=document.createElement('button'); b.textContent=`${i+1} ${t}`; if(st.step===i+1) b.classList.add('active'); if(done.has(i+1)) b.classList.add('done'); b.onclick=()=>go(i+1); n.append(b); }); }
+function go(k){ st.step=k; st.phi=0.62; st.theta=0.38; st.zoom=1; document.querySelectorAll('.step').forEach(s=>s.classList.toggle('active',+s.dataset.step===k)); $('prev').disabled=k===1; $('next').disabled=k===7; buildNav(); updAll(); window.scrollTo({top:0,behavior:'smooth'}); }
+$('prev').onclick=()=>go(Math.max(1,st.step-1)); $('next').onclick=()=>go(Math.min(7,st.step+1));
+function inp(id,ok){ $(id).className=ok?'good':'bad'; return ok; }
+const near=(a,b)=>a!==null&&Math.abs(a-b)<1e-9;
+
+/* ---------- 1 ---------- */
+tex($('f1E'),`E:\\ \\vec x=\\underbrace{${col(PP)}}_{\\vec p}+r\\cdot\\underbrace{${col(UU)}}_{\\vec u}+s\\cdot\\underbrace{${col(VV)}}_{\\vec v}`,true);
+function upd1(){
+  const n=[+$('n1').value,+$('n2').value,+$('n3').value]; ['n1','n2','n3'].forEach((id,i)=>$(id+'v').textContent=fmt(n[i]));
+  const a=dot3(n,UU), b=dot3(n,VV);
+  const cA=a===0?'\\color{#1e6b35}':'\\color{#c62828}', cB=b===0?'\\color{#1e6b35}':'\\color{#c62828}';
+  tex($('f1dots'),`\\vec n=${col(n)}:\\qquad \\vec n\\circ\\vec u=${cA}{${tn(a)}}\\qquad \\vec n\\circ\\vec v=${cB}{${tn(b)}}`,true);
+  if(isZero(n)) say('fb1a','Der Nullvektor zeigt in keine Richtung – er kommt nicht in Frage.','no');
+  else if(a===0&&b===0){ say('fb1a',`Treffer! \\(\\vec n=${col(n)}\\) steht senkrecht auf der Ebene – die roten Winkelzeichen zeigen die rechten Winkel zu \\(\\vec u\\) und \\(\\vec v\\).`,'ok'); $('q1').classList.remove('hidden'); }
+  else if(a===0||b===0) say('fb1a','Halb geschafft: \\(\\vec n\\) ist schon zu einem Spannvektor orthogonal. Jetzt noch zum anderen.','info');
+  else say('fb1a','','');
+  renderAuto($('fb1a')); render();
+}
+['n1','n2','n3'].forEach(id=>$(id).addEventListener('input',upd1));
+mc('mc1',['|n| = 1','n∘u = 0 und n∘v = 0','n∘u = 0 reicht','n∘p = 0'],'n∘u = 0 und n∘v = 0','fb1',
+  'Genau. Steht \\(\\vec n\\) senkrecht auf <strong>beiden</strong> Spannvektoren, dann steht er senkrecht auf <strong>jeder</strong> Richtung in der Ebene.',
+  {'n∘u = 0 reicht':'Stelle n so ein, dass nur n∘u = 0 gilt. Steht er dann wirklich senkrecht auf der Ebene? Schau von der Seite.'});
+
+/* ---------- 2 ---------- */
+(function(){ const c=$('kChoice'); [1,2,-1,0.5,0].forEach((k,i)=>{ const b=document.createElement('button'); b.className='btn'+(i===0?' on':''); b.textContent=`k = ${String(k).replace('.',',').replace('-','−')}`; b.onclick=()=>{ st.k=k; [...c.children].forEach(x=>x.classList.remove('on')); b.classList.add('on'); upd2(); }; c.append(b); }); })();
+function upd2(){ const n=mul(st.k,NN); tex($('f2'),`${tn(st.k)}\\cdot\\vec n=${col(n)}:\\quad \\vec n\\circ\\vec u=${tn(dot3(n,UU))},\\quad \\vec n\\circ\\vec v=${tn(dot3(n,VV))}${st.k===0?'\\quad\\text{(Nullvektor!)}':''}`,true); render(); }
+mc('mc2',['Es gibt genau einen Normalenvektor.','Alle Vielfachen k·n mit k ≠ 0 sind Normalenvektoren.','Nur Vektoren der Länge 1 sind Normalenvektoren.'],'Alle Vielfachen k·n mit k ≠ 0 sind Normalenvektoren.','fb2',
+  'Richtig. Die <strong>Richtung</strong> ist eindeutig, die Länge (und die Orientierung) kann man frei wählen. Deshalb darf man beim Berechnen eine Koordinate frei wählen. Nur der Nullvektor ist ausgeschlossen.');
+
+/* ---------- 3 ---------- */
+tex($('f3a'),`\\begin{pmatrix}n_1\\\\n_2\\\\n_3\\end{pmatrix}\\circ${col(UU)}=0\\qquad\\text{und}\\qquad\\begin{pmatrix}n_1\\\\n_2\\\\n_3\\end{pmatrix}\\circ${col(VV)}=0`,true);
+function lgsInputs(id){ const c=$(id); c.innerHTML=''; ['I','II'].forEach((r,i)=>{ const row=document.createElement('div'); row.className='row sin'; row.innerHTML=`<span style="min-width:28px;font-weight:600">${r}:</span>`;
+  ['n_1','n_2','n_3'].forEach((v,j)=>{ const x=document.createElement('input'); x.id=`${id}_${i}${j}`; x.inputMode='numeric'; row.append(x); const s=document.createElement('span'); tex(s,v+(j<2?'\\,+':'\\,=\\,0')); row.append(s); }); c.append(row); }); }
+function checkLGS(id,ref){ let ok=true; ref.forEach((r,i)=>r.forEach((v,j)=>{ const x=readNum($(`${id}_${i}${j}`).value); ok=inp(`${id}_${i}${j}`, (x===null&&v===0)||near(x,v))&&ok; })); return ok; }
+lgsInputs('lgs3');
+$('tip3a').onclick=()=>say('fb3a',`Skalarprodukt koordinatenweise: \\(n_1\\cdot 2+n_2\\cdot(-1)+n_3\\cdot 0\\). Leere Felder zählen als 0.`,'info');
+$('chk3a').onclick=()=>{ if(checkLGS('lgs3',[[2,-1,0],[0,1,-1]])){ say('fb3a','Richtig: \\(\\text{I}:\\ 2n_1-n_2=0,\\quad \\text{II}:\\ n_2-n_3=0\\).','ok'); $('part3b').classList.remove('hidden'); } else say('fb3a','Noch nicht – rot markierte Koeffizienten prüfen.','no'); };
+$('tip3b').onclick=()=>say('fb3b','Setze \\(n_1=1\\) in I ein: \\(2\\cdot1-n_2=0\\). Mit \\(n_2\\) dann in II.','info');
+$('chk3b').onclick=()=>{ const a=inp('n2in',near(readNum($('n2in').value),2)), b=inp('n3in',near(readNum($('n3in').value),2));
+  if(a&&b){ st.ok3=true; say('fb3b','Richtig: \\(\\vec n=\\begin{pmatrix}1\\\\2\\\\2\\end{pmatrix}\\) – genau der Vektor aus Schritt 1. Probe: \\(\\vec n\\circ\\vec u=2-2=0\\), \\(\\vec n\\circ\\vec v=2-2=0\\) ✓','ok'); markDone(); render(); }
+  else say('fb3b','Noch nicht. Aus I folgt \\(n_2=2n_1\\), aus II folgt \\(n_3=n_2\\).','no'); };
+
+/* ---------- 4 ---------- */
+(function(){ const c=$('pairChoice'); PAIRS.forEach((p,i)=>{ const b=document.createElement('button'); b.className='btn small'+(i===0?' on':''); b.innerHTML=katex.renderToString(`\\vec u=${col(p.u)},\\ \\vec v=${col(p.v)}`); b.onclick=()=>{ st.pair=i; [...c.children].forEach(x=>x.classList.remove('on')); b.classList.add('on'); upd4(); }; c.append(b); });
+  const d=$('pChoice'); PCHOICE.forEach((p,i)=>{ const b=document.createElement('button'); b.className='btn small'+(i===0?' on':''); b.textContent=p.lab; b.onclick=()=>{ st.pch=i; [...d.children].forEach(x=>x.classList.remove('on')); b.classList.add('on'); upd4(); }; d.append(b); }); })();
+function upd4(){ const pr=PAIRS[st.pair], p=PCHOICE[st.pch].p;
+  tex($('f4'),`\\vec n\\circ${col(pr.u)}=${dot3(NN,pr.u)},\\quad \\vec n\\circ${col(pr.v)}=${dot3(NN,pr.v)}\\qquad ${st.pch?'\\text{Stützpunkt }Q(2|1|3)':'\\text{Stützpunkt }P(2|1|1)'}`,true); render(); }
+mc('mc4',['ein Punkt allein','ein Normalenvektor allein','ein Punkt und ein Normalenvektor','zwei Punkte'],'ein Punkt und ein Normalenvektor','fb4',
+  'Richtig! Mit gleichem Normalenvektor, aber anderem Punkt entsteht eine <strong>parallele</strong> Ebene (grau). Erst <strong>Punkt + Normalenvektor</strong> legen die Ebene eindeutig fest – egal, welche Spannvektoren man wählt.',
+  {'ein Normalenvektor allein':'Wähle den anderen Punkt Q: Der Normalenvektor ist gleich – aber ist es dieselbe Ebene?'});
+
+/* ---------- 5 ---------- */
+(function(){ const c=$('xPresets'); XPRE.forEach(X=>{ const b=document.createElement('button'); b.className='btn small'; b.textContent=`X(${X.join('|')})`; b.onclick=()=>{ ['x1','x2','x3'].forEach((id,i)=>$(id).value=X[i]); upd5(); }; c.append(b); }); })();
+function upd5(){
+  const X=[+$('x1').value,+$('x2').value,+$('x3').value]; ['x1','x2','x3'].forEach((id,i)=>$(id+'v').textContent=fmt(X[i],1));
+  const w=sub(X,PP), sc=dot3(w,NN), ang = isZero(w)?null: Math.acos(Math.max(-1,Math.min(1,sc/(len(w)*len(NN)))))*180/Math.PI;
+  const c=Math.abs(sc)<1e-9?'\\color{#1e6b35}':'\\color{#c62828}';
+  tex($('f5'),`(\\vec x-\\vec p)\\circ\\vec n=${col(w)}\\circ${col(NN)}=${c}{${tn(sc)}}${ang===null?'':`\\qquad\\sphericalangle(\\vec x-\\vec p,\\vec n)\\approx ${tn(ang,1)}^\\circ`}`,true);
+  if(isZero(w)) say('fb5a','X ist der Stützpunkt P selbst – der liegt natürlich in der Ebene.','info');
+  else if(Math.abs(sc)<1e-9){ say('fb5a','Skalarprodukt 0: \\(\\vec x-\\vec p\\) steht senkrecht auf \\(\\vec n\\) – <strong>X liegt in der Ebene.</strong>','ok');
+    if(!st.found.some(f=>f.every((v,i)=>v===X[i]))){ st.found.push(X); showFound(); } }
+  else say('fb5a',`Skalarprodukt ${fmt(sc)} ≠ 0 – X liegt <strong>nicht</strong> in der Ebene, sondern ${sc>0?'auf der Seite, in die \\(\\vec n\\) zeigt':'auf der anderen Seite'}.`,'no');
+  render();
+}
+function showFound(){ $('found').innerHTML='Gefundene Punkte in E: '+st.found.map(f=>`<span class="pill">(${f.map(v=>fmt(v,1)).join('|')})</span>`).join(' ');
+  if(st.found.length>=3) $('q5').classList.remove('hidden'); }
+['x1','x2','x3'].forEach(id=>$(id).addEventListener('input',upd5));
+mc('mc5',['wenn (x−p)∘n = 0','wenn (x−p)∘n > 0','wenn x−p parallel zu n ist'],'wenn (x−p)∘n = 0','fb5',
+  'Genau. Genau die Punkte \\(X\\), für die \\(\\vec x-\\vec p\\) senkrecht auf \\(\\vec n\\) steht, bilden die Ebene: \\((\\vec x-\\vec p)\\circ\\vec n=0\\).',
+  {'wenn x−p parallel zu n ist':'Dann zeigt der orange Pfeil aus der Ebene heraus. Wähle X(4|3|2) und vergleiche.'});
+
+/* ---------- 6 ---------- */
+$('nextDer').onclick=()=>{ st.der=Math.min(4,st.der+1); updDer(); };
+function updDer(){ [...$('derive').children].forEach((d,i)=>d.classList.toggle('show',i<st.der)); if(st.der>=4){ $('nextDer').disabled=true; $('part6b').classList.remove('hidden'); } }
+$('tip6').onclick=()=>say('fb6','Links: \\(x_1\\cdot1+x_2\\cdot2+x_3\\cdot2\\). Rechts: \\(2\\cdot1+1\\cdot2+1\\cdot2\\).','info');
+$('chk6').onclick=()=>{ const ok=[['ca',1],['cb',2],['cc',2],['cd',6]].map(([id,v])=>inp(id,near(readNum($(id).value),v))).every(Boolean);
+  if(ok){ say('fb6','Richtig: \\(E:\\ x_1+2x_2+2x_3=6\\). Das ist die <strong>Koordinatengleichung</strong> der Ebene.','ok'); $('part6c').classList.remove('hidden'); build6(); }
+  else say('fb6','Noch nicht – vergleiche mit dem Tipp.','no'); };
+function build6(){ const c=$('pp6'); c.innerHTML='';
+  [[0,3,0],[4,3,2],[6,0,0],[1,1,1]].forEach(X=>{ const v=X[0]+2*X[1]+2*X[2]; const row=document.createElement('div'); row.className='row';
+    const t=document.createElement('span'); tex(t,`X(${X.join('|')})`); row.append(t);
+    const fb=document.createElement('span'); fb.className='muted';
+    ['liegt in E','liegt nicht in E'].forEach(o=>{ const b=document.createElement('button'); b.className='btn small'; b.textContent=o; b.onclick=()=>{ const ok=(o==='liegt in E')===(v===6); fb.innerHTML=(ok?'✓ ':'✗ ')+katex.renderToString(`${X[0]}+2\\cdot${X[1]}+2\\cdot${X[2]}=${v}${v===6?'':'\\neq 6'}`); fb.style.color=ok?'#1e6b35':'#c62828'; }; row.append(b); });
+    row.append(fb); c.append(row); }); }
+mc('mc6',['(3|1|4)','(3|−1|4)','(3|−1|4|7)','(7|3|−1)'],'(3|−1|4)','fb6c','Richtig: Die Koeffizienten vor \\(x_1,x_2,x_3\\) – mit Vorzeichen – sind die Koordinaten eines Normalenvektors.');
+
+/* ---------- 7 ---------- */
+tex($('f7E'),`E:\\ \\vec x=${col(E7.p)}+r\\cdot${col(E7.u)}+s\\cdot${col(E7.v)}`,true);
+lgsInputs('lgs7');
+$('tip7a').onclick=()=>say('fb7a','\\(\\vec n\\circ\\vec u=n_1\\cdot1+n_2\\cdot1+n_3\\cdot0\\) und \\(\\vec n\\circ\\vec v=n_1\\cdot0+n_2\\cdot1+n_3\\cdot(-1)\\).','info');
+$('chk7a').onclick=()=>{ if(checkLGS('lgs7',[[1,1,0],[0,1,-1]])){ say('fb7a','Richtig: \\(\\text{I}:\\ n_1+n_2=0,\\quad\\text{II}:\\ n_2-n_3=0\\).','ok'); $('part7b').classList.remove('hidden'); } else say('fb7a','Noch nicht – rot markierte Koeffizienten prüfen.','no'); };
+$('tip7b').onclick=()=>say('fb7b','Aus I: \\(n_1=-n_2\\). Aus II: \\(n_3=n_2\\).','info');
+$('chk7b').onclick=()=>{ const a=inp('m1in',near(readNum($('m1in').value),-1)), b=inp('m3in',near(readNum($('m3in').value),1));
+  if(a&&b){ st.ok7b=true; say('fb7b','Richtig: \\(\\vec n=\\begin{pmatrix}-1\\\\1\\\\1\\end{pmatrix}\\). Ansatz: \\(-x_1+x_2+x_3=d\\).','ok'); $('part7c').classList.remove('hidden'); render(); }
+  else say('fb7b','Noch nicht – nutze den Tipp.','no'); };
+$('tip7c').onclick=()=>say('fb7c','Setze den Stützpunkt \\(P(1|0|2)\\) ein: \\(-1+0+2=d\\).','info');
+$('chk7c').onclick=()=>{ if(inp('d7in',near(readNum($('d7in').value),1))){ say('fb7c','Richtig: \\(E:\\ -x_1+x_2+x_3=1\\). Probe mit einem anderen Punkt (\\(r=s=1\\)): \\(X(2|2|1)\\): \\(-2+2+1=1\\) ✓','ok'); $('part7d').classList.remove('hidden'); markDone(); }
+  else say('fb7c','Noch nicht – nutze den Tipp.','no'); };
+mc('mc7',['Nein – eine Ebene braucht immer zwei Parameter.','Ja – es ist eine Koordinatengleichung mit n = (2|−1|1); die Ebene geht durch den Ursprung.','Ja – aber es ist eine Gerade.'],
+  'Ja – es ist eine Koordinatengleichung mit n = (2|−1|1); die Ebene geht durch den Ursprung.','fb7',
+  'Emil hat recht. \\(2x_1-x_2+x_3=0\\) ist die Koordinatengleichung einer Ebene mit Normalenvektor \\(\\vec n=\\begin{pmatrix}2\\\\-1\\\\1\\end{pmatrix}\\). Wegen \\(d=0\\) erfüllt \\(O(0|0|0)\\) die Gleichung – die Ebene geht durch den Ursprung. Weitere Punkte findet man durch Probieren, z. B. \\((1|2|0)\\) oder \\((0|1|1)\\).');
+
+function updAll(){ if(st.step===1) upd1(); else if(st.step===2) upd2(); else if(st.step===4) upd4(); else if(st.step===5) upd5(); else render(); }
+function renderAuto(root){ if(window.renderMathInElement) renderMathInElement(root,{delimiters:[{left:'\\(',right:'\\)',display:false},{left:'\\[',right:'\\]',display:true}],throwOnError:false}); }
+const start=()=>{ renderMath(); renderAuto(document.body); go(1); };
+if(document.readyState==='complete') start(); else window.addEventListener('load',start);
+
+</script>
+</body>
+</html>
