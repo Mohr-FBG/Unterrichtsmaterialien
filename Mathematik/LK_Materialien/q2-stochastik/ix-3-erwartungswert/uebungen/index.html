@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Übungsphase · Erwartungswert und Histogramme</title>
 
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css">
+<link rel="stylesheet" crossorigin="anonymous" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css">
 <script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
 <script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/contrib/auto-render.min.js"></script>
 
@@ -227,6 +227,7 @@ footer.bot a{color:var(--blue)}
     .onmodal .box{background:#fff;border-radius:10px;max-width:900px;width:100%;max-height:90vh;overflow:auto;padding:14px}
     .onmodal img{max-width:100%;border:1px solid var(--border)}
     #on-stage{position:fixed;left:-12000px;top:0;width:860px;background:#fff;padding:22px 26px;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;color:#1c1f26;line-height:1.55;font-size:16px}
+    #on-stage .katex,#on-stage .katex-html,#on-stage .pcards > span{white-space:nowrap}
     #on-stage .ex-item{margin-bottom:20px}
     #on-stage .ex-item:last-child{margin-bottom:0}
     #on-stage .ex-title{font-weight:700;font-size:1.05rem;margin:0 0 6px;padding-bottom:4px;border-bottom:3px solid var(--blue)}
@@ -860,12 +861,32 @@ document.addEventListener('DOMContentLoaded', function () {
     var src=document.createElement('div'); src.className='ex-src'; src.textContent='LK Q2 · IX.3 Erwartungswert und Histogramme · FBG Schwerte'; stage.appendChild(src);
     return stage;
   }
+  /* KaTeX-Schriften einmalig als data-URLs einbetten, damit Formeln im Bild exakt wie auf der Seite aussehen */
+  var fontCSS=null;
+  function toDataURL(blob){ return new Promise(function(res,rej){ var fr=new FileReader(); fr.onload=function(){ res(fr.result); }; fr.onerror=rej; fr.readAsDataURL(blob); }); }
+  function katexFontCSS(){
+    if(fontCSS!==null) return Promise.resolve(fontCSS);
+    var link=document.querySelector('link[href*="katex"]'); if(!link){ fontCSS=''; return Promise.resolve(''); }
+    var href=link.href;
+    return fetch(href).then(function(r){ return r.text(); }).then(function(css){
+      var faces=css.match(/@font-face\{[^}]*\}/g)||[];
+      return Promise.all(faces.map(function(face){
+        var m=face.match(/url\(([^)]+?\.woff2)\)/); if(!m) return '';
+        var url=new URL(m[1].replace(/["']/g,''),href).href;
+        return fetch(url).then(function(r){ return r.blob(); }).then(toDataURL).then(function(d){
+          return face.replace(/src:[^;}]*/,'src:url('+d+') format("woff2")');
+        }).catch(function(){ return ''; });
+      }));
+    }).then(function(list){ fontCSS=list.join('\n'); return fontCSS; }).catch(function(){ fontCSS=''; return ''; });
+  }
+  if(window.fetch) setTimeout(katexFontCSS,1500);
+
   function exportCards(list, withSol){
     if(!list.length) return;
     if(!window.htmlToImage){ toast('Export-Bibliothek nicht geladen (Internetverbindung?)',true); return; }
     var stage=buildStage(list, withSol);
     var opts={pixelRatio:2, backgroundColor:'#ffffff', cacheBust:false, width:stage.offsetWidth, height:stage.offsetHeight, style:{position:'static',left:'0',top:'0'}};
-    var blobPromise=htmlToImage.toBlob(stage,opts);
+    var blobPromise=katexFontCSS().then(function(css){ if(css) opts.fontEmbedCSS=css; return htmlToImage.toBlob(stage,opts); });
     var done=function(){ toast('✓ Kopiert – in OneNote mit Strg+V einfügen'); };
     var fallback=function(){
       blobPromise.then(function(b){ var url=URL.createObjectURL(b); document.getElementById('on-img').src=url; document.getElementById('on-dl').href=url; document.getElementById('onmodal').classList.add('show'); })
