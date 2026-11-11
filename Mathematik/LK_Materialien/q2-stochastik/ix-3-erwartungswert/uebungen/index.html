@@ -1,0 +1,889 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Übungsphase · Erwartungswert und Histogramme</title>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css">
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/contrib/auto-render.min.js"></script>
+
+<style>
+:root{
+  --gold:#e8a800; --gold-dark:#b58200;
+  --blue:#2c5f8a; --blue-dark:#1a3d5c;
+  --green:#1a9e5c; --orange:#d4760a; --purple:#7b3fb5;
+  --red:#c0392b;
+  --border:#dde1e7; --bg:#f4f5f7; --text:#1c1f26;
+  --muted:#5c6472;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0; background:var(--bg); color:var(--text);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  line-height:1.55; font-size:16px;
+}
+.wrap{max-width:960px; margin:0 auto; padding:0 16px 64px}
+
+/* ---------- Kopf ---------- */
+header.top{background:var(--gold); border-bottom:4px solid var(--gold-dark); color:#fff}
+header.top .inner{max-width:960px; margin:0 auto; padding:22px 16px 24px}
+header.top .kap{font-size:.78rem; font-weight:700; letter-spacing:.06em; text-transform:uppercase; opacity:.92}
+header.top h1{margin:6px 0 4px; font-size:1.7rem; line-height:1.2}
+header.top .sub{font-size:.92rem; opacity:.95}
+
+/* ---------- Steuerleiste ---------- */
+.controls{
+  background:#fff; border:1px solid var(--border); border-radius:10px;
+  padding:14px 16px; margin:18px 0 22px;
+  display:flex; flex-wrap:wrap; gap:16px; align-items:center; justify-content:space-between;
+}
+.unlock{display:flex; align-items:center; gap:8px; flex-wrap:wrap}
+.unlock label{font-size:.9rem; color:var(--muted)}
+.unlock input{border:1px solid var(--border); border-radius:6px; padding:6px 10px; font-size:.95rem; width:130px; font-family:inherit}
+.unlock button{background:var(--blue); color:#fff; border:0; border-radius:6px; padding:7px 14px; font-size:.9rem; font-weight:600; cursor:pointer; font-family:inherit}
+.unlock button:hover{background:var(--blue-dark)}
+.unlock .msg{font-size:.85rem; font-weight:600}
+.unlock .msg.ok{color:var(--green)}
+.unlock .msg.bad{color:#c0392b}
+
+.filters{display:flex; gap:6px; flex-wrap:wrap}
+.filters button{background:#fff; border:1px solid var(--border); border-radius:20px; padding:6px 14px; font-size:.85rem; cursor:pointer; color:var(--muted); font-family:inherit; font-weight:600}
+.filters button:hover{border-color:var(--muted)}
+.filters button.on{background:var(--text); border-color:var(--text); color:#fff}
+
+/* ---------- Abschnitte ---------- */
+.stufe-head{display:flex; align-items:baseline; gap:12px; flex-wrap:wrap; margin:30px 0 12px; padding-bottom:8px; border-bottom:2px solid var(--border)}
+.stufe-badge{color:#fff; border-radius:6px; padding:4px 12px; font-weight:700; font-size:.9rem; letter-spacing:.02em}
+.sA .stufe-badge{background:var(--blue)}
+.sG .stufe-badge{background:var(--text)}
+.s1 .stufe-badge{background:var(--green)}
+.s2 .stufe-badge{background:var(--orange)}
+.s3 .stufe-badge{background:var(--purple)}
+.stufe-head .desc{color:var(--muted); font-size:.9rem}
+
+/* ---------- Karten ---------- */
+.card{background:#fff; border:1px solid var(--border); border-radius:10px; margin-bottom:14px; overflow:hidden; position:relative}
+.tw,.tree-box,.katex-display{position:relative}
+.card.sA{border-top:4px solid var(--blue)}
+.card.sG{border-top:4px solid var(--text)}
+.card.s1{border-top:4px solid var(--green)}
+.card.s2{border-top:4px solid var(--orange)}
+.card.s3{border-top:4px solid var(--purple)}
+.card-head{display:flex; align-items:center; justify-content:space-between; gap:12px; padding:13px 18px; cursor:pointer; user-select:none}
+.card-head:hover{background:#fafbfc}
+.card-head h3{margin:0; font-size:1.03rem; font-weight:700}
+.chev{color:var(--muted); font-size:1.1rem; transition:transform .18s}
+.card.open .chev{transform:rotate(180deg)}
+.card-body{display:none; padding:0 18px 18px}
+.card.open .card-body{display:block}
+
+.task{background:#fbfcfd; border:1px solid var(--border); border-left:3px solid var(--blue); border-radius:6px; padding:12px 15px; margin-bottom:14px}
+.task p{margin:.5em 0}
+.task p:first-child{margin-top:0}
+.task p:last-child{margin-bottom:0}
+.task .sub-i{margin-left:1.6em}
+
+/* Merkkasten wie im Buch */
+.merk{border:2px solid var(--blue); border-radius:8px; padding:14px 18px; background:#f3f7fb}
+.merk h4{margin:0 0 6px; font-size:1rem}
+.merk p{margin:.45em 0}
+
+/* Beispiel-Lösung im Buchstil */
+.bsp{border-left:3px solid var(--blue); padding:2px 0 2px 16px}
+.bsp .lh{font-weight:700; color:var(--muted); margin:10px 0 4px}
+.bsp p{margin:.5em 0}
+
+/* Tafel-Hinweis */
+.board{border:1.5px dashed var(--text); border-radius:8px; padding:12px 15px; font-size:.92rem; color:var(--muted); display:flex; gap:10px; align-items:center}
+.board b{color:var(--text)}
+
+/* ---------- Selbsteinschätzung ---------- */
+.assess{display:flex; align-items:center; gap:7px; flex-wrap:wrap; margin-bottom:14px}
+.assess .lab{font-size:.83rem; color:var(--muted); margin-right:2px}
+.assess button{border:1px solid var(--border); background:#fff; border-radius:16px; padding:4px 12px; font-size:.8rem; cursor:pointer; color:var(--muted); font-family:inherit}
+.assess button.on[data-v="ok"]{background:var(--green); border-color:var(--green); color:#fff}
+.assess button.on[data-v="mid"]{background:var(--orange); border-color:var(--orange); color:#fff}
+.assess button.on[data-v="ask"]{background:var(--blue); border-color:var(--blue); color:#fff}
+
+/* ---------- Hilfen ---------- */
+.hints{border:1px solid var(--border); border-radius:8px; overflow:hidden; margin-bottom:14px}
+.hints .htitle{background:#f7f8fa; padding:7px 14px; font-size:.8rem; font-weight:700; color:var(--muted); text-transform:uppercase; letter-spacing:.05em; border-bottom:1px solid var(--border)}
+.htabs{display:flex; flex-wrap:wrap; gap:6px; padding:10px 14px; background:#fdfdfe}
+.htabs button{border:1px solid var(--border); background:#fff; border-radius:6px; padding:5px 11px; font-size:.82rem; cursor:pointer; color:var(--text); font-family:inherit}
+.htabs button:hover{border-color:var(--blue)}
+.htabs button.on{background:var(--blue); border-color:var(--blue); color:#fff; font-weight:600}
+.hpanel{display:none; padding:12px 15px; border-top:1px solid var(--border); font-size:.95rem}
+.hpanel.on{display:block}
+.hpanel h4{margin:0 0 8px; font-size:.92rem; color:var(--blue-dark)}
+.hpanel p{margin:.5em 0}
+
+/* ---------- Musterlösung ---------- */
+.sol-lock{background:#f7f8fa; border:1px dashed var(--border); border-radius:8px; padding:12px 15px; font-size:.9rem; color:var(--muted); text-align:center}
+.sol-lock.active{cursor:pointer; background:#eef4f9; border:1px solid var(--blue); color:var(--blue-dark); font-weight:600}
+.sol-lock.active:hover{background:#e2ecf5}
+.sol{display:none; border:1px solid var(--green); border-radius:8px; overflow:hidden}
+.sol.shown{display:block}
+.sol .sh{background:var(--green); color:#fff; padding:7px 15px; font-weight:700; font-size:.88rem}
+.sol .sb{padding:13px 15px; font-size:.95rem}
+.sol .sb p{margin:.55em 0}
+.sol .sb p:first-child{margin-top:0}
+
+/* Alternativer Lösungsweg */
+.alt-btn{margin-top:10px; background:#fff; border:1px solid var(--purple); color:var(--purple); border-radius:6px; padding:6px 12px; font-size:.85rem; font-weight:600; cursor:pointer; font-family:inherit}
+.alt-btn:hover{background:#f6f0fb}
+.alt{display:none; margin-top:10px; border:1px solid var(--purple); border-left:4px solid var(--purple); border-radius:6px; padding:10px 14px; background:#faf6fd; font-size:.93rem}
+.alt.shown{display:block}
+.alt .ah{font-weight:700; color:var(--purple); font-size:.85rem; text-transform:uppercase; letter-spacing:.04em; margin-bottom:4px}
+
+/* Verteilungstabelle im Buchstil */
+.tw{overflow-x:auto; margin:.6em 0}
+table.vt{border-collapse:collapse; font-size:.92rem}
+table.vt th, table.vt td{border:1px solid var(--border); padding:5px 10px; text-align:center; white-space:nowrap}
+table.vt th{background:#eef0f3; font-weight:600}
+table.vt td.hl{background:#e6f5ec}
+
+/* Grafiken */
+.fig{display:flex; flex-wrap:wrap; gap:18px; align-items:flex-start}
+.fig .txt{flex:1 1 320px; min-width:0}
+.fig .pic{flex:0 1 auto; overflow-x:auto; max-width:100%}
+.tree-box{overflow-x:auto; max-width:100%}
+.tree-box svg{display:block}
+.cap{font-size:.78rem; color:var(--muted); text-align:center; margin-top:2px}
+
+.res{color:#1a9e5c;font-weight:700}
+.note{background:#fdf6e3; border-left:3px solid var(--gold); border-radius:6px; padding:10px 14px; font-size:.9rem; margin:12px 0}
+.note a{color:var(--blue); font-weight:600}
+.katex{font-size:1.04em}
+.katex-display{margin:.6em 0; overflow-x:auto; overflow-y:hidden}
+footer.bot{text-align:center; color:var(--muted); font-size:.82rem; padding:26px 16px; border-top:1px solid var(--border); margin-top:34px}
+footer.bot a{color:var(--blue)}
+@media(max-width:600px){
+  header.top h1{font-size:1.32rem}
+  .controls{flex-direction:column; align-items:stretch}
+  .card-head h3{font-size:.95rem}
+  .card-body{padding:0 12px 14px}
+}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="inner">
+    <div class="kap">Kapitel IX · Binomialverteilung · LK Mathematik Q2</div>
+    <h1>3 · Erwartungswert und Histogramme</h1>
+    <div class="sub">Anleitung lesen · Gemeinsam starten · Stufe wählen · Hilfen schrittweise nutzen · Musterlösungen nach Freigabe</div>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <style>
+    code.ti{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.86em;background:#eef1f5;border:1px solid #dde1e7;border-radius:4px;padding:1px 5px;white-space:nowrap}
+    .kbd{display:inline-block;font-size:.75rem;font-weight:700;border:1px solid #8a93a3;border-radius:4px;padding:0 5px;background:#f4f5f7;line-height:1.5}
+    .mpath{font-weight:700;color:var(--blue-dark)}
+    table.lst{border-collapse:collapse;font-size:.8rem;margin:8px 0;font-variant-numeric:tabular-nums}
+    table.lst th,table.lst td{border:1px solid #dde1e7;padding:2px 7px;text-align:center;white-space:nowrap}
+    table.lst tr.hd th{background:#e5eef7;color:#2c5f8a}
+    table.lst tr.fm td{background:#f4f5f7;color:#6b7280;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.72rem}
+    table.lst td.rn{background:#f4f5f7;color:#6b7280}
+    .steps{margin:6px 0 6px 20px;padding:0}
+    .steps li{margin:4px 0}
+    .tool{display:grid;grid-template-columns:minmax(170px,auto) 1fr;gap:5px 14px;font-size:.92rem;margin-top:6px}
+    .tool div:nth-child(odd){font-weight:600}
+    .hist{display:inline-block;vertical-align:top;margin:4px 6px 4px 0}
+    .hist svg{display:block;max-width:100%;height:auto}
+    .hgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin:8px 0}
+    .hgrid .hist{margin:0;border:1px solid var(--border);border-radius:6px;background:#fff;padding:4px}
+    .pcards{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0}
+    .pcards > span{background:#fdf3d6;border:1px solid #e8c766;border-radius:6px;padding:4px 10px;font-weight:600;font-size:.92rem}
+    .pcards > span > b{display:inline-block;background:var(--gold);color:#fff;border-radius:4px;padding:0 6px;margin-right:6px}
+    .tf{list-style:none;padding:0;margin:6px 0}
+    .tf li{margin:4px 0;padding-left:1.6em;text-indent:-1.6em}
+    .tiscreen{border:2px solid var(--text);border-radius:10px;overflow:hidden;max-width:420px;background:#fff;margin:8px 0}
+    .tiscreen .bar{background:var(--blue);color:#fff;font-size:.72rem;font-weight:700;padding:2px 10px}
+    .tiscreen .body{padding:6px 8px}
+
+    /* ---------- OneNote-Export ---------- */
+    .card-head .tools{display:flex;align-items:center;gap:8px;margin-left:auto}
+    .on-pick{display:flex;align-items:center;gap:4px;font-size:.78rem;color:var(--muted);font-weight:600;cursor:pointer;white-space:nowrap}
+    .on-pick input{width:16px;height:16px;accent-color:var(--purple);cursor:pointer}
+    .on-copy{border:1px solid var(--border);background:#fff;border-radius:6px;padding:3px 8px;font-size:.78rem;font-weight:700;cursor:pointer;color:var(--purple);font-family:inherit;white-space:nowrap}
+    .on-copy:hover{border-color:var(--purple);background:#faf6fd}
+    .card.picked{box-shadow:0 0 0 2px var(--purple)}
+    .onbar{position:fixed;left:50%;bottom:16px;transform:translateX(-50%);background:var(--text);color:#fff;border-radius:12px;padding:10px 14px;display:none;align-items:center;gap:12px;flex-wrap:wrap;z-index:50;box-shadow:0 6px 24px rgba(0,0,0,.25);max-width:calc(100% - 24px);font-size:.9rem}
+    .onbar.show{display:flex}
+    .onbar button{border:0;border-radius:6px;padding:7px 12px;font-weight:700;cursor:pointer;font-family:inherit;font-size:.86rem}
+    .onbar .go{background:var(--purple);color:#fff}
+    .onbar .clr{background:#3a3f4a;color:#fff}
+    .onbar label{display:flex;align-items:center;gap:5px;cursor:pointer}
+    .onbar label.dis{opacity:.45;cursor:not-allowed}
+    .ontoast{position:fixed;left:50%;top:18px;transform:translateX(-50%);background:var(--green);color:#fff;border-radius:8px;padding:10px 16px;font-weight:700;z-index:60;display:none;max-width:calc(100% - 24px);font-size:.9rem}
+    .ontoast.bad{background:var(--red)}
+    .onmodal{position:fixed;inset:0;background:rgba(0,0,0,.55);display:none;align-items:center;justify-content:center;z-index:70;padding:16px}
+    .onmodal.show{display:flex}
+    .onmodal .box{background:#fff;border-radius:10px;max-width:900px;width:100%;max-height:90vh;overflow:auto;padding:14px}
+    .onmodal img{max-width:100%;border:1px solid var(--border)}
+    #on-stage{position:fixed;left:-12000px;top:0;width:860px;background:#fff;padding:22px 26px;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;color:#1c1f26;line-height:1.55;font-size:16px}
+    #on-stage .ex-item{margin-bottom:20px}
+    #on-stage .ex-item:last-child{margin-bottom:0}
+    #on-stage .ex-title{font-weight:700;font-size:1.05rem;margin:0 0 6px;padding-bottom:4px;border-bottom:3px solid var(--blue)}
+    #on-stage .ex-title.s1{border-color:var(--green)} #on-stage .ex-title.s2{border-color:var(--orange)} #on-stage .ex-title.s3{border-color:var(--purple)} #on-stage .ex-title.sG{border-color:var(--text)}
+    #on-stage .ex-src{font-size:.75rem;color:var(--muted);text-align:right;margin-top:10px}
+    #on-stage .sol{display:block}
+    #on-stage .board,#on-stage .assess,#on-stage .hints,#on-stage .sol-lock,#on-stage .alt-btn{display:none}
+    @media (max-width:560px){ .tool{grid-template-columns:1fr} .tool div:nth-child(even){margin-bottom:6px} code.ti{white-space:normal;word-break:break-word} .on-pick span{display:none} }
+  </style>
+
+  <div class="controls">
+    <div class="unlock">
+      <label for="code">🔒 Musterlösungen freischalten:</label>
+      <input id="code" type="text" autocomplete="off" placeholder="Code">
+      <button id="btn-unlock" type="button">Bestätigen</button>
+      <span class="msg" id="msg"></span>
+    </div>
+    <div class="filters">
+      <button class="on" data-f="all" type="button">Alles</button>
+      <button data-f="A" type="button">Anleitung</button>
+      <button data-f="G" type="button">Gemeinsam</button>
+      <button data-f="1" type="button">Stufe 1</button>
+      <button data-f="2" type="button">Stufe 2</button>
+      <button data-f="3" type="button">Stufe 3</button>
+    </div>
+  </div>
+
+  <div class="note">
+    <strong>Werkzeug:</strong> Tabellen und Histogramme erstellt ihr mit dem <b>TI-Nspire CAS</b> in <b>Lists &amp; Spreadsheet</b> – die Werkzeugkarte steht direkt unten in der Anleitung.
+    Zum Ausprobieren und Kontrollieren: <a href="../../simulationen/galton-schraeg/">Schiefes Galton-Brett</a> (Histogramm-Labor in Schritt 2).<br>
+    <span style="color:var(--purple);font-weight:600">📋 Für die Lehrkraft:</span> Mit „📋 OneNote“ wird eine Aufgabe als Bild kopiert. Mehrere Aufgaben über „auswählen“ markieren und gemeinsam kopieren – dann in OneNote mit <span class="kbd">Strg</span> <span class="kbd">V</span> einfügen.
+  </div>
+
+  <!-- ================= ANLEITUNG ================= -->
+  <section class="sA" data-stufe="A">
+    <div class="stufe-head">
+      <span class="stufe-badge">Anleitung</span>
+      <span class="desc">Merkwissen, Werkzeugkarte und vollständig vorgerechnete Beispiele – so sollen deine Lösungen aussehen</span>
+    </div>
+
+    <article class="card sA" data-title="Merkwissen · Erwartungswert und Histogramm">
+      <div class="card-head"><h3>Merkwissen · Erwartungswert und Histogramm</h3><span class="chev">▾</span></div>
+      <div class="card-body">
+        <div class="merk">
+          <p><strong>Erwartungswert:</strong> Für eine Zufallsgröße $X$ mit den Werten $0,1,\ldots,n$ ist $\mu=E(X)=0\cdot P(X=0)+1\cdot P(X=1)+\ldots+n\cdot P(X=n)$.
+          Ist $X$ binomialverteilt mit den Parametern $n$ und $p$, so gilt
+          $$\mu=E(X)=n\cdot p.$$
+          Bei einer Bernoulli-Kette der Länge $n$ mit der Trefferwahrscheinlichkeit $p$ erwartet man, dass die Trefferanzahl in der Nähe von $n\cdot p$ liegt.</p>
+          <p><strong>Lage der höchsten Säule:</strong> Ist $\mu$ ganzzahlig, so hat $X=\mu$ die größte Wahrscheinlichkeit. Ist $\mu$ nicht ganzzahlig, so liegt die höchste Säule bei einer der beiden benachbarten ganzen Zahlen – manchmal sind beide gleich hoch.</p>
+          <p><strong>Histogramm:</strong> Die Säule zu $k$ hat die Breite 1 und reicht von $k-0{,}5$ bis $k+0{,}5$. Ihre <b>Fläche</b> ist $P(X=k)$, die Summe aller Flächen ist 1.
+          Eine Wahrscheinlichkeit wie $P(a\le X\le b)$ ist die Fläche über dem Intervall $[a-0{,}5;\,b+0{,}5]$.</p>
+          <p><strong>Form:</strong> Für $p=0{,}5$ ist das Histogramm symmetrisch zu $\frac n2$. Für $p\lt 0{,}5$ liegt die höchste Säule links, für $p\gt 0{,}5$ rechts davon. Mit wachsendem $n$ wird das Histogramm breiter und flacher.</p>
+        </div>
+      </div>
+    </article>
+
+    <article class="card sA" data-title="Werkzeugkarte · Binomialverteilung am TI-Nspire">
+      <div class="card-head"><h3>Werkzeugkarte · Tabelle und Histogramm am TI-Nspire</h3><span class="chev">▾</span></div>
+      <div class="card-body">
+        <div class="task" style="border-left-color:var(--gold)">
+          <p><strong>A · Einzelne Wahrscheinlichkeit</strong> (Calculator): <code class="ti">binompdf(n,p,k)</code>, z.&nbsp;B. <code class="ti">binompdf(12,0.25,3)</code> $\approx 0{,}2581$.
+          Menü: <span class="mpath">menu ▸ Wahrscheinlichkeit ▸ Verteilungen ▸ Binomial Pdf</span>.</p>
+          <p><strong>B · Verteilung als Tabelle</strong> (neue Seite <span class="mpath">Lists &amp; Spreadsheet</span>):</p>
+          <ol class="steps">
+            <li>Spalte A oben benennen: <code class="ti">treffer</code>, in die graue Formelzeile darunter: <code class="ti">=seq(t,t,0,12)</code></li>
+            <li>Spalte B benennen: <code class="ti">wkt</code>, Formelzeile: <code class="ti">=binompdf(12,0.25)</code> – ohne $k$ entstehen alle Werte auf einmal.</li>
+          </ol>
+          <div class="tw"><table class="lst">
+            <tr class="hd"><th></th><th>A treffer</th><th>B wkt</th></tr>
+            <tr class="fm"><td>◆</td><td>=seq(t,t,0,12)</td><td>=binompdf(12,0.25)</td></tr>
+            <tr><td class="rn">1</td><td>0</td><td>0.031676</td></tr>
+            <tr><td class="rn">2</td><td>1</td><td>0.126705</td></tr>
+            <tr><td class="rn">3</td><td>2</td><td>0.232293</td></tr>
+            <tr><td class="rn">4</td><td>3</td><td>0.258104</td></tr>
+            <tr><td class="rn">…</td><td>…</td><td>…</td></tr>
+          </table></div>
+          <p><strong>C · Histogramm:</strong> In Lists &amp; Spreadsheet <span class="mpath">menu ▸ Daten ▸ Ergebnisdiagramm</span>
+          (je nach Version auch „Zusammenfassungsdiagramm“). X-Liste: <code class="ti">treffer</code>, Ergebnisliste: <code class="ti">wkt</code>, „Anzeigen in: neue Seite“.
+          Klickt man eine Säule an, erscheinen $k$ und $P(X=k)$.</p>
+          <p><strong>D · Auswerten:</strong></p>
+          <div class="tool">
+            <div>Erwartungswert</div><div>in eine freie Zelle: <code class="ti">=sum(treffer*wkt)</code> – Kontrolle: $n\cdot p$</div>
+            <div>höchste Säule</div><div><code class="ti">=max(wkt)</code> liefert die größte Wahrscheinlichkeit; in der Tabelle die zugehörige Zeile suchen.</div>
+            <div>mehrere Säulen (Fläche)</div><div><code class="ti">=sum(b3:b5)</code> addiert $P(X=2)$ bis $P(X=4)$. <b>Achtung:</b> Zeile $r$ gehört zu $k=r-1$.<br>
+              Ohne Tabelle: <code class="ti">sum(binompdf(12,0.25,{2,3,4}))</code></div>
+            <div>Parameter ändern</div><div>Im Calculator <code class="ti">n:=20</code> und <code class="ti">p:=0.4</code> speichern und in den Spalten <code class="ti">=seq(t,t,0,n)</code> und <code class="ti">=binompdf(n,p)</code> schreiben – dann aktualisieren sich Tabelle und Histogramm automatisch.</div>
+          </div>
+          <p style="font-size:.88rem;color:var(--muted)"><b>Typische Fehler:</b> Dezimalkomma statt Punkt (<code class="ti">0,25</code> ✗ → <code class="ti">0.25</code>); Spalte heißt <code class="ti">t</code> und die Formel benutzt <code class="ti">t</code> (Zirkelbezug); <code class="ti">seq</code> beginnt bei 1 statt bei 0.</p>
+        </div>
+      </div>
+    </article>
+
+    <!-- Beispiel 1 -->
+    <article class="card sA" data-title="Beispiel 1 · Erwartungswert berechnen und Histogramm zeichnen">
+      <div class="card-head"><h3>Beispiel 1 · Erwartungswert berechnen und Histogramm zeichnen</h3><span class="chev">▾</span></div>
+      <div class="card-body">
+        <div class="task">
+          <p>Eine Bogenschützin trifft bei jedem Schuss mit einer Wahrscheinlichkeit von $80\,\%$ den inneren Ring – unabhängig von den vorherigen Schüssen. Sie schießt sechs Pfeile.</p>
+          <p><strong>a)</strong> Berechnen Sie den Erwartungswert der Anzahl $X$ der Treffer im inneren Ring.</p>
+          <p><strong>b)</strong> Geben Sie die Wahrscheinlichkeitsverteilung an und zeichnen Sie das Histogramm.</p>
+          <p><strong>c)</strong> Interpretieren Sie die Ergebnisse aus a) und b) im Vergleich.</p>
+        </div>
+        <div class="bsp">
+          <div class="lh">Lösung</div>
+          <p>$X$ zählt die Treffer im inneren Ring. Unter den Annahmen ist $X$ binomialverteilt mit $n=6$ und $p=0{,}8$.</p>
+          <p><strong>a)</strong> $\mu=E(X)=n\cdot p=6\cdot0{,}8={\color{#1a9e5c}\boldsymbol{4{,}8}}$.</p>
+          <p><strong>b)</strong> Mit <code class="ti">=binompdf(6,0.8)</code>:</p>
+          <div class="tw"><table class="vt">
+            <tr><th>$k$</th><td>0</td><td>1</td><td>2</td><td>3</td><td>4</td><td>5</td><td>6</td></tr>
+            <tr><th>$B_{6;\,0{,}8}(k)$</th><td>$\approx0{,}0001$</td><td>$\approx0{,}0015$</td><td>$\approx0{,}0154$</td><td>$\approx0{,}0819$</td><td>$\approx0{,}2458$</td><td class="hl">$\approx0{,}3932$</td><td>$\approx0{,}2621$</td></tr>
+          </table></div>
+          <div class="hist" data-hist='{"n":6,"p":0.8,"w":340,"h":200,"mu":true,"hl":[5],"lab":"n = 6, p = 0,8"}'></div>
+          <p><strong>c)</strong> Der Erwartungswert $4{,}8$ kann als Trefferzahl nicht vorkommen, da $X$ nur ganzzahlige Werte annimmt. Er besagt: Schießt sie viele 6er-Serien, erzielt sie im Mittel $4{,}8$ Treffer pro Serie.
+          Am wahrscheinlichsten ist eine einzelne Serie mit ${\color{#1a9e5c}\boldsymbol{5}}$ Treffern (ca. $39\,\%$); die höchste Säule liegt bei einer der beiden ganzen Zahlen neben $\mu=4{,}8$.</p>
+        </div>
+      </div>
+    </article>
+
+    <!-- Beispiel 2 -->
+    <article class="card sA" data-title="Beispiel 2 · Histogramme den Parametern zuordnen">
+      <div class="card-head"><h3>Beispiel 2 · Histogramme den Parametern zuordnen</h3><span class="chev">▾</span></div>
+      <div class="card-body">
+        <div class="task">
+          <p>Ordnen Sie jedem Histogramm die passenden Parameter zu und begründen Sie ohne Rechner.</p>
+          <div class="pcards"><span><b>A</b>$n=10,\ p=0{,}3$</span><span><b>B</b>$n=16,\ p=0{,}5$</span><span><b>C</b>$n=10,\ p=0{,}7$</span></div>
+          <div class="hgrid">
+            <div class="hist" data-hist='{"n":10,"p":0.7,"w":260,"h":160,"lab":"(1)","xmax":16}'></div>
+            <div class="hist" data-hist='{"n":16,"p":0.5,"w":260,"h":160,"lab":"(2)","xmax":16}'></div>
+            <div class="hist" data-hist='{"n":10,"p":0.3,"w":260,"h":160,"lab":"(3)","xmax":16}'></div>
+          </div>
+        </div>
+        <div class="bsp">
+          <div class="lh">Lösung</div>
+          <p>Man nutzt drei Merkmale: Bis zu welchem $k$ reichen die Säulen (Hinweis auf $n$)? Wo liegt die höchste Säule ($\approx n\cdot p$)? Ist das Histogramm symmetrisch ($p=0{,}5$)?</p>
+          <p><strong>(2) – B:</strong> Das Histogramm ist symmetrisch zu $k=8$ und reicht bis 16. Mit $n=16$ und $p=0{,}5$ ist $\mu=8$. ✓</p>
+          <p><strong>(3) – A:</strong> Die höchste Säule liegt bei $k=3$, also weit links. Zu A gehört $\mu=10\cdot0{,}3=3$. ✓</p>
+          <p><strong>(1) – C:</strong> Die höchste Säule liegt bei $k=7$; das Histogramm ist das Spiegelbild von (3) an $k=5$. Zu C gehört $\mu=10\cdot0{,}7=7$. ✓</p>
+          <p>Ergebnis: ${\color{#1a9e5c}\boldsymbol{(1)\to C,\ (2)\to B,\ (3)\to A}}$.</p>
+        </div>
+      </div>
+    </article>
+
+    <!-- Beispiel 3 -->
+    <article class="card sA" data-title="Beispiel 3 · Histogramm mit dem TI-Nspire erstellen und auswerten">
+      <div class="card-head"><h3>Beispiel 3 · Histogramm mit dem TI-Nspire erstellen und auswerten</h3><span class="chev">▾</span></div>
+      <div class="card-body">
+        <div class="task">
+          <p>Ein Glücksrad hat vier gleich große Felder, eines davon ist rot. Es wird zwölfmal gedreht. $X$ zählt, wie oft Rot erscheint.</p>
+          <p><strong>a)</strong> Erstellen Sie mit dem TI-Nspire eine Tabelle der Wahrscheinlichkeitsverteilung und das Histogramm.</p>
+          <p><strong>b)</strong> Bestimmen Sie mithilfe der Tabelle den Erwartungswert und die wahrscheinlichste Anzahl roter Felder.</p>
+          <p><strong>c)</strong> Bestimmen Sie die Wahrscheinlichkeit, dass Rot zwei- bis viermal erscheint, und beschreiben Sie sie als Fläche im Histogramm.</p>
+        </div>
+        <div class="bsp">
+          <div class="lh">Lösung</div>
+          <p>$X$ ist binomialverteilt mit $n=12$ und $p=0{,}25$.</p>
+          <p><strong>a)</strong> Lists &amp; Spreadsheet: Spalte <code class="ti">treffer</code> mit <code class="ti">=seq(t,t,0,12)</code>, Spalte <code class="ti">wkt</code> mit <code class="ti">=binompdf(12,0.25)</code>.
+          Dann <span class="mpath">menu ▸ Daten ▸ Ergebnisdiagramm</span> mit X-Liste <code class="ti">treffer</code> und Ergebnisliste <code class="ti">wkt</code>:</p>
+          <div class="tiscreen"><div class="bar">1.2 &nbsp; Data &amp; Statistics</div><div class="body"><div class="hist" data-hist='{"n":12,"p":0.25,"w":390,"h":190,"hl":[2,3,4],"mu":false,"plain":true}'></div></div></div>
+          <p><strong>b)</strong> In einer freien Zelle: <code class="ti">=sum(treffer*wkt)</code> $=3$, also $\mu={\color{#1a9e5c}\boldsymbol{3}}$ (Kontrolle: $12\cdot0{,}25=3$).
+          Die größte Wahrscheinlichkeit in der Spalte <code class="ti">wkt</code> ist $0{,}2581$ in Zeile 4, also bei $k={\color{#1a9e5c}\boldsymbol{3}}$ – passend zur Regel, da $\mu$ ganzzahlig ist.</p>
+          <p><strong>c)</strong> $P(2\le X\le4)=P(X=2)+P(X=3)+P(X=4)$; in der Tabelle sind das die Zeilen 3 bis 5:
+          <code class="ti">=sum(b3:b5)</code> $\approx0{,}2323+0{,}2581+0{,}1936={\color{#1a9e5c}\boldsymbol{0{,}684}}$.
+          Im Histogramm ist das die Fläche der drei markierten Säulen über dem Intervall $[1{,}5;\ 4{,}5]$.</p>
+        </div>
+      </div>
+    </article>
+  </section>
+
+  <!-- ================= GEMEINSAM ================= -->
+  <section class="sG" data-stufe="G">
+    <div class="stufe-head">
+      <span class="stufe-badge">Gemeinsam im Unterricht</span>
+      <span class="desc">Diese Aufgaben lösen wir zusammen – die Lösung wird an der Tafel gesichert</span>
+    </div>
+
+    <article class="card sG" data-title="Aufgabe A · Vier Histogramme, sechs Kärtchen">
+      <div class="card-head"><h3>Aufgabe A · Vier Histogramme, sechs Kärtchen</h3><span class="chev">▾</span></div>
+      <div class="card-body">
+        <div class="task">
+          <p>Ordnen Sie jedem Histogramm die Parameter der zugehörigen Binomialverteilung zu. Zwei Kärtchen bleiben übrig – begründen Sie, warum.</p>
+          <div class="pcards"><span><b>A</b>$n=12,\ p=0{,}25$</span><span><b>B</b>$n=20,\ p=0{,}6$</span><span><b>C</b>$n=12,\ p=0{,}5$</span><span><b>D</b>$n=15,\ p=0{,}2$</span><span><b>E</b>$n=20,\ p=0{,}4$</span><span><b>F</b>$n=8,\ p=0{,}75$</span></div>
+          <div class="hgrid">
+            <div class="hist" data-hist='{"n":12,"p":0.5,"w":260,"h":160,"lab":"(1)","xmax":20,"ymax":0.35}'></div>
+            <div class="hist" data-hist='{"n":20,"p":0.6,"w":260,"h":160,"lab":"(2)","xmax":20,"ymax":0.35}'></div>
+            <div class="hist" data-hist='{"n":8,"p":0.75,"w":260,"h":160,"lab":"(3)","xmax":20,"ymax":0.35}'></div>
+            <div class="hist" data-hist='{"n":15,"p":0.2,"w":260,"h":160,"lab":"(4)","xmax":20,"ymax":0.35}'></div>
+          </div>
+        </div>
+        <div class="board">✏️ <span><b>Tafelsicherung:</b> Zuordnung mit den drei Merkmalen (Reichweite, Lage der höchsten Säule ≈ n·p, Symmetrie); warum A und E nicht passen; Kontrolle im Histogramm-Labor.</span></div>
+      </div>
+    </article>
+
+    <article class="card sG" data-title="Aufgabe B · Was bedeutet der Erwartungswert?">
+      <div class="card-head"><h3>Aufgabe B · Was bedeutet der Erwartungswert?</h3><span class="chev">▾</span></div>
+      <div class="card-body">
+        <div class="task">
+          <p>$X$ zählt die Treffer. Berechnen Sie jeweils den Erwartungswert von $X$ und interpretieren Sie ihn im Sachzusammenhang.</p>
+          <p><strong>a)</strong> Bei einem Online-Shop werden erfahrungsgemäß $3\,\%$ der Bestellungen zurückgeschickt. An einem Tag gehen 200 Bestellungen ein. Treffer: „wird zurückgeschickt“.</p>
+          <p><strong>b)</strong> Ein Würfel wird 30-mal geworfen. Treffer: „Augenzahl durch 3 teilbar“.</p>
+          <p><strong>c)</strong> Im Rate-Quiz aus IX.1 (8 Fragen, je 3 Antworten) wird geraten. Treffer: „richtige Antwort“.</p>
+          <p><strong>d)</strong> Ein Fußballtorwart hält einen Elfmeter mit $22\,\%$. Im Elfmeterschießen kommen 5 Schüsse auf ihn zu. Treffer: „gehalten“.</p>
+        </div>
+        <div class="board">✏️ <span><b>Tafelsicherung:</b> Tabelle n · p · μ · Interpretation („im Mittel bei vielen Wiederholungen …“); Unterschied zwischen μ und dem wahrscheinlichsten Wert (Beispiele c und d).</span></div>
+      </div>
+    </article>
+
+    <article class="card sG" data-title="Aufgabe C · Wahr oder falsch?">
+      <div class="card-head"><h3>Aufgabe C · Wahr oder falsch?</h3><span class="chev">▾</span></div>
+      <div class="card-body">
+        <div class="task">
+          <p>Beurteilen Sie die Aussagen über Histogramme binomialverteilter Zufallsgrößen. Begründen Sie oder geben Sie ein Gegenbeispiel an.</p>
+          <ul class="tf">
+            <li><strong>a)</strong> Die Summe der Flächeninhalte aller Säulen ist 1.</li>
+            <li><strong>b)</strong> Die höchste Säule liegt immer genau bei $n\cdot p$.</li>
+            <li><strong>c)</strong> Für $p=0{,}5$ ist das Histogramm symmetrisch.</li>
+            <li><strong>d)</strong> Verdoppelt man $n$, wird die höchste Säule doppelt so hoch.</li>
+            <li><strong>e)</strong> Die Histogramme zu $p=0{,}3$ und $p=0{,}7$ (bei gleichem $n$) sind Spiegelbilder voneinander.</li>
+          </ul>
+        </div>
+        <div class="board">✏️ <span><b>Tafelsicherung:</b> wahr / falsch mit Begründung; Gegenbeispiele aus dem Histogramm-Labor (z. B. n = 6, p = 0,75 zu b; n = 10 und 20 bei p = 0,5 zu d).</span></div>
+      </div>
+    </article>
+  </section>
+
+  <!-- ================= STUFE 1 ================= -->
+  <section class="s1" data-stufe="1">
+    <div class="stufe-head">
+      <span class="stufe-badge">Stufe 1</span>
+      <span class="desc">Grundaufgaben · Erwartungswert berechnen, Verteilung und Histogramm mit dem TI-Nspire</span>
+    </div>
+
+    <article class="card s1" data-title="Aufgabe 1 · Erwartungswert und höchste Säule">
+      <div class="card-head"><h3>Aufgabe 1 · Erwartungswert und höchste Säule</h3><span class="chev">▾</span></div>
+      <div class="card-body">
+        <div class="task">
+          <p><strong>a)</strong> Berechnen Sie den Erwartungswert $\mu$ der binomialverteilten Zufallsgröße $X$ mit</p>
+          <p class="sub-i">(1) $n=12,\ p=0{,}25$ &nbsp;&nbsp; (2) $n=30,\ p=0{,}4$ &nbsp;&nbsp; (3) $n=40,\ p=\frac38$ &nbsp;&nbsp; (4) $n=60,\ p=\frac16$.</p>
+          <p><strong>b)</strong> Berechnen Sie jeweils die Wahrscheinlichkeit dafür, dass $X$ genau den Wert $\mu$ annimmt.</p>
+          <p><strong>c)</strong> Zeigen Sie mit dem TI-Nspire, dass $P(X=\mu-1)$ und $P(X=\mu+1)$ jeweils kleiner sind.</p>
+        </div>
+        <div class="assess"><span class="lab">Einschätzung:</span>
+          <button data-v="ok" type="button">✓ Fertig &amp; verstanden</button><button data-v="mid" type="button">~ Noch unsicher</button><button data-v="ask" type="button">? Frage an Lehrer</button></div>
+        <div class="hints">
+          <div class="htitle">Hilfen</div>
+          <div class="htabs"><button type="button">Hilfe 1 · Formel</button><button type="button">Hilfe 2 · TI-Befehl</button><button type="button">Hilfe 3 · Drei Werte auf einmal</button></div>
+          <div class="hpanel"><h4>Hilfe 1 · Erwartungswert</h4><p>Für binomialverteilte $X$ gilt $\mu=n\cdot p$. Alle vier Erwartungswerte sind ganzzahlig.</p></div>
+          <div class="hpanel"><h4>Hilfe 2 · Einzelwahrscheinlichkeit</h4><p>Im Calculator: <code class="ti">binompdf(n,p,k)</code> mit $k=\mu$, z.&nbsp;B. <code class="ti">binompdf(12,0.25,3)</code>. Brüche wie $\frac38$ dürfen direkt als <code class="ti">3/8</code> eingegeben werden.</p></div>
+          <div class="hpanel"><h4>Hilfe 3 · Liste als drittes Argument</h4><p><code class="ti">binompdf(30,0.4,{11,12,13})</code> liefert die drei Wahrscheinlichkeiten für $\mu-1$, $\mu$ und $\mu+1$ in einer Liste.</p></div>
+        </div>
+        <div class="sol-lock">🔒 Musterlösung – nach Freigabe durch den Lehrer sichtbar.</div>
+        <div class="sol"><div class="sh">✓ Musterlösung · Aufgabe 1</div><div class="sb">
+          <div class="tw"><table class="vt">
+            <tr><th></th><th>$n$</th><th>$p$</th><th>a) $\mu=n\cdot p$</th><th>$P(X=\mu-1)$</th><th>b) $P(X=\mu)$</th><th>$P(X=\mu+1)$</th></tr>
+            <tr><td>(1)</td><td>12</td><td>$0{,}25$</td><td>$3$</td><td>$0{,}2323$</td><td class="hl">$0{,}2581$</td><td>$0{,}1936$</td></tr>
+            <tr><td>(2)</td><td>30</td><td>$0{,}4$</td><td>$12$</td><td>$0{,}1396$</td><td class="hl">$0{,}1474$</td><td>$0{,}1360$</td></tr>
+            <tr><td>(3)</td><td>40</td><td>$\frac38$</td><td>$15$</td><td>$0{,}1244$</td><td class="hl">$0{,}1294$</td><td>$0{,}1213$</td></tr>
+            <tr><td>(4)</td><td>60</td><td>$\frac16$</td><td>$10$</td><td>$0{,}1343$</td><td class="hl">$0{,}1370$</td><td>$0{,}1246$</td></tr>
+          </table></div>
+          <p>Beispiel (2): $P(X=12)=\binom{30}{12}\cdot0{,}4^{12}\cdot0{,}6^{18}\approx{\color{#1a9e5c}\boldsymbol{0{,}1474}}$; TI: <code class="ti">binompdf(30,0.4,{11,12,13})</code> $\to\{0.1396,\ 0.1474,\ 0.1360\}$.</p>
+          <p><strong>c)</strong> In allen vier Fällen sind beide Nachbarwerte kleiner – wie es die Regel für ganzzahliges $\mu$ verlangt. Auffällig: Obwohl $\mu$ der wahrscheinlichste Wert ist, liegt $P(X=\mu)$ bei großem $n$ nur bei etwa $13$ bis $15\,\%$.</p>
+        </div></div>
+      </div>
+    </article>
+
+    <article class="card s1" data-title="Aufgabe 2 · Verteilung und Histogramm mit dem TI-Nspire">
+      <div class="card-head"><h3>Aufgabe 2 · Verteilung und Histogramm mit dem TI-Nspire</h3><span class="chev">▾</span></div>
+      <div class="card-body">
+        <div class="task">
+          <p>Erstellen Sie mit dem TI-Nspire jeweils die Tabelle der Wahrscheinlichkeitsverteilung und das Histogramm. Berechnen Sie den Erwartungswert und geben Sie den Wert mit der größten Wahrscheinlichkeit an.</p>
+          <p><strong>a)</strong> Ein Basketballspieler wirft vier Freiwürfe mit der Trefferwahrscheinlichkeit $0{,}6$.</p>
+          <p><strong>b)</strong> Ein Würfel wird sechsmal geworfen; Treffer ist „Augenzahl 5 oder 6“.</p>
+          <p><strong>c)</strong> Vergleichen Sie: Was ist bei a) besonders?</p>
+        </div>
+        <div class="assess"><span class="lab">Einschätzung:</span>
+          <button data-v="ok" type="button">✓ Fertig &amp; verstanden</button><button data-v="mid" type="button">~ Noch unsicher</button><button data-v="ask" type="button">? Frage an Lehrer</button></div>
+        <div class="hints">
+          <div class="htitle">Hilfen</div>
+          <div class="htabs"><button type="button">Hilfe 1 · Parameter</button><button type="button">Hilfe 2 · Tabelle</button><button type="button">Hilfe 3 · Histogramm</button></div>
+          <div class="hpanel"><h4>Hilfe 1 · n und p</h4><p>a) $n=4$, $p=0{,}6$. &nbsp; b) $n=6$; „5 oder 6“ sind 2 von 6 Augenzahlen, also $p=\frac13$.</p></div>
+          <div class="hpanel"><h4>Hilfe 2 · Lists &amp; Spreadsheet</h4><p>Spalte <code class="ti">treffer</code>: <code class="ti">=seq(t,t,0,4)</code>, Spalte <code class="ti">wkt</code>: <code class="ti">=binompdf(4,0.6)</code>. Erwartungswert in einer freien Zelle: <code class="ti">=sum(treffer*wkt)</code>.</p></div>
+          <div class="hpanel"><h4>Hilfe 3 · Ergebnisdiagramm</h4><p><span class="mpath">menu ▸ Daten ▸ Ergebnisdiagramm</span>, X-Liste <code class="ti">treffer</code>, Ergebnisliste <code class="ti">wkt</code>. Siehe Werkzeugkarte, Teil C.</p></div>
+        </div>
+        <div class="sol-lock">🔒 Musterlösung – nach Freigabe durch den Lehrer sichtbar.</div>
+        <div class="sol"><div class="sh">✓ Musterlösung · Aufgabe 2</div><div class="sb">
+          <p><strong>a)</strong> $X\sim B_{4;\,0{,}6}$: &nbsp; $\mu=4\cdot0{,}6={\color{#1a9e5c}\boldsymbol{2{,}4}}$</p>
+          <div class="tw"><table class="vt"><tr><th>$k$</th><td>0</td><td>1</td><td>2</td><td>3</td><td>4</td></tr>
+            <tr><th>$P(X=k)$</th><td>$0{,}0256$</td><td>$0{,}1536$</td><td class="hl">$0{,}3456$</td><td class="hl">$0{,}3456$</td><td>$0{,}1296$</td></tr></table></div>
+          <div class="hist" data-hist='{"n":4,"p":0.6,"w":260,"h":170,"mu":true,"hl":[2,3]}'></div>
+          <p>Größte Wahrscheinlichkeit: bei ${\color{#1a9e5c}\boldsymbol{k=2\text{ und }k=3}}$ (gleich groß).</p>
+          <p><strong>b)</strong> $X\sim B_{6;\,\frac13}$: &nbsp; $\mu=6\cdot\frac13={\color{#1a9e5c}\boldsymbol{2}}$</p>
+          <div class="tw"><table class="vt"><tr><th>$k$</th><td>0</td><td>1</td><td>2</td><td>3</td><td>4</td><td>5</td><td>6</td></tr>
+            <tr><th>$P(X=k)$</th><td>$0{,}0878$</td><td>$0{,}2634$</td><td class="hl">$0{,}3292$</td><td>$0{,}2195$</td><td>$0{,}0823$</td><td>$0{,}0165$</td><td>$0{,}0014$</td></tr></table></div>
+          <div class="hist" data-hist='{"n":6,"p":0.3333333,"w":300,"h":170,"mu":true,"hl":[2]}'></div>
+          <p>Größte Wahrscheinlichkeit bei ${\color{#1a9e5c}\boldsymbol{k=2=\mu}}$.</p>
+          <p><strong>c)</strong> Bei a) ist $\mu=2{,}4$ nicht ganzzahlig. Die beiden benachbarten Werte 2 und 3 sind <b>gleich</b> wahrscheinlich: $\binom42\cdot0{,}6^2\cdot0{,}4^2=6\cdot0{,}0576=0{,}3456$ und $\binom43\cdot0{,}6^3\cdot0{,}4=4\cdot0{,}0864=0{,}3456$.</p>
+        </div></div>
+      </div>
+    </article>
+  </section>
+
+  <!-- ================= STUFE 2 ================= -->
+  <section class="s2" data-stufe="2">
+    <div class="stufe-head">
+      <span class="stufe-badge">Stufe 2</span>
+      <span class="desc">Aufbauend · Histogramme lesen, Parameter erkennen, Flächen deuten</span>
+    </div>
+
+    <article class="card s2" data-title="Aufgabe 3 · Ein Histogramm auswerten">
+      <div class="card-head"><h3>Aufgabe 3 · Ein Histogramm auswerten</h3><span class="chev">▾</span></div>
+      <div class="card-body">
+        <div class="task">
+          <div class="fig"><div class="txt">
+            <p>Das Histogramm gehört zu einer binomialverteilten Zufallsgröße $X$ mit $n=10$ und $p=0{,}35$.</p>
+            <p><strong>a)</strong> Lesen Sie näherungsweise ab: $P(X=3)$, $P(X\lt 3)$ und $P(X\gt 5)$.</p>
+            <p><strong>b)</strong> Markieren Sie die Flächen, die zu den Wahrscheinlichkeiten aus a) gehören, und geben Sie die zugehörigen Intervalle auf der $k$-Achse an.</p>
+            <p><strong>c)</strong> Kontrollieren Sie Ihre Werte mit dem TI-Nspire.</p>
+          </div><div class="pic"><div class="hist" data-hist='{"n":10,"p":0.35,"w":330,"h":220,"grid":0.05,"ymax":0.3}'></div></div></div>
+        </div>
+        <div class="assess"><span class="lab">Einschätzung:</span>
+          <button data-v="ok" type="button">✓ Fertig &amp; verstanden</button><button data-v="mid" type="button">~ Noch unsicher</button><button data-v="ask" type="button">? Frage an Lehrer</button></div>
+        <div class="hints">
+          <div class="htitle">Hilfen</div>
+          <div class="htabs"><button type="button">Hilfe 1 · Ablesen</button><button type="button">Hilfe 2 · Welche Säulen?</button><button type="button">Hilfe 3 · TI</button></div>
+          <div class="hpanel"><h4>Hilfe 1 · Höhe = Wahrscheinlichkeit</h4><p>Die Säulen haben die Breite 1. Ihre Höhe kann man daher direkt als Wahrscheinlichkeit ablesen. Die Gitterlinien liegen im Abstand $0{,}05$.</p></div>
+          <div class="hpanel"><h4>Hilfe 2 · „kleiner als 3“</h4><p>$X\lt 3$ bedeutet $X\in\{0;1;2\}$, $X\gt 5$ bedeutet $X\in\{6;\ldots;10\}$. Addiere die abgelesenen Säulenhöhen.</p></div>
+          <div class="hpanel"><h4>Hilfe 3 · Kontrolle</h4><p><code class="ti">sum(binompdf(10,0.35,{0,1,2}))</code> bzw. <code class="ti">sum(binompdf(10,0.35,{6,7,8,9,10}))</code></p></div>
+        </div>
+        <div class="sol-lock">🔒 Musterlösung – nach Freigabe durch den Lehrer sichtbar.</div>
+        <div class="sol"><div class="sh">✓ Musterlösung · Aufgabe 3</div><div class="sb">
+          <p><strong>a)</strong> Abgelesen: $P(X=3)\approx0{,}25$; &nbsp; $P(X\lt 3)=P(X=0)+P(X=1)+P(X=2)\approx0{,}01+0{,}07+0{,}18={\color{#1a9e5c}\boldsymbol{0{,}26}}$;
+          &nbsp; $P(X\gt 5)\approx0{,}07+0{,}02+0{,}005+\ldots\approx{\color{#1a9e5c}\boldsymbol{0{,}09}}$.</p>
+          <p><strong>b)</strong> $P(X=3)$: Säule über $[2{,}5;\,3{,}5]$. &nbsp; $P(X\lt 3)$: drei Säulen über $[-0{,}5;\,2{,}5]$. &nbsp; $P(X\gt 5)$: Säulen über $[5{,}5;\,10{,}5]$.</p>
+          <div class="hist" data-hist='{"n":10,"p":0.35,"w":330,"h":200,"hl":[0,1,2],"hl2":[6,7,8,9,10]}'></div>
+          <p><strong>c)</strong> TI: $P(X=3)\approx0{,}2522$; &nbsp; $P(X\lt 3)\approx0{,}0135+0{,}0725+0{,}1757=0{,}2616$; &nbsp; $P(X\gt 5)\approx0{,}0949$. Die abgelesenen Werte passen gut.</p>
+        </div></div>
+      </div>
+    </article>
+
+    <article class="card s2" data-title="Aufgabe 4 · Wie verändert sich das Histogramm?">
+      <div class="card-head"><h3>Aufgabe 4 · Wie verändert sich das Histogramm?</h3><span class="chev">▾</span></div>
+      <div class="card-body">
+        <div class="task">
+          <p><strong>a)</strong> Erzeugen Sie mit dem TI-Nspire die Histogramme zu $p=0{,}4$ und $n=10$, $n=25$, $n=50$. Beschreiben Sie, wie sich Lage und Höhe der höchsten Säule mit wachsendem $n$ ändern.</p>
+          <p><strong>b)</strong> Erzeugen Sie die Histogramme zu $n=30$ und $p=0{,}1$, $p=0{,}5$, $p=0{,}9$. Beschreiben Sie Lage und Form. Welche zwei Histogramme sind Spiegelbilder voneinander? Begründen Sie mit der Bernoulli-Formel.</p>
+        </div>
+        <div class="assess"><span class="lab">Einschätzung:</span>
+          <button data-v="ok" type="button">✓ Fertig &amp; verstanden</button><button data-v="mid" type="button">~ Noch unsicher</button><button data-v="ask" type="button">? Frage an Lehrer</button></div>
+        <div class="hints">
+          <div class="htitle">Hilfen</div>
+          <div class="htabs"><button type="button">Hilfe 1 · Schnell wechseln</button><button type="button">Hilfe 2 · Höchste Säule</button><button type="button">Hilfe 3 · Spiegelung</button></div>
+          <div class="hpanel"><h4>Hilfe 1 · Variablen n und p</h4><p>Speichere im Calculator <code class="ti">n:=10</code> und <code class="ti">p:=0.4</code>. Spalten: <code class="ti">=seq(t,t,0,n)</code> und <code class="ti">=binompdf(n,p)</code>. Ändert man <code class="ti">n:=25</code>, aktualisiert sich das Histogramm.</p></div>
+          <div class="hpanel"><h4>Hilfe 2 · max</h4><p><code class="ti">=max(wkt)</code> gibt die Höhe der höchsten Säule. Ihre Lage: $n\cdot p$.</p></div>
+          <div class="hpanel"><h4>Hilfe 3 · Treffer und Nieten tauschen</h4><p>Vergleiche $B_{30;\,0{,}1}(k)$ mit $B_{30;\,0{,}9}(30-k)$. Was passiert, wenn man in der Bernoulli-Formel $p$ und $1-p$ sowie $k$ und $n-k$ vertauscht?</p></div>
+        </div>
+        <div class="sol-lock">🔒 Musterlösung – nach Freigabe durch den Lehrer sichtbar.</div>
+        <div class="sol"><div class="sh">✓ Musterlösung · Aufgabe 4</div><div class="sb">
+          <div class="hgrid">
+            <div class="hist" data-hist='{"n":10,"p":0.4,"w":250,"h":150,"lab":"n = 10","xmax":50,"ymax":0.3,"mu":true}'></div>
+            <div class="hist" data-hist='{"n":25,"p":0.4,"w":250,"h":150,"lab":"n = 25","xmax":50,"ymax":0.3,"mu":true}'></div>
+            <div class="hist" data-hist='{"n":50,"p":0.4,"w":250,"h":150,"lab":"n = 50","xmax":50,"ymax":0.3,"mu":true}'></div>
+          </div>
+          <p><strong>a)</strong> Die höchste Säule wandert mit $\mu=n\cdot p$ nach rechts (bei 4, 10, 20). Sie wird niedriger ($\approx0{,}251$; $0{,}161$; $0{,}115$), das Histogramm wird breiter und flacher, aber symmetrischer – es nimmt eine <b>Glockenform</b> an.</p>
+          <div class="hgrid">
+            <div class="hist" data-hist='{"n":30,"p":0.1,"w":250,"h":150,"lab":"p = 0,1","ymax":0.25,"mu":true}'></div>
+            <div class="hist" data-hist='{"n":30,"p":0.5,"w":250,"h":150,"lab":"p = 0,5","ymax":0.25,"mu":true}'></div>
+            <div class="hist" data-hist='{"n":30,"p":0.9,"w":250,"h":150,"lab":"p = 0,9","ymax":0.25,"mu":true}'></div>
+          </div>
+          <p><strong>b)</strong> $p=0{,}1$: höchste Säule bei 3, Histogramm links und schief (rechts lang auslaufend). $p=0{,}5$: symmetrisch zu 15. $p=0{,}9$: höchste Säule bei 27, rechts.
+          ${\color{#1a9e5c}\boldsymbol{p=0{,}1\text{ und }p=0{,}9}}$ sind Spiegelbilder an $k=15$, denn
+          $$B_{30;\,0{,}9}(30-k)=\binom{30}{30-k}\,0{,}9^{30-k}\,0{,}1^{k}=\binom{30}{k}\,0{,}1^{k}\,0{,}9^{30-k}=B_{30;\,0{,}1}(k).$$
+          Anschaulich: Zählt man statt der Treffer die Nieten, wird aus $p$ die Wahrscheinlichkeit $1-p$ und aus $k$ die Zahl $n-k$.</p>
+        </div></div>
+      </div>
+    </article>
+  </section>
+
+  <!-- ================= STUFE 3 ================= -->
+  <section class="s3" data-stufe="3">
+    <div class="stufe-head">
+      <span class="stufe-badge">Stufe 3</span>
+      <span class="desc">Vertiefend · Parameter rekonstruieren, Aussagen prüfen und begründen</span>
+    </div>
+
+    <article class="card s3" data-title="Aufgabe 5 · Das unvollständige Histogramm">
+      <div class="card-head"><h3>Aufgabe 5 · Das unvollständige Histogramm</h3><span class="chev">▾</span></div>
+      <div class="card-body">
+        <div class="task">
+          <div class="fig"><div class="txt">
+            <p>Von einem Histogramm einer binomialverteilten Zufallsgröße mit $n=25$ ist nur ein Ausschnitt zu sehen; die Beschriftung der Hochachse fehlt. Bekannt ist: Der Erwartungswert ist ganzzahlig, und die höchste Säule steht über $k=10$.</p>
+            <p><strong>a)</strong> Bestimmen Sie den Parameter $p$.</p>
+            <p><strong>b)</strong> Berechnen Sie die Höhe der höchsten Säule und ergänzen Sie eine passende Beschriftung der Hochachse.</p>
+            <p><strong>c)</strong> Ein zweites Histogramm mit $n=25$ ist das Spiegelbild des ersten. Geben Sie dessen Parameter und die Lage der höchsten Säule an.</p>
+          </div><div class="pic"><div class="hist" data-hist='{"n":25,"p":0.4,"w":300,"h":190,"from":6,"to":14,"noy":true}'></div></div></div>
+        </div>
+        <div class="assess"><span class="lab">Einschätzung:</span>
+          <button data-v="ok" type="button">✓ Fertig &amp; verstanden</button><button data-v="mid" type="button">~ Noch unsicher</button><button data-v="ask" type="button">? Frage an Lehrer</button></div>
+        <div class="hints">
+          <div class="htitle">Hilfen</div>
+          <div class="htabs"><button type="button">Hilfe 1 · μ</button><button type="button">Hilfe 2 · Höhe</button><button type="button">Hilfe 3 · Spiegelbild</button></div>
+          <div class="hpanel"><h4>Hilfe 1 · Ganzzahliges μ</h4><p>Ist $\mu$ ganzzahlig, so liegt die höchste Säule genau bei $\mu$. Also $25\cdot p=10$.</p></div>
+          <div class="hpanel"><h4>Hilfe 2 · Höchste Säule</h4><p>Höhe $=B_{25;\,p}(10)$, z.&nbsp;B. mit <code class="ti">binompdf(25,p,10)</code>. Wähle die Hochachse so, dass dieser Wert gut darauf passt.</p></div>
+          <div class="hpanel"><h4>Hilfe 3 · Spiegelung</h4><p>Siehe Aufgabe 4 b): Vertauscht man $p$ und $1-p$, wird das Histogramm an $\frac n2$ gespiegelt.</p></div>
+        </div>
+        <div class="sol-lock">🔒 Musterlösung – nach Freigabe durch den Lehrer sichtbar.</div>
+        <div class="sol"><div class="sh">✓ Musterlösung · Aufgabe 5</div><div class="sb">
+          <p><strong>a)</strong> Da $\mu$ ganzzahlig ist, liegt die höchste Säule bei $\mu$: $25\cdot p=10\ \Rightarrow\ p={\color{#1a9e5c}\boldsymbol{0{,}4}}$.</p>
+          <p><strong>b)</strong> $B_{25;\,0{,}4}(10)=\binom{25}{10}\cdot0{,}4^{10}\cdot0{,}6^{15}\approx{\color{#1a9e5c}\boldsymbol{0{,}1612}}$. Zur Kontrolle: $P(X=9)\approx0{,}1511$ und $P(X=11)\approx0{,}1465$ sind kleiner.
+          Eine passende Hochachse geht z.&nbsp;B. von 0 bis $0{,}2$ in Schritten von $0{,}05$:</p>
+          <div class="hist" data-hist='{"n":25,"p":0.4,"w":320,"h":200,"from":6,"to":14,"ymax":0.2,"grid":0.05,"hl":[10]}'></div>
+          <p><strong>c)</strong> Spiegelbild an $k=12{,}5$: $p={\color{#1a9e5c}\boldsymbol{0{,}6}}$, höchste Säule bei $25\cdot0{,}6={\color{#1a9e5c}\boldsymbol{15}}$ mit derselben Höhe $0{,}1612$.</p>
+        </div></div>
+      </div>
+    </article>
+
+    <article class="card s3" data-title="Aufgabe 6 · Trifft man den Erwartungswert?">
+      <div class="card-head"><h3>Aufgabe 6 · Trifft man den Erwartungswert?</h3><span class="chev">▾</span></div>
+      <div class="card-body">
+        <div class="task">
+          <p>Eine Münze wird $n$-mal geworfen, $X$ zählt „Zahl“.</p>
+          <p>Leon behauptet: <em>„Je öfter ich werfe, desto sicherer trifft $X$ genau den Erwartungswert.“</em><br>
+          Mara entgegnet: <em>„Genau treffen wird immer unwahrscheinlicher. Aber der <b>Anteil</b> $\frac Xn$ landet immer sicherer zwischen $0{,}4$ und $0{,}6$.“</em></p>
+          <p><strong>a)</strong> Prüfen Sie Leons Aussage für $n=10$, $n=50$ und $n=100$.</p>
+          <p><strong>b)</strong> Prüfen Sie Maras Aussage für dieselben $n$. Beschreiben Sie das Ergebnis als Fläche im Histogramm.</p>
+          <p><strong>c)</strong> Erklären Sie, warum beide Beobachtungen gleichzeitig gelten können.</p>
+        </div>
+        <div class="assess"><span class="lab">Einschätzung:</span>
+          <button data-v="ok" type="button">✓ Fertig &amp; verstanden</button><button data-v="mid" type="button">~ Noch unsicher</button><button data-v="ask" type="button">? Frage an Lehrer</button></div>
+        <div class="hints">
+          <div class="htitle">Hilfen</div>
+          <div class="htabs"><button type="button">Hilfe 1 · Leon</button><button type="button">Hilfe 2 · Mara</button><button type="button">Hilfe 3 · Erklärung</button></div>
+          <div class="hpanel"><h4>Hilfe 1 · Genau μ</h4><p>Berechne $P(X=5)$ für $n=10$, $P(X=25)$ für $n=50$, $P(X=50)$ für $n=100$.</p></div>
+          <div class="hpanel"><h4>Hilfe 2 · Anteil zwischen 0,4 und 0,6</h4><p>Für $n=50$ heißt das $20\le X\le30$. TI: <code class="ti">sum(binompdf(50,0.5,seq(t,t,20,30)))</code></p></div>
+          <div class="hpanel"><h4>Hilfe 3 · Viele Säulen</h4><p>Wie viele Säulen liegen zwischen $0{,}4n$ und $0{,}6n$? Wie hoch ist jede einzelne? Was geschieht mit der Fläche außerhalb?</p></div>
+        </div>
+        <div class="sol-lock">🔒 Musterlösung – nach Freigabe durch den Lehrer sichtbar.</div>
+        <div class="sol"><div class="sh">✓ Musterlösung · Aufgabe 6</div><div class="sb">
+          <div class="tw"><table class="vt">
+            <tr><th>$n$</th><th>$\mu$</th><th>a) $P(X=\mu)$</th><th>Intervall für $0{,}4\le\frac Xn\le0{,}6$</th><th>b) Wahrscheinlichkeit</th></tr>
+            <tr><td>10</td><td>5</td><td>$0{,}2461$</td><td>$4\le X\le6$</td><td>$0{,}6563$</td></tr>
+            <tr><td>50</td><td>25</td><td>$0{,}1123$</td><td>$20\le X\le30$</td><td>$0{,}8811$</td></tr>
+            <tr><td>100</td><td>50</td><td>$0{,}0796$</td><td>$40\le X\le60$</td><td>$0{,}9648$</td></tr>
+          </table></div>
+          <p><strong>a)</strong> Leon irrt: $P(X=\mu)$ <b>sinkt</b> von $0{,}25$ auf unter $0{,}08$.</p>
+          <p><strong>b)</strong> Mara hat recht: Die Fläche über $[0{,}4n-0{,}5;\ 0{,}6n+0{,}5]$ wächst von ${\color{#1a9e5c}\boldsymbol{0{,}66}}$ auf ${\color{#1a9e5c}\boldsymbol{0{,}96}}$.</p>
+          <p><strong>c)</strong> Mit wachsendem $n$ verteilt sich die Gesamtfläche 1 auf immer mehr Säulen, jede einzelne wird niedriger – auch die bei $\mu$. Das Intervall $[0{,}4n;\,0{,}6n]$ enthält aber immer mehr Säulen ($3$, $11$, $21$), und die Fläche außerhalb schrumpft, weil das Histogramm im Verhältnis zu $n$ schmaler wird. Wie stark die Trefferzahl um $\mu$ streut, untersuchen wir in IX.5 (Standardabweichung).</p>
+        </div></div>
+      </div>
+    </article>
+  </section>
+
+</div>
+
+<!-- OneNote-Export -->
+<div class="onbar" id="onbar">
+  <span id="on-count">0 ausgewählt</span>
+  <label id="on-sol-lab" class="dis" title="Erst nach Freischalten der Musterlösungen"><input type="checkbox" id="on-sol" disabled> mit Musterlösung</label>
+  <button class="go" id="on-go" type="button">📋 Als Bild für OneNote kopieren</button>
+  <button class="clr" id="on-clr" type="button">Auswahl aufheben</button>
+</div>
+<div class="ontoast" id="ontoast"></div>
+<div class="onmodal" id="onmodal"><div class="box">
+  <p style="margin:0 0 8px"><b>Kopieren direkt in die Zwischenablage ist in diesem Browser nicht möglich.</b> Bild mit Rechtsklick (bzw. lange tippen) kopieren oder speichern und in OneNote einfügen.</p>
+  <img id="on-img" alt="Aufgaben als Bild">
+  <p style="margin:10px 0 0;display:flex;gap:8px;flex-wrap:wrap"><a id="on-dl" download="aufgaben.png" class="on-copy" style="text-decoration:none">⬇ Bild speichern</a><button class="on-copy" id="on-close" type="button">Schließen</button></p>
+</div></div>
+<div id="on-stage" aria-hidden="true"></div>
+
+<footer class="bot">
+  Mathematik Oberstufe LK · Q2 · Kapitel IX · Binomialverteilung<br>
+  <a href="../">← Zurück zu Kapitel IX.3</a> · <a href="../../index.html#kap-ix">Stochastik-Übersicht</a>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/html-to-image@1.11.11/dist/html-to-image.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+
+  /* ---------- Histogramme (SVG) ---------- */
+  var NS='http://www.w3.org/2000/svg';
+  function mk(tag,a,p){ var e=document.createElementNS(NS,tag); for(var k in a) e.setAttribute(k,a[k]); if(p) p.appendChild(e); return e; }
+  function tx(p,x,y,s,a){ var t=mk('text',Object.assign({x:x,y:y,'text-anchor':'middle','font-family':'-apple-system,Segoe UI,Arial,sans-serif','font-size':11,fill:'#5c6472'},a||{}),p); t.textContent=s; return t; }
+  function nCr(n,k){ if(k<0||k>n) return 0; var r=1; for(var i=1;i<=k;i++) r=r*(n-k+i)/i; return r; }
+  function B(n,p,k){ return nCr(n,k)*Math.pow(p,k)*Math.pow(1-p,n-k); }
+  function de(x,d){ return x.toFixed(d).replace('.',','); }
+  document.querySelectorAll('[data-hist]').forEach(function(box){
+    var s=JSON.parse(box.getAttribute('data-hist'));
+    var n=s.n, p=s.p, W=s.w||320, H=s.h||200;
+    var k0=s.from!=null?s.from:0, k1=s.to!=null?s.to:(s.xmax!=null?s.xmax:n);
+    var vals=[]; for(var k=0;k<=n;k++) vals.push(B(n,p,k));
+    var mx=0; for(k=k0;k<=Math.min(k1,n);k++) mx=Math.max(mx,vals[k]);
+    var ymax=s.ymax||Math.ceil(mx*20+0.4)/20;
+    var m={l:s.noy?14:40,r:10,t:s.noy?(s.lab?22:12):24,b:30}, iw=W-m.l-m.r, ih=H-m.t-m.b;
+    var svg=mk('svg',{width:W,height:H,viewBox:'0 0 '+W+' '+H,role:'img','aria-label':'Histogramm n = '+n+', p = '+de(p,2)},box);
+    var nb=k1-k0+1, bw=iw/nb, X=function(k){ return m.l+bw*(k-k0+0.5); }, Y=function(v){ return m.t+ih*(1-v/ymax); };
+    var step=s.grid||(ymax>0.3?0.1:0.05);
+    if(!s.noy){ for(var v=0;v<=ymax+1e-9;v+=step){ mk('line',{x1:m.l,x2:W-m.r,y1:Y(v),y2:Y(v),stroke:'#e3e6eb'},svg); tx(svg,m.l-5,Y(v)+4,de(v,2),{'text-anchor':'end','font-size':10}); } tx(svg,m.l-4,m.t-6,'P(X = k)',{'text-anchor':'start','font-size':10}); }
+    var hl=s.hl||[], hl2=s.hl2||[];
+    for(k=k0;k<=Math.min(k1,n);k++){
+      var c=hl.indexOf(k)>=0?'#e8a800':hl2.indexOf(k)>=0?'#d4760a':(s.plain?'#5b8fc7':'#8fb3d9');
+      mk('rect',{x:X(k)-bw/2,y:Y(vals[k]),width:bw,height:Y(0)-Y(vals[k]),fill:c,stroke:'#2c5f8a','stroke-width':bw>6?0.8:0.3},svg);
+    }
+    mk('line',{x1:m.l,x2:W-m.r,y1:Y(0),y2:Y(0),stroke:'#1c1f26','stroke-width':1.2},svg);
+    var every=nb>36?10:nb>18?5:nb>12?2:1;
+    for(k=k0;k<=k1;k++){ if((k-k0)%every===0 || k===k0) tx(svg,X(k),H-m.b+14,k,{'font-size':10}); }
+    tx(svg,W-m.r,H-4,'k',{'text-anchor':'end','font-size':10,'font-style':'italic'});
+    if(s.mu){ var mu=Math.round(n*p*1000)/1000, xm=X(mu); mk('line',{x1:xm,x2:xm,y1:m.t,y2:Y(0),stroke:'#1a9e5c','stroke-width':2,'stroke-dasharray':'5 3'},svg); tx(svg,xm+4,m.t+10,'μ = '+de(mu,mu%1?1:0),{'text-anchor':'start','font-size':10,'font-weight':700,fill:'#1a9e5c'}); }
+    if(s.lab) tx(svg,W-m.r,13,s.lab,{'text-anchor':'end','font-size':12,'font-weight':700,fill:'#1c1f26'});
+  });
+
+  /* ---------- KaTeX ---------- */
+  function render(){
+    if (window.renderMathInElement) {
+      renderMathInElement(document.body, {
+        delimiters: [ {left:'$$', right:'$$', display:true}, {left:'$', right:'$', display:false} ],
+        throwOnError:false
+      });
+    }
+  }
+  if (window.renderMathInElement) render(); else window.addEventListener('load', render);
+
+  /* ---------- Karten auf/zu ---------- */
+  document.querySelectorAll('.card-head').forEach(function(h){
+    h.addEventListener('click', function(){ h.parentElement.classList.toggle('open'); });
+  });
+
+  /* ---------- Hilfe-Reiter ---------- */
+  document.querySelectorAll('.hints').forEach(function(box){
+    var tabs=box.querySelectorAll('.htabs button'), panels=box.querySelectorAll('.hpanel');
+    tabs.forEach(function(tab,i){
+      tab.addEventListener('click', function(){
+        var wasOn=tab.classList.contains('on');
+        tabs.forEach(function(t){ t.classList.remove('on'); });
+        panels.forEach(function(p){ p.classList.remove('on'); });
+        if (!wasOn){ tab.classList.add('on'); if (panels[i]) panels[i].classList.add('on'); }
+      });
+    });
+  });
+
+  /* ---------- Selbsteinschätzung ---------- */
+  document.querySelectorAll('.assess').forEach(function(box){
+    var btns=box.querySelectorAll('button');
+    btns.forEach(function(b){
+      b.addEventListener('click', function(){
+        var wasOn=b.classList.contains('on');
+        btns.forEach(function(x){ x.classList.remove('on'); });
+        if (!wasOn) b.classList.add('on');
+      });
+    });
+  });
+
+  /* ---------- Filter ---------- */
+  document.querySelectorAll('.filters button').forEach(function(b){
+    b.addEventListener('click', function(){
+      document.querySelectorAll('.filters button').forEach(function(x){ x.classList.remove('on'); });
+      b.classList.add('on');
+      var f=b.dataset.f;
+      document.querySelectorAll('section[data-stufe]').forEach(function(sec){
+        sec.style.display=(f==='all' || sec.dataset.stufe===f) ? '' : 'none';
+      });
+    });
+  });
+
+  /* ---------- Alternative Lösungswege ---------- */
+  document.querySelectorAll('.alt-btn').forEach(function(b){
+    var label=b.textContent;
+    b.addEventListener('click', function(){
+      var alt=b.nextElementSibling; var on=alt.classList.toggle('shown');
+      b.textContent = on ? '➖ Alternativen Weg ausblenden' : label;
+    });
+  });
+
+
+
+  /* ---------- Musterlösungen freischalten (pro Aufgabe einzeln) ---------- */
+  var CODE='MATHE', input=document.getElementById('code'), msg=document.getElementById('msg');
+  function activateLocks(){
+    document.querySelectorAll('.sol-lock').forEach(function(lock){ lock.classList.add('active'); lock.textContent='👁 Musterlösung anzeigen'; });
+  }
+  function tryUnlock(){
+    var val=(input.value||'').trim().toUpperCase();
+    if (val===CODE){
+      document.body.classList.add('unlocked');
+      msg.textContent='✓ freigeschaltet – Musterlösungen jetzt einzeln aufklappbar'; msg.className='msg ok';
+      activateLocks();
+      var sl=document.getElementById('on-sol'); sl.disabled=false; document.getElementById('on-sol-lab').classList.remove('dis');
+    } else { msg.textContent='✗ Code stimmt nicht'; msg.className='msg bad'; }
+  }
+  document.getElementById('btn-unlock').addEventListener('click', tryUnlock);
+  input.addEventListener('keydown', function(e){ if (e.key==='Enter') tryUnlock(); });
+  document.querySelectorAll('.sol-lock').forEach(function(lock){
+    lock.addEventListener('click', function(){
+      if (!document.body.classList.contains('unlocked')) return;
+      var sol=lock.nextElementSibling;
+      if (!sol || !sol.classList.contains('sol')) return;
+      var showing=sol.classList.toggle('shown');
+      lock.textContent = showing ? '🙈 Musterlösung wieder ausblenden' : '👁 Musterlösung anzeigen';
+      if (showing) sol.scrollIntoView({behavior:'smooth', block:'nearest'});
+    });
+  });
+
+  /* ---------- OneNote-Export: Aufgaben als Bild kopieren ---------- */
+  var cards=[].slice.call(document.querySelectorAll('article.card'));
+  var bar=document.getElementById('onbar'), cnt=document.getElementById('on-count');
+  function picked(){ return cards.filter(function(c){ return c.classList.contains('picked'); }); }
+  function updBar(){ var n=picked().length; cnt.textContent=n+(n===1?' Aufgabe':' Aufgaben')+' ausgewählt'; bar.classList.toggle('show',n>0); }
+  cards.forEach(function(card){
+    var head=card.querySelector('.card-head'), chev=head.querySelector('.chev');
+    var tools=document.createElement('div'); tools.className='tools';
+    tools.innerHTML='<label class="on-pick" title="Für den gemeinsamen Export auswählen"><input type="checkbox"><span>auswählen</span></label><button class="on-copy" type="button" title="Diese Aufgabe als Bild für OneNote kopieren">📋 OneNote</button>';
+    head.insertBefore(tools,chev);
+    tools.addEventListener('click',function(e){ e.stopPropagation(); });
+    var cb=tools.querySelector('input');
+    cb.addEventListener('change',function(){ card.classList.toggle('picked',cb.checked); updBar(); });
+    tools.querySelector('.on-copy').addEventListener('click',function(){ exportCards([card], document.getElementById('on-sol').checked); });
+  });
+  document.getElementById('on-clr').addEventListener('click',function(){ cards.forEach(function(c){ c.classList.remove('picked'); var i=c.querySelector('.on-pick input'); if(i) i.checked=false; }); updBar(); });
+  document.getElementById('on-go').addEventListener('click',function(){ exportCards(picked(), document.getElementById('on-sol').checked); });
+  document.getElementById('on-close').addEventListener('click',function(){ document.getElementById('onmodal').classList.remove('show'); });
+
+  function toast(t,bad){ var el=document.getElementById('ontoast'); el.textContent=t; el.classList.toggle('bad',!!bad); el.style.display='block'; clearTimeout(el._t); el._t=setTimeout(function(){ el.style.display='none'; },3200); }
+
+  function buildStage(list, withSol){
+    var stage=document.getElementById('on-stage'); stage.innerHTML='';
+    list.forEach(function(card){
+      var item=document.createElement('div'); item.className='ex-item';
+      var cls=['sA','sG','s1','s2','s3'].filter(function(c){ return card.classList.contains(c); })[0]||'sA';
+      var h=document.createElement('div'); h.className='ex-title '+cls; h.textContent=card.getAttribute('data-title')||card.querySelector('h3').textContent; item.appendChild(h);
+      card.querySelectorAll('.card-body > .task, .card-body > .bsp, .card-body > .merk').forEach(function(el){ item.appendChild(el.cloneNode(true)); });
+      if (withSol && document.body.classList.contains('unlocked')){ var sol=card.querySelector('.sol'); if(sol) item.appendChild(sol.cloneNode(true)); }
+      stage.appendChild(item);
+    });
+    var src=document.createElement('div'); src.className='ex-src'; src.textContent='LK Q2 · IX.3 Erwartungswert und Histogramme · FBG Schwerte'; stage.appendChild(src);
+    return stage;
+  }
+  function exportCards(list, withSol){
+    if(!list.length) return;
+    if(!window.htmlToImage){ toast('Export-Bibliothek nicht geladen (Internetverbindung?)',true); return; }
+    var stage=buildStage(list, withSol);
+    var opts={pixelRatio:2, backgroundColor:'#ffffff', cacheBust:false, width:stage.offsetWidth, height:stage.offsetHeight, style:{position:'static',left:'0',top:'0'}};
+    var blobPromise=htmlToImage.toBlob(stage,opts);
+    var done=function(){ toast('✓ Kopiert – in OneNote mit Strg+V einfügen'); };
+    var fallback=function(){
+      blobPromise.then(function(b){ var url=URL.createObjectURL(b); document.getElementById('on-img').src=url; document.getElementById('on-dl').href=url; document.getElementById('onmodal').classList.add('show'); })
+        .catch(function(){ toast('Bild konnte nicht erzeugt werden',true); });
+    };
+    try{
+      if(navigator.clipboard && window.ClipboardItem){
+        navigator.clipboard.write([new ClipboardItem({'image/png':blobPromise})]).then(done,fallback);
+      } else fallback();
+    }catch(e){ fallback(); }
+  }
+
+  /* Erste Karte jedes Abschnitts geöffnet starten */
+  document.querySelectorAll('section[data-stufe]').forEach(function(sec){
+    var first=sec.querySelector('.card'); if (first) first.classList.add('open');
+  });
+});
+</script>
+
+</body>
+</html>
