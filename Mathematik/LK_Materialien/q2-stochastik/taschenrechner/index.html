@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TI-Nspire-Anleitung · Stochastik · LK Q2</title>
+<!--
+  ================================================================
+  SO WIRD DIESE ANLEITUNG ERWEITERT
+  ----------------------------------------------------------------
+  • Jeder Befehl ist ein <article class="cmd" id="…" data-kap="…">.
+    Einfach einen vorhandenen Block kopieren, id ändern (eindeutig,
+    ohne Leerzeichen) und Inhalt anpassen.
+  • data-kap = Kapitel, in dem der Befehl eingeführt wird (z. B. "IX.4").
+    Daraus entsteht automatisch der Kapitel-Filter.
+  • data-neu="1" setzt das Abzeichen „neu“.
+  • Neue Themen-Abschnitte: <section class="topic" id="…" data-title="…">.
+    Das Inhaltsverzeichnis wird automatisch erzeugt.
+  • Zuletzt das Datum im Kopf („Stand“) anpassen.
+  ================================================================
+-->
+<style>
+  :root{
+    --gold:#b87500; --gold-pale:#fdf3dc; --bg:#f5f4f0; --surface:#ffffff; --surface-2:#faf9f6;
+    --border:#ddd8cc; --text:#1c1a16; --muted:#6b6456; --link:#2c5f8a; --link-pale:#e5eef7;
+    --green:#1a7a4c; --green-pale:#e3f3ea; --red:#c0392b; --red-pale:#fdecea; --code:#eef1f5; --r:6px;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --gold:#d4a030; --gold-pale:#2a2010; --bg:#1a1814; --surface:#242018; --surface-2:#2a251c;
+      --border:#38332a; --text:#ede8de; --muted:#9e9482; --link:#6a9fd8; --link-pale:#0f1e30;
+      --green:#3fbf82; --green-pale:#0f2a1c; --red:#ef6b5b; --red-pale:#3d2420; --code:#2f2a22;
+    }
+  }
+  :root[data-theme="dark"]{
+    --gold:#d4a030; --gold-pale:#2a2010; --bg:#1a1814; --surface:#242018; --surface-2:#2a251c;
+    --border:#38332a; --text:#ede8de; --muted:#9e9482; --link:#6a9fd8; --link-pale:#0f1e30;
+    --green:#3fbf82; --green-pale:#0f2a1c; --red:#ef6b5b; --red-pale:#3d2420; --code:#2f2a22;
+  }
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;font-size:16px;line-height:1.6}
+  a{color:var(--link)}
+  .topbar{background:var(--surface);border-bottom:1px solid var(--border);padding:0 20px}
+  .topbar-inner{max-width:960px;margin:0 auto;min-height:46px;padding:6px 0;display:flex;flex-wrap:wrap;align-items:center;gap:6px;font-size:.82rem;color:var(--muted)}
+  .topbar-inner a{color:var(--link);text-decoration:none}
+  .topbar-inner a:hover{text-decoration:underline}
+  .sep{opacity:.45}
+  header.page-head{background:var(--surface);border-bottom:3px solid var(--gold);padding:30px 20px 26px;margin-bottom:24px}
+  header.page-head .inner{max-width:960px;margin:0 auto}
+  .head-eyebrow{font-size:.78rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--gold);margin-bottom:6px}
+  h1{font-family:"Crimson Pro",Georgia,serif;font-size:2.2rem;font-weight:600;line-height:1.15}
+  header.page-head p{font-size:.93rem;color:var(--muted);margin-top:6px;max-width:740px}
+  .wrap{max-width:960px;margin:0 auto;padding:0 20px 80px}
+
+  .controls{position:sticky;top:0;z-index:5;background:var(--bg);padding:10px 0;display:flex;flex-wrap:wrap;gap:10px;align-items:center;border-bottom:1px solid var(--border);margin-bottom:18px}
+  .controls input{flex:1 1 220px;min-width:0;background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:8px 12px;font:inherit;color:inherit}
+  .chips{display:flex;flex-wrap:wrap;gap:6px}
+  .chips button{border:1px solid var(--border);background:var(--surface);color:var(--muted);border-radius:20px;padding:5px 12px;font:inherit;font-size:.82rem;font-weight:600;cursor:pointer}
+  .chips button.on{background:var(--text);border-color:var(--text);color:var(--bg)}
+
+  nav.toc{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:8px;margin-bottom:26px}
+  nav.toc a{display:block;background:var(--surface);border:1px solid var(--border);border-left:4px solid var(--gold);border-radius:var(--r);padding:8px 12px;text-decoration:none;color:var(--text);font-weight:600;font-size:.9rem}
+  nav.toc a span{display:block;font-weight:400;font-size:.78rem;color:var(--muted)}
+  nav.toc a:hover{border-color:var(--gold)}
+
+  section.topic{margin-bottom:34px}
+  section.topic > h2{font-family:"Crimson Pro",Georgia,serif;font-size:1.6rem;font-weight:600;border-bottom:2px solid var(--border);padding-bottom:6px;margin-bottom:6px;scroll-margin-top:70px}
+  section.topic > .lead{color:var(--muted);font-size:.92rem;margin-bottom:14px}
+
+  article.cmd{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:16px 18px;margin-bottom:12px;scroll-margin-top:70px}
+  article.cmd > header{display:flex;flex-wrap:wrap;align-items:baseline;gap:8px 12px;margin-bottom:8px}
+  article.cmd h3{font-size:1.05rem}
+  .kap{font-size:.72rem;font-weight:700;letter-spacing:.05em;color:var(--gold);background:var(--gold-pale);border-radius:20px;padding:1px 9px}
+  .neu{font-size:.72rem;font-weight:700;color:#fff;background:var(--green);border-radius:20px;padding:1px 9px}
+  .syntax{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.95rem;background:var(--code);border:1px solid var(--border);border-radius:var(--r);padding:6px 10px;display:inline-block;margin:2px 0 8px}
+  article.cmd p{margin:.45em 0}
+  article.cmd ol,article.cmd ul{margin:.4em 0 .4em 1.4em}
+  article.cmd li{margin:.25em 0}
+  code{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.88em;background:var(--code);border:1px solid var(--border);border-radius:4px;padding:0 5px;white-space:nowrap}
+  .kbd{display:inline-block;font-size:.74rem;font-weight:700;border:1px solid var(--muted);border-radius:4px;padding:0 6px;background:var(--surface-2);line-height:1.55;white-space:nowrap}
+  .path{font-weight:700;color:var(--link)}
+  .ex{border-left:3px solid var(--link);background:var(--link-pale);border-radius:0 var(--r) var(--r) 0;padding:8px 12px;margin:8px 0;font-size:.93rem}
+  .ex b{color:var(--link)}
+  .warn{border-left:3px solid var(--red);background:var(--red-pale);border-radius:0 var(--r) var(--r) 0;padding:8px 12px;margin:8px 0;font-size:.9rem}
+  .tip{border-left:3px solid var(--green);background:var(--green-pale);border-radius:0 var(--r) var(--r) 0;padding:8px 12px;margin:8px 0;font-size:.9rem}
+  .cols{display:flex;flex-wrap:wrap;gap:16px;align-items:flex-start}
+  .cols > div{flex:1 1 300px;min-width:0}
+
+  /* TI-Bildschirm-Attrappen */
+  .screen{border:2px solid var(--text);border-radius:10px;overflow:hidden;background:#fff;color:#1c1f26;max-width:440px;margin:8px 0;font-size:.85rem}
+  .screen .bar{background:#2c5f8a;color:#fff;font-size:.72rem;font-weight:700;padding:3px 10px}
+  .screen .ln{display:flex;justify-content:space-between;gap:12px;padding:5px 10px;border-bottom:1px solid #e3e6eb;font-family:ui-monospace,Menlo,Consolas,monospace}
+  .screen .ln span:last-child{font-weight:700;text-align:right}
+  .scroll{overflow-x:auto}
+  table.ls{border-collapse:collapse;font-size:.78rem;font-variant-numeric:tabular-nums;background:#fff;color:#1c1f26}
+  table.ls th,table.ls td{border:1px solid #cfd5dd;padding:2px 8px;text-align:center;white-space:nowrap}
+  table.ls tr.col th{background:#e5eef7;color:#2c5f8a;font-weight:700}
+  table.ls tr.nm td{background:#fff;font-weight:700}
+  table.ls tr.fm td{background:#eef0f3;color:#5c6472;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.7rem}
+  table.ls td.rn,table.ls th.rn{background:#eef0f3;color:#5c6472;font-weight:400}
+  table.ls td.hl{background:#fdf3d6}
+  .lab{font-size:.75rem;color:var(--muted)}
+  svg.hist{display:block;max-width:100%;height:auto}
+
+  table.err{border-collapse:collapse;width:100%;font-size:.9rem}
+  table.err th,table.err td{border-bottom:1px solid var(--border);padding:7px 8px;text-align:left;vertical-align:top}
+  table.err th{font-size:.75rem;letter-spacing:.05em;text-transform:uppercase;color:var(--muted)}
+
+  .empty{display:none;color:var(--muted);text-align:center;padding:30px}
+  footer{text-align:center;color:var(--muted);font-size:.82rem;margin-top:40px;padding:20px;border-top:1px solid var(--border)}
+  @media print{ .controls,.topbar,nav.toc{display:none} article.cmd{break-inside:avoid} body{background:#fff} }
+  @media (max-width:600px){ h1{font-size:1.8rem} .wrap{padding:0 14px 60px} article.cmd{padding:14px} code{white-space:normal;word-break:break-word} }
+</style>
+</head>
+<body>
+
+<nav class="topbar" aria-label="Breadcrumb">
+  <div class="topbar-inner">
+    <a href="../../../../index.html">Unterrichtsmaterialien</a><span class="sep">›</span>
+    <a href="../../../index.html">Mathematik</a><span class="sep">›</span>
+    <a href="../../index.html">Leistungskurs</a><span class="sep">›</span>
+    <a href="../index.html">Stochastik</a><span class="sep">›</span>
+    <span>TI-Nspire-Anleitung</span>
+  </div>
+</nav>
+
+<header class="page-head">
+  <div class="inner">
+    <div class="head-eyebrow">Mathematik · Leistungskurs · Q2 · Stochastik</div>
+    <h1>🧮 TI-Nspire CAS – Anleitung Stochastik</h1>
+    <p>Alle Befehle, die wir in den Kapiteln VIII und IX benutzen – mit Beispielen, Bildschirm-Ansichten und typischen Fehlern. Die Anleitung wächst mit jedem Kapitel weiter. <b>Stand: November 2026</b> (bis IX.3).</p>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <div class="controls">
+    <input type="search" id="q" placeholder="Befehl oder Stichwort suchen, z. B. binompdf, Histogramm, Zufall …" aria-label="Suche">
+    <div class="chips" id="chips"><button class="on" data-k="all" type="button">Alle Kapitel</button></div>
+  </div>
+
+  <nav class="toc" id="toc" aria-label="Inhalt"></nav>
+  <div class="empty" id="empty">Kein Eintrag gefunden. Andere Schreibweise versuchen?</div>
+
+  <!-- ============================================================ -->
+  <section class="topic" id="grundlagen" data-title="Grundlagen" data-sub="Dokument, Seiten, Eingabe">
+    <h2>1 · Grundlagen</h2>
+    <p class="lead">Was man für alle weiteren Befehle braucht.</p>
+
+    <article class="cmd" id="dokument" data-kap="VIII.4">
+      <header><h3>Neues Dokument und neue Seiten</h3></header>
+      <ul>
+        <li><b>Neues Dokument:</b> <span class="kbd">home</span> ▸ <b>Neu</b>. Speichern mit <span class="kbd">ctrl</span> <span class="kbd">S</span>.</li>
+        <li><b>Neue Seite</b> im selben Dokument: <span class="kbd">ctrl</span> <span class="kbd">doc</span>, dann die App wählen:
+          <b>Calculator</b> (Rechnen), <b>Lists &amp; Spreadsheet</b> (Tabellen), <b>Data &amp; Statistics</b> (Diagramme).</li>
+        <li>Zwischen Seiten wechseln: <span class="kbd">ctrl</span> <span class="kbd">◀</span> / <span class="kbd">▶</span>.</li>
+        <li>Alle Seiten eines Problems teilen sich die <b>Variablen</b>: Eine Spalte <code>wkt</code> in der Tabelle kann man im Calculator direkt benutzen.</li>
+      </ul>
+    </article>
+
+    <article class="cmd" id="eingabe" data-kap="VIII.4">
+      <header><h3>Dezimalpunkt, Brüche und Dezimalzahlen</h3></header>
+      <ul>
+        <li>Dezimalzahlen immer mit <b>Punkt</b>: <code>0.25</code>, nicht <code>0,25</code>. Das Komma trennt Argumente: <code>binompdf(12,0.25,3)</code>.</li>
+        <li>Der CAS rechnet exakt und zeigt oft <b>Brüche</b>. Dezimalzahl erzwingen: im Calculator mit <span class="kbd">ctrl</span> <span class="kbd">enter</span> statt <span class="kbd">enter</span>,
+        in Formeln <code>*1.0</code> anhängen oder durch <code>100.0</code> statt <code>100</code> teilen.</li>
+        <li>Brüche wie $\frac38$ darf man direkt eingeben: <code>3/8</code>.</li>
+      </ul>
+    </article>
+
+    <article class="cmd" id="variablen" data-kap="IX.3">
+      <header><h3>Variablen speichern</h3><span class="syntax">name:=Wert</span></header>
+      <p>Mit <code>:=</code> speichert man einen Wert unter einem Namen. Gleichwertig ist der Befehl <code>Define n=12</code>, falls man das Zeichen <code>:=</code> nicht findet.</p>
+      <div class="ex"><b>Beispiel:</b> <code>n:=12</code> und <code>p:=0.25</code> – danach rechnet <code>binompdf(n,p,3)</code> mit diesen Werten.
+      Ändert man später <code>n:=20</code>, passen sich alle Formeln und Diagramme an, die <code>n</code> benutzen.</div>
+      <div class="warn">Spaltennamen sind ebenfalls Variablen. Eine Spalte nicht so nennen wie eine Laufvariable in ihrer eigenen Formel (z. B. Spalte <code>t</code> mit <code>=seq(t,t,0,8)</code>) – das gibt einen Zirkelbezug.</div>
+    </article>
+
+    <article class="cmd" id="listen" data-kap="VIII.4">
+      <header><h3>Listen</h3><span class="syntax">{1,2,3}</span></header>
+      <p>Eine Liste schreibt man in geschweiften Klammern. Viele Befehle verarbeiten Listen elementweise: <code>binompdf(30,0.4,{11,12,13})</code> liefert drei Werte auf einmal.</p>
+      <p>Jede <b>benannte Spalte</b> in Lists &amp; Spreadsheet ist eine Liste, z. B. <code>treffer</code>. Mit Listen kann man rechnen: <code>treffer*wkt</code> multipliziert Eintrag für Eintrag.</p>
+    </article>
+  </section>
+
+  <!-- ============================================================ -->
+  <section class="topic" id="tabellen" data-title="Tabellen" data-sub="Lists &amp; Spreadsheet">
+    <h2>2 · Tabellen mit Lists &amp; Spreadsheet</h2>
+    <p class="lead">Die Tabellenkalkulation des TI-Nspire – für Simulationen und Wahrscheinlichkeitsverteilungen.</p>
+
+    <article class="cmd" id="aufbau" data-kap="VIII.4">
+      <header><h3>Aufbau einer Tabelle</h3></header>
+      <div class="cols"><div>
+        <ul>
+          <li>Spalten heißen <b>A, B, C, …</b>, Zeilen <b>1, 2, 3, …</b>; eine Zelle heißt z. B. <code>b3</code>.</li>
+          <li><b>Oberste Zeile:</b> Spaltenname (frei wählbar, z. B. <code>treffer</code>).</li>
+          <li><b>Graue Formelzeile</b> mit ◆: Formel für die <b>ganze Spalte</b>.</li>
+          <li>Darunter die <b>Zellen</b>. Eine Formel in einer Zelle beginnt mit <code>=</code>.</li>
+        </ul>
+      </div><div class="scroll">
+        <table class="ls">
+          <tr class="col"><th class="rn"></th><th>A</th><th>B</th><th>C</th></tr>
+          <tr class="nm"><td class="rn">Name</td><td>treffer</td><td>wkt</td><td></td></tr>
+          <tr class="fm"><td class="rn">◆</td><td>=seq(t,t,0,4)</td><td>=binompdf(4,0.6)</td><td></td></tr>
+          <tr><td class="rn">1</td><td>0</td><td>0.0256</td><td></td></tr>
+          <tr><td class="rn">2</td><td>1</td><td>0.1536</td><td></td></tr>
+          <tr><td class="rn">3</td><td>2</td><td>0.3456</td><td></td></tr>
+          <tr><td class="rn">4</td><td>3</td><td>0.3456</td><td></td></tr>
+          <tr><td class="rn">5</td><td>4</td><td>0.1296</td><td class="hl">=sum(…)</td></tr>
+        </table>
+        <div class="lab">Name – Formelzeile ◆ – Zellen</div>
+      </div></div>
+    </article>
+
+    <article class="cmd" id="spaltenformel" data-kap="VIII.4">
+      <header><h3>Spaltenformel – eine ganze Spalte auf einmal füllen</h3></header>
+      <ol>
+        <li>Mit den Pfeiltasten ganz nach oben in die Spalte und einen <b>Namen</b> eintippen, z. B. <code>wurf</code> <span class="kbd">enter</span>.</li>
+        <li>Eine Zeile tiefer in die <b>graue Formelzeile</b> (◆) gehen.</li>
+        <li>Formel mit <code>=</code> eintippen, z. B. <code>=randint(1,6,100)</code> <span class="kbd">enter</span> – die Spalte füllt sich mit 100 Werten.</li>
+      </ol>
+      <p>Auf andere Spalten bezieht man sich über ihren Namen (<code>=w1+w2</code>) oder über <code>a[]</code>, <code>b[]</code> (ganze Spalte A bzw. B).</p>
+    </article>
+
+    <article class="cmd" id="zellformel" data-kap="VIII.4">
+      <header><h3>Zellformel und Bereiche</h3></header>
+      <p>In eine einzelne Zelle tippt man eine Formel mit <code>=</code>. Ein <b>Bereich</b> wird mit Doppelpunkt angegeben:</p>
+      <ul>
+        <li><code>=sum(a1:c1)</code> – Summe der Zellen A1 bis C1 (eine Zeile)</li>
+        <li><code>=sum(b3:b5)</code> – Summe der Zellen B3 bis B5 (ein Stück einer Spalte)</li>
+        <li><code>=sum(wkt)</code> – Summe der ganzen Spalte <code>wkt</code></li>
+      </ul>
+      <div class="warn"><b>Zeile und k:</b> Beginnt die Spalte bei $k=0$, gehört Zeile $r$ zu $k=r-1$. $P(X=2)$ bis $P(X=4)$ stehen also in den Zeilen 3 bis 5: <code>=sum(b3:b5)</code>.</div>
+    </article>
+
+    <article class="cmd" id="fuellen" data-kap="VIII.4">
+      <header><h3>Formel nach unten oder rechts kopieren (Füllen)</h3><span class="syntax">menu ▸ Daten ▸ Füllen</span></header>
+      <ol>
+        <li>Die Zelle(n) mit der Formel markieren (mehrere: <span class="kbd">⇧ shift</span> gedrückt halten und Pfeiltasten).</li>
+        <li><span class="path">menu ▸ Daten ▸ Füllen</span>.</li>
+        <li>Mit den Pfeiltasten den gestrichelten Rahmen bis zur gewünschten Zeile ziehen, <span class="kbd">enter</span>.</li>
+      </ol>
+      <p>Die Zellbezüge passen sich an: aus <code>=sum(a1:c1)</code> wird in Zeile 2 <code>=sum(a2:c2)</code>.</p>
+    </article>
+
+    <article class="cmd" id="neuberechnen" data-kap="VIII.4">
+      <header><h3>Neu berechnen / neu würfeln</h3><span class="syntax">ctrl R</span></header>
+      <p><span class="kbd">ctrl</span> <span class="kbd">R</span> erzeugt alle Zufallszahlen neu – die Simulation läuft noch einmal. Ideal, um zu sehen, wie stark Schätzwerte schwanken.</p>
+      <p>Spalte einfügen oder löschen: Spaltenkopf (A, B, …) anklicken, dann <span class="path">menu ▸ Einfügen</span> bzw. <span class="kbd">del</span>. Danach Bereiche in Formeln prüfen.</p>
+    </article>
+  </section>
+
+  <!-- ============================================================ -->
+  <section class="topic" id="zufall" data-title="Zufall &amp; Simulation" data-sub="rand, randint, when, countif">
+    <h2>3 · Zufallszahlen und Simulationen</h2>
+    <p class="lead">Zufallsexperimente mit Zufallszahlen nachspielen (Kapitel VIII.4).</p>
+
+    <article class="cmd" id="randseed" data-kap="VIII.4">
+      <header><h3>Zufallsgenerator starten</h3><span class="syntax">RandSeed Zahl</span></header>
+      <p>Einmal zu Beginn im Calculator, z. B. <code>RandSeed 1704</code> <span class="kbd">enter</span> (eigene Zahl wählen). Sonst liefern alle frisch zurückgesetzten Rechner die gleichen „Zufallszahlen“.</p>
+    </article>
+
+    <article class="cmd" id="rand" data-kap="VIII.4">
+      <header><h3>Zufallszahl zwischen 0 und 1</h3><span class="syntax">rand()  ·  rand(k)</span></header>
+      <p><code>rand()</code> liefert eine Zahl zwischen 0 und 1, <code>rand(k)</code> eine Liste mit $k$ solchen Zahlen.</p>
+      <div class="ex"><b>Treffer mit Wahrscheinlichkeit p:</b> <code>=when(rand()&lt;0.7,1,0)</code> ergibt in 70 % der Fälle 1 (Treffer), sonst 0.</div>
+    </article>
+
+    <article class="cmd" id="randint" data-kap="VIII.4">
+      <header><h3>Ganze Zufallszahlen</h3><span class="syntax">randint(a,b)  ·  randint(a,b,k)</span></header>
+      <p>Eine bzw. $k$ ganze Zufallszahlen von $a$ bis $b$ (jede gleich wahrscheinlich).</p>
+      <div class="ex"><b>Würfel:</b> <code>=randint(1,6,300)</code> als Spaltenformel – 300 Würfe.<br>
+      <b>Augensumme dreier Würfel:</b> <code>=randint(1,6,300)+randint(1,6,300)+randint(1,6,300)</code></div>
+    </article>
+
+    <article class="cmd" id="when" data-kap="VIII.4">
+      <header><h3>Fallunterscheidung</h3><span class="syntax">when(Bedingung, dann, sonst)</span></header>
+      <p>Wie „WENN“ in Excel. Bedingungen mit <code>=</code>, <code>&lt;</code>, <code>&gt;</code>, <code>&lt;=</code>, <code>≠</code> und verknüpft mit <code>and</code> / <code>or</code>.</p>
+      <div class="ex"><code>=when(a1=b1,1,0)</code> – 1, wenn beide Würfel gleich sind<br>
+      <code>=when(d1&gt;0,0,sum(a1:c1))</code> – 0 Punkte, sobald eine Sechs dabei ist, sonst die Augensumme<br>
+      <code>=when(randint(1,6)&lt;=2,1,0)</code> – Treffer mit Wahrscheinlichkeit $\frac13$ per Würfel</div>
+    </article>
+
+    <article class="cmd" id="countif" data-kap="VIII.4">
+      <header><h3>Zählen</h3><span class="syntax">countif(Liste, Wert)</span></header>
+      <p>Zählt, wie oft ein Wert vorkommt. Bedingungen schreibt man mit <code>?</code> als Platzhalter.</p>
+      <div class="ex"><code>countif(a1:c1,6)</code> – Anzahl der Sechsen in A1 bis C1<br>
+      <code>countif(summe,?&gt;11)</code> – wie oft die Spalte <code>summe</code> größer als 11 ist<br>
+      <code>=countif(summe,?&gt;11)/300.0</code> – relative Häufigkeit bei 300 Versuchen (Dezimalzahl dank <code>300.0</code>)</div>
+    </article>
+
+    <article class="cmd" id="listbefehle" data-kap="VIII.4">
+      <header><h3>Summe, Mittelwert, Maximum</h3><span class="syntax">sum( )  ·  mean( )  ·  max( )</span></header>
+      <p>Funktionieren für Bereiche (<code>a1:a100</code>), Spalten (<code>punkte</code>) und Listen.</p>
+      <div class="ex"><code>=mean(e1:e100)*1.0</code> – mittlere Punktzahl in 100 Spielen<br><code>=max(wkt)</code> – größte Wahrscheinlichkeit in der Spalte <code>wkt</code></div>
+    </article>
+
+    <article class="cmd" id="seq" data-kap="VIII.4">
+      <header><h3>Folgen und Listen erzeugen</h3><span class="syntax">seq(Term, Variable, Start, Ende)</span></header>
+      <p>Erzeugt eine Liste: Für jeden Wert der Variablen von Start bis Ende wird der Term ausgewertet.</p>
+      <div class="ex"><code>=seq(t,t,0,12)</code> – die Zahlen 0, 1, …, 12 (z. B. Trefferzahlen)<br>
+      <code>=seq(countif(rand(10),?&lt;0.7),k,1,100)</code> – 100 Serien zu je 10 Würfen, jeweils die Trefferzahl</div>
+    </article>
+
+    <article class="cmd" id="muster-sim" data-kap="VIII.4">
+      <header><h3>Muster: Serien simulieren und Wahrscheinlichkeit schätzen</h3></header>
+      <p>Beispiel: 10 Freiwürfe mit Trefferwahrscheinlichkeit 0,7; wie oft gibt es mindestens 8 Treffer?</p>
+      <ol>
+        <li>A1: <code>=when(rand()&lt;0.7,1,0)</code>, mit <b>Füllen</b> nach rechts bis J1.</li>
+        <li>K1: <code>=sum(a1:j1)</code> – Trefferzahl der Serie.</li>
+        <li>A1 bis K1 markieren und bis Zeile 100 nach unten füllen.</li>
+        <li>L1: <code>=countif(k1:k100,?&gt;7)/100.0</code> – Schätzwert.</li>
+        <li>Mit <span class="kbd">ctrl</span> <span class="kbd">R</span> wiederholen und die Schwankung beobachten.</li>
+      </ol>
+    </article>
+  </section>
+
+  <!-- ============================================================ -->
+  <section class="topic" id="kombinatorik" data-title="Kombinatorik" data-sub="nCr, Fakultät">
+    <h2>4 · Kombinatorik</h2>
+    <p class="lead">Pfade zählen (Kapitel IX.1 und IX.2).</p>
+
+    <article class="cmd" id="ncr" data-kap="IX.1">
+      <header><h3>Binomialkoeffizient „n über k“</h3><span class="syntax">nCr(n,k)</span></header>
+      <p>Anzahl der Pfade mit genau $k$ Treffern bei $n$ Versuchen, bzw. Anzahl der Möglichkeiten, $k$ aus $n$ auszuwählen. Menü: <span class="path">menu ▸ Wahrscheinlichkeit ▸ Kombinationen</span>.</p>
+      <div class="screen"><div class="bar">1.1 &nbsp; Calculator</div>
+        <div class="ln"><span>nCr(8,4)</span><span>70</span></div>
+        <div class="ln"><span>nCr(10,3)</span><span>120</span></div></div>
+      <div class="warn">Reihenfolge: erst $n$, dann $k$. <code>nCr(2,6)</code> liefert 0.</div>
+    </article>
+
+    <article class="cmd" id="fakultaet" data-kap="IX.2">
+      <header><h3>Fakultät</h3><span class="syntax">n!</span></header>
+      <p>$n!=n\cdot(n-1)\cdot\ldots\cdot2\cdot1$. Das Zeichen <code>!</code> über <span class="path">menu ▸ Wahrscheinlichkeit ▸ Fakultät</span> oder die Taste <span class="kbd">?!▸</span>.</p>
+      <div class="ex"><code>6!/(2!*4!)</code> → 15, gleich <code>nCr(6,2)</code>.</div>
+      <div class="warn">Klammer um den Nenner nicht vergessen: <code>6!/2!*4!</code> rechnet $\frac{6!}{2!}\cdot4!=8640$.</div>
+    </article>
+  </section>
+
+  <!-- ============================================================ -->
+  <section class="topic" id="binomial" data-title="Binomialverteilung" data-sub="binompdf, Tabelle, Erwartungswert">
+    <h2>5 · Binomialverteilung</h2>
+    <p class="lead">Wahrscheinlichkeiten $B_{n;\,p}(k)$ berechnen, als Tabelle darstellen und auswerten (Kapitel IX.1 und IX.3).</p>
+
+    <article class="cmd" id="binompdf" data-kap="IX.1">
+      <header><h3>Einzelne Wahrscheinlichkeit P(X = k)</h3><span class="syntax">binompdf(n,p,k)</span></header>
+      <p>Berechnet $B_{n;\,p}(k)=\binom nk\,p^k\,(1-p)^{n-k}$. Menü: <span class="path">menu ▸ Wahrscheinlichkeit ▸ Verteilungen ▸ Binomial Pdf</span> (dann erscheint ein Eingabefenster für <i>n</i>, <i>p</i> und den <i>x</i>-Wert).</p>
+      <div class="screen"><div class="bar">1.1 &nbsp; Calculator</div>
+        <div class="ln"><span>binompdf(8,1/3,4)</span><span>0.170705</span></div>
+        <div class="ln"><span>nCr(8,4)·(1/3)^4·(2/3)^4</span><span>0.170705</span></div></div>
+      <p>Mit einer Liste als drittem Argument entstehen mehrere Werte auf einmal: <code>binompdf(30,0.4,{11,12,13})</code>.</p>
+    </article>
+
+    <article class="cmd" id="binompdf-summe" data-kap="IX.3">
+      <header><h3>Mehrere Werte addieren</h3><span class="syntax">sum(binompdf(n,p,{…}))</span></header>
+      <div class="ex"><code>sum(binompdf(12,0.25,{2,3,4}))</code> → $P(2\le X\le4)\approx0{,}684$<br>
+      <code>sum(binompdf(50,0.5,seq(t,t,20,30)))</code> → $P(20\le X\le30)$, wenn die Liste lang ist</div>
+      <p>Für „höchstens“ und „mindestens“ gibt es ab IX.4 einen eigenen Befehl (kumulierte Wahrscheinlichkeiten).</p>
+    </article>
+
+    <article class="cmd" id="verteilungstabelle" data-kap="IX.1">
+      <header><h3>Die ganze Verteilung als Tabelle</h3><span class="syntax">=binompdf(n,p)</span></header>
+      <p>Ohne drittes Argument liefert <code>binompdf(n,p)</code> die Liste aller Werte für $k=0,\ldots,n$.</p>
+      <ol>
+        <li>Neue Seite <span class="kbd">ctrl</span> <span class="kbd">doc</span> ▸ <b>Lists &amp; Spreadsheet</b>.</li>
+        <li>Spalte A Name <code>treffer</code>, Formelzeile <code>=seq(t,t,0,12)</code>.</li>
+        <li>Spalte B Name <code>wkt</code>, Formelzeile <code>=binompdf(12,0.25)</code>.</li>
+      </ol>
+      <div class="cols"><div class="scroll">
+        <table class="ls">
+          <tr class="col"><th class="rn"></th><th>A</th><th>B</th></tr>
+          <tr class="nm"><td class="rn"></td><td>treffer</td><td>wkt</td></tr>
+          <tr class="fm"><td class="rn">◆</td><td>=seq(t,t,0,12)</td><td>=binompdf(12,0.25)</td></tr>
+          <tr><td class="rn">1</td><td>0</td><td>0.031676</td></tr>
+          <tr><td class="rn">2</td><td>1</td><td>0.126705</td></tr>
+          <tr><td class="rn">3</td><td>2</td><td>0.232293</td></tr>
+          <tr><td class="rn">4</td><td>3</td><td class="hl">0.258104</td></tr>
+          <tr><td class="rn">5</td><td>4</td><td>0.193578</td></tr>
+          <tr><td class="rn">…</td><td>…</td><td>…</td></tr>
+        </table></div><div>
+        <div class="tip"><b>Tipp für schnelle Wechsel:</b> im Calculator <code>n:=12</code> und <code>p:=0.25</code> speichern und in die Spalten <code>=seq(t,t,0,n)</code> und <code>=binompdf(n,p)</code> schreiben.
+        Dann genügt <code>n:=20</code>, und Tabelle und Histogramm passen sich an.</div>
+      </div></div>
+    </article>
+
+    <article class="cmd" id="erwartungswert" data-kap="IX.3">
+      <header><h3>Erwartungswert aus der Tabelle</h3><span class="syntax">sum(treffer*wkt)</span></header>
+      <p>$\mu=0\cdot P(X=0)+1\cdot P(X=1)+\ldots+n\cdot P(X=n)$. In eine freie Zelle: <code>=sum(treffer*wkt)</code>.</p>
+      <div class="ex">Für $n=12$, $p=0{,}25$: Ergebnis 3. Kontrolle mit der Formel $\mu=n\cdot p=12\cdot0{,}25=3$.</div>
+    </article>
+
+    <article class="cmd" id="hoechste-saeule" data-kap="IX.3">
+      <header><h3>Wahrscheinlichster Wert (höchste Säule)</h3><span class="syntax">max(wkt)</span></header>
+      <p><code>=max(wkt)</code> liefert die größte Wahrscheinlichkeit; in der Tabelle sucht man die zugehörige Zeile (Zeile $r$ → $k=r-1$). Im Histogramm ist es die höchste Säule.</p>
+    </article>
+  </section>
+
+  <!-- ============================================================ -->
+  <section class="topic" id="diagramme" data-title="Histogramme" data-sub="Ergebnisdiagramm, Data &amp; Statistics">
+    <h2>6 · Histogramme und Diagramme</h2>
+    <p class="lead">Wahrscheinlichkeitsverteilungen und Simulationsergebnisse grafisch darstellen.</p>
+
+    <article class="cmd" id="ergebnisdiagramm" data-kap="IX.3">
+      <header><h3>Histogramm einer Verteilung (Ergebnisdiagramm)</h3><span class="syntax">menu ▸ Daten ▸ Ergebnisdiagramm</span></header>
+      <div class="cols"><div>
+        <ol>
+          <li>Tabelle mit den Spalten <code>treffer</code> und <code>wkt</code> anlegen (siehe <a href="#verteilungstabelle">Abschnitt 5</a>).</li>
+          <li>In Lists &amp; Spreadsheet: <span class="path">menu ▸ Daten ▸ Ergebnisdiagramm</span><br><span class="lab">(je nach Betriebssystem auch „Zusammenfassungsdiagramm“, englisch „Summary Plot“)</span>.</li>
+          <li>Im Fenster: <b>X-Liste</b> <code>treffer</code>, <b>Ergebnisliste</b> <code>wkt</code>, Anzeigen in: <b>neue Seite</b>, <span class="kbd">enter</span>.</li>
+          <li>Eine Säule anklicken: $k$ und $P(X=k)$ werden angezeigt.</li>
+        </ol>
+        <div class="warn">Ein „normales“ Histogramm der Spalte <code>treffer</code> zeigt bei jeder Säule nur die Häufigkeit 1. Für Verteilungen immer das <b>Ergebnis</b>diagramm mit <code>wkt</code> als Ergebnisliste nehmen.</div>
+      </div><div>
+        <div class="screen" style="max-width:360px"><div class="bar">1.2 &nbsp; Data &amp; Statistics</div><div style="padding:6px"><svg class="hist" id="demoHist" viewBox="0 0 340 200" role="img" aria-label="Histogramm n = 12, p = 0,25"></svg></div></div>
+        <div class="lab">$n=12$, $p=0{,}25$ – höchste Säule bei $k=3$</div>
+      </div></div>
+    </article>
+
+    <article class="cmd" id="flaeche" data-kap="IX.3">
+      <header><h3>Wahrscheinlichkeiten als Flächen ablesen</h3></header>
+      <p>Jede Säule hat die Breite 1 (von $k-0{,}5$ bis $k+0{,}5$), ihre Fläche ist $P(X=k)$. $P(a\le X\le b)$ ist die Fläche der Säulen von $a$ bis $b$ – rechnerisch <code>=sum(…)</code> über die passenden Zeilen oder <code>sum(binompdf(n,p,{a,…,b}))</code>.</p>
+    </article>
+
+    <article class="cmd" id="sim-histogramm" data-kap="VIII.4">
+      <header><h3>Simulationsdaten als Diagramm</h3></header>
+      <p>Für eine Spalte mit simulierten Werten (z. B. <code>summe</code> mit 300 Augensummen):</p>
+      <ol>
+        <li>Neue Seite <span class="kbd">ctrl</span> <span class="kbd">doc</span> ▸ <b>Data &amp; Statistics</b>.</li>
+        <li>Unten auf „Variable hinzufügen“ klicken und <code>summe</code> wählen – es entsteht ein Punktdiagramm.</li>
+        <li><span class="path">menu ▸ Plot-Typ ▸ Histogramm</span>.</li>
+        <li>Säulenbreite 1 einstellen: <span class="path">menu ▸ Plot-Eigenschaften ▸ Histogramm-Eigenschaften ▸ Säuleneinstellungen</span>, Breite <code>1</code>, Ausrichtung <code>0.5</code>.</li>
+      </ol>
+      <p class="lab">Bezeichnungen können je nach Betriebssystem leicht abweichen.</p>
+    </article>
+  </section>
+
+  <!-- ============================================================ -->
+  <section class="topic" id="fehler" data-title="Fehlerhilfe" data-sub="Typische Probleme">
+    <h2>7 · Fehlerhilfe</h2>
+    <p class="lead">Wenn etwas nicht klappt – häufige Ursachen.</p>
+    <article class="cmd" id="fehlertabelle" data-kap="IX.3">
+      <header><h3>Typische Fehler und Abhilfe</h3></header>
+      <div class="scroll"><table class="err">
+        <tr><th>Beobachtung</th><th>Ursache / Abhilfe</th></tr>
+        <tr><td>„Syntaxfehler“ bei <code>binompdf(8,0,33,4)</code></td><td>Dezimalkomma statt Punkt: <code>0.33</code> oder besser <code>1/3</code>.</td></tr>
+        <tr><td>Ergebnis ist ein Bruch</td><td><span class="kbd">ctrl</span> <span class="kbd">enter</span> oder <code>*1.0</code> anhängen.</td></tr>
+        <tr><td>„Zirkelbezug“ in einer Spalte</td><td>Spaltenname und Laufvariable gleich (Spalte <code>t</code> mit <code>seq(t,t,…)</code>): Spalte umbenennen.</td></tr>
+        <tr><td>Spalte zeigt nur eine Zahl</td><td><code>binompdf(4,0.6,2)</code> mit $k$ eingegeben – für die ganze Liste das dritte Argument weglassen.</td></tr>
+        <tr><td>Summe zu groß oder zu klein</td><td>Zeilen verwechselt: Zeile $r$ gehört zu $k=r-1$.</td></tr>
+        <tr><td>Histogramm zeigt nur Säulen der Höhe 1</td><td>Normales Histogramm statt Ergebnisdiagramm gewählt.</td></tr>
+        <tr><td><code>nCr(2,6)</code> = 0</td><td>Argumente vertauscht: erst $n$, dann $k$.</td></tr>
+        <tr><td>Alle Rechner zeigen dieselben Zufallszahlen</td><td>Einmal <code>RandSeed</code> mit einer eigenen Zahl ausführen.</td></tr>
+        <tr><td>Formel wurde nicht kopiert</td><td>Erst die Zelle markieren, dann <span class="path">menu ▸ Daten ▸ Füllen</span> und mit <span class="kbd">enter</span> bestätigen.</td></tr>
+      </table></div>
+    </article>
+  </section>
+
+</div>
+
+<footer>
+  <a href="../index.html" style="text-decoration:none">← Zurück zur Stochastik-Übersicht</a><br>
+  Unterrichtsmaterialien · Friedrich-Bährens-Gymnasium Schwerte
+</footer>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css">
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/contrib/auto-render.min.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function(){
+  var topics=[].slice.call(document.querySelectorAll('section.topic'));
+  var cmds=[].slice.call(document.querySelectorAll('article.cmd'));
+
+  // Abzeichen (Kapitel, neu) automatisch aus data-Attributen
+  cmds.forEach(function(c){
+    var h=c.querySelector('header');
+    var k=document.createElement('span'); k.className='kap'; k.textContent='ab '+c.dataset.kap; h.appendChild(k);
+    if(c.dataset.neu){ var n=document.createElement('span'); n.className='neu'; n.textContent='neu'; h.appendChild(n); }
+  });
+
+  // Inhaltsverzeichnis
+  var toc=document.getElementById('toc');
+  topics.forEach(function(t,i){
+    var a=document.createElement('a'); a.href='#'+t.id;
+    a.innerHTML=(i+1)+' · '+t.dataset.title+'<span>'+(t.dataset.sub||'')+'</span>'; toc.appendChild(a);
+  });
+
+  // Kapitel-Filter aus data-kap
+  var kaps=[]; cmds.forEach(function(c){ if(kaps.indexOf(c.dataset.kap)<0) kaps.push(c.dataset.kap); });
+  kaps.sort(function(a,b){ var r=function(s){ var p=s.split('.'); var rom={VIII:8,IX:9,X:10,XI:11}; return (rom[p[0]]||0)*100+(+p[1]||0); }; return r(a)-r(b); });
+  var chips=document.getElementById('chips'), kapSel='all';
+  kaps.forEach(function(k){ var b=document.createElement('button'); b.type='button'; b.dataset.k=k; b.textContent='bis '+k; chips.appendChild(b); });
+  function rank(s){ var p=s.split('.'); var rom={VIII:8,IX:9,X:10,XI:11}; return (rom[p[0]]||0)*100+(+p[1]||0); }
+
+  var q=document.getElementById('q');
+  function apply(){
+    var term=(q.value||'').trim().toLowerCase(), shown=0;
+    cmds.forEach(function(c){
+      var okK = kapSel==='all' || rank(c.dataset.kap)<=rank(kapSel);
+      var okT = !term || c.textContent.toLowerCase().indexOf(term)>=0;
+      c.style.display = okK&&okT ? '' : 'none'; if(okK&&okT) shown++;
+    });
+    topics.forEach(function(t){ var any=[].some.call(t.querySelectorAll('article.cmd'),function(c){ return c.style.display!=='none'; }); t.style.display=any?'':'none'; });
+    document.getElementById('empty').style.display=shown?'none':'block';
+    toc.style.display=(term||kapSel!=='all')?'none':'';
+  }
+  q.addEventListener('input',apply);
+  chips.addEventListener('click',function(e){ var b=e.target.closest('button'); if(!b) return;
+    chips.querySelectorAll('button').forEach(function(x){ x.classList.remove('on'); }); b.classList.add('on'); kapSel=b.dataset.k; apply(); });
+
+  // Beispiel-Histogramm
+  (function(){
+    var svg=document.getElementById('demoHist'); if(!svg) return; var NS='http://www.w3.org/2000/svg';
+    function mk(t,a){ var e=document.createElementNS(NS,t); for(var k in a) e.setAttribute(k,a[k]); svg.appendChild(e); return e; }
+    function nCr(n,k){ var r=1; for(var i=1;i<=k;i++) r=r*(n-k+i)/i; return r; }
+    var n=12,p=0.25,W=340,H=200,m={l:34,r:8,t:12,b:24},iw=W-m.l-m.r,ih=H-m.t-m.b,ymax=0.3,bw=iw/(n+1);
+    var Y=function(v){ return m.t+ih*(1-v/ymax); };
+    for(var v=0;v<=ymax+1e-9;v+=0.1){ mk('line',{x1:m.l,x2:W-m.r,y1:Y(v),y2:Y(v),stroke:'#e3e6eb'}); var t=mk('text',{x:m.l-4,y:Y(v)+4,'text-anchor':'end','font-size':10,fill:'#5c6472'}); t.textContent=v.toFixed(1); }
+    for(var k=0;k<=n;k++){ var val=nCr(n,k)*Math.pow(p,k)*Math.pow(1-p,n-k);
+      mk('rect',{x:m.l+bw*k,y:Y(val),width:bw,height:Y(0)-Y(val),fill:k===3?'#e8a800':'#8fb3d9',stroke:'#2c5f8a','stroke-width':.8});
+      if(k%2===0){ var tt=mk('text',{x:m.l+bw*(k+.5),y:H-8,'text-anchor':'middle','font-size':10,fill:'#5c6472'}); tt.textContent=k; } }
+    mk('line',{x1:m.l,x2:W-m.r,y1:Y(0),y2:Y(0),stroke:'#1c1f26'});
+  })();
+
+  function render(){ if(window.renderMathInElement) renderMathInElement(document.body,{delimiters:[{left:'$',right:'$',display:false}],throwOnError:false}); }
+  if(window.renderMathInElement) render(); else window.addEventListener('load',render);
+});
+</script>
+</body>
+</html>

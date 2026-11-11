@@ -166,9 +166,24 @@ footer.bot a{color:var(--blue)}
   .card-head h3{font-size:.95rem}
   .card-body{padding:0 12px 14px}
 }
+/* ---------- Navigationszeile ---------- */
+.topbar{background:#fff;border-bottom:1px solid var(--border);padding:0 16px}
+.topbar-inner{max-width:960px;margin:0 auto;min-height:44px;padding:6px 0;display:flex;flex-wrap:wrap;align-items:center;gap:6px;font-size:.82rem;color:var(--muted)}
+.topbar-inner a{color:var(--blue);text-decoration:none}
+.topbar-inner a:hover{text-decoration:underline}
+.topbar-inner .sep{opacity:.45}
+.topbar-inner .ti-link{margin-left:auto;font-weight:700;white-space:nowrap}
+@media(max-width:600px){ .topbar-inner .ti-link{margin-left:0} }
 </style>
 </head>
 <body>
+
+<nav class="topbar" aria-label="Navigation">
+  <div class="topbar-inner">
+    <a href="../../../../../index.html">Unterrichtsmaterialien</a><span class="sep">›</span><a href="../../../../index.html">Mathematik</a><span class="sep">›</span><a href="../../../index.html">Leistungskurs</a><span class="sep">›</span><a href="../../index.html#kap-viii">Stochastik</a><span class="sep">›</span><a href="../">VIII.4</a><span class="sep">›</span><span>Übungen</span>
+    <a class="ti-link" href="../../taschenrechner/">🧮 TI-Nspire-Anleitung</a>
+  </div>
+</nav>
 
 <header class="top">
   <div class="inner">
@@ -214,7 +229,7 @@ footer.bot a{color:var(--blue)}
 
   <div class="note">
     <strong>Werkzeug:</strong> Alle Aufgaben werden mit dem <b>TI-Nspire CAS</b> in <b>Lists &amp; Spreadsheet</b> gelöst. Die Befehle stehen auf der
-    Werkzeugkarte des Arbeitsblatts „Die verflixte 6“. Zum Vergleichen: Simulation <a href="../../simulationen/verflixte-sechs/">Die verflixte 6</a>.
+    Werkzeugkarte des Arbeitsblatts „Die verflixte 6“. Ausführlich: <a href="../../taschenrechner/">TI-Nspire-Anleitung Stochastik</a>. Zum Vergleichen: Simulation <a href="../../simulationen/verflixte-sechs/">Die verflixte 6</a>.
   </div>
 
   <!-- ================= ANLEITUNG ================= -->
