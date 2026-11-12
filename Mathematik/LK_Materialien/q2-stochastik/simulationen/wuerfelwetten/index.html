@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Würfelwetten · Simulation · LK Q2 Stochastik</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,400;0,600;1,400&display=swap">
+<style>
+  :root {
+    --gold:#b87500; --gold-pale:#fdf3dc;
+    --bg:#f5f4f0; --surface:#ffffff; --surface-2:#faf9f6;
+    --border:#ddd8cc; --text:#1c1a16; --muted:#6b6456;
+    --link:#2c5f8a; --link-pale:#e5eef7;
+    --win:#1a7a4c; --win-pale:#e3f3ea;
+    --bad:#c0392b; --bad-pale:#fdecea;
+    --nail:#6b6456; --ball:#d4760a;
+    --hl:#e8a800;
+    --r:6px;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --gold:#d4a030; --gold-pale:#2a2010;
+      --bg:#1a1814; --surface:#242018; --surface-2:#2a251c;
+      --border:#38332a; --text:#ede8de; --muted:#9e9482;
+      --link:#6a9fd8; --link-pale:#0f1e30;
+      --win:#3fbf82; --win-pale:#0f2a1c;
+      --bad:#ef6b5b; --bad-pale:#3d2420;
+      --nail:#b8ad98; --ball:#f0a050;
+      --hl:#e8b830;
+    }
+  }
+  :root[data-theme="dark"] {
+    --gold:#d4a030; --gold-pale:#2a2010;
+    --bg:#1a1814; --surface:#242018; --surface-2:#2a251c;
+    --border:#38332a; --text:#ede8de; --muted:#9e9482;
+    --link:#6a9fd8; --link-pale:#0f1e30;
+    --win:#3fbf82; --win-pale:#0f2a1c;
+    --bad:#ef6b5b; --bad-pale:#3d2420;
+    --nail:#b8ad98; --ball:#f0a050;
+    --hl:#e8b830;
+  }
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;font-size:16px;line-height:1.55;min-height:100vh}
+  button,select,input{font:inherit;color:inherit}
+
+  .topbar{background:var(--surface);border-bottom:1px solid var(--border);padding:0 20px}
+  .topbar-inner{max-width:960px;margin:0 auto;min-height:46px;display:flex;flex-wrap:wrap;align-items:center;gap:6px;font-size:.82rem;color:var(--muted)}
+  .topbar-inner a{color:var(--link);text-decoration:none}
+  .topbar-inner a:hover{text-decoration:underline}
+  .sep{opacity:.45}
+  header.page-head{background:var(--surface);border-bottom:3px solid var(--link);padding:28px 20px 24px;margin-bottom:28px}
+  header.page-head .inner{max-width:960px;margin:0 auto}
+  .head-eyebrow{font-size:.78rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--link);margin-bottom:6px}
+  h1{font-family:"Crimson Pro",Georgia,serif;font-size:2.2rem;font-weight:600;line-height:1.15}
+  header.page-head p{font-size:.95rem;color:var(--muted);margin-top:6px;max-width:720px}
+
+  .wrap{max-width:960px;margin:0 auto;padding:0 16px 80px}
+  .panel{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:20px;margin-bottom:24px}
+  .panel-head{display:flex;align-items:baseline;gap:10px;margin-bottom:4px}
+  .step{display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:50%;background:var(--link);color:#fff;font-weight:700;font-size:.85rem;flex-shrink:0}
+  h2{font-family:"Crimson Pro",Georgia,serif;font-size:1.45rem;font-weight:600}
+  h3{font-size:1rem;margin-bottom:8px}
+  .panel-sub{color:var(--muted);font-size:.9rem;margin:0 0 16px 36px}
+  .muted{color:var(--muted)}
+  .hide{display:none!important}
+
+  .rules{display:flex;gap:14px;align-items:flex-start;background:var(--gold-pale);border-left:3px solid var(--gold);border-radius:var(--r);padding:14px 18px;margin-bottom:24px}
+  .rules .who{font-weight:700;color:var(--gold);font-size:.85rem;text-transform:uppercase;letter-spacing:.05em}
+  .task-box{background:var(--gold-pale);border-left:3px solid var(--gold);border-radius:var(--r);padding:12px 16px;font-size:.92rem;margin:16px 0 0}
+  .task-box b{color:var(--gold)}
+  .task-box ol{margin:6px 0 0 20px}
+  .task-box li{margin:3px 0}
+
+  .btn{border:1px solid var(--border);background:var(--surface);border-radius:var(--r);padding:8px 14px;cursor:pointer;font-weight:600;font-size:.9rem}
+  .btn:hover{background:var(--surface-2)}
+  .btn:disabled{opacity:.45;cursor:not-allowed}
+  .btn-primary{background:var(--gold);border-color:var(--gold);color:#fff}
+  .btn-primary:hover{background:var(--gold);filter:brightness(1.07)}
+  .btn-blue{background:var(--link);border-color:var(--link);color:#fff}
+  .btn-blue:hover{background:var(--link);filter:brightness(1.1)}
+  .btn-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+  .ctl{display:flex;align-items:center;gap:8px;font-size:.9rem}
+  .ctl label{color:var(--muted);font-weight:600}
+  select,input[type=password]{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:6px 9px}
+  input[type=range]{accent-color:var(--gold);width:150px}
+  .nval{display:inline-block;min-width:2.4em;text-align:center;font-weight:700;background:var(--gold-pale);color:var(--gold);border-radius:20px;padding:1px 8px}
+
+  .board-wrap{border:1px solid var(--border);border-radius:10px;background:var(--surface-2);overflow:hidden;margin-top:12px}
+  svg.board{display:block;width:100%;height:auto;max-height:640px}
+  svg.board text{font-family:inherit}
+  .stat-row{display:flex;flex-wrap:wrap;gap:10px;margin:12px 0 4px}
+  .stat{background:var(--surface-2);border:1px solid var(--border);border-radius:var(--r);padding:8px 14px;min-width:120px}
+  .stat .k{font-size:.72rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:600}
+  .stat .v{font-size:1.3rem;font-weight:700;font-variant-numeric:tabular-nums}
+  .lastpath{font-family:ui-monospace,Menlo,Consolas,monospace;letter-spacing:.12em}
+
+  table.mw{border-collapse:collapse;width:100%;font-size:.88rem;margin-top:10px;font-variant-numeric:tabular-nums}
+  table.mw th,table.mw td{border-bottom:1px solid var(--border);padding:5px 6px;text-align:center}
+  table.mw th{font-size:.72rem;letter-spacing:.05em;text-transform:uppercase;color:var(--muted)}
+  table.mw td:first-child,table.mw th:first-child{text-align:left}
+  .scroll-x{overflow-x:auto}
+
+  .paths{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+  .paths span{font-family:ui-monospace,Menlo,Consolas,monospace;background:var(--win-pale);color:var(--win);border:1px solid var(--win);border-radius:5px;padding:2px 8px;font-weight:700;letter-spacing:.08em}
+  .msg{min-height:26px;font-size:.93rem;margin-top:8px}
+  .msg .ok{color:var(--win);font-weight:700} .msg .no{color:var(--bad);font-weight:700}
+  .bigbtn{font-size:1.05rem;padding:10px 22px}
+
+  .lock-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:16px}
+  .merk{border:2px solid var(--link);border-radius:var(--r);padding:14px 18px;margin-top:14px;background:var(--link-pale);font-size:.95rem}
+  .merk b{color:var(--link)}
+  .merk p{margin:6px 0}
+  .formula{font-family:"Cambria Math","Times New Roman",serif;font-size:1.25rem;text-align:center;margin:10px 0}
+  .binom{display:inline-flex;align-items:center;vertical-align:middle}
+  .binom .br{font-size:2.1em;font-weight:200;line-height:1;transform:scaleX(.6)}
+  .binom .st{display:inline-flex;flex-direction:column;font-size:.8em;line-height:1.05;text-align:center}
+  .frac{display:inline-flex;flex-direction:column;vertical-align:middle;text-align:center;line-height:1.15;margin:0 3px}
+  .frac span:first-child{border-bottom:1px solid currentColor;padding:0 3px}
+  .pascal{overflow-x:auto;margin-top:10px}
+  .prow{display:flex;justify-content:center;gap:4px;margin:3px 0}
+  .pc{min-width:42px;padding:4px 2px;text-align:center;border-radius:5px;background:var(--surface);border:1px solid var(--border);font-variant-numeric:tabular-nums;font-size:.85rem;cursor:pointer}
+  .pc.sel{background:var(--hl);border-color:var(--hl);color:#1c1a16;font-weight:800}
+  .pc.par{background:var(--gold-pale);border-color:var(--gold);font-weight:700}
+  .prow .ln{min-width:30px;color:var(--muted);font-size:.75rem;align-self:center;text-align:right;padding-right:4px}
+  .ti{border:2px solid var(--text);border-radius:10px;overflow:hidden;background:var(--surface);margin-top:10px;max-width:520px}
+  .ti .bar{background:var(--link);color:#fff;font-size:.75rem;font-weight:700;padding:3px 10px}
+  .ti .ln{display:flex;justify-content:space-between;padding:6px 12px;border-bottom:1px solid var(--border);font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.88rem}
+  .ti .ln span:last-child{font-weight:700}
+
+  footer{text-align:center;color:var(--muted);font-size:.82rem;margin-top:48px;padding-top:20px;border-top:1px solid var(--border)}
+  @media (max-width:640px){
+    h1{font-size:1.8rem}
+    .panel{padding:14px}
+    .panel-sub{margin-left:0}
+    .pc{min-width:30px;font-size:.72rem}
+  }
+  .round-head{margin-top:12px;font-size:1.15rem;padding:10px 14px;border-radius:var(--r);background:var(--link-pale);border-left:3px solid var(--link)}
+  .chart-wrap{position:relative;margin-top:10px;border:1px solid var(--border);border-radius:var(--r);background:var(--surface-2)}
+  svg.chart{display:block;width:100%;height:auto}
+  svg.chart text{font-family:inherit}
+  details summary{margin-top:4px}
+  .bets{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:10px;margin-top:6px}
+  .bet{display:flex;align-items:center;gap:12px;border:2px solid var(--border);border-radius:10px;padding:10px 14px;background:var(--surface-2);transition:all .3s}
+  .bet .bl{display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:50%;background:var(--gold);color:#fff;font-weight:800;flex-shrink:0}
+  .bet .bt{flex:1;font-weight:600}
+  .bet .bq{font-weight:800;font-size:1.15rem;color:var(--gold);white-space:nowrap}
+  .bet.win{border-color:var(--win);background:var(--win-pale)}
+  .bet.lose{opacity:.45}
+  .dice{display:flex;flex-wrap:wrap;gap:6px;margin-top:14px;min-height:10px}
+  .die{font-size:3rem;line-height:1;color:var(--muted)}
+  .die.done{color:var(--text)}
+  .die.six{color:var(--bad)}
+  .evt{margin:12px 0 4px;font-size:1.05rem;padding:10px 14px;border-radius:var(--r);background:var(--gold-pale);border-left:3px solid var(--gold)}
+  .evt .ev{font-weight:800}
+  .evt .pv{font-weight:800;font-size:1.2rem}
+  .info{border:1px solid var(--border);border-radius:var(--r);padding:10px 14px;background:var(--surface-2);margin-top:10px;min-height:42px;font-variant-numeric:tabular-nums}
+  @media (max-width:640px){ .die{font-size:2.2rem} }
+</style>
+</head>
+<body>
+
+<nav class="topbar" aria-label="Breadcrumb">
+  <div class="topbar-inner">
+    <a href="../../../../../index.html">Unterrichtsmaterialien</a><span class="sep">›</span>
+    <a href="../../../../index.html">Mathematik</a><span class="sep">›</span>
+    <a href="../../../index.html">Leistungskurs</a><span class="sep">›</span>
+    <a href="../../index.html#simulationen">Stochastik</a><span class="sep">›</span>
+    <span>Würfelwetten</span>
+    <a href="../../taschenrechner/" style="margin-left:auto;font-weight:700">🧮 TI-Nspire-Anleitung</a>
+  </div>
+</nav>
+
+<header class="page-head">
+  <div class="inner">
+    <div class="head-eyebrow">Simulation · Kapitel IX.4</div>
+    <h1>Würfelwetten mit Spielchips</h1>
+    <p>Zwölf Würfel, sechs Wetten, eine Frage: Auf welche Wette sollte man seine Chips setzen? Dafür braucht man Wahrscheinlichkeiten für „höchstens“, „mindestens“ und „zwischen“.</p>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <div class="rules">
+    <div style="font-size:2rem">🎲</div>
+    <div>
+      <div class="who">Spielregeln</div>
+      <div style="font-size:.98rem">Jedes Team startet mit <b>10 Chips</b>. In jeder Runde werden <b>12 Würfel</b> geworfen, gezählt werden die <b>Sechsen</b>.
+      Vorher setzt jedes Team <b>genau 3 Chips</b>, beliebig auf die Wetten A–F verteilt. Gewinnt eine Wette, gibt es <b>Einsatz × Quote</b> zurück; verlorene Einsätze sind weg.</div>
+    </div>
+  </div>
+
+  <!-- 1 · Wett-Tisch -->
+  <section class="panel">
+    <div class="panel-head"><span class="step">1</span><h2>Der Wett-Tisch</h2></div>
+    <p class="panel-sub">Für den Beamer: Erst setzen alle ihre Chips (Arbeitsblatt), dann wird gewürfelt.</p>
+    <div class="bets" id="bets"></div>
+    <div class="btn-row" style="margin-top:14px">
+      <button class="btn btn-primary bigbtn" id="roll">🎲 12 Würfel werfen</button>
+      <button class="btn" id="rReset">↺ Runden zurücksetzen</button>
+      <span class="stat" style="padding:4px 12px;min-width:0"><span class="k">Runde</span> <b id="rNo">0</b></span>
+    </div>
+    <div class="dice" id="dice"></div>
+    <div class="msg" id="rMsg"></div>
+    <div class="scroll-x"><table class="mw" id="rLog"></table></div>
+  </section>
+
+  <!-- 2 · Langzeittest -->
+  <section class="panel">
+    <div class="panel-head"><span class="step">2</span><h2>Der Langzeittest</h2></div>
+    <p class="panel-sub">Vermutet zuerst: Welche Wette lohnt sich auf Dauer? Dann setzt der Computer in jeder Runde auf <b>jede</b> Wette einen Chip – viele tausend Runden lang.</p>
+    <div class="btn-row">
+      <button class="btn btn-blue" data-n="100">+ 100 Runden</button>
+      <button class="btn btn-blue" data-n="1000">+ 1 000</button>
+      <button class="btn btn-blue" data-n="10000">+ 10 000</button>
+      <button class="btn" id="lReset">↺ Zurücksetzen</button>
+      <span class="stat" style="padding:4px 12px;min-width:0"><span class="k">Runden</span> <b id="lN">0</b></span>
+    </div>
+    <div class="chart-wrap"><svg class="chart" id="lChart" viewBox="0 0 720 250" role="img" aria-label="Rückfluss pro eingesetztem Chip je Wette"></svg></div>
+    <div class="scroll-x"><table class="mw" id="lTbl"></table></div>
+    <p class="muted" style="font-size:.85rem;margin-top:6px"><b>Rückfluss pro Chip</b> = ausgezahlte Chips ÷ eingesetzte Chips. Über 1 bedeutet: Die Wette bringt auf Dauer Gewinn.</p>
+  </section>
+
+  <!-- 3 · Intervall-Labor -->
+  <section class="panel">
+    <div class="panel-head"><span class="step">3</span><h2>Intervall-Labor</h2></div>
+    <p class="panel-sub">Jede Wette ist ein Ereignis wie „höchstens 1 Sechs“. Welche Säulen gehören dazu, und wie groß ist ihre Fläche?</p>
+    <div class="btn-row" style="gap:14px">
+      <div class="ctl"><label for="iN">n</label><input type="range" id="iN" min="1" max="50" value="12"><span class="nval" id="iNv">12</span></div>
+      <div class="ctl"><label for="iP">p</label><select id="iP"></select></div>
+    </div>
+    <div class="btn-row" style="gap:10px;margin-top:10px">
+      <div class="ctl"><label for="iT">Ereignis</label><select id="iT">
+        <option value="eq">genau k</option><option value="le" selected>höchstens k</option><option value="lt">weniger als k</option>
+        <option value="ge">mindestens k</option><option value="gt">mehr als k</option><option value="bt">mindestens a und höchstens b</option></select></div>
+      <div class="ctl" id="iAw"><label for="iA">a =</label><select id="iA"></select></div>
+      <div class="ctl"><label for="iK" id="iKl">k =</label><select id="iK"></select></div>
+      <div class="ctl"><label for="iBet">oder Wette:</label><select id="iBet"><option value="">–</option></select></div>
+    </div>
+    <div class="evt" id="iEvt"></div>
+    <div class="chart-wrap"><svg class="chart" id="iHist" viewBox="0 0 720 260" role="img" aria-label="Histogramm mit markiertem Ereignis"></svg></div>
+    <div class="chart-wrap"><svg class="chart" id="iStair" viewBox="0 0 720 240" role="img" aria-label="Treppengraph der kumulierten Wahrscheinlichkeiten"></svg></div>
+    <p class="muted" style="font-size:.85rem;margin-top:6px">Unten der <b>Treppengraph</b>: Über jedem k steht die Summe aller Säulen von 0 bis k. Tippe auf eine Säule oder Stufe, um Werte zu sehen.</p>
+    <div class="info" id="iInfo"></div>
+  </section>
+
+  <!-- 4 · gesperrt -->
+  <section class="panel">
+    <div class="panel-head"><span class="step">4</span><h2>Kumulierte Wahrscheinlichkeiten</h2></div>
+    <p class="panel-sub">Erst freischalten, wenn ihr die Wahrscheinlichkeiten der Wetten selbst berechnet habt.</p>
+    <div class="lock-row" id="lockRow">
+      <input type="password" id="code" placeholder="Code" autocomplete="off" style="width:110px">
+      <button class="btn" id="btnUnlock">🔒 Freischalten</button>
+      <span class="muted" id="codeMsg" style="font-size:.85rem">Freigabe durch die Lehrkraft.</span>
+    </div>
+    <div id="locked" class="hide">
+      <div class="merk">
+        <p><b>Kumulierte Wahrscheinlichkeit.</b> Ist X binomialverteilt mit den Parametern n und p, so heißt</p>
+        <div class="formula">P(X ≤ k) = P(X = 0) + P(X = 1) + … + P(X = k) = F<sub>n;&thinsp;p</sub>(k)</div>
+        <p>die <b>kumulierte Wahrscheinlichkeit</b>. Im Treppengraph ist F<sub>n;&thinsp;p</sub>(k) die Höhe der Stufe über k.</p>
+        <p><b>Alle anderen Ereignisse lassen sich auf F zurückführen:</b></p>
+        <table class="mw" style="max-width:640px">
+          <tr><th>Ereignis</th><th>Intervall</th><th>mit F berechnen</th></tr>
+          <tr><td>höchstens k</td><td>[0; k]</td><td>F(k)</td></tr>
+          <tr><td>weniger als k</td><td>[0; k − 1]</td><td>F(k − 1)</td></tr>
+          <tr><td>mindestens k</td><td>[k; n]</td><td>1 − F(k − 1)</td></tr>
+          <tr><td>mehr als k</td><td>[k + 1; n]</td><td>1 − F(k)</td></tr>
+          <tr><td>mindestens a und höchstens b</td><td>[a; b]</td><td>F(b) − F(a − 1)</td></tr>
+        </table>
+      </div>
+      <h3 style="margin-top:16px">Im TI-Nspire</h3>
+      <div class="ti">
+        <div class="bar">1.1 &nbsp; Calculator</div>
+        <div class="ln"><span>binomCdf(12,1/6,0,1)</span><span>0.381333</span></div>
+        <div class="ln"><span>binomCdf(12,1/6,2,4)</span><span>0.582317</span></div>
+        <div class="ln"><span>1−binomCdf(12,1/6,0,2)</span><span>0.322574</span></div>
+        <div class="ln"><span>binomCdf(12,1/6,3,12)</span><span>0.322574</span></div>
+      </div>
+      <p class="muted" style="font-size:.85rem;margin-top:6px"><code>binomCdf(n,p,a,b)</code> = P(a ≤ X ≤ b), Menü <b>menu ▸ Wahrscheinlichkeit ▸ Verteilungen ▸ Binomial Cdf</b>. In Lists &amp; Spreadsheet liefert <code>=cumulativesum(wkt)</code> die Spalte F(0), F(1), …</p>
+    </div>
+  </section>
+
+</div>
+
+<footer>Unterrichtsmaterialien · Friedrich-Bährens-Gymnasium Schwerte</footer>
+
+<script>
+(() => {
+  const $=id=>document.getElementById(id);
+  const fmt=n=>n.toLocaleString('de-DE');
+  const dec=(x,d=3)=>x.toLocaleString('de-DE',{minimumFractionDigits:d,maximumFractionDigits:d});
+  const NS='http://www.w3.org/2000/svg';
+  function el(t,a,p){const e=document.createElementNS(NS,t);for(const k in a)e.setAttribute(k,a[k]);if(p)p.appendChild(e);return e;}
+  function txt(p,a,s){const t=el('text',a,p);t.textContent=s;return t;}
+  const nCr=(n,k)=>{if(k<0||k>n)return 0;let r=1;for(let i=1;i<=k;i++)r=r*(n-k+i)/i;return r;};
+  const B=(n,p,k)=>nCr(n,k)*Math.pow(p,k)*Math.pow(1-p,n-k);
+  let unlocked=false;
+
+  // Wetten: lo..hi (Anzahl Sechsen), Quote = Auszahlung pro Chip (inkl. Einsatz)
+  const BETS=[
+    {id:'A',txt:'Keine Sechs',lo:0,hi:0,q:8},
+    {id:'B',txt:'Höchstens eine Sechs',lo:0,hi:1,q:2.5},
+    {id:'C',txt:'Genau zwei Sechsen',lo:2,hi:2,q:3},
+    {id:'D',txt:'Zwei bis vier Sechsen',lo:2,hi:4,q:2},
+    {id:'E',txt:'Mindestens drei Sechsen',lo:3,hi:12,q:3},
+    {id:'F',txt:'Mehr als vier Sechsen',lo:5,hi:12,q:20}
+  ];
+  const NW=12;
+  const wins=(b,s)=>s>=b.lo&&s<=b.hi;
+
+  // ================= 1 · Wett-Tisch =================
+  $('bets').innerHTML=BETS.map(b=>`<div class="bet" id="bet${b.id}"><span class="bl">${b.id}</span><span class="bt">${b.txt}</span><span class="bq">× ${dec(b.q,b.q%1?1:0)}</span></div>`).join('');
+  const FACE=['⚀','⚁','⚂','⚃','⚄','⚅'];
+  let rounds=[];
+  function renderLog(){
+    $('rNo').textContent=rounds.length;
+    if(!rounds.length){ $('rLog').innerHTML=''; return; }
+    $('rLog').innerHTML='<tr><th>Runde</th><th>Sechsen</th>'+BETS.map(b=>`<th>${b.id}</th>`).join('')+'</tr>'+
+      rounds.map((s,i)=>`<tr><td>${i+1}</td><td><b>${s}</b></td>`+BETS.map(b=>`<td>${wins(b,s)?'<span style="color:var(--win);font-weight:800">✓</span>':'<span class="muted">–</span>'}</td>`).join('')+'</tr>').join('');
+  }
+  let rolling=false;
+  $('roll').onclick=()=>{
+    if(rolling) return; rolling=true; $('roll').disabled=true; $('rMsg').innerHTML='';
+    BETS.forEach(b=>$('bet'+b.id).classList.remove('win','lose'));
+    const res=[...Array(NW)].map(()=>1+Math.floor(Math.random()*6));
+    $('dice').innerHTML=res.map(()=>'<span class="die">⚀</span>').join('');
+    const ds=[...$('dice').children]; let t=0;
+    const iv=setInterval(()=>{ t++; ds.forEach((d,i)=>{ if(t<8+i) d.textContent=FACE[Math.floor(Math.random()*6)]; else { d.textContent=FACE[res[i]-1]; d.classList.toggle('six',res[i]===6); d.classList.add('done'); } });
+      if(t>=8+NW){ clearInterval(iv); const s=res.filter(v=>v===6).length; rounds.push(s); renderLog();
+        BETS.forEach(b=>$('bet'+b.id).classList.add(wins(b,s)?'win':'lose'));
+        $('rMsg').innerHTML=`<b style="font-size:1.2rem">${s} ${s===1?'Sechs':'Sechsen'}</b> – gewonnen haben: <b>${BETS.filter(b=>wins(b,s)).map(b=>b.id).join(', ')||'keine Wette'}</b>`;
+        rolling=false; $('roll').disabled=false; } },70);
+  };
+  $('rReset').onclick=()=>{ rounds=[]; renderLog(); $('dice').innerHTML=''; $('rMsg').innerHTML=''; BETS.forEach(b=>$('bet'+b.id).classList.remove('win','lose')); };
+
+  // ================= 2 · Langzeittest =================
+  let LN=0, LW=BETS.map(()=>0);
+  function sixes(){ let s=0; for(let i=0;i<NW;i++) if(Math.random()<1/6) s++; return s; }
+  function renderLong(){
+    $('lN').textContent=fmt(LN);
+    const rf=BETS.map((b,i)=>LN?LW[i]*b.q/LN:0);
+    let h='<tr><th>Wette</th><th>Quote</th><th>gewonnen</th><th>Gewinnanteil</th><th>eingesetzt</th><th>ausgezahlt</th><th>Rückfluss pro Chip</th></tr>';
+    BETS.forEach((b,i)=>{ h+=`<tr><td><b>${b.id}</b> ${b.txt}</td><td>× ${dec(b.q,b.q%1?1:0)}</td><td>${fmt(LW[i])}</td><td>${LN?dec(LW[i]/LN):'–'}</td><td>${fmt(LN)}</td><td>${fmt(Math.round(LW[i]*b.q))}</td><td><b style="color:${LN&&rf[i]>1?'var(--win)':'inherit'}">${LN?dec(rf[i],2):'–'}</b></td></tr>`; });
+    $('lTbl').innerHTML=h;
+    const svg=$('lChart'); svg.innerHTML=''; const W=720,H=250,m={l:44,r:12,t:16,b:34},iw=W-m.l-m.r,ih=H-m.t-m.b,YM=1.6;
+    const y=v=>m.t+ih*(1-Math.min(v,YM)/YM), band=iw/BETS.length;
+    for(let v=0;v<=YM+1e-9;v+=0.2){ el('line',{x1:m.l,x2:W-m.r,y1:y(v),y2:y(v),stroke:'var(--border)'},svg); txt(svg,{x:m.l-6,y:y(v)+4,'text-anchor':'end','font-size':11,fill:'var(--muted)'},dec(v,1)); }
+    el('line',{x1:m.l,x2:W-m.r,y1:y(1),y2:y(1),stroke:'var(--bad)','stroke-width':2,'stroke-dasharray':'6 4'},svg);
+    txt(svg,{x:W-m.r,y:y(1)-5,'text-anchor':'end','font-size':11,'font-weight':700,fill:'var(--bad)'},'Einsatz zurück');
+    BETS.forEach((b,i)=>{ const cx=m.l+band*(i+.5);
+      if(LN){ el('rect',{x:cx-band*.3,y:y(rf[i]),width:band*.6,height:y(0)-y(rf[i]),rx:3,fill:rf[i]>1?'var(--win)':'var(--link)'},svg);
+        txt(svg,{x:cx,y:y(rf[i])-5,'text-anchor':'middle','font-size':11,'font-weight':700,fill:'var(--text)'},dec(rf[i],2)); }
+      txt(svg,{x:cx,y:H-14,'text-anchor':'middle','font-size':13,'font-weight':800,fill:'var(--text)'},b.id);
+      if(unlocked){ const ex=pBet(b)*b.q; el('line',{x1:cx-band*.36,x2:cx+band*.36,y1:y(ex),y2:y(ex),stroke:'var(--hl)','stroke-width':3.5,'stroke-linecap':'round'},svg); }
+    });
+    if(unlocked) txt(svg,{x:m.l+4,y:m.t+8,'font-size':11,'font-weight':700,fill:'var(--gold)'},'gelb: exakter Wert P · Quote');
+  }
+  document.querySelectorAll('[data-n]').forEach(b=>b.onclick=()=>{ const K=+b.dataset.n; for(let j=0;j<K;j++){ const s=sixes(); BETS.forEach((bt,i)=>{ if(wins(bt,s)) LW[i]++; }); } LN+=K; renderLong(); });
+  $('lReset').onclick=()=>{ LN=0; LW=BETS.map(()=>0); renderLong(); };
+  const pBet=b=>{ let s=0; for(let k=b.lo;k<=Math.min(b.hi,NW);k++) s+=B(NW,1/6,k); return s; };
+
+  // ================= 3 · Intervall-Labor =================
+  const PS=[['1/6',1/6],['1/3',1/3],['0,1',.1],['0,2',.2],['0,25',.25],['0,3',.3],['0,4',.4],['0,5',.5],['0,6',.6],['0,7',.7],['0,75',.75],['0,8',.8],['0,9',.9]];
+  $('iP').innerHTML=PS.map((x,i)=>`<option value="${i}">${x[0]}</option>`).join('');
+  $('iBet').innerHTML+=BETS.map(b=>`<option value="${b.id}">${b.id}: ${b.txt}</option>`).join('');
+  let n=12, p=1/6, pl='1/6';
+  function opts(sel,max,val){ sel.innerHTML=[...Array(max+1).keys()].map(k=>`<option ${k===val?'selected':''}>${k}</option>`).join(''); }
+  function interval(){ const T=$('iT').value, k=+$('iK').value, a=+$('iA').value;
+    switch(T){ case 'eq': return [k,k]; case 'le': return [0,k]; case 'lt': return [0,k-1]; case 'ge': return [k,n]; case 'gt': return [k+1,n]; default: return [Math.min(a,k),Math.max(a,k)]; } }
+  function evtText(){ const T=$('iT').value, k=+$('iK').value, a=+$('iA').value;
+    return {eq:`X = ${k}`,le:`X ≤ ${k}`,lt:`X < ${k}`,ge:`X ≥ ${k}`,gt:`X > ${k}`,bt:`${Math.min(a,k)} ≤ X ≤ ${Math.max(a,k)}`}[T]; }
+  function Fv(k){ let s=0; for(let j=0;j<=Math.min(k,n);j++) s+=B(n,p,j); return k<0?0:s; }
+  function drawI(){
+    const T=$('iT').value; $('iAw').classList.toggle('hide',T!=='bt'); $('iKl').textContent=T==='bt'?'b =':'k =';
+    const [lo,hi]=interval(); const v=[...Array(n+1).keys()].map(k=>B(n,p,k));
+    let P=0; for(let k=Math.max(lo,0);k<=Math.min(hi,n);k++) P+=v[k];
+    const emp=lo>hi||lo>n||hi<0;
+    let iv=emp?'leere Menge':`[${Math.max(lo,0)}; ${Math.min(hi,n)}]`;
+    let e=`<span class="ev">P(${evtText()})</span> <span class="muted">Intervall der Trefferzahlen:</span> <b>${iv}</b> &nbsp;→&nbsp; <span class="pv">${dec(P,4)}</span>`;
+    if(unlocked && !emp){ const L=Math.max(lo,0), Hh=Math.min(hi,n); let f;
+      if(L===0&&Hh===n) f='1'; else if(L===0) f=`F(${Hh})`; else if(Hh===n) f=`1 − F(${L-1})`; else f=`F(${Hh}) − F(${L-1})`;
+      e+=` &nbsp;=&nbsp; <b style="color:var(--win)">${f}</b>`; }
+    $('iEvt').innerHTML=e;
+    // Histogramm
+    const svg=$('iHist'); svg.innerHTML=''; const W=720,H=260,m={l:48,r:12,t:24,b:34},iw=W-m.l-m.r,ih=H-m.t-m.b;
+    const mx=Math.max(...v), YM=Math.min(1,Math.ceil(mx*20+.5)/20), y=t=>m.t+ih*(1-t/YM), bw=iw/(n+1), x=k=>m.l+bw*(k+.5);
+    const st=YM>0.4?0.1:0.05;
+    for(let t=0;t<=YM+1e-9;t+=st){ el('line',{x1:m.l,x2:W-m.r,y1:y(t),y2:y(t),stroke:'var(--border)'},svg); txt(svg,{x:m.l-6,y:y(t)+4,'text-anchor':'end','font-size':11,fill:'var(--muted)'},dec(t,2)); }
+    txt(svg,{x:8,y:12,'font-size':11,fill:'var(--muted)'},'P(X = k)');
+    v.forEach((val,k)=>{ const inI=!emp&&k>=lo&&k<=hi;
+      const r=el('rect',{x:x(k)-bw/2,y:y(val),width:bw,height:y(0)-y(val),fill:inI?'var(--hl)':'var(--link)',opacity:inI?1:.4,stroke:'var(--surface)','stroke-width':bw>8?1:.3,style:'cursor:pointer'},svg);
+      r.onclick=()=>info(k); });
+    const ev=n>30?5:n>15?2:1; for(let k=0;k<=n;k+=ev) txt(svg,{x:x(k),y:H-18,'text-anchor':'middle','font-size':11,fill:'var(--muted)'},k);
+    // Treppengraph
+    const s2=$('iStair'); s2.innerHTML=''; const H2=240, ih2=H2-m.t-m.b, y2=t=>m.t+ih2*(1-t);
+    for(let t=0;t<=1.0001;t+=0.2){ el('line',{x1:m.l,x2:W-m.r,y1:y2(t),y2:y2(t),stroke:'var(--border)'},s2); txt(s2,{x:m.l-6,y:y2(t)+4,'text-anchor':'end','font-size':11,fill:'var(--muted)'},dec(t,1)); }
+    txt(s2,{x:8,y:12,'font-size':11,fill:'var(--muted)'},'P(X ≤ k)');
+    const xs=t=>m.l+iw*(t+.5)/(n+1);
+    for(let k=0;k<=n;k++){ const Fk=Fv(k), x1=xs(k), x2=xs(k+1>n?n+.5:k+1);
+      const mark=unlocked&&!emp&&((k===hi&&hi<=n)||(k===lo-1));
+      el('line',{x1,x2:k===n?xs(n)+bw/2:x2,y1:y2(Fk),y2:y2(Fk),stroke:mark?'var(--win)':'var(--gold)','stroke-width':mark?4:2.5},s2);
+      const c=el('circle',{cx:x1,cy:y2(Fk),r:mark?5.5:3.5,fill:mark?'var(--win)':'var(--gold)',style:'cursor:pointer'},s2); c.onclick=()=>info(k);
+      if(k<n) el('line',{x1:x2,x2:x2,y1:y2(Fk),y2:y2(Fv(k+1)),stroke:'var(--gold)','stroke-width':1,'stroke-dasharray':'3 3',opacity:.6},s2);
+    }
+    for(let k=0;k<=n;k+=ev) txt(s2,{x:xs(k),y:H2-18,'text-anchor':'middle','font-size':11,fill:'var(--muted)'},k);
+  }
+  function info(k){ $('iInfo').innerHTML=`k = <b>${k}</b>: &nbsp; P(X = ${k}) ≈ <b>${dec(B(n,p,k),4)}</b> &nbsp;·&nbsp; P(X ≤ ${k}) ≈ <b>${dec(Fv(k),4)}</b>${unlocked?` = F<sub>${n};&thinsp;${pl}</sub>(${k})`:''}`; }
+  function syncK(){ const k=Math.min(+$('iK').value||0,n), a=Math.min(+$('iA').value||0,n); opts($('iK'),n,k); opts($('iA'),n,a); }
+  $('iN').oninput=e=>{ n=+e.target.value; $('iNv').textContent=n; syncK(); $('iBet').value=''; drawI(); };
+  $('iP').onchange=e=>{ const x=PS[+e.target.value]; p=x[1]; pl=x[0]; $('iBet').value=''; drawI(); };
+  ['iT','iK','iA'].forEach(id=>$(id).onchange=()=>{ $('iBet').value=''; drawI(); });
+  $('iBet').onchange=e=>{ const b=BETS.find(x=>x.id===e.target.value); if(!b) return;
+    n=12; p=1/6; pl='1/6'; $('iN').value=12; $('iNv').textContent=12; $('iP').value=0; syncK();
+    const map={A:['eq',0],B:['le',1],C:['eq',2],D:['bt',4,2],E:['ge',3],F:['gt',4]}[b.id];
+    $('iT').value=map[0]; $('iK').value=map[1]; if(map[2]!=null) $('iA').value=map[2]; drawI(); $('iBet').value=b.id; };
+
+  // ================= 4 · gesperrt =================
+  function unlock(){ if(($('code').value||'').trim().toUpperCase()==='MATHE'){ unlocked=true; $('lockRow').classList.add('hide'); $('locked').classList.remove('hide'); renderLong(); drawI(); }
+    else { $('codeMsg').textContent='Code nicht korrekt.'; $('codeMsg').style.color='var(--gold)'; } }
+  $('btnUnlock').onclick=unlock; $('code').addEventListener('keydown',e=>{ if(e.key==='Enter') unlock(); });
+
+  opts($('iK'),12,1); opts($('iA'),12,0); renderLog(); renderLong(); drawI();
+})();
+</script>
+</body>
+</html>
