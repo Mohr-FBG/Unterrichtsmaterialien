@@ -1,0 +1,917 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Übungsphase · Kumulierte Wahrscheinlichkeiten</title>
+
+<link rel="stylesheet" crossorigin="anonymous" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css">
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/contrib/auto-render.min.js"></script>
+
+<style>
+:root{
+  --gold:#e8a800; --gold-dark:#b58200;
+  --blue:#2c5f8a; --blue-dark:#1a3d5c;
+  --green:#1a9e5c; --orange:#d4760a; --purple:#7b3fb5;
+  --red:#c0392b;
+  --border:#dde1e7; --bg:#f4f5f7; --text:#1c1f26;
+  --muted:#5c6472;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0; background:var(--bg); color:var(--text);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  line-height:1.55; font-size:16px;
+}
+.wrap{max-width:960px; margin:0 auto; padding:0 16px 64px}
+
+/* ---------- Kopf ---------- */
+header.top{background:var(--gold); border-bottom:4px solid var(--gold-dark); color:#fff}
+header.top .inner{max-width:960px; margin:0 auto; padding:22px 16px 24px}
+header.top .kap{font-size:.78rem; font-weight:700; letter-spacing:.06em; text-transform:uppercase; opacity:.92}
+header.top h1{margin:6px 0 4px; font-size:1.7rem; line-height:1.2}
+header.top .sub{font-size:.92rem; opacity:.95}
+
+/* ---------- Steuerleiste ---------- */
+.controls{
+  background:#fff; border:1px solid var(--border); border-radius:10px;
+  padding:14px 16px; margin:18px 0 22px;
+  display:flex; flex-wrap:wrap; gap:16px; align-items:center; justify-content:space-between;
+}
+.unlock{display:flex; align-items:center; gap:8px; flex-wrap:wrap}
+.unlock label{font-size:.9rem; color:var(--muted)}
+.unlock input{border:1px solid var(--border); border-radius:6px; padding:6px 10px; font-size:.95rem; width:130px; font-family:inherit}
+.unlock button{background:var(--blue); color:#fff; border:0; border-radius:6px; padding:7px 14px; font-size:.9rem; font-weight:600; cursor:pointer; font-family:inherit}
+.unlock button:hover{background:var(--blue-dark)}
+.unlock .msg{font-size:.85rem; font-weight:600}
+.unlock .msg.ok{color:var(--green)}
+.unlock .msg.bad{color:#c0392b}
+
+.filters{display:flex; gap:6px; flex-wrap:wrap}
+.filters button{background:#fff; border:1px solid var(--border); border-radius:20px; padding:6px 14px; font-size:.85rem; cursor:pointer; color:var(--muted); font-family:inherit; font-weight:600}
+.filters button:hover{border-color:var(--muted)}
+.filters button.on{background:var(--text); border-color:var(--text); color:#fff}
+
+/* ---------- Abschnitte ---------- */
+.stufe-head{display:flex; align-items:baseline; gap:12px; flex-wrap:wrap; margin:30px 0 12px; padding-bottom:8px; border-bottom:2px solid var(--border)}
+.stufe-badge{color:#fff; border-radius:6px; padding:4px 12px; font-weight:700; font-size:.9rem; letter-spacing:.02em}
+.sA .stufe-badge{background:var(--blue)}
+.sG .stufe-badge{background:var(--text)}
+.s1 .stufe-badge{background:var(--green)}
+.s2 .stufe-badge{background:var(--orange)}
+.s3 .stufe-badge{background:var(--purple)}
+.stufe-head .desc{color:var(--muted); font-size:.9rem}
+
+/* ---------- Karten ---------- */
+.card{background:#fff; border:1px solid var(--border); border-radius:10px; margin-bottom:14px; overflow:hidden; position:relative}
+.tw,.tree-box,.katex-display{position:relative}
+.card.sA{border-top:4px solid var(--blue)}
+.card.sG{border-top:4px solid var(--text)}
+.card.s1{border-top:4px solid var(--green)}
+.card.s2{border-top:4px solid var(--orange)}
+.card.s3{border-top:4px solid var(--purple)}
+.card-head{display:flex; align-items:center; justify-content:space-between; gap:12px; padding:13px 18px; cursor:pointer; user-select:none}
+.card-head:hover{background:#fafbfc}
+.card-head h3{margin:0; font-size:1.03rem; font-weight:700}
+.chev{color:var(--muted); font-size:1.1rem; transition:transform .18s}
+.card.open .chev{transform:rotate(180deg)}
+.card-body{display:none; padding:0 18px 18px}
+.card.open .card-body{display:block}
+
+.task{background:#fbfcfd; border:1px solid var(--border); border-left:3px solid var(--blue); border-radius:6px; padding:12px 15px; margin-bottom:14px}
+.task p{margin:.5em 0}
+.task p:first-child{margin-top:0}
+.task p:last-child{margin-bottom:0}
+.task .sub-i{margin-left:1.6em}
+
+/* Merkkasten wie im Buch */
+.merk{border:2px solid var(--blue); border-radius:8px; padding:14px 18px; background:#f3f7fb}
+.merk h4{margin:0 0 6px; font-size:1rem}
+.merk p{margin:.45em 0}
+
+/* Beispiel-Lösung im Buchstil */
+.bsp{border-left:3px solid var(--blue); padding:2px 0 2px 16px}
+.bsp .lh{font-weight:700; color:var(--muted); margin:10px 0 4px}
+.bsp p{margin:.5em 0}
+
+/* Tafel-Hinweis */
+.board{border:1.5px dashed var(--text); border-radius:8px; padding:12px 15px; font-size:.92rem; color:var(--muted); display:flex; gap:10px; align-items:center}
+.board b{color:var(--text)}
+
+/* ---------- Selbsteinschätzung ---------- */
+.assess{display:flex; align-items:center; gap:7px; flex-wrap:wrap; margin-bottom:14px}
+.assess .lab{font-size:.83rem; color:var(--muted); margin-right:2px}
+.assess button{border:1px solid var(--border); background:#fff; border-radius:16px; padding:4px 12px; font-size:.8rem; cursor:pointer; color:var(--muted); font-family:inherit}
+.assess button.on[data-v="ok"]{background:var(--green); border-color:var(--green); color:#fff}
+.assess button.on[data-v="mid"]{background:var(--orange); border-color:var(--orange); color:#fff}
+.assess button.on[data-v="ask"]{background:var(--blue); border-color:var(--blue); color:#fff}
+
+/* ---------- Hilfen ---------- */
+.hints{border:1px solid var(--border); border-radius:8px; overflow:hidden; margin-bottom:14px}
+.hints .htitle{background:#f7f8fa; padding:7px 14px; font-size:.8rem; font-weight:700; color:var(--muted); text-transform:uppercase; letter-spacing:.05em; border-bottom:1px solid var(--border)}
+.htabs{display:flex; flex-wrap:wrap; gap:6px; padding:10px 14px; background:#fdfdfe}
+.htabs button{border:1px solid var(--border); background:#fff; border-radius:6px; padding:5px 11px; font-size:.82rem; cursor:pointer; color:var(--text); font-family:inherit}
+.htabs button:hover{border-color:var(--blue)}
+.htabs button.on{background:var(--blue); border-color:var(--blue); color:#fff; font-weight:600}
+.hpanel{display:none; padding:12px 15px; border-top:1px solid var(--border); font-size:.95rem}
+.hpanel.on{display:block}
+.hpanel h4{margin:0 0 8px; font-size:.92rem; color:var(--blue-dark)}
+.hpanel p{margin:.5em 0}
+
+/* ---------- Musterlösung ---------- */
+.sol-lock{background:#f7f8fa; border:1px dashed var(--border); border-radius:8px; padding:12px 15px; font-size:.9rem; color:var(--muted); text-align:center}
+.sol-lock.active{cursor:pointer; background:#eef4f9; border:1px solid var(--blue); color:var(--blue-dark); font-weight:600}
+.sol-lock.active:hover{background:#e2ecf5}
+.sol{display:none; border:1px solid var(--green); border-radius:8px; overflow:hidden}
+.sol.shown{display:block}
+.sol .sh{background:var(--green); color:#fff; padding:7px 15px; font-weight:700; font-size:.88rem}
+.sol .sb{padding:13px 15px; font-size:.95rem}
+.sol .sb p{margin:.55em 0}
+.sol .sb p:first-child{margin-top:0}
+
+/* Alternativer Lösungsweg */
+.alt-btn{margin-top:10px; background:#fff; border:1px solid var(--purple); color:var(--purple); border-radius:6px; padding:6px 12px; font-size:.85rem; font-weight:600; cursor:pointer; font-family:inherit}
+.alt-btn:hover{background:#f6f0fb}
+.alt{display:none; margin-top:10px; border:1px solid var(--purple); border-left:4px solid var(--purple); border-radius:6px; padding:10px 14px; background:#faf6fd; font-size:.93rem}
+.alt.shown{display:block}
+.alt .ah{font-weight:700; color:var(--purple); font-size:.85rem; text-transform:uppercase; letter-spacing:.04em; margin-bottom:4px}
+
+/* Verteilungstabelle im Buchstil */
+.tw{overflow-x:auto; margin:.6em 0}
+table.vt{border-collapse:collapse; font-size:.92rem}
+table.vt th, table.vt td{border:1px solid var(--border); padding:5px 10px; text-align:center; white-space:nowrap}
+table.vt th{background:#eef0f3; font-weight:600}
+table.vt td.hl{background:#e6f5ec}
+
+/* Grafiken */
+.fig{display:flex; flex-wrap:wrap; gap:18px; align-items:flex-start}
+.fig .txt{flex:1 1 320px; min-width:0}
+.fig .pic{flex:0 1 auto; overflow-x:auto; max-width:100%}
+.tree-box{overflow-x:auto; max-width:100%}
+.tree-box svg{display:block}
+.cap{font-size:.78rem; color:var(--muted); text-align:center; margin-top:2px}
+
+.res{color:#1a9e5c;font-weight:700}
+.note{background:#fdf6e3; border-left:3px solid var(--gold); border-radius:6px; padding:10px 14px; font-size:.9rem; margin:12px 0}
+.note a{color:var(--blue); font-weight:600}
+.katex{font-size:1.04em}
+.katex-display{margin:.6em 0; overflow-x:auto; overflow-y:hidden}
+footer.bot{text-align:center; color:var(--muted); font-size:.82rem; padding:26px 16px; border-top:1px solid var(--border); margin-top:34px}
+footer.bot a{color:var(--blue)}
+@media(max-width:600px){
+  header.top h1{font-size:1.32rem}
+  .controls{flex-direction:column; align-items:stretch}
+  .card-head h3{font-size:.95rem}
+  .card-body{padding:0 12px 14px}
+}
+/* ---------- Navigationszeile ---------- */
+.topbar{background:#fff;border-bottom:1px solid var(--border);padding:0 16px}
+.topbar-inner{max-width:960px;margin:0 auto;min-height:44px;padding:6px 0;display:flex;flex-wrap:wrap;align-items:center;gap:6px;font-size:.82rem;color:var(--muted)}
+.topbar-inner a{color:var(--blue);text-decoration:none}
+.topbar-inner a:hover{text-decoration:underline}
+.topbar-inner .sep{opacity:.45}
+.topbar-inner .ti-link{margin-left:auto;font-weight:700;white-space:nowrap}
+@media(max-width:600px){ .topbar-inner .ti-link{margin-left:0} }
+</style>
+</head>
+<body>
+
+<nav class="topbar" aria-label="Navigation">
+  <div class="topbar-inner">
+    <a href="../../../../../index.html">Unterrichtsmaterialien</a><span class="sep">›</span><a href="../../../../index.html">Mathematik</a><span class="sep">›</span><a href="../../../index.html">Leistungskurs</a><span class="sep">›</span><a href="../../index.html#kap-ix">Stochastik</a><span class="sep">›</span><a href="../">IX.4</a><span class="sep">›</span><span>Übungen</span>
+    <a class="ti-link" href="../../taschenrechner/">🧮 TI-Nspire-Anleitung</a>
+  </div>
+</nav>
+
+<header class="top">
+  <div class="inner">
+    <div class="kap">Kapitel IX · Binomialverteilung · LK Mathematik Q2</div>
+    <h1>4 · Kumulierte Wahrscheinlichkeiten</h1>
+    <div class="sub">Anleitung lesen · Gemeinsam starten · Stufe wählen · Hilfen schrittweise nutzen · Musterlösungen nach Freigabe</div>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <style>
+    code.ti{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.86em;background:#eef1f5;border:1px solid #dde1e7;border-radius:4px;padding:1px 5px;white-space:nowrap}
+    .kbd{display:inline-block;font-size:.75rem;font-weight:700;border:1px solid #8a93a3;border-radius:4px;padding:0 5px;background:#f4f5f7;line-height:1.5}
+    .mpath{font-weight:700;color:var(--blue-dark)}
+    table.lst{border-collapse:collapse;font-size:.8rem;margin:8px 0;font-variant-numeric:tabular-nums}
+    table.lst th,table.lst td{border:1px solid #dde1e7;padding:2px 7px;text-align:center;white-space:nowrap}
+    table.lst tr.hd th{background:#e5eef7;color:#2c5f8a}
+    table.lst tr.fm td{background:#f4f5f7;color:#6b7280;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.72rem}
+    table.lst td.rn{background:#f4f5f7;color:#6b7280}
+    .steps{margin:6px 0 6px 20px;padding:0}
+    .steps li{margin:4px 0}
+    .tool{display:grid;grid-template-columns:minmax(170px,auto) 1fr;gap:5px 14px;font-size:.92rem;margin-top:6px}
+    .tool div:nth-child(odd){font-weight:600}
+    .hist{display:inline-block;vertical-align:top;margin:4px 6px 4px 0}
+    .hist svg{display:block;max-width:100%;height:auto}
+    .hgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin:8px 0}
+    .hgrid .hist{margin:0;border:1px solid var(--border);border-radius:6px;background:#fff;padding:4px}
+    .stair{display:inline-block;vertical-align:top;margin:4px 6px 4px 0}
+    .stair svg{display:block;max-width:100%;height:auto}
+    .hgrid .stair{margin:0;border:1px solid var(--border);border-radius:6px;background:#fff;padding:4px}
+    .pcards{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0}
+    .pcards > span{background:#fdf3d6;border:1px solid #e8c766;border-radius:6px;padding:4px 10px;font-weight:600;font-size:.92rem}
+    .pcards > span > b{display:inline-block;background:var(--gold);color:#fff;border-radius:4px;padding:0 6px;margin-right:6px}
+    .tf{list-style:none;padding:0;margin:6px 0}
+    .tf li{margin:4px 0;padding-left:1.6em;text-indent:-1.6em}
+    .tiscreen{border:2px solid var(--text);border-radius:10px;overflow:hidden;max-width:420px;background:#fff;margin:8px 0}
+    .tiscreen .bar{background:var(--blue);color:#fff;font-size:.72rem;font-weight:700;padding:2px 10px}
+    .tiscreen .body{padding:6px 8px}
+
+    /* ---------- OneNote-Export ---------- */
+    .card-head .tools{display:flex;align-items:center;gap:8px;margin-left:auto}
+    .on-pick{display:flex;align-items:center;gap:4px;font-size:.78rem;color:var(--muted);font-weight:600;cursor:pointer;white-space:nowrap}
+    .on-pick input{width:16px;height:16px;accent-color:var(--purple);cursor:pointer}
+    .on-copy{border:1px solid var(--border);background:#fff;border-radius:6px;padding:3px 8px;font-size:.78rem;font-weight:700;cursor:pointer;color:var(--purple);font-family:inherit;white-space:nowrap}
+    .on-copy:hover{border-color:var(--purple);background:#faf6fd}
+    .card.picked{box-shadow:0 0 0 2px var(--purple)}
+    .onbar{position:fixed;left:50%;bottom:16px;transform:translateX(-50%);background:var(--text);color:#fff;border-radius:12px;padding:10px 14px;display:none;align-items:center;gap:12px;flex-wrap:wrap;z-index:50;box-shadow:0 6px 24px rgba(0,0,0,.25);max-width:calc(100% - 24px);font-size:.9rem}
+    .onbar.show{display:flex}
+    .onbar button{border:0;border-radius:6px;padding:7px 12px;font-weight:700;cursor:pointer;font-family:inherit;font-size:.86rem}
+    .onbar .go{background:var(--purple);color:#fff}
+    .onbar .clr{background:#3a3f4a;color:#fff}
+    .onbar label{display:flex;align-items:center;gap:5px;cursor:pointer}
+    .onbar label.dis{opacity:.45;cursor:not-allowed}
+    .ontoast{position:fixed;left:50%;top:18px;transform:translateX(-50%);background:var(--green);color:#fff;border-radius:8px;padding:10px 16px;font-weight:700;z-index:60;display:none;max-width:calc(100% - 24px);font-size:.9rem}
+    .ontoast.bad{background:var(--red)}
+    .onmodal{position:fixed;inset:0;background:rgba(0,0,0,.55);display:none;align-items:center;justify-content:center;z-index:70;padding:16px}
+    .onmodal.show{display:flex}
+    .onmodal .box{background:#fff;border-radius:10px;max-width:900px;width:100%;max-height:90vh;overflow:auto;padding:14px}
+    .onmodal img{max-width:100%;border:1px solid var(--border)}
+    #on-stage{position:fixed;left:-12000px;top:0;width:860px;background:#fff;padding:22px 26px;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;color:#1c1f26;line-height:1.55;font-size:16px}
+    #on-stage .katex,#on-stage .katex-html,#on-stage .pcards > span{white-space:nowrap}
+    #on-stage .ex-item{margin-bottom:20px}
+    #on-stage .ex-item:last-child{margin-bottom:0}
+    #on-stage .ex-title{font-weight:700;font-size:1.05rem;margin:0 0 6px;padding-bottom:4px;border-bottom:3px solid var(--blue)}
+    #on-stage .ex-title.s1{border-color:var(--green)} #on-stage .ex-title.s2{border-color:var(--orange)} #on-stage .ex-title.s3{border-color:var(--purple)} #on-stage .ex-title.sG{border-color:var(--text)}
+    #on-stage .ex-src{font-size:.75rem;color:var(--muted);text-align:right;margin-top:10px}
+    #on-stage .sol{display:block}
+    #on-stage .tw{overflow:visible}
+    #on-stage .board,#on-stage .assess,#on-stage .hints,#on-stage .sol-lock,#on-stage .alt-btn{display:none}
+    @media (max-width:560px){ .tool{grid-template-columns:1fr} .tool div:nth-child(even){margin-bottom:6px} code.ti{white-space:normal;word-break:break-word} .on-pick span{display:none} }
+  </style>
+
+  <div class="controls">
+    <div class="unlock">
+      <label for="code">🔒 Musterlösungen freischalten:</label>
+      <input id="code" type="text" autocomplete="off" placeholder="Code">
+      <button id="btn-unlock" type="button">Bestätigen</button>
+      <span class="msg" id="msg"></span>
+    </div>
+    <div class="filters">
+      <button class="on" data-f="all" type="button">Alles</button>
+      <button data-f="A" type="button">Anleitung</button>
+      <button data-f="G" type="button">Gemeinsam</button>
+      <button data-f="1" type="button">Stufe 1</button>
+      <button data-f="2" type="button">Stufe 2</button>
+      <button data-f="3" type="button">Stufe 3</button>
+    </div>
+  </div>
+
+  <div class="note">
+    <strong>Werkzeug:</strong> Alle Aufgaben lassen sich am <b>TI-Nspire CAS</b> mit <code class="ti">binomCdf(n,p,a,b)</code> lösen – entscheidend ist das richtige Intervall. Die Werkzeugkarte steht unten in der Anleitung, alle Befehle ausführlich: <a href="../../taschenrechner/">TI-Nspire-Anleitung Stochastik</a>.
+    Zum Ausprobieren und Kontrollieren: <a href="../../simulationen/wuerfelwetten/">Würfelwetten</a> (Intervall-Labor mit Treppengraph in Schritt 3).<br>
+    <span style="color:var(--purple);font-weight:600">📋 Für die Lehrkraft:</span> Mit „📋 OneNote“ wird eine Aufgabe als Bild kopiert. Mehrere Aufgaben über „auswählen“ markieren und gemeinsam kopieren – dann in OneNote mit <span class="kbd">Strg</span> <span class="kbd">V</span> einfügen.
+  </div>
+
+  <!-- ================= ANLEITUNG ================= -->
+  <section class="sA" data-stufe="A">
+    <div class="stufe-head">
+      <span class="stufe-badge">Anleitung</span>
+      <span class="desc">Merkwissen, Werkzeugkarte und vollständig vorgerechnete Beispiele – so sollen deine Lösungen aussehen</span>
+    </div>
+
+    <article class="card sA" data-title="Merkwissen · Kumulierte Wahrscheinlichkeiten">
+      <div class="card-head"><h3>Merkwissen · Kumulierte Wahrscheinlichkeiten</h3><span class="chev">▾</span></div>
+      <div class="card-body">
+        <div class="merk">
+          <p><strong>Kumulierte Wahrscheinlichkeit:</strong> Ist $X$ binomialverteilt mit den Parametern $n$ und $p$, so heißt
+          $$P(X\le k)=P(X=0)+P(X=1)+\ldots+P(X=k)=F_{n;\,p}(k)$$
+          die kumulierte Wahrscheinlichkeit. Im <b>Treppengraph</b> ist $F_{n;\,p}(k)$ die Höhe der Stufe über $k$.</p>
+          <p><strong>Vorgehen:</strong> (1) Ereignis in ein <b>Intervall</b> von Trefferzahlen übersetzen. (2) Mit $F_{n;\,p}$ ausdrücken bzw. die Grenzen in <code class="ti">binomCdf</code> eintragen.</p>
+          <div class="tw"><table class="vt">
+            <tr><th>Ereignis</th><th>Intervall</th><th>mit $F_{n;\,p}$</th><th>TI-Nspire</th></tr>
+            <tr><td>höchstens $k$</td><td>$[0;\,k]$</td><td>$F(k)$</td><td><code class="ti">binomCdf(n,p,0,k)</code></td></tr>
+            <tr><td>weniger als $k$</td><td>$[0;\,k-1]$</td><td>$F(k-1)$</td><td><code class="ti">binomCdf(n,p,0,k-1)</code></td></tr>
+            <tr><td>mindestens $k$</td><td>$[k;\,n]$</td><td>$1-F(k-1)$</td><td><code class="ti">binomCdf(n,p,k,n)</code></td></tr>
+            <tr><td>mehr als $k$</td><td>$[k+1;\,n]$</td><td>$1-F(k)$</td><td><code class="ti">binomCdf(n,p,k+1,n)</code></td></tr>
+            <tr><td>mindestens $a$, höchstens $b$</td><td>$[a;\,b]$</td><td>$F(b)-F(a-1)$</td><td><code class="ti">binomCdf(n,p,a,b)</code></td></tr>
+          </table></div>
+          <p><strong>Merke:</strong> In <code class="ti">binomCdf</code> stehen immer die <b>kleinste</b> und die <b>größte</b> Trefferzahl, die noch zum Ereignis gehören. Bei „mindestens“ und „mehr als“ ist die obere Grenze $n$. Bei $F(b)-F(a-1)$ gilt: „unten eins weniger“.</p>
+        </div>
+      </div>
+    </article>
+
+    <article class="card sA" data-title="Werkzeugkarte · Kumulierte Wahrscheinlichkeiten am TI-Nspire">
+      <div class="card-head"><h3>Werkzeugkarte · Kumulierte Wahrscheinlichkeiten am TI-Nspire</h3><span class="chev">▾</span></div>
+      <div class="card-body">
+        <div class="task" style="border-left-color:var(--gold)">
+          <p><strong>A · Ein Befehl für alles</strong> (Calculator): <code class="ti">binomCdf(n,p,a,b)</code> $=P(a\le X\le b)$.
+          Menü: <span class="mpath">menu ▸ Wahrscheinlichkeit ▸ Verteilungen ▸ Binomial Cdf</span> – im Fenster $n$, $p$, untere und obere Grenze eintragen.</p>
+          <div class="tiscreen"><div class="bar">1.1 &nbsp; Calculator</div><div class="body" style="font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.85rem">
+            <div style="display:flex;justify-content:space-between;border-bottom:1px solid #e3e6eb;padding:3px 0"><span>binomCdf(25,0.2,0,4)</span><b>0.420674</b></div>
+            <div style="display:flex;justify-content:space-between;border-bottom:1px solid #e3e6eb;padding:3px 0"><span>binomCdf(25,0.2,8,25)</span><b>0.109123</b></div>
+            <div style="display:flex;justify-content:space-between;padding:3px 0"><span>binomCdf(25,0.2,3,7)</span><b>0.792652</b></div>
+          </div></div>
+          <p><strong>B · Spalte $F(0),F(1),\ldots$</strong> in Lists &amp; Spreadsheet: neben <code class="ti">treffer</code> und <code class="ti">wkt</code> eine Spalte <code class="ti">kum</code> mit <code class="ti">=cumulativesum(wkt)</code>. Zeile $r$ gehört zu $k=r-1$.</p>
+          <p><strong>C · Treppengraph:</strong> In Lists &amp; Spreadsheet <span class="mpath">menu ▸ Daten ▸ Ergebnisdiagramm</span> mit X-Liste <code class="ti">treffer</code> und Ergebnisliste <code class="ti">kum</code> – die Säulenhöhen sind dann die Stufen $F(k)$.</p>
+          <p style="font-size:.88rem;color:var(--muted)"><b>Typische Fehler:</b> nur eine Grenze eingegeben (<code class="ti">binomCdf(25,0.2,4)</code> – je nach Version wird das als Obergrenze gelesen, sicherer immer beide Grenzen); bei „mindestens 8“ die 7 als untere Grenze; bei „weniger als 6“ die 6 als obere Grenze.</p>
+        </div>
+      </div>
+    </article>
+
+    <!-- Beispiel 1 -->
+    <article class="card sA" data-title="Beispiel 1 · Mit kumulierten Wahrscheinlichkeiten arbeiten">
+      <div class="card-head"><h3>Beispiel 1 · Mit kumulierten Wahrscheinlichkeiten arbeiten</h3><span class="chev">▾</span></div>
+      <div class="card-body">
+        <div class="task">
+          <p>Eine Basketballspielerin verwandelt Freiwürfe mit einer Wahrscheinlichkeit von $75\,\%$. Im Training wirft sie 16-mal. $X$ zählt die Treffer. Berechnen Sie die Wahrscheinlichkeit, dass sie</p>
+          <p><strong>a)</strong> höchstens 10-mal trifft, &nbsp; <strong>b)</strong> weniger als 12-mal trifft, &nbsp; <strong>c)</strong> mindestens 14-mal trifft, &nbsp; <strong>d)</strong> mehr als 9-, aber höchstens 13-mal trifft.</p>
+        </div>
+        <div class="bsp">
+          <div class="lh">Lösung</div>
+          <p>$X$ ist binomialverteilt mit $n=16$ und $p=0{,}75$ (Würfe unabhängig, Trefferwahrscheinlichkeit konstant).</p>
+          <div class="tw"><table class="vt">
+            <tr><th></th><th>Intervall</th><th>formale Schreibweise mit $F_{16;\,0{,}75}$</th><th>TI-Nspire</th><th>Wert</th></tr>
+            <tr><td>a)</td><td>$[0;\,10]$</td><td>$P(X\le10)=F(10)$</td><td><code class="ti">binomCdf(16,0.75,0,10)</code></td><td class="hl">$\approx0{,}1897$</td></tr>
+            <tr><td>b)</td><td>$[0;\,11]$</td><td>$P(X\lt 12)=P(X\le11)=F(11)$</td><td><code class="ti">binomCdf(16,0.75,0,11)</code></td><td class="hl">$\approx0{,}3698$</td></tr>
+            <tr><td>c)</td><td>$[14;\,16]$</td><td>$P(X\ge14)=1-P(X\le13)=1-F(13)$</td><td><code class="ti">binomCdf(16,0.75,14,16)</code></td><td class="hl">$\approx0{,}1971$</td></tr>
+            <tr><td>d)</td><td>$[10;\,13]$</td><td>$P(10\le X\le13)=F(13)-F(9)$</td><td><code class="ti">binomCdf(16,0.75,10,13)</code></td><td class="hl">$\approx0{,}7233$</td></tr>
+          </table></div>
+          <p>Bei d) gehört die 9 <b>nicht</b> dazu („mehr als 9“), die 13 schon. Deshalb beginnt das Intervall bei 10, und von $F(13)$ wird $F(9)$ abgezogen.</p>
+        </div>
+      </div>
+    </article>
+
+    <!-- Beispiel 2 -->
+    <article class="card sA" data-title="Beispiel 2 · Kumulierte Wahrscheinlichkeiten im Treppengraph">
+      <div class="card-head"><h3>Beispiel 2 · Kumulierte Wahrscheinlichkeiten im Treppengraph</h3><span class="chev">▾</span></div>
+      <div class="card-body">
+        <div class="task">
+          <div class="fig"><div class="txt">
+            <p>Eine Münze wird achtmal geworfen, $X$ zählt „Zahl“. Der Treppengraph zeigt zu jedem $x$ den Wert $F_{8;\,0{,}5}(x)=P(X\le x)$.</p>
+            <p><strong>a)</strong> Lesen Sie $F(3)$ und $F(5)$ ab.</p>
+            <p><strong>b)</strong> Beschreiben Sie die Länge der grünen Strecke als Wahrscheinlichkeit und berechnen Sie sie.</p>
+            <p><strong>c)</strong> Begründen Sie, warum der Graph zwischen zwei ganzen Zahlen waagerecht verläuft.</p>
+          </div><div class="pic"><div class="stair" data-stair='{"n":8,"p":0.5,"w":330,"h":230,"pts":[[3,"A"],[5,"B"]],"seg":[[3,5,"#1a9e5c"]]}'></div></div></div>
+        </div>
+        <div class="bsp">
+          <div class="lh">Lösung</div>
+          <p><strong>a)</strong> Punkt A: $F(3)=P(X\le3)\approx{\color{#1a9e5c}\boldsymbol{0{,}36}}$ (genau $0{,}3633$); Punkt B: $F(5)\approx{\color{#1a9e5c}\boldsymbol{0{,}86}}$ (genau $0{,}8555$).</p>
+          <p><strong>b)</strong> Die grüne Strecke ist der Höhenunterschied von A nach B:
+          $F(5)-F(3)=P(X\le5)-P(X\le3)=P(4\le X\le5)\approx0{,}8555-0{,}3633={\color{#1a9e5c}\boldsymbol{0{,}4922}}$.
+          Das sind die beiden Stufen bei $x=4$ und $x=5$, also $P(X=4)+P(X=5)$. TI: <code class="ti">binomCdf(8,0.5,4,5)</code>.</p>
+          <p><strong>c)</strong> $X$ nimmt nur ganzzahlige Werte an. Zwischen z.&nbsp;B. 3 und 4 kommt keine Wahrscheinlichkeit hinzu: $P(X\le3{,}5)=P(X\le3)$. Erst bei der nächsten ganzen Zahl springt der Graph um $P(X=4)$ nach oben.</p>
+        </div>
+      </div>
+    </article>
+
+    <!-- Beispiel 3 -->
+    <article class="card sA" data-title="Beispiel 3 · Eine Sachaufgabe modellieren">
+      <div class="card-head"><h3>Beispiel 3 · Eine Sachaufgabe modellieren</h3><span class="chev">▾</span></div>
+      <div class="card-body">
+        <div class="task">
+          <p>Ein Hersteller weiß aus Erfahrung, dass $4\,\%$ seiner LED-Lampen defekt sind. Ein Baumarkt erhält eine Kiste mit 50 Lampen.</p>
+          <p><strong>a)</strong> Geben Sie an, welche Annahmen man treffen muss, um die Anzahl $X$ der defekten Lampen als binomialverteilt anzusehen.</p>
+          <p><strong>b)</strong> Berechnen Sie die Wahrscheinlichkeit, dass höchstens zwei Lampen defekt sind.</p>
+          <p><strong>c)</strong> Der Baumarkt reklamiert die Kiste, wenn mehr als $5\,\%$ der Lampen defekt sind. Berechnen Sie die Wahrscheinlichkeit für eine Reklamation.</p>
+        </div>
+        <div class="bsp">
+          <div class="lh">Lösung</div>
+          <p><strong>a)</strong> Jede Lampe ist unabhängig von den anderen mit derselben Wahrscheinlichkeit $p=0{,}04$ defekt. Dann ist $X$ binomialverteilt mit $n=50$ und $p=0{,}04$. „Treffer“ ist hier „defekt“.</p>
+          <p><strong>b)</strong> $P(X\le2)=F_{50;\,0{,}04}(2)$; TI: <code class="ti">binomCdf(50,0.04,0,2)</code> $\approx{\color{#1a9e5c}\boldsymbol{0{,}6767}}$.</p>
+          <p><strong>c)</strong> $5\,\%$ von 50 sind $2{,}5$ Lampen. „Mehr als 2,5“ bedeutet bei ganzen Zahlen: <b>mindestens 3</b>.
+          $P(X\ge3)=1-F_{50;\,0{,}04}(2)\approx1-0{,}6767={\color{#1a9e5c}\boldsymbol{0{,}3233}}$; TI: <code class="ti">binomCdf(50,0.04,3,50)</code>.
+          Etwa jede dritte Kiste würde reklamiert.</p>
+        </div>
+      </div>
+    </article>
+  </section>
+
+  <!-- ================= GEMEINSAM ================= -->
+  <section class="sG" data-stufe="G">
+    <div class="stufe-head">
+      <span class="stufe-badge">Gemeinsam im Unterricht</span>
+      <span class="desc">Diese Aufgaben lösen wir zusammen – die Lösung wird an der Tafel gesichert</span>
+    </div>
+
+    <article class="card sG" data-title="Aufgabe A · Was gehört zusammen?">
+      <div class="card-head"><h3>Aufgabe A · Was gehört zusammen?</h3><span class="chev">▾</span></div>
+      <div class="card-body">
+        <div class="task">
+          <p>$X$ ist binomialverteilt mit $n=20$. Ordnen Sie jeder Beschreibung das passende Intervall und den passenden Term zu. Zu einem Term gibt es zwei Beschreibungen.</p>
+          <div class="pcards">
+            <span><b>1</b>„höchstens sieben Treffer“</span><span><b>2</b>„weniger als sieben Treffer“</span><span><b>3</b>„mindestens sieben Treffer“</span>
+            <span><b>4</b>„mehr als sieben Treffer“</span><span><b>5</b>„nicht mehr als sechs Treffer“</span><span><b>6</b>„zwischen 4 und 9 Treffer (einschließlich)“</span>
+          </div>
+          <div class="pcards">
+            <span><b>I</b>$[7;\,20]$</span><span><b>II</b>$[0;\,6]$</span><span><b>III</b>$[8;\,20]$</span><span><b>IV</b>$[0;\,7]$</span><span><b>V</b>$[4;\,9]$</span>
+          </div>
+          <div class="pcards">
+            <span><b>α</b>$F(7)$</span><span><b>β</b>$1-F(6)$</span><span><b>γ</b>$F(9)-F(3)$</span><span><b>δ</b>$F(6)$</span><span><b>ε</b>$1-F(7)$</span>
+          </div>
+          <p>Geben Sie zu jeder Beschreibung zusätzlich den <code class="ti">binomCdf</code>-Befehl an (mit $p$ als Platzhalter).</p>
+        </div>
+        <div class="board">✏️ <span><b>Tafelsicherung:</b> Tabelle Beschreibung – Intervall – F-Term – binomCdf; 2 und 5 gehören zusammen; Zahlengerade 0 bis 20 mit markierten Intervallen.</span></div>
+      </div>
+    </article>
+
+    <article class="card sG" data-title="Aufgabe B · Gleiche Wahrscheinlichkeit?">
+      <div class="card-head"><h3>Aufgabe B · Gleiche Wahrscheinlichkeit?</h3><span class="chev">▾</span></div>
+      <div class="card-body">
+        <div class="task">
+          <p>$X$ ist binomialverteilt mit $n=12$. Sortieren Sie die Terme in Gruppen, die dieselbe Wahrscheinlichkeit beschreiben. Begründen Sie mit Intervallen. Ein Term bleibt übrig.</p>
+          <div class="pcards">
+            <span><b>1</b>$P(X\lt 5)$</span><span><b>2</b>$1-P(X\le 8)$</span><span><b>3</b>$P(3\le X\le 7)$</span><span><b>4</b>$P(X\le 4)$</span>
+            <span><b>5</b>$P(X\gt 8)$</span><span><b>6</b>$P(2\lt X\lt 8)$</span><span><b>7</b>$1-P(X\ge 5)$</span><span><b>8</b>$F(7)-F(3)$</span><span><b>9</b>$P(X\ge 9)$</span>
+          </div>
+        </div>
+        <div class="board">✏️ <span><b>Tafelsicherung:</b> Intervalle zu allen Termen; Gruppen gleicher Wahrscheinlichkeit; warum $F(7)-F(3)$ nicht zu $P(3\le X\le7)$ passt.</span></div>
+      </div>
+    </article>
+
+    <article class="card sG" data-title="Aufgabe C · Finde den Fehler!">
+      <div class="card-head"><h3>Aufgabe C · Finde den Fehler!</h3><span class="chev">▾</span></div>
+      <div class="card-body">
+        <div class="task">
+          <p>Lena hat für $X\sim B_{20;\,0{,}3}$ folgende Rechnungen notiert. Finden Sie alle Fehler und korrigieren Sie sie.</p>
+          <div class="code-note" style="background:#f4f5f7;border:1px dashed #9aa2ad;border-radius:8px;padding:10px 14px;font-family:'Segoe Print','Comic Sans MS',cursive;font-size:.95rem;line-height:1.8">
+            (1) $P(X\ge4)=1-F(4)$<br>
+            (2) $P(3\le X\le7)=F(7)-F(3)$<br>
+            (3) $P(X\lt 5)=F(5)$, TI: <code class="ti">binomCdf(20,0.3,0,5)</code><br>
+            (4) $P(X\gt 6)$ = <code class="ti">binomCdf(20,0.3,6,20)</code><br>
+            (5) $P(X\le 2)$ = <code class="ti">binomCdf(20,0.3,0,2)</code>
+          </div>
+        </div>
+        <div class="board">✏️ <span><b>Tafelsicherung:</b> Fehlerarten benennen (Grenze beim Gegenereignis, „unten eins weniger“, „weniger als“, „mehr als“); welche Rechnung stimmt; korrigierte Werte.</span></div>
+      </div>
+    </article>
+  </section>
+
+  <!-- ================= STUFE 1 ================= -->
+  <section class="s1" data-stufe="1">
+    <div class="stufe-head">
+      <span class="stufe-badge">Stufe 1</span>
+      <span class="desc">Grundaufgaben · Ereignisse in Intervalle übersetzen und mit binomCdf berechnen</span>
+    </div>
+
+    <article class="card s1" data-title="Aufgabe 1 · Kumulierte Wahrscheinlichkeiten berechnen">
+      <div class="card-head"><h3>Aufgabe 1 · Kumulierte Wahrscheinlichkeiten berechnen</h3><span class="chev">▾</span></div>
+      <div class="card-body">
+        <div class="task">
+          <p>$X$ ist binomialverteilt mit $n=25$ und $p=0{,}2$. Geben Sie jeweils das Intervall und die Schreibweise mit $F_{25;\,0{,}2}$ an und berechnen Sie die Wahrscheinlichkeit.</p>
+          <p class="sub-i"><strong>a)</strong> $P(X\le4)$ &nbsp;&nbsp; <strong>b)</strong> $P(X\lt 6)$ &nbsp;&nbsp; <strong>c)</strong> $P(X\ge8)$ &nbsp;&nbsp; <strong>d)</strong> $P(X\gt 3)$ &nbsp;&nbsp; <strong>e)</strong> $P(3\le X\le7)$ &nbsp;&nbsp; <strong>f)</strong> $P(2\lt X\lt 9)$</p>
+        </div>
+        <div class="assess"><span class="lab">Einschätzung:</span>
+          <button data-v="ok" type="button">✓ Fertig &amp; verstanden</button><button data-v="mid" type="button">~ Noch unsicher</button><button data-v="ask" type="button">? Frage an Lehrer</button></div>
+        <div class="hints">
+          <div class="htitle">Hilfen</div>
+          <div class="htabs"><button type="button">Hilfe 1 · Intervall</button><button type="button">Hilfe 2 · Mit F</button><button type="button">Hilfe 3 · TI</button></div>
+          <div class="hpanel"><h4>Hilfe 1 · Welche Trefferzahlen gehören dazu?</h4><p>Schreibe die Trefferzahlen auf: „weniger als 6“ sind 0 bis 5, „mehr als 3“ sind 4 bis 25, „$2\lt X\lt 9$“ sind 3 bis 8.</p></div>
+          <div class="hpanel"><h4>Hilfe 2 · Tabelle im Merkwissen</h4><p>„mindestens $k$“ → $1-F(k-1)$; „zwischen $a$ und $b$“ → $F(b)-F(a-1)$.</p></div>
+          <div class="hpanel"><h4>Hilfe 3 · binomCdf</h4><p>Grenzen = kleinste und größte Trefferzahl im Intervall, z.&nbsp;B. c) <code class="ti">binomCdf(25,0.2,8,25)</code>.</p></div>
+        </div>
+        <div class="sol-lock">🔒 Musterlösung – nach Freigabe durch den Lehrer sichtbar.</div>
+        <div class="sol"><div class="sh">✓ Musterlösung · Aufgabe 1</div><div class="sb">
+          <div class="tw"><table class="vt">
+            <tr><th></th><th>Intervall</th><th>mit $F_{25;\,0{,}2}$</th><th>TI-Nspire</th><th>Wert</th></tr>
+            <tr><td>a)</td><td>$[0;\,4]$</td><td>$F(4)$</td><td><code class="ti">binomCdf(25,0.2,0,4)</code></td><td class="hl">$0{,}4207$</td></tr>
+            <tr><td>b)</td><td>$[0;\,5]$</td><td>$F(5)$</td><td><code class="ti">binomCdf(25,0.2,0,5)</code></td><td class="hl">$0{,}6167$</td></tr>
+            <tr><td>c)</td><td>$[8;\,25]$</td><td>$1-F(7)$</td><td><code class="ti">binomCdf(25,0.2,8,25)</code></td><td class="hl">$0{,}1091$</td></tr>
+            <tr><td>d)</td><td>$[4;\,25]$</td><td>$1-F(3)$</td><td><code class="ti">binomCdf(25,0.2,4,25)</code></td><td class="hl">$0{,}7660$</td></tr>
+            <tr><td>e)</td><td>$[3;\,7]$</td><td>$F(7)-F(2)$</td><td><code class="ti">binomCdf(25,0.2,3,7)</code></td><td class="hl">$0{,}7927$</td></tr>
+            <tr><td>f)</td><td>$[3;\,8]$</td><td>$F(8)-F(2)$</td><td><code class="ti">binomCdf(25,0.2,3,8)</code></td><td class="hl">$0{,}8550$</td></tr>
+          </table></div>
+        </div></div>
+      </div>
+    </article>
+
+    <article class="card s1" data-title="Aufgabe 2 · Rot-Grün-Sehschwäche">
+      <div class="card-head"><h3>Aufgabe 2 · Rot-Grün-Sehschwäche</h3><span class="chev">▾</span></div>
+      <div class="card-body">
+        <div class="task">
+          <p>Etwa $8\,\%$ der Jungen haben eine Rot-Grün-Sehschwäche. In einer Jahrgangsstufe sind 60 Jungen. Notieren Sie das Intervall und die Rechnung mit $F_{n;\,p}$ und berechnen Sie die Wahrscheinlichkeit, dass</p>
+          <p><strong>a)</strong> genau fünf, &nbsp; <strong>b)</strong> höchstens drei, &nbsp; <strong>c)</strong> mindestens sechs, &nbsp; <strong>d)</strong> mindestens drei und höchstens sieben Jungen eine Rot-Grün-Sehschwäche haben.</p>
+          <p><strong>e)</strong> Berechnen Sie den Erwartungswert und vergleichen Sie ihn mit dem Ergebnis aus a).</p>
+        </div>
+        <div class="assess"><span class="lab">Einschätzung:</span>
+          <button data-v="ok" type="button">✓ Fertig &amp; verstanden</button><button data-v="mid" type="button">~ Noch unsicher</button><button data-v="ask" type="button">? Frage an Lehrer</button></div>
+        <div class="hints">
+          <div class="htitle">Hilfen</div>
+          <div class="htabs"><button type="button">Hilfe 1 · Modell</button><button type="button">Hilfe 2 · genau</button><button type="button">Hilfe 3 · mindestens</button></div>
+          <div class="hpanel"><h4>Hilfe 1 · n und p</h4><p>$X$: Anzahl der Jungen mit Sehschwäche, $n=60$, $p=0{,}08$.</p></div>
+          <div class="hpanel"><h4>Hilfe 2 · „genau“</h4><p>Für genau einen Wert: <code class="ti">binompdf(60,0.08,5)</code> (oder <code class="ti">binomCdf(60,0.08,5,5)</code>).</p></div>
+          <div class="hpanel"><h4>Hilfe 3 · „mindestens sechs“</h4><p>Intervall $[6;\,60]$, also $1-F(5)$.</p></div>
+        </div>
+        <div class="sol-lock">🔒 Musterlösung – nach Freigabe durch den Lehrer sichtbar.</div>
+        <div class="sol"><div class="sh">✓ Musterlösung · Aufgabe 2</div><div class="sb">
+          <p>$X$ ist binomialverteilt mit $n=60$, $p=0{,}08$ (Annahme: die Jungen sind unabhängig voneinander, jeder mit derselben Wahrscheinlichkeit betroffen).</p>
+          <div class="tw"><table class="vt">
+            <tr><th></th><th>Intervall</th><th>Rechnung</th><th>TI-Nspire</th><th>Wert</th></tr>
+            <tr><td>a)</td><td>$[5;\,5]$</td><td>$P(X=5)$</td><td><code class="ti">binompdf(60,0.08,5)</code></td><td class="hl">$0{,}1824$</td></tr>
+            <tr><td>b)</td><td>$[0;\,3]$</td><td>$F(3)$</td><td><code class="ti">binomCdf(60,0.08,0,3)</code></td><td class="hl">$0{,}2829$</td></tr>
+            <tr><td>c)</td><td>$[6;\,60]$</td><td>$1-F(5)$</td><td><code class="ti">binomCdf(60,0.08,6,60)</code></td><td class="hl">$0{,}3474$</td></tr>
+            <tr><td>d)</td><td>$[3;\,7]$</td><td>$F(7)-F(2)$</td><td><code class="ti">binomCdf(60,0.08,3,7)</code></td><td class="hl">$0{,}7639$</td></tr>
+          </table></div>
+          <p><strong>e)</strong> $\mu=60\cdot0{,}08={\color{#1a9e5c}\boldsymbol{4{,}8}}$. Obwohl 5 nahe am Erwartungswert liegt, hat „genau 5“ nur etwa $18\,\%$ – einzelne Werte sind selten, deshalb fragt man meist nach Bereichen.</p>
+        </div></div>
+      </div>
+    </article>
+  </section>
+
+  <!-- ================= STUFE 2 ================= -->
+  <section class="s2" data-stufe="2">
+    <div class="stufe-head">
+      <span class="stufe-badge">Stufe 2</span>
+      <span class="desc">Aufbauend · Treppengraph und Histogramm deuten, Aussagen über F prüfen</span>
+    </div>
+
+    <article class="card s2" data-title="Aufgabe 3 · Histogramm und Treppengraph">
+      <div class="card-head"><h3>Aufgabe 3 · Histogramm und Treppengraph</h3><span class="chev">▾</span></div>
+      <div class="card-body">
+        <div class="task">
+          <p>$X$ ist binomialverteilt mit $n=12$ und $p=0{,}25$. Links das Histogramm, rechts der Treppengraph.</p>
+          <div class="hgrid">
+            <div class="hist" data-hist='{"n":12,"p":0.25,"w":300,"h":200,"hl":[0,1,2],"hl2":[6,7,8,9,10,11,12],"ymax":0.3}'></div>
+            <div class="stair" data-stair='{"n":12,"p":0.25,"w":300,"h":200,"pts":[[2,"A"],[5,"B"]],"bars":[[0,2,"#e8a800","p₁"],[2,5,"#1a9e5c","p₂"],[5,12,"#7b3fb5","p₃"]]}'></div>
+          </div>
+          <p><strong>a)</strong> Beschreiben Sie den Zusammenhang zwischen den beiden Graphen. Welche Säulen des Histogramms gehören zur Stufe über $k=2$?</p>
+          <p><strong>b)</strong> Geben Sie die Wahrscheinlichkeiten $p_1$, $p_2$ und $p_3$ (Streckenlängen rechts) mit $F_{12;\,0{,}25}$ und als Ereignis in Worten an. Berechnen Sie sie.</p>
+          <p><strong>c)</strong> Welche der Wahrscheinlichkeiten aus b) gehören zu den gelb bzw. orange gefärbten Säulen im Histogramm?</p>
+        </div>
+        <div class="assess"><span class="lab">Einschätzung:</span>
+          <button data-v="ok" type="button">✓ Fertig &amp; verstanden</button><button data-v="mid" type="button">~ Noch unsicher</button><button data-v="ask" type="button">? Frage an Lehrer</button></div>
+        <div class="hints">
+          <div class="htitle">Hilfen</div>
+          <div class="htabs"><button type="button">Hilfe 1 · Stufe</button><button type="button">Hilfe 2 · Strecken</button><button type="button">Hilfe 3 · Bis 1</button></div>
+          <div class="hpanel"><h4>Hilfe 1 · Stufenhöhe</h4><p>Die Stufe über $k$ ist die Summe aller Säulen von 0 bis $k$. Jeder Sprung im Treppengraph ist so hoch wie eine Säule.</p></div>
+          <div class="hpanel"><h4>Hilfe 2 · Höhenunterschiede</h4><p>$p_2$ ist der Unterschied zwischen B und A: $F(5)-F(2)$. Welche Trefferzahlen kommen dabei hinzu?</p></div>
+          <div class="hpanel"><h4>Hilfe 3 · Der Rest bis 1</h4><p>Der Treppengraph endet bei 1. $p_3$ ist das Stück von B bis 1.</p></div>
+        </div>
+        <div class="sol-lock">🔒 Musterlösung – nach Freigabe durch den Lehrer sichtbar.</div>
+        <div class="sol"><div class="sh">✓ Musterlösung · Aufgabe 3</div><div class="sb">
+          <p><strong>a)</strong> Die Höhe der Stufe über $k$ ist die Summe der Säulenhöhen von 0 bis $k$; jeder Sprung ist genau so hoch wie die Säule an dieser Stelle. Zur Stufe über 2 gehören die Säulen bei 0, 1 und 2.</p>
+          <p><strong>b)</strong> $p_1=F(2)=P(X\le2)\approx{\color{#1a9e5c}\boldsymbol{0{,}3907}}$ – „höchstens zwei Treffer“.<br>
+          $p_2=F(5)-F(2)=P(3\le X\le5)\approx0{,}9456-0{,}3907={\color{#1a9e5c}\boldsymbol{0{,}5549}}$ – „drei bis fünf Treffer“.<br>
+          $p_3=1-F(5)=P(X\ge6)\approx{\color{#1a9e5c}\boldsymbol{0{,}0544}}$ – „mindestens sechs Treffer“.<br>
+          Kontrolle: $p_1+p_2+p_3=1$.</p>
+          <p><strong>c)</strong> Gelb (Säulen 0 bis 2): $p_1$. Orange (Säulen 6 bis 12): $p_3$.</p>
+        </div></div>
+      </div>
+    </article>
+
+    <article class="card s2" data-title="Aufgabe 4 · Gilt immer – gilt nie – es kommt darauf an">
+      <div class="card-head"><h3>Aufgabe 4 · Gilt immer – gilt nie – es kommt darauf an</h3><span class="chev">▾</span></div>
+      <div class="card-body">
+        <div class="task">
+          <p>Untersuchen Sie, ob die Aussage für eine $B_{n;\,p}$-verteilte Zufallsgröße immer gilt, nie gilt oder nur in bestimmten Fällen. Geben Sie gegebenenfalls die Bedingungen an.</p>
+          <p><strong>a)</strong> $F_{n;\,p}(n)=1$ &nbsp;&nbsp; <strong>b)</strong> $F_{n;\,p}(k+1)-F_{n;\,p}(k)=B_{n;\,p}(k+1)$ &nbsp;&nbsp; <strong>c)</strong> $F_{n;\,p}(0)=(1-p)^n$</p>
+          <p><strong>d)</strong> $P(X\ge k)=1-F_{n;\,p}(k)$ &nbsp;&nbsp; <strong>e)</strong> $F_{n;\,0{,}5}\!\left(\frac n2\right)=0{,}5$ &nbsp;&nbsp; <strong>f)</strong> $F_{n;\,p}(k)\le F_{n;\,p}(k+1)$</p>
+        </div>
+        <div class="assess"><span class="lab">Einschätzung:</span>
+          <button data-v="ok" type="button">✓ Fertig &amp; verstanden</button><button data-v="mid" type="button">~ Noch unsicher</button><button data-v="ask" type="button">? Frage an Lehrer</button></div>
+        <div class="hints">
+          <div class="htitle">Hilfen</div>
+          <div class="htabs"><button type="button">Hilfe 1 · Ausprobieren</button><button type="button">Hilfe 2 · d)</button><button type="button">Hilfe 3 · e)</button></div>
+          <div class="hpanel"><h4>Hilfe 1 · Mit Zahlen testen</h4><p>Teste mit $n=4$, $p=0{,}5$ am TI. Danach allgemein begründen.</p></div>
+          <div class="hpanel"><h4>Hilfe 2 · Gegenereignis</h4><p>Das Gegenereignis von „mindestens $k$“ ist „höchstens $k-1$“.</p></div>
+          <div class="hpanel"><h4>Hilfe 3 · Symmetrie</h4><p>Für $p=0{,}5$ ist das Histogramm symmetrisch zu $\frac n2$. Was passiert mit der mittleren Säule?</p></div>
+        </div>
+        <div class="sol-lock">🔒 Musterlösung – nach Freigabe durch den Lehrer sichtbar.</div>
+        <div class="sol"><div class="sh">✓ Musterlösung · Aufgabe 4</div><div class="sb">
+          <p><strong>a) gilt immer:</strong> $X\le n$ ist das sichere Ereignis.</p>
+          <p><strong>b) gilt immer</strong> (für $0\le k\lt n$): Der Unterschied zweier benachbarter Stufen ist genau die Säule bei $k+1$.</p>
+          <p><strong>c) gilt immer:</strong> $F(0)=P(X=0)=\binom n0p^0(1-p)^n=(1-p)^n$.</p>
+          <p><strong>d) gilt nie</strong> (für $0\lt p\lt 1$): richtig ist $1-F(k-1)$. Die rechte Seite lässt $P(X=k)\gt0$ weg.</p>
+          <p><strong>e) gilt nie:</strong> Für gerades $n$ liegt die mittlere Säule bei $\frac n2$; $F(\frac n2)$ enthält die linke Hälfte <b>plus</b> die ganze mittlere Säule, ist also größer als $0{,}5$ (z.&nbsp;B. $F_{10;\,0{,}5}(5)\approx0{,}623$). Für ungerades $n$ ist $F(\frac n2)$ nicht definiert bzw. $F(\frac{n-1}{2})=0{,}5$.</p>
+          <p><strong>f) gilt immer:</strong> Beim Übergang von $k$ zu $k+1$ kommt $P(X=k+1)\ge0$ hinzu; der Treppengraph steigt nie ab.</p>
+        </div></div>
+      </div>
+    </article>
+  </section>
+
+  <!-- ================= STUFE 3 ================= -->
+  <section class="s3" data-stufe="3">
+    <div class="stufe-head">
+      <span class="stufe-badge">Stufe 3</span>
+      <span class="desc">Vertiefend · zusammengesetzte Situationen und Begründungen</span>
+    </div>
+
+    <article class="card s3" data-title="Aufgabe 5 · Zwei Maschinen">
+      <div class="card-head"><h3>Aufgabe 5 · Zwei Maschinen</h3><span class="chev">▾</span></div>
+      <div class="card-body">
+        <div class="task">
+          <p>Ein Sensor wird auf zwei Maschinen gefertigt. Bei Maschine A sind erfahrungsgemäß $3\,\%$ der Sensoren defekt, bei Maschine B $6\,\%$. Eine Lieferung enthält 20 Sensoren von A und 10 von B.</p>
+          <p><strong>a)</strong> Berechnen Sie die Wahrscheinlichkeit, dass unter den Sensoren von B höchstens einer defekt ist.</p>
+          <p><strong>b)</strong> Berechnen Sie die Wahrscheinlichkeit, dass in der gesamten Lieferung höchstens ein Sensor defekt ist.</p>
+          <p><strong>c)</strong> Erklären Sie, warum man b) nicht einfach mit einer Binomialverteilung mit $n=30$ berechnen kann.</p>
+        </div>
+        <div class="assess"><span class="lab">Einschätzung:</span>
+          <button data-v="ok" type="button">✓ Fertig &amp; verstanden</button><button data-v="mid" type="button">~ Noch unsicher</button><button data-v="ask" type="button">? Frage an Lehrer</button></div>
+        <div class="hints">
+          <div class="htitle">Hilfen</div>
+          <div class="htabs"><button type="button">Hilfe 1 · Zwei Zufallsgrößen</button><button type="button">Hilfe 2 · Fälle</button><button type="button">Hilfe 3 · Pfadregeln</button></div>
+          <div class="hpanel"><h4>Hilfe 1 · Getrennt zählen</h4><p>$X_A\sim B_{20;\,0{,}03}$ zählt defekte Sensoren von A, $X_B\sim B_{10;\,0{,}06}$ die von B.</p></div>
+          <div class="hpanel"><h4>Hilfe 2 · Höchstens einer insgesamt</h4><p>Fall 1: von A keiner defekt und von B höchstens einer. Fall 2: von A genau einer und von B keiner.</p></div>
+          <div class="hpanel"><h4>Hilfe 3 · Multiplizieren und addieren</h4><p>Die Maschinen arbeiten unabhängig: Wahrscheinlichkeiten innerhalb eines Falls multiplizieren, die beiden Fälle addieren.</p></div>
+        </div>
+        <div class="sol-lock">🔒 Musterlösung – nach Freigabe durch den Lehrer sichtbar.</div>
+        <div class="sol"><div class="sh">✓ Musterlösung · Aufgabe 5</div><div class="sb">
+          <p><strong>a)</strong> $P(X_B\le1)=F_{10;\,0{,}06}(1)$; TI <code class="ti">binomCdf(10,0.06,0,1)</code> $\approx{\color{#1a9e5c}\boldsymbol{0{,}8824}}$.</p>
+          <p><strong>b)</strong> $P(X_A=0)=0{,}97^{20}\approx0{,}5438$, \ $P(X_A=1)\approx0{,}3364$, \ $P(X_B=0)=0{,}94^{10}\approx0{,}5386$.<br>
+          $P(\text{höchstens 1 defekt})=P(X_A=0)\cdot P(X_B\le1)+P(X_A=1)\cdot P(X_B=0)\approx0{,}5438\cdot0{,}8824+0{,}3364\cdot0{,}5386\approx{\color{#1a9e5c}\boldsymbol{0{,}661}}$.</p>
+          <p><strong>c)</strong> Die Defektwahrscheinlichkeit ist nicht für alle 30 Sensoren gleich ($0{,}03$ bzw. $0{,}06$). Für eine Bernoulli-Kette muss $p$ bei jedem Versuch gleich sein.</p>
+        </div></div>
+      </div>
+    </article>
+
+    <article class="card s3" data-title="Aufgabe 6 · Treffer oder Nieten zählen?">
+      <div class="card-head"><h3>Aufgabe 6 · Treffer oder Nieten zählen?</h3><span class="chev">▾</span></div>
+      <div class="card-body">
+        <div class="task">
+          <p>Jonas überlegt: <em>„Wenn ich bei 15 Versuchen höchstens 4 Treffer habe, dann habe ich mindestens 11 Nieten. Also kann ich statt der Treffer auch die Nieten zählen.“</em></p>
+          <p><strong>a)</strong> $X$ zählt die Treffer ($p=0{,}3$), $Y$ die Nieten. Geben Sie die Verteilung von $Y$ an.</p>
+          <p><strong>b)</strong> Zeigen Sie mit Jonas' Idee: $F_{15;\,0{,}3}(4)=1-F_{15;\,0{,}7}(10)$. Prüfen Sie mit dem TI-Nspire.</p>
+          <p><strong>c)</strong> Verallgemeinern Sie: Drücken Sie $F_{n;\,p}(k)$ durch $F_{n;\,1-p}$ aus.</p>
+        </div>
+        <div class="assess"><span class="lab">Einschätzung:</span>
+          <button data-v="ok" type="button">✓ Fertig &amp; verstanden</button><button data-v="mid" type="button">~ Noch unsicher</button><button data-v="ask" type="button">? Frage an Lehrer</button></div>
+        <div class="hints">
+          <div class="htitle">Hilfen</div>
+          <div class="htabs"><button type="button">Hilfe 1 · Nieten</button><button type="button">Hilfe 2 · Ereignisse</button><button type="button">Hilfe 3 · Allgemein</button></div>
+          <div class="hpanel"><h4>Hilfe 1 · Y = 15 − X</h4><p>Eine Niete tritt mit Wahrscheinlichkeit $0{,}7$ auf, unabhängig. Also ist auch $Y$ binomialverteilt.</p></div>
+          <div class="hpanel"><h4>Hilfe 2 · Gleiche Ereignisse</h4><p>$X\le4$ und $Y\ge11$ beschreiben dasselbe. Und $P(Y\ge11)=1-P(Y\le10)$.</p></div>
+          <div class="hpanel"><h4>Hilfe 3 · k Treffer, n − k Nieten</h4><p>$X\le k$ ⇔ $Y\ge n-k$.</p></div>
+        </div>
+        <div class="sol-lock">🔒 Musterlösung – nach Freigabe durch den Lehrer sichtbar.</div>
+        <div class="sol"><div class="sh">✓ Musterlösung · Aufgabe 6</div><div class="sb">
+          <p><strong>a)</strong> $Y=15-X$ ist binomialverteilt mit $n=15$ und $p=0{,}7$.</p>
+          <p><strong>b)</strong> $X\le4\iff Y\ge11$, also $F_{15;\,0{,}3}(4)=P(Y\ge11)=1-P(Y\le10)=1-F_{15;\,0{,}7}(10)$.
+          TI: <code class="ti">binomCdf(15,0.3,0,4)</code> $\approx0{,}5155$ und <code class="ti">1-binomCdf(15,0.7,0,10)</code> $\approx0{,}5155$ ✓.</p>
+          <p><strong>c)</strong> $X\le k\iff Y\ge n-k$, also ${\color{#1a9e5c}\boldsymbol{F_{n;\,p}(k)=1-F_{n;\,1-p}(n-k-1)}}$.</p>
+        </div></div>
+      </div>
+    </article>
+  </section>
+
+</div>
+
+<!-- OneNote-Export -->
+<div class="onbar" id="onbar">
+  <span id="on-count">0 ausgewählt</span>
+  <label id="on-sol-lab" class="dis" title="Erst nach Freischalten der Musterlösungen"><input type="checkbox" id="on-sol" disabled> mit Musterlösung</label>
+  <button class="go" id="on-go" type="button">📋 Als Bild für OneNote kopieren</button>
+  <button class="clr" id="on-clr" type="button">Auswahl aufheben</button>
+</div>
+<div class="ontoast" id="ontoast"></div>
+<div class="onmodal" id="onmodal"><div class="box">
+  <p style="margin:0 0 8px"><b>Kopieren direkt in die Zwischenablage ist in diesem Browser nicht möglich.</b> Bild mit Rechtsklick (bzw. lange tippen) kopieren oder speichern und in OneNote einfügen.</p>
+  <img id="on-img" alt="Aufgaben als Bild">
+  <p style="margin:10px 0 0;display:flex;gap:8px;flex-wrap:wrap"><a id="on-dl" download="aufgaben.png" class="on-copy" style="text-decoration:none">⬇ Bild speichern</a><button class="on-copy" id="on-close" type="button">Schließen</button></p>
+</div></div>
+<div id="on-stage" aria-hidden="true"></div>
+
+<footer class="bot">
+  Mathematik Oberstufe LK · Q2 · Kapitel IX · Binomialverteilung<br>
+  <a href="../">← Zurück zu Kapitel IX.4</a> · <a href="../../index.html#kap-ix">Stochastik-Übersicht</a>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/html-to-image@1.11.11/dist/html-to-image.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+
+  /* ---------- Histogramme (SVG) ---------- */
+  var NS='http://www.w3.org/2000/svg';
+  function mk(tag,a,p){ var e=document.createElementNS(NS,tag); for(var k in a) e.setAttribute(k,a[k]); if(p) p.appendChild(e); return e; }
+  function tx(p,x,y,s,a){ var t=mk('text',Object.assign({x:x,y:y,'text-anchor':'middle','font-family':'-apple-system,Segoe UI,Arial,sans-serif','font-size':11,fill:'#5c6472'},a||{}),p); t.textContent=s; return t; }
+  function nCr(n,k){ if(k<0||k>n) return 0; var r=1; for(var i=1;i<=k;i++) r=r*(n-k+i)/i; return r; }
+  function B(n,p,k){ return nCr(n,k)*Math.pow(p,k)*Math.pow(1-p,n-k); }
+  function de(x,d){ return x.toFixed(d).replace('.',','); }
+  document.querySelectorAll('[data-hist]').forEach(function(box){
+    var s=JSON.parse(box.getAttribute('data-hist'));
+    var n=s.n, p=s.p, W=s.w||320, H=s.h||200;
+    var k0=s.from!=null?s.from:0, k1=s.to!=null?s.to:(s.xmax!=null?s.xmax:n);
+    var vals=[]; for(var k=0;k<=n;k++) vals.push(B(n,p,k));
+    var mx=0; for(k=k0;k<=Math.min(k1,n);k++) mx=Math.max(mx,vals[k]);
+    var ymax=s.ymax||Math.ceil(mx*20+0.4)/20;
+    var m={l:s.noy?14:40,r:10,t:s.noy?(s.lab?22:12):24,b:30}, iw=W-m.l-m.r, ih=H-m.t-m.b;
+    var svg=mk('svg',{width:W,height:H,viewBox:'0 0 '+W+' '+H,role:'img','aria-label':'Histogramm n = '+n+', p = '+de(p,2)},box);
+    var nb=k1-k0+1, bw=iw/nb, X=function(k){ return m.l+bw*(k-k0+0.5); }, Y=function(v){ return m.t+ih*(1-v/ymax); };
+    var step=s.grid||(ymax>0.3?0.1:0.05);
+    if(!s.noy){ for(var v=0;v<=ymax+1e-9;v+=step){ mk('line',{x1:m.l,x2:W-m.r,y1:Y(v),y2:Y(v),stroke:'#e3e6eb'},svg); tx(svg,m.l-5,Y(v)+4,de(v,2),{'text-anchor':'end','font-size':10}); } tx(svg,m.l-4,m.t-6,'P(X = k)',{'text-anchor':'start','font-size':10}); }
+    var hl=s.hl||[], hl2=s.hl2||[];
+    for(k=k0;k<=Math.min(k1,n);k++){
+      var c=hl.indexOf(k)>=0?'#e8a800':hl2.indexOf(k)>=0?'#d4760a':(s.plain?'#5b8fc7':'#8fb3d9');
+      mk('rect',{x:X(k)-bw/2,y:Y(vals[k]),width:bw,height:Y(0)-Y(vals[k]),fill:c,stroke:'#2c5f8a','stroke-width':bw>6?0.8:0.3},svg);
+    }
+    mk('line',{x1:m.l,x2:W-m.r,y1:Y(0),y2:Y(0),stroke:'#1c1f26','stroke-width':1.2},svg);
+    var every=nb>36?10:nb>18?5:nb>12?2:1;
+    for(k=k0;k<=k1;k++){ if((k-k0)%every===0 || k===k0) tx(svg,X(k),H-m.b+14,k,{'font-size':10}); }
+    tx(svg,W-m.r,H-4,'k',{'text-anchor':'end','font-size':10,'font-style':'italic'});
+    if(s.mu){ var mu=Math.round(n*p*1000)/1000, xm=X(mu); mk('line',{x1:xm,x2:xm,y1:m.t,y2:Y(0),stroke:'#1a9e5c','stroke-width':2,'stroke-dasharray':'5 3'},svg); tx(svg,xm+4,m.t+10,'μ = '+de(mu,mu%1?1:0),{'text-anchor':'start','font-size':10,'font-weight':700,fill:'#1a9e5c'}); }
+    if(s.lab) tx(svg,W-m.r,13,s.lab,{'text-anchor':'end','font-size':12,'font-weight':700,fill:'#1c1f26'});
+  });
+
+  /* ---------- Treppengraphen (SVG) ---------- */
+  document.querySelectorAll('[data-stair]').forEach(function(box){
+    var s=JSON.parse(box.getAttribute('data-stair')), n=s.n, p=s.p, W=s.w||320, H=s.h||210;
+    var F=[], acc=0; for(var k=0;k<=n;k++){ acc+=B(n,p,k); F.push(Math.min(acc,1)); }
+    var extra=s.bars?60:14, m={l:40,r:extra,t:16,b:30}, iw=W-m.l-m.r, ih=H-m.t-m.b;
+    var svg=mk('svg',{width:W,height:H,viewBox:'0 0 '+W+' '+H,role:'img','aria-label':'Treppengraph n = '+n},box);
+    var X=function(x){ return m.l+iw*(x+0.5)/(n+1.5); }, Y=function(v){ return m.t+ih*(1-v); };
+    for(var v=0;v<=1.0001;v+=0.2){ mk('line',{x1:m.l,x2:W-m.r,y1:Y(v),y2:Y(v),stroke:'#e3e6eb'},svg); tx(svg,m.l-5,Y(v)+4,de(v,1),{'text-anchor':'end','font-size':10}); }
+    tx(svg,m.l-4,m.t-5,'P(X ≤ x)',{'text-anchor':'start','font-size':10});
+    mk('line',{x1:m.l,x2:W-m.r,y1:Y(0),y2:Y(0),stroke:'#1c1f26','stroke-width':1.2},svg);
+    mk('line',{x1:X(-0.5),x2:X(0),y1:Y(0),y2:Y(0),stroke:'#2c5f8a','stroke-width':2.2},svg);
+    for(k=0;k<=n;k++){ var x2=k<n?X(k+1):X(n+0.9);
+      mk('line',{x1:X(k),x2:x2,y1:Y(F[k]),y2:Y(F[k]),stroke:'#2c5f8a','stroke-width':2.2},svg);
+      mk('circle',{cx:X(k),cy:Y(F[k]),r:2.6,fill:'#2c5f8a'},svg);
+      if(k<n) mk('circle',{cx:x2,cy:Y(F[k]),r:2.4,fill:'#fff',stroke:'#2c5f8a','stroke-width':1.2},svg); }
+    var every=n>24?5:n>10?2:1; for(k=0;k<=n;k+=every) tx(svg,X(k),H-m.b+14,k,{'font-size':10});
+    tx(svg,X(n+0.9),H-4,'x',{'text-anchor':'end','font-size':10,'font-style':'italic'});
+    (s.seg||[]).forEach(function(g){ var xs=X(g[1])+4; mk('line',{x1:xs,x2:xs,y1:Y(F[g[0]]),y2:Y(F[g[1]]),stroke:g[2],'stroke-width':4,'stroke-linecap':'round'},svg); });
+    (s.bars||[]).forEach(function(g,i){ var lo=g[0]===0?0:F[g[0]], hi=F[g[1]], xb=W-m.r+14+i*0; 
+      mk('line',{x1:xb,x2:xb,y1:Y(lo),y2:Y(hi),stroke:g[2],'stroke-width':5},svg);
+      mk('line',{x1:xb-5,x2:xb+5,y1:Y(lo),y2:Y(lo),stroke:g[2],'stroke-width':1.5},svg); mk('line',{x1:xb-5,x2:xb+5,y1:Y(hi),y2:Y(hi),stroke:g[2],'stroke-width':1.5},svg);
+      tx(svg,xb+8,(Y(lo)+Y(hi))/2+4,g[3],{'text-anchor':'start','font-size':12,'font-weight':700,fill:g[2]}); });
+    (s.pts||[]).forEach(function(q){ var cx=X(q[0]), cy=Y(F[q[0]]); mk('path',{d:'M'+(cx-4)+' '+(cy-4)+'L'+(cx+4)+' '+(cy+4)+'M'+(cx-4)+' '+(cy+4)+'L'+(cx+4)+' '+(cy-4),stroke:'#c0392b','stroke-width':2},svg); tx(svg,cx-6,cy-7,q[1],{'text-anchor':'end','font-size':12,'font-weight':700,fill:'#1c1f26'}); });
+  });
+
+  /* ---------- KaTeX ---------- */
+  function render(){
+    if (window.renderMathInElement) {
+      renderMathInElement(document.body, {
+        delimiters: [ {left:'$$', right:'$$', display:true}, {left:'$', right:'$', display:false} ],
+        throwOnError:false
+      });
+    }
+  }
+  if (window.renderMathInElement) render(); else window.addEventListener('load', render);
+
+  /* ---------- Karten auf/zu ---------- */
+  document.querySelectorAll('.card-head').forEach(function(h){
+    h.addEventListener('click', function(){ h.parentElement.classList.toggle('open'); });
+  });
+
+  /* ---------- Hilfe-Reiter ---------- */
+  document.querySelectorAll('.hints').forEach(function(box){
+    var tabs=box.querySelectorAll('.htabs button'), panels=box.querySelectorAll('.hpanel');
+    tabs.forEach(function(tab,i){
+      tab.addEventListener('click', function(){
+        var wasOn=tab.classList.contains('on');
+        tabs.forEach(function(t){ t.classList.remove('on'); });
+        panels.forEach(function(p){ p.classList.remove('on'); });
+        if (!wasOn){ tab.classList.add('on'); if (panels[i]) panels[i].classList.add('on'); }
+      });
+    });
+  });
+
+  /* ---------- Selbsteinschätzung ---------- */
+  document.querySelectorAll('.assess').forEach(function(box){
+    var btns=box.querySelectorAll('button');
+    btns.forEach(function(b){
+      b.addEventListener('click', function(){
+        var wasOn=b.classList.contains('on');
+        btns.forEach(function(x){ x.classList.remove('on'); });
+        if (!wasOn) b.classList.add('on');
+      });
+    });
+  });
+
+  /* ---------- Filter ---------- */
+  document.querySelectorAll('.filters button').forEach(function(b){
+    b.addEventListener('click', function(){
+      document.querySelectorAll('.filters button').forEach(function(x){ x.classList.remove('on'); });
+      b.classList.add('on');
+      var f=b.dataset.f;
+      document.querySelectorAll('section[data-stufe]').forEach(function(sec){
+        sec.style.display=(f==='all' || sec.dataset.stufe===f) ? '' : 'none';
+      });
+    });
+  });
+
+  /* ---------- Alternative Lösungswege ---------- */
+  document.querySelectorAll('.alt-btn').forEach(function(b){
+    var label=b.textContent;
+    b.addEventListener('click', function(){
+      var alt=b.nextElementSibling; var on=alt.classList.toggle('shown');
+      b.textContent = on ? '➖ Alternativen Weg ausblenden' : label;
+    });
+  });
+
+
+
+  /* ---------- Musterlösungen freischalten (pro Aufgabe einzeln) ---------- */
+  var CODE='MATHE', input=document.getElementById('code'), msg=document.getElementById('msg');
+  function activateLocks(){
+    document.querySelectorAll('.sol-lock').forEach(function(lock){ lock.classList.add('active'); lock.textContent='👁 Musterlösung anzeigen'; });
+  }
+  function tryUnlock(){
+    var val=(input.value||'').trim().toUpperCase();
+    if (val===CODE){
+      document.body.classList.add('unlocked');
+      msg.textContent='✓ freigeschaltet – Musterlösungen jetzt einzeln aufklappbar'; msg.className='msg ok';
+      activateLocks();
+      var sl=document.getElementById('on-sol'); sl.disabled=false; document.getElementById('on-sol-lab').classList.remove('dis');
+    } else { msg.textContent='✗ Code stimmt nicht'; msg.className='msg bad'; }
+  }
+  document.getElementById('btn-unlock').addEventListener('click', tryUnlock);
+  input.addEventListener('keydown', function(e){ if (e.key==='Enter') tryUnlock(); });
+  document.querySelectorAll('.sol-lock').forEach(function(lock){
+    lock.addEventListener('click', function(){
+      if (!document.body.classList.contains('unlocked')) return;
+      var sol=lock.nextElementSibling;
+      if (!sol || !sol.classList.contains('sol')) return;
+      var showing=sol.classList.toggle('shown');
+      lock.textContent = showing ? '🙈 Musterlösung wieder ausblenden' : '👁 Musterlösung anzeigen';
+      if (showing) sol.scrollIntoView({behavior:'smooth', block:'nearest'});
+    });
+  });
+
+  /* ---------- OneNote-Export: Aufgaben als Bild kopieren ---------- */
+  var cards=[].slice.call(document.querySelectorAll('article.card'));
+  var bar=document.getElementById('onbar'), cnt=document.getElementById('on-count');
+  function picked(){ return cards.filter(function(c){ return c.classList.contains('picked'); }); }
+  function updBar(){ var n=picked().length; cnt.textContent=n+(n===1?' Aufgabe':' Aufgaben')+' ausgewählt'; bar.classList.toggle('show',n>0); }
+  cards.forEach(function(card){
+    var head=card.querySelector('.card-head'), chev=head.querySelector('.chev');
+    var tools=document.createElement('div'); tools.className='tools';
+    tools.innerHTML='<label class="on-pick" title="Für den gemeinsamen Export auswählen"><input type="checkbox"><span>auswählen</span></label><button class="on-copy" type="button" title="Diese Aufgabe als Bild für OneNote kopieren">📋 OneNote</button>';
+    head.insertBefore(tools,chev);
+    tools.addEventListener('click',function(e){ e.stopPropagation(); });
+    var cb=tools.querySelector('input');
+    cb.addEventListener('change',function(){ card.classList.toggle('picked',cb.checked); updBar(); });
+    tools.querySelector('.on-copy').addEventListener('click',function(){ exportCards([card], document.getElementById('on-sol').checked); });
+  });
+  document.getElementById('on-clr').addEventListener('click',function(){ cards.forEach(function(c){ c.classList.remove('picked'); var i=c.querySelector('.on-pick input'); if(i) i.checked=false; }); updBar(); });
+  document.getElementById('on-go').addEventListener('click',function(){ exportCards(picked(), document.getElementById('on-sol').checked); });
+  document.getElementById('on-close').addEventListener('click',function(){ document.getElementById('onmodal').classList.remove('show'); });
+
+  function toast(t,bad){ var el=document.getElementById('ontoast'); el.textContent=t; el.classList.toggle('bad',!!bad); el.style.display='block'; clearTimeout(el._t); el._t=setTimeout(function(){ el.style.display='none'; },3200); }
+
+  function buildStage(list, withSol){
+    var stage=document.getElementById('on-stage'); stage.innerHTML='';
+    list.forEach(function(card){
+      var item=document.createElement('div'); item.className='ex-item';
+      var cls=['sA','sG','s1','s2','s3'].filter(function(c){ return card.classList.contains(c); })[0]||'sA';
+      var h=document.createElement('div'); h.className='ex-title '+cls; h.textContent=card.getAttribute('data-title')||card.querySelector('h3').textContent; item.appendChild(h);
+      card.querySelectorAll('.card-body > .task, .card-body > .bsp, .card-body > .merk').forEach(function(el){ item.appendChild(el.cloneNode(true)); });
+      if (withSol && document.body.classList.contains('unlocked')){ var sol=card.querySelector('.sol'); if(sol) item.appendChild(sol.cloneNode(true)); }
+      stage.appendChild(item);
+    });
+    var src=document.createElement('div'); src.className='ex-src'; src.textContent='LK Q2 · IX.4 Kumulierte Wahrscheinlichkeiten · FBG Schwerte'; stage.appendChild(src);
+    return stage;
+  }
+  /* KaTeX-Schriften einmalig als data-URLs einbetten, damit Formeln im Bild exakt wie auf der Seite aussehen */
+  var fontCSS=null;
+  function toDataURL(blob){ return new Promise(function(res,rej){ var fr=new FileReader(); fr.onload=function(){ res(fr.result); }; fr.onerror=rej; fr.readAsDataURL(blob); }); }
+  function katexFontCSS(){
+    if(fontCSS!==null) return Promise.resolve(fontCSS);
+    var link=document.querySelector('link[href*="katex"]'); if(!link){ fontCSS=''; return Promise.resolve(''); }
+    var href=link.href;
+    return fetch(href).then(function(r){ return r.text(); }).then(function(css){
+      var faces=css.match(/@font-face\{[^}]*\}/g)||[];
+      return Promise.all(faces.map(function(face){
+        var m=face.match(/url\(([^)]+?\.woff2)\)/); if(!m) return '';
+        var url=new URL(m[1].replace(/["']/g,''),href).href;
+        return fetch(url).then(function(r){ return r.blob(); }).then(toDataURL).then(function(d){
+          return face.replace(/src:[^;}]*/,'src:url('+d+') format("woff2")');
+        }).catch(function(){ return ''; });
+      }));
+    }).then(function(list){ fontCSS=list.join('\n'); return fontCSS; }).catch(function(){ fontCSS=''; return ''; });
+  }
+  if(window.fetch) setTimeout(katexFontCSS,1500);
+
+  function exportCards(list, withSol){
+    if(!list.length) return;
+    if(!window.htmlToImage){ toast('Export-Bibliothek nicht geladen (Internetverbindung?)',true); return; }
+    var stage=buildStage(list, withSol);
+    var opts={pixelRatio:2, backgroundColor:'#ffffff', cacheBust:false, width:stage.offsetWidth, height:stage.offsetHeight, style:{position:'static',left:'0',top:'0'}};
+    var blobPromise=katexFontCSS().then(function(css){ if(css) opts.fontEmbedCSS=css; return htmlToImage.toBlob(stage,opts); });
+    var done=function(){ toast('✓ Kopiert – in OneNote mit Strg+V einfügen'); };
+    var fallback=function(){
+      blobPromise.then(function(b){ var url=URL.createObjectURL(b); document.getElementById('on-img').src=url; document.getElementById('on-dl').href=url; document.getElementById('onmodal').classList.add('show'); })
+        .catch(function(){ toast('Bild konnte nicht erzeugt werden',true); });
+    };
+    try{
+      if(navigator.clipboard && window.ClipboardItem){
+        navigator.clipboard.write([new ClipboardItem({'image/png':blobPromise})]).then(done,fallback);
+      } else fallback();
+    }catch(e){ fallback(); }
+  }
+
+  /* Erste Karte jedes Abschnitts geöffnet starten */
+  document.querySelectorAll('section[data-stufe]').forEach(function(sec){
+    var first=sec.querySelector('.card'); if (first) first.classList.add('open');
+  });
+});
+</script>
+
+</body>
+</html>

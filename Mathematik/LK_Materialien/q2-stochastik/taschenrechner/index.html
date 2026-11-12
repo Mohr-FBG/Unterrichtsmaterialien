@@ -129,7 +129,7 @@
   <div class="inner">
     <div class="head-eyebrow">Mathematik · Leistungskurs · Q2 · Stochastik</div>
     <h1>🧮 TI-Nspire CAS – Anleitung Stochastik</h1>
-    <p>Alle Befehle, die wir in den Kapiteln VIII und IX benutzen – mit Beispielen, Bildschirm-Ansichten und typischen Fehlern. Die Anleitung wächst mit jedem Kapitel weiter. <b>Stand: November 2026</b> (bis IX.3).</p>
+    <p>Alle Befehle, die wir in den Kapiteln VIII und IX benutzen – mit Beispielen, Bildschirm-Ansichten und typischen Fehlern. Die Anleitung wächst mit jedem Kapitel weiter. <b>Stand: November 2026</b> (bis IX.4).</p>
   </div>
 </header>
 
@@ -339,9 +339,9 @@
   </section>
 
   <!-- ============================================================ -->
-  <section class="topic" id="binomial" data-title="Binomialverteilung" data-sub="binompdf, Tabelle, Erwartungswert">
+  <section class="topic" id="binomial" data-title="Binomialverteilung" data-sub="binompdf, binomCdf, Tabelle, Erwartungswert">
     <h2>5 · Binomialverteilung</h2>
-    <p class="lead">Wahrscheinlichkeiten $B_{n;\,p}(k)$ berechnen, als Tabelle darstellen und auswerten (Kapitel IX.1 und IX.3).</p>
+    <p class="lead">Wahrscheinlichkeiten $B_{n;\,p}(k)$ und $F_{n;\,p}(k)$ berechnen, als Tabelle darstellen und auswerten (Kapitel IX.1, IX.3, IX.4).</p>
 
     <article class="cmd" id="binompdf" data-kap="IX.1">
       <header><h3>Einzelne Wahrscheinlichkeit P(X = k)</h3><span class="syntax">binompdf(n,p,k)</span></header>
@@ -356,7 +356,7 @@
       <header><h3>Mehrere Werte addieren</h3><span class="syntax">sum(binompdf(n,p,{…}))</span></header>
       <div class="ex"><code>sum(binompdf(12,0.25,{2,3,4}))</code> → $P(2\le X\le4)\approx0{,}684$<br>
       <code>sum(binompdf(50,0.5,seq(t,t,20,30)))</code> → $P(20\le X\le30)$, wenn die Liste lang ist</div>
-      <p>Für „höchstens“ und „mindestens“ gibt es ab IX.4 einen eigenen Befehl (kumulierte Wahrscheinlichkeiten).</p>
+      <p>Schneller geht es mit <a href="#binomcdf"><code>binomCdf</code></a> (ab IX.4).</p>
     </article>
 
     <article class="cmd" id="verteilungstabelle" data-kap="IX.1">
@@ -384,6 +384,41 @@
       </div></div>
     </article>
 
+    <article class="cmd" id="binomcdf" data-kap="IX.4" data-neu="1">
+      <header><h3>Kumulierte Wahrscheinlichkeit P(a ≤ X ≤ b)</h3><span class="syntax">binomCdf(n,p,a,b)</span></header>
+      <p>Berechnet die Summe $P(X=a)+\ldots+P(X=b)$. Menü: <span class="path">menu ▸ Wahrscheinlichkeit ▸ Verteilungen ▸ Binomial Cdf</span> – im Fenster $n$, $p$, untere und obere Grenze eintragen.</p>
+      <p><b>Ein Befehl für alle Fragen:</b> Erst das Ereignis in ein Intervall übersetzen, dann die kleinste und die größte Trefferzahl als Grenzen eintragen.</p>
+      <div class="scroll"><table class="err">
+        <tr><th>Ereignis</th><th>Intervall</th><th>mit F</th><th>TI-Nspire</th></tr>
+        <tr><td>höchstens $k$</td><td>$[0;\,k]$</td><td>$F(k)$</td><td><code>binomCdf(n,p,0,k)</code></td></tr>
+        <tr><td>weniger als $k$</td><td>$[0;\,k-1]$</td><td>$F(k-1)$</td><td><code>binomCdf(n,p,0,k-1)</code></td></tr>
+        <tr><td>mindestens $k$</td><td>$[k;\,n]$</td><td>$1-F(k-1)$</td><td><code>binomCdf(n,p,k,n)</code></td></tr>
+        <tr><td>mehr als $k$</td><td>$[k+1;\,n]$</td><td>$1-F(k)$</td><td><code>binomCdf(n,p,k+1,n)</code></td></tr>
+        <tr><td>mindestens $a$, höchstens $b$</td><td>$[a;\,b]$</td><td>$F(b)-F(a-1)$</td><td><code>binomCdf(n,p,a,b)</code></td></tr>
+      </table></div>
+      <div class="screen"><div class="bar">1.1 &nbsp; Calculator</div>
+        <div class="ln"><span>binomCdf(12,1/6,0,1)</span><span>0.381333</span></div>
+        <div class="ln"><span>binomCdf(12,1/6,2,4)</span><span>0.582317</span></div>
+        <div class="ln"><span>binomCdf(12,1/6,3,12)</span><span>0.322574</span></div></div>
+      <div class="warn">Immer <b>beide</b> Grenzen angeben. Mit nur einer Zahl (<code>binomCdf(12,1/6,4)</code>) wird diese je nach Version als Obergrenze gelesen – das führt leicht zu Fehlern.</div>
+    </article>
+
+    <article class="cmd" id="cumulativesum" data-kap="IX.4" data-neu="1">
+      <header><h3>Spalte mit F(0), F(1), F(2), …</h3><span class="syntax">cumulativeSum(Liste)</span></header>
+      <p>Addiert eine Liste schrittweise auf. In Lists &amp; Spreadsheet neben <code>treffer</code> und <code>wkt</code> eine Spalte <code>kum</code> mit <code>=cumulativesum(wkt)</code>.</p>
+      <div class="scroll"><table class="ls">
+        <tr class="col"><th class="rn"></th><th>A</th><th>B</th><th>C</th></tr>
+        <tr class="nm"><td class="rn"></td><td>treffer</td><td>wkt</td><td>kum</td></tr>
+        <tr class="fm"><td class="rn">◆</td><td>=seq(t,t,0,12)</td><td>=binompdf(12,1/6)</td><td>=cumulativesum(wkt)</td></tr>
+        <tr><td class="rn">1</td><td>0</td><td>0.112157</td><td>0.112157</td></tr>
+        <tr><td class="rn">2</td><td>1</td><td>0.269176</td><td>0.381333</td></tr>
+        <tr><td class="rn">3</td><td>2</td><td>0.296094</td><td>0.677426</td></tr>
+        <tr><td class="rn">4</td><td>3</td><td>0.197396</td><td>0.874822</td></tr>
+        <tr><td class="rn">…</td><td>…</td><td>…</td><td>…</td></tr>
+      </table></div>
+      <p>Zeile $r$ gehört wieder zu $k=r-1$: <code>c2</code> ist $F(1)$.</p>
+    </article>
+
     <article class="cmd" id="erwartungswert" data-kap="IX.3">
       <header><h3>Erwartungswert aus der Tabelle</h3><span class="syntax">sum(treffer*wkt)</span></header>
       <p>$\mu=0\cdot P(X=0)+1\cdot P(X=1)+\ldots+n\cdot P(X=n)$. In eine freie Zelle: <code>=sum(treffer*wkt)</code>.</p>
@@ -397,7 +432,7 @@
   </section>
 
   <!-- ============================================================ -->
-  <section class="topic" id="diagramme" data-title="Histogramme" data-sub="Ergebnisdiagramm, Data &amp; Statistics">
+  <section class="topic" id="diagramme" data-title="Histogramme" data-sub="Ergebnisdiagramm, Treppengraph">
     <h2>6 · Histogramme und Diagramme</h2>
     <p class="lead">Wahrscheinlichkeitsverteilungen und Simulationsergebnisse grafisch darstellen.</p>
 
@@ -415,6 +450,17 @@
         <div class="screen" style="max-width:360px"><div class="bar">1.2 &nbsp; Data &amp; Statistics</div><div style="padding:6px"><svg class="hist" id="demoHist" viewBox="0 0 340 200" role="img" aria-label="Histogramm n = 12, p = 0,25"></svg></div></div>
         <div class="lab">$n=12$, $p=0{,}25$ – höchste Säule bei $k=3$</div>
       </div></div>
+    </article>
+
+    <article class="cmd" id="treppengraph" data-kap="IX.4" data-neu="1">
+      <header><h3>Treppengraph der kumulierten Wahrscheinlichkeiten</h3></header>
+      <ol>
+        <li>Tabelle mit <code>treffer</code>, <code>wkt</code> und <code>kum</code> anlegen (siehe <a href="#cumulativesum">cumulativeSum</a>).</li>
+        <li><span class="path">menu ▸ Daten ▸ Ergebnisdiagramm</span>, X-Liste <code>treffer</code>, Ergebnisliste <code>kum</code>.</li>
+        <li>Die Säulenhöhen sind die Stufen $F(0), F(1), \ldots$; die Säule über $k$ zeigt $P(X\le k)$.</li>
+      </ol>
+      <p><b>Ablesen:</b> $P(a\le X\le b)$ ist der Höhenunterschied zwischen der Stufe über $b$ und der Stufe über $a-1$.</p>
+      <div class="tip">Zum Ausprobieren: Simulation <a href="../simulationen/wuerfelwetten/">Würfelwetten</a>, Schritt 3 (Intervall-Labor mit Treppengraph).</div>
     </article>
 
     <article class="cmd" id="flaeche" data-kap="IX.3">
@@ -450,6 +496,9 @@
         <tr><td>Summe zu groß oder zu klein</td><td>Zeilen verwechselt: Zeile $r$ gehört zu $k=r-1$.</td></tr>
         <tr><td>Histogramm zeigt nur Säulen der Höhe 1</td><td>Normales Histogramm statt Ergebnisdiagramm gewählt.</td></tr>
         <tr><td><code>nCr(2,6)</code> = 0</td><td>Argumente vertauscht: erst $n$, dann $k$.</td></tr>
+        <tr><td>„mindestens 8“ mit <code>binomCdf(n,p,7,n)</code></td><td>Untere Grenze ist die kleinste Trefferzahl, die <b>dazugehört</b>: 8.</td></tr>
+        <tr><td>„mehr als 6“ mit <code>binomCdf(n,p,6,n)</code></td><td>„mehr als 6“ beginnt bei 7.</td></tr>
+        <tr><td>$P(3\le X\le7)=F(7)-F(3)$</td><td>„Unten eins weniger“: $F(7)-F(2)$, sonst fehlt die Säule bei 3.</td></tr>
         <tr><td>Alle Rechner zeigen dieselben Zufallszahlen</td><td>Einmal <code>RandSeed</code> mit einer eigenen Zahl ausführen.</td></tr>
         <tr><td>Formel wurde nicht kopiert</td><td>Erst die Zelle markieren, dann <span class="path">menu ▸ Daten ▸ Füllen</span> und mit <span class="kbd">enter</span> bestätigen.</td></tr>
       </table></div>
