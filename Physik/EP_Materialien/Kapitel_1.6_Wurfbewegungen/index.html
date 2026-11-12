@@ -1,0 +1,396 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>[hidden]{display:none!important}body{margin:0}img{max-width:100%}:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}</style>
+<title>Anleitung Waagerechter Wurf</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@400;600&family=Space+Grotesk:wght@500;700&display=swap">
+<style>
+/* Layout: teal bar, sticky step chips, then one card per work step — left "So gehen Sie vor", right the OneNote documentation box; hints and teacher-unlocked Sicherung below */
+:root{
+  --bg:#eef4f4; --surface:#ffffff; --surface-2:#f5f9f9; --ink:#0f2a2c; --muted:#56706f; --line:#d3e1e0;
+  --teal:#0d7472; --teal-ink:#ffffff; --teal-soft:#dbefed; --bar:#0a5452; --bar-ink:#eaf7f6;
+  --doc:#f3eefb; --doc-line:#d9cdee; --doc-ink:#4b2d83; --ballA:#c2511e; --ballB:#2a64c9;
+  --font-display:"Space Grotesk", "Segoe UI", system-ui, sans-serif;
+  --font-body:"Atkinson Hyperlegible", "Segoe UI", system-ui, sans-serif;
+  --font-mono:"JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#0c1617; --surface:#132224; --surface-2:#182a2c; --ink:#e3f0ef; --muted:#93acab; --line:#26393b;
+  --teal:#3db3ac; --teal-ink:#06201f; --teal-soft:#16403d; --bar:#0b3b39; --bar-ink:#e3f0ef;
+  --doc:#211a33; --doc-line:#3a2f57; --doc-ink:#c9b6f2; --ballA:#f08552; --ballB:#6b9cf0; color-scheme:dark } }
+:root[data-theme="dark"]{
+  --bg:#0c1617; --surface:#132224; --surface-2:#182a2c; --ink:#e3f0ef; --muted:#93acab; --line:#26393b;
+  --teal:#3db3ac; --teal-ink:#06201f; --teal-soft:#16403d; --bar:#0b3b39; --bar-ink:#e3f0ef;
+  --doc:#211a33; --doc-line:#3a2f57; --doc-ink:#c9b6f2; --ballA:#f08552; --ballB:#6b9cf0; color-scheme:dark }
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--font-body);font-size:17px;line-height:1.55}
+.wrap{max-width:1100px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+h1,h2,h3{font-family:var(--font-display);text-wrap:balance;margin:0}
+sub{font-size:.72em}
+.f{font-family:var(--font-body);white-space:nowrap}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bar)}
+
+.top{background:var(--bar);color:var(--bar-ink)}
+.top .wrap{padding-block:16px 22px;display:flex;flex-direction:column;gap:8px}
+.toprow{display:flex;gap:10px;flex-wrap:wrap;justify-content:space-between}
+.pill{color:var(--bar-ink);text-decoration:none;font-weight:700;font-size:.92rem;padding:9px 14px;border:1.5px solid rgba(234,247,246,.45);border-radius:999px;display:inline-flex;align-items:center;min-height:44px}
+.pill.solid{background:var(--bar-ink);color:var(--bar);border-color:var(--bar-ink)}
+.eyebrow{font-size:.76rem;letter-spacing:.12em;text-transform:uppercase;opacity:.85;margin-top:6px}
+.top h1{font-size:clamp(1.6rem,3.6vw,2.4rem)}
+.top p{margin:0;max-width:64ch;opacity:.92}
+
+.stepnav{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);border-bottom:1px solid var(--line)}
+.stepnav .wrap{display:flex;gap:6px;overflow-x:auto;padding-block:10px}
+.stepnav a{flex:none;display:inline-flex;align-items:center;gap:8px;text-decoration:none;color:var(--ink);border:1.5px solid var(--line);background:var(--surface);border-radius:999px;padding:6px 12px 6px 6px;font-size:.88rem;font-weight:700;min-height:40px}
+.stepnav a .n{display:grid;place-items:center;width:26px;height:26px;border-radius:50%;background:var(--teal-soft);color:var(--teal);font-size:.82rem}
+.stepnav a.done .n{background:var(--teal);color:var(--teal-ink)}
+
+main.wrap{padding-block:22px 48px;display:flex;flex-direction:column;gap:20px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:20px 22px;display:flex;flex-direction:column;gap:14px;scroll-margin-top:72px}
+.card-head{display:flex;gap:14px;align-items:center}
+.num{flex:none;display:grid;place-items:center;width:44px;height:44px;border-radius:12px;background:var(--teal);color:var(--teal-ink);font-family:var(--font-display);font-weight:700;font-size:1.3rem}
+.card-head h2{font-size:1.35rem}
+.card-head .sub{color:var(--muted);font-size:.9rem}
+.cols{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:18px;align-items:start}
+@media (max-width:820px){.cols{grid-template-columns:minmax(0,1fr)}}
+.label{font-size:.76rem;letter-spacing:.1em;text-transform:uppercase;font-weight:700;color:var(--muted);margin-bottom:6px}
+.do ol{margin:0;padding-left:1.35em;display:flex;flex-direction:column;gap:8px}
+.do li::marker{font-weight:700;color:var(--teal)}
+.do p{margin:0 0 8px}
+.op{font-weight:700}
+.ui{display:inline-block;border:1.5px solid var(--teal);color:var(--teal);border-radius:7px;padding:0 7px;font-size:.88em;font-weight:700;line-height:1.5;white-space:nowrap}
+.tab{display:inline-block;background:var(--teal);color:var(--teal-ink);border-radius:7px;padding:0 8px;font-size:.88em;font-weight:700;line-height:1.55;white-space:nowrap}
+.doc{background:var(--doc);border:1.5px solid var(--doc-line);border-radius:12px;padding:14px 16px}
+.doc .label{color:var(--doc-ink)}
+.doc ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}
+.doc li label{display:flex;gap:10px;align-items:flex-start;cursor:pointer}
+.doc input{width:20px;height:20px;margin-top:3px;accent-color:var(--doc-ink);flex:none}
+.tip{border-left:4px solid var(--teal);background:var(--surface-2);padding:8px 12px;border-radius:0 8px 8px 0;font-size:.95rem}
+.tip b{color:var(--teal)}
+.formula{font-family:var(--font-body);background:var(--surface-2);border:1px solid var(--line);border-radius:8px;padding:6px 12px;display:inline-block;margin:4px 0;font-size:1.05rem}
+
+.helps{display:flex;flex-direction:column;gap:8px}
+details{border:1.5px solid var(--line);border-radius:10px;background:var(--surface-2)}
+details summary{cursor:pointer;padding:10px 14px;font-weight:700;color:var(--teal);min-height:44px;display:flex;align-items:center}
+details > div{padding:0 14px 12px}
+details > div p{margin:0 0 6px}
+details.sec summary{color:var(--muted)}
+.secrow{display:flex;gap:8px;flex-wrap:wrap}
+.secrow input{font:inherit;padding:8px 10px;border-radius:8px;border:1.5px solid var(--line);background:var(--surface);color:var(--ink);width:10em}
+.btn{font:inherit;font-weight:700;border-radius:10px;padding:8px 16px;border:1.5px solid var(--teal);background:var(--teal);color:var(--teal-ink);cursor:pointer;min-height:44px}
+.sol{border-left:4px solid var(--teal);padding:4px 12px;background:var(--surface)}
+.sol p{margin:0 0 6px}
+
+table.groups{border-collapse:collapse;font-variant-numeric:tabular-nums}
+table.groups th,table.groups td{border:1px solid var(--line);padding:6px 12px;text-align:center}
+table.groups th{background:var(--surface-2)}
+.tablewrap{overflow-x:auto}
+.legendrow{display:flex;flex-wrap:wrap;gap:10px 22px;font-size:.95rem;align-items:center}
+.cA{color:var(--ballA);font-weight:700} .cB{color:var(--ballB);font-weight:700}
+a{color:var(--teal)}
+:focus-visible{outline:3px solid var(--teal);outline-offset:2px}
+footer{color:var(--muted);font-size:.88rem;border-top:1px solid var(--line)}
+footer .wrap{padding-block:18px 28px;display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap}
+</style>
+</head>
+<body>
+
+
+<header class="top">
+  <div class="wrap">
+    <div class="toprow">
+      <a class="pill" href="../index.html">← Kapitelübersicht</a>
+      <a class="pill solid" href="simulation.html" target="_blank" rel="noopener">Simulation öffnen ↗</a>
+    </div>
+    <div class="eyebrow">Physik EP · Kapitel 1.6 Wurfbewegungen</div>
+    <h1>Anleitung: Der waagerechte Wurf</h1>
+    <p>Mit dem virtuellen Fallapparat untersuchen Sie, wie sich ein waagerecht geworfener Körper bewegt. Am Ende stellen Sie die Bewegungsgleichungen und die Gleichung der Bahnkurve auf.</p>
+  </div>
+</header>
+
+<nav class="stepnav" aria-label="Arbeitsschritte">
+  <div class="wrap" id="stepnav"></div>
+</nav>
+
+<main class="wrap">
+  <section class="card" id="start" aria-labelledby="h0">
+    <div class="card-head"><div class="num">0</div><div><h2 id="h0">Vorbereitung</h2><div class="sub">ca. 5 Minuten</div></div></div>
+    <div class="cols">
+      <div class="do">
+        <div class="label">So gehen Sie vor</div>
+        <ol>
+          <li><span class="op">Öffnen Sie</span> die Simulation. Am besten im Split View neben OneNote oder neben dieser Anleitung.</li>
+          <li><span class="op">Legen Sie</span> in OneNote eine neue Seite „1.6 Waagerechter Wurf“ <span class="op">an</span>.</li>
+          <li>Ihre Lehrkraft teilt Ihrer Gruppe eine Anlaufhöhe <i>h</i> zu. Die Fallhöhe beträgt für alle <i>H</i> = 1,00 m.</li>
+        </ol>
+        <div class="tablewrap" style="margin-top:10px">
+          <table class="groups"><thead><tr><th>Gruppe</th><th>1</th><th>2</th><th>3</th><th>4</th><th>5</th></tr></thead>
+          <tbody><tr><th>Anlaufhöhe <i>h</i></th><td>4 cm</td><td>8 cm</td><td>12 cm</td><td>16 cm</td><td>20 cm</td></tr></tbody></table>
+        </div>
+      </div>
+      <div>
+        <div class="label">Die Simulation im Überblick</div>
+        <p style="margin:0 0 8px">Oben in der Simulation schalten Sie mit vier Knöpfen zwischen den Bereichen um:</p>
+        <ul style="margin:0;padding-left:1.2em;display:flex;flex-direction:column;gap:4px">
+          <li><span class="tab">Versuch</span> Aufbau einstellen und Versuch starten</li>
+          <li><span class="tab">Fotos</span> Serienbilder und Stroboskopbild ansehen und kopieren</li>
+          <li><span class="tab">Messwerte</span> Werte an den Fotos ablesen und eintragen</li>
+          <li><span class="tab">Diagramm</span> Messwerte auswerten</li>
+        </ul>
+        <div class="legendrow" style="margin-top:10px"><span><span class="cA">Kugel A</span> wird waagerecht abgeworfen</span><span><span class="cB">Kugel B</span> fällt senkrecht</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="card" id="s1" aria-labelledby="h1">
+    <div class="card-head"><div class="num">1</div><div><h2 id="h1">Vermutung aufstellen</h2><div class="sub">ca. 5 Minuten · Simulation noch nicht starten</div></div></div>
+    <div class="cols">
+      <div class="do">
+        <div class="label">So gehen Sie vor</div>
+        <p>Schauen Sie sich im Bereich <span class="tab">Versuch</span> den Aufbau an: Kugel A rollt die Rampe hinab und verlässt die Bahn waagerecht. Dabei stößt sie eine Klappe an, die den Magneten abschaltet. Im selben Moment fällt Kugel B aus derselben Höhe.</p>
+        <ol>
+          <li><span class="op">Stellen Sie eine Vermutung auf:</span> Welche Kugel kommt zuerst auf dem Boden an?</li>
+          <li><span class="op">Begründen Sie</span> Ihre Vermutung.</li>
+        </ol>
+      </div>
+      <div class="doc"><div class="label">In OneNote dokumentieren</div><ul data-check="s1">
+        <li><label><input type="checkbox"><span>Vermutung mit Begründung</span></label></li>
+      </ul></div>
+    </div>
+  </section>
+
+  <section class="card" id="s2" aria-labelledby="h2">
+    <div class="card-head"><div class="num">2</div><div><h2 id="h2">Versuch beobachten</h2><div class="sub">ca. 5 Minuten</div></div></div>
+    <div class="cols">
+      <div class="do">
+        <div class="label">So gehen Sie vor</div>
+        <ol>
+          <li>Bereich <span class="tab">Versuch</span>: <span class="op">Starten Sie</span> den Versuch mit <span class="ui">▶ Versuch starten</span>. Achten Sie auf das Aufprall-Geräusch.</li>
+          <li><span class="op">Wiederholen Sie</span> den Versuch mit <span class="ui">Zeitlupe 1:10</span> und <span class="ui">1:40</span>.</li>
+          <li><span class="op">Verändern Sie</span> die Anlaufhöhe <i>h</i> und beobachten Sie erneut.</li>
+          <li><span class="op">Überprüfen Sie</span> Ihre Vermutung.</li>
+        </ol>
+      </div>
+      <div class="doc"><div class="label">In OneNote dokumentieren</div><ul data-check="s2">
+        <li><label><input type="checkbox"><span>Beobachtung in zwei bis drei Sätzen</span></label></li>
+        <li><label><input type="checkbox"><span>Vermutung bestätigt oder widerlegt?</span></label></li>
+      </ul></div>
+    </div>
+  </section>
+
+  <section class="card" id="s3" aria-labelledby="h3">
+    <div class="card-head"><div class="num">3</div><div><h2 id="h3">Serienbild aufnehmen</h2><div class="sub">ca. 10 Minuten</div></div></div>
+    <div class="cols">
+      <div class="do">
+        <div class="label">So gehen Sie vor</div>
+        <ol>
+          <li>Bereich <span class="tab">Versuch</span>: <span class="op">Stellen Sie</span> die Anlaufhöhe Ihrer Gruppe <span class="op">ein</span>, die Fallhöhe auf 1,00 m und bei Kugel B <span class="ui">An der Bahnkante</span>.</li>
+          <li>Kamera: Haken bei <span class="ui">Serienbild aufnehmen</span>, Zeitabstand <span class="ui">0,05 s</span>.</li>
+          <li><span class="op">Starten Sie</span> den Versuch. Die Kamera nimmt ab <i>t</i> = 0 alle 0,05 s ein Foto auf. <i>t</i> = 0 ist der Moment, in dem Kugel A die Bahn verlässt.</li>
+          <li>Bereich <span class="tab">Fotos</span>: Wählen Sie das <span class="ui">Stroboskopbild</span>. Es zeigt alle Fotos übereinander. Kopieren Sie es mit <span class="ui">Bild kopieren</span> und fügen Sie es in OneNote ein.</li>
+          <li><span class="op">Beschreiben Sie</span>, was Ihnen auffällt: zuerst in waagerechter, dann in senkrechter Richtung.</li>
+        </ol>
+      </div>
+      <div class="doc"><div class="label">In OneNote dokumentieren</div><ul data-check="s3">
+        <li><label><input type="checkbox"><span>Versuchsdaten: <i>h</i>, <i>H</i> und Δ<i>t</i></span></label></li>
+        <li><label><input type="checkbox"><span>Stroboskopbild</span></label></li>
+        <li><label><input type="checkbox"><span>Beobachtung in x-Richtung</span></label></li>
+        <li><label><input type="checkbox"><span>Beobachtung in y-Richtung (Vergleich A und B)</span></label></li>
+      </ul></div>
+    </div>
+    <div class="helps">
+      <details><summary>Hilfe 1</summary><div><p>Betrachten Sie nur Kugel A. Vergleichen Sie die waagerechten Abstände zwischen zwei aufeinanderfolgenden Positionen.</p></div></details>
+      <details><summary>Hilfe 2</summary><div><p>Vergleichen Sie die Höhe von Kugel A mit der Höhe von Kugel B auf demselben Foto. Wie verändern sich die senkrechten Abstände von Foto zu Foto?</p></div></details>
+    </div>
+  </section>
+
+  <section class="card" id="s4" aria-labelledby="h4">
+    <div class="card-head"><div class="num">4</div><div><h2 id="h4">Messwerte ermitteln</h2><div class="sub">ca. 15 Minuten · Arbeitsteilung: eine Person Kugel A, eine Person Kugel B</div></div></div>
+    <div class="cols">
+      <div class="do">
+        <div class="label">So gehen Sie vor</div>
+        <ol>
+          <li>Bereich <span class="tab">Messwerte</span>: Links sehen Sie ein Foto, rechts die Tabelle. Wählen Sie <span class="ui">Selbst ablesen</span>.</li>
+          <li>Tippen Sie in ein Feld der Tabelle. Links erscheint automatisch das passende Foto.</li>
+          <li>Wählen Sie die Lupe <span class="ui">4×</span>. Tippen Sie genau auf die Mitte der Kugel. Das rote Fadenkreuz zeigt am Lineal oben den Wert <i>s</i><sub>x</sub> und am Lineal links den Wert <i>s</i><sub>y</sub>. Durch Ziehen verschieben Sie das Bild.</li>
+          <li><span class="op">Tragen Sie</span> die Werte in Metern mit drei Nachkommastellen <span class="op">ein</span>, zum Beispiel 0,195.</li>
+          <li>Wenn die Tabelle voll ist: <span class="ui">Werte kontrollieren</span>. Orange markierte Werte lesen Sie noch einmal ab.</li>
+          <li><span class="ui">Messreihe sichern</span>, dann <span class="ui">Tabelle kopieren</span> und in OneNote einfügen.</li>
+        </ol>
+      </div>
+      <div class="doc"><div class="label">In OneNote dokumentieren</div><ul data-check="s4">
+        <li><label><input type="checkbox"><span>Vollständige Messtabelle mit <i>t</i>, <i>s</i><sub>x</sub> und <i>s</i><sub>y</sub> für beide Kugeln</span></label></li>
+      </ul></div>
+    </div>
+    <div class="tip"><b>Hinweis:</b> Wenn die Zeit knapp ist, kann Ihre Lehrkraft erlauben, die Werte mit <span class="ui">Automatisch</span> erzeugen zu lassen.</div>
+  </section>
+
+  <section class="card" id="s5" aria-labelledby="h5">
+    <div class="card-head"><div class="num">5</div><div><h2 id="h5">Auswertung in x-Richtung</h2><div class="sub">ca. 10 Minuten</div></div></div>
+    <div class="cols">
+      <div class="do">
+        <div class="label">So gehen Sie vor</div>
+        <ol>
+          <li>Bereich <span class="tab">Diagramm</span>: Wählen Sie das <span class="ui"><i>t</i>-<i>s</i><sub>x</sub>-Diagramm</span>.</li>
+          <li><span class="op">Beschreiben Sie</span> den Zusammenhang zwischen <i>t</i> und <i>s</i><sub>x</sub> für Kugel A.</li>
+          <li><span class="op">Geben Sie an</span>, welche Bewegungsart Kugel A in x-Richtung ausführt.</li>
+          <li>Setzen Sie den Haken bei <span class="ui">Ursprungsgerade anpassen</span>. <span class="op">Bestimmen Sie</span> aus der Steigung die Abwurfgeschwindigkeit <i>v</i><sub>0</sub>.</li>
+          <li><span class="op">Stellen Sie</span> die Bewegungsgleichung <i>s</i><sub>x</sub>(<i>t</i>) mit Ihrem Zahlenwert <span class="op">auf</span>.</li>
+        </ol>
+      </div>
+      <div class="doc"><div class="label">In OneNote dokumentieren</div><ul data-check="s5">
+        <li><label><input type="checkbox"><span><i>t</i>-<i>s</i><sub>x</sub>-Diagramm (über <span class="ui">Diagramm kopieren</span>)</span></label></li>
+        <li><label><input type="checkbox"><span>Beschreibung des Zusammenhangs und Bewegungsart</span></label></li>
+        <li><label><input type="checkbox"><span><i>v</i><sub>0</sub> mit Einheit</span></label></li>
+        <li><label><input type="checkbox"><span>Bewegungsgleichung <i>s</i><sub>x</sub>(<i>t</i>)</span></label></li>
+      </ul></div>
+    </div>
+    <div class="helps">
+      <details><summary>Hilfe 1</summary><div><p>Wie nennt man eine Bewegung, bei der in gleichen Zeitabschnitten gleiche Strecken zurückgelegt werden? Schauen Sie in Kapitel 1.2 nach.</p></div></details>
+      <details><summary>Hilfe 2</summary><div><p>Im <i>t</i>-<i>s</i>-Diagramm ist die Steigung die Geschwindigkeit: <span class="f"><i>v</i> = Δ<i>s</i> / Δ<i>t</i></span>. Für eine Ursprungsgerade gilt <span class="f"><i>s</i> = <i>v</i> · <i>t</i></span>.</p></div></details>
+      <details class="sec" data-sol="x"><summary>Sicherung (Freischaltung durch die Lehrkraft)</summary><div></div></details>
+    </div>
+  </section>
+
+  <section class="card" id="s6" aria-labelledby="h6">
+    <div class="card-head"><div class="num">6</div><div><h2 id="h6">Auswertung in y-Richtung</h2><div class="sub">ca. 20 Minuten</div></div></div>
+    <div class="cols">
+      <div class="do">
+        <div class="label">So gehen Sie vor</div>
+        <ol>
+          <li>Wählen Sie das <span class="ui"><i>t</i>-<i>s</i><sub>y</sub>-Diagramm</span>. <span class="op">Vergleichen Sie</span> die Messpunkte von Kugel A (●) und Kugel B (□).</li>
+          <li>Der Graph ist gekrümmt. Wählen Sie deshalb das <span class="ui"><i>t</i>²-<i>s</i><sub>y</sub>-Diagramm</span> und setzen Sie den Haken bei <span class="ui">Ursprungsgerade anpassen</span>.</li>
+          <li><span class="op">Geben Sie an</span>, welche Bewegung in y-Richtung vorliegt. <span class="op">Bestimmen Sie</span> aus der Steigung die Fallbeschleunigung <i>g</i>.</li>
+          <li><span class="op">Stellen Sie</span> die Bewegungsgleichung <i>s</i><sub>y</sub>(<i>t</i>) <span class="op">auf</span>.</li>
+          <li><span class="op">Vergleichen Sie</span> mit den anderen Gruppen: Notieren Sie für jede Gruppe <i>h</i>, <i>v</i><sub>0</sub> und die Steigung im <i>t</i>²-<i>s</i><sub>y</sub>-Diagramm.</li>
+          <li><span class="op">Formulieren Sie</span> einen Merksatz: Wie beeinflussen sich die Bewegung in x-Richtung und die Bewegung in y-Richtung?</li>
+        </ol>
+      </div>
+      <div class="doc"><div class="label">In OneNote dokumentieren</div><ul data-check="s6">
+        <li><label><input type="checkbox"><span><i>t</i>-<i>s</i><sub>y</sub>-Diagramm mit Vergleich von A und B</span></label></li>
+        <li><label><input type="checkbox"><span><i>t</i>²-<i>s</i><sub>y</sub>-Diagramm, Bewegungsart, <i>g</i> aus der Steigung</span></label></li>
+        <li><label><input type="checkbox"><span>Bewegungsgleichung <i>s</i><sub>y</sub>(<i>t</i>)</span></label></li>
+        <li><label><input type="checkbox"><span>Tabelle mit dem Vergleich der Gruppen</span></label></li>
+        <li><label><input type="checkbox"><span>Merksatz (Unabhängigkeitsprinzip)</span></label></li>
+      </ul></div>
+    </div>
+    <div class="helps">
+      <details><summary>Hilfe 1</summary><div><p>Aus Kapitel 1.3: Für eine gleichmäßig beschleunigte Bewegung aus der Ruhe gilt <span class="f"><i>s</i> = ½ · <i>a</i> · <i>t</i>²</span>. Trägt man <i>s</i> über <i>t</i>² auf, erhält man eine Ursprungsgerade mit der Steigung ½ <i>a</i>.</p></div></details>
+      <details><summary>Hilfe 2</summary><div><p>Ist die Steigung im <i>t</i>²-<i>s</i><sub>y</sub>-Diagramm <i>k</i>, dann gilt <span class="f"><i>k</i> = ½ <i>g</i></span>, also <span class="f"><i>g</i> = 2 <i>k</i></span>.</p></div></details>
+      <details><summary>Hilfe 3: Lückentext für den Merksatz</summary><div><p>Der waagerechte Wurf setzt sich aus einer __________ Bewegung in __________ Richtung und einem __________ in senkrechter Richtung zusammen. Die beiden Bewegungen __________ sich, ohne sich gegenseitig zu __________.</p></div></details>
+      <details class="sec" data-sol="y"><summary>Sicherung (Freischaltung durch die Lehrkraft)</summary><div></div></details>
+    </div>
+  </section>
+
+  <section class="card" id="s7" aria-labelledby="h7">
+    <div class="card-head"><div class="num">7</div><div><h2 id="h7">Die Bahnkurve</h2><div class="sub">ca. 15 Minuten</div></div></div>
+    <div class="cols">
+      <div class="do">
+        <div class="label">So gehen Sie vor</div>
+        <ol>
+          <li>Wählen Sie <span class="ui">Bahnkurve (<i>s</i><sub>x</sub>-<i>s</i><sub>y</sub>)</span>. <span class="op">Beschreiben Sie</span> die Form der Bahn. An welche Funktion aus der Mathematik erinnert sie?</li>
+          <li><span class="op">Leiten Sie</span> die Bahngleichung <i>s</i><sub>y</sub>(<i>s</i><sub>x</sub>) <span class="op">her</span>. Sie kennen:
+            <div><span class="formula"><i>s</i><sub>x</sub> = <i>v</i><sub>0</sub> · <i>t</i></span> &nbsp;und&nbsp; <span class="formula"><i>s</i><sub>y</sub> = ½ · <i>g</i> · <i>t</i>²</span></div>
+            Ziel ist eine Gleichung, in der <i>t</i> nicht mehr vorkommt.</li>
+          <li><span class="op">Überprüfen Sie</span> Ihre Bahngleichung: Wählen Sie das <span class="ui"><i>s</i><sub>x</sub>²-<i>s</i><sub>y</sub>-Diagramm</span> mit <span class="ui">Ursprungsgerade anpassen</span>. <span class="op">Vergleichen Sie</span> die angezeigte Steigung mit dem Wert, den Sie aus Ihrer Bahngleichung mit <i>g</i> = 9,81 m/s² und Ihrem <i>v</i><sub>0</sub> berechnen.</li>
+        </ol>
+      </div>
+      <div class="doc"><div class="label">In OneNote dokumentieren</div><ul data-check="s7">
+        <li><label><input type="checkbox"><span>Diagramm der Bahnkurve und Beschreibung</span></label></li>
+        <li><label><input type="checkbox"><span>Herleitung der Bahngleichung in Schritten</span></label></li>
+        <li><label><input type="checkbox"><span><i>s</i><sub>x</sub>²-<i>s</i><sub>y</sub>-Diagramm</span></label></li>
+        <li><label><input type="checkbox"><span>Vergleich: gemessene und berechnete Steigung</span></label></li>
+      </ul></div>
+    </div>
+    <div class="helps">
+      <details><summary>Hilfe 1</summary><div><p>Lösen Sie die Gleichung für <i>s</i><sub>x</sub> nach <i>t</i> auf.</p></div></details>
+      <details><summary>Hilfe 2</summary><div><p><span class="f"><i>t</i> = <i>s</i><sub>x</sub> / <i>v</i><sub>0</sub></span>. Setzen Sie diesen Ausdruck für <i>t</i> in die Gleichung für <i>s</i><sub>y</sub> ein.</p></div></details>
+      <details><summary>Hilfe 3</summary><div><p><span class="f"><i>s</i><sub>y</sub> = ½ · <i>g</i> · (<i>s</i><sub>x</sub> / <i>v</i><sub>0</sub>)²</span>. Lösen Sie die Klammer auf. Welcher Faktor steht dann vor <i>s</i><sub>x</sub>²?</p></div></details>
+      <details class="sec" data-sol="bahn"><summary>Sicherung (Freischaltung durch die Lehrkraft)</summary><div></div></details>
+    </div>
+  </section>
+
+  <section class="card" id="s8" aria-labelledby="h8">
+    <div class="card-head"><div class="num">+</div><div><h2 id="h8">Zusatz: Trifft Kugel A die Kugel B?</h2><div class="sub">für Schnelle</div></div></div>
+    <div class="cols">
+      <div class="do">
+        <div class="label">So gehen Sie vor</div>
+        <ol>
+          <li>Bereich <span class="tab">Versuch</span>: Wählen Sie bei Kugel B <span class="ui">Im Abstand <i>d</i></span>. Kugel B hängt jetzt auf Höhe der Bahnkante im Abstand <i>d</i> und fällt wieder genau dann, wenn A die Bahn verlässt.</li>
+          <li><span class="op">Sagen Sie voraus</span>, ob A die Kugel B trifft, und <span class="op">begründen Sie</span> mit Ihrem Merksatz aus Schritt 6.</li>
+          <li><span class="op">Überprüfen Sie</span> die Vorhersage für verschiedene <i>d</i> und <i>h</i>.</li>
+          <li><span class="op">Berechnen Sie</span> für Ihre Werte den größten Abstand <i>d</i>, bei dem es noch zu einem Treffer kommt, und überprüfen Sie ihn.</li>
+        </ol>
+      </div>
+      <div class="doc"><div class="label">In OneNote dokumentieren</div><ul data-check="s8">
+        <li><label><input type="checkbox"><span>Vorhersage mit Begründung</span></label></li>
+        <li><label><input type="checkbox"><span>Rechnung für den größten Abstand <i>d</i></span></label></li>
+      </ul></div>
+    </div>
+    <div class="helps">
+      <details class="sec" data-sol="treffer"><summary>Sicherung (Freischaltung durch die Lehrkraft)</summary><div></div></details>
+    </div>
+  </section>
+</main>
+
+<footer><div class="wrap"><span>Physik EP · Friedrich-Bährens-Gymnasium Schwerte</span><a href="simulation.html" target="_blank" rel="noopener">Simulation öffnen</a></div></footer>
+
+<script>
+(function(){
+"use strict";
+const SOL = {
+  x:`<p>Die Messpunkte liegen auf einer Ursprungsgeraden: <i>s</i><sub>x</sub> ~ <i>t</i>. Kugel A bewegt sich in x-Richtung <b>gleichförmig</b>.</p>
+     <p><i>s</i><sub>x</sub>(<i>t</i>) = <i>v</i><sub>0</sub> · <i>t</i>,&nbsp; <i>v</i><sub>x</sub> = <i>v</i><sub>0</sub>,&nbsp; <i>a</i><sub>x</sub> = 0. Die Steigung des <i>t</i>-<i>s</i><sub>x</sub>-Diagramms ist <i>v</i><sub>0</sub>.</p>`,
+  y:`<p>Kugel A und Kugel B haben zu jedem Zeitpunkt dieselbe Fallstrecke <i>s</i><sub>y</sub>, unabhängig von <i>v</i><sub>0</sub>. In y-Richtung liegt ein <b>freier Fall</b> vor:</p>
+     <p><i>s</i><sub>y</sub>(<i>t</i>) = ½ · <i>g</i> · <i>t</i>²,&nbsp; <i>v</i><sub>y</sub> = <i>g</i> · <i>t</i>,&nbsp; <i>a</i><sub>y</sub> = <i>g</i>. Die Steigung im <i>t</i>²-<i>s</i><sub>y</sub>-Diagramm ist ½ <i>g</i> ≈ 4,9 m/s².</p>
+     <p><b>Unabhängigkeitsprinzip:</b> Der waagerechte Wurf setzt sich aus einer gleichförmigen Bewegung in waagerechter Richtung und einem freien Fall in senkrechter Richtung zusammen. Die beiden Bewegungen überlagern sich, ohne sich gegenseitig zu beeinflussen.</p>`,
+  bahn:`<p>Aus <i>s</i><sub>x</sub> = <i>v</i><sub>0</sub> · <i>t</i> folgt <i>t</i> = <i>s</i><sub>x</sub> / <i>v</i><sub>0</sub>. Eingesetzt in <i>s</i><sub>y</sub> = ½ <i>g t</i>²:</p>
+     <p><i>s</i><sub>y</sub> = <i>g</i> / (2 <i>v</i><sub>0</sub>²) · <i>s</i><sub>x</sub>²</p>
+     <p>Wegen <i>s</i><sub>y</sub> ~ <i>s</i><sub>x</sub>² ist die Bahnkurve eine Parabel, die <b>Wurfparabel</b>. Die Steigung im <i>s</i><sub>x</sub>²-<i>s</i><sub>y</sub>-Diagramm ist <i>g</i> / (2 <i>v</i><sub>0</sub>²). Beispiel: Für <i>v</i><sub>0</sub> = 1,40 m/s ergibt sich 2,50 1/m.</p>`,
+  treffer:`<p>Beide Kugeln führen in y-Richtung denselben freien Fall aus und sind deshalb immer auf gleicher Höhe. Kugel A trifft Kugel B, wenn sie den Abstand <i>d</i> erreicht, bevor sie auf dem Boden ankommt:</p>
+     <p><i>d</i> ≤ <i>v</i><sub>0</sub> · <i>t</i><sub>F</sub> mit der Fallzeit <i>t</i><sub>F</sub> = √(2<i>H</i> / <i>g</i>). Für <i>H</i> = 1,00 m ist <i>t</i><sub>F</sub> ≈ 0,45 s.</p>`
+};
+const get = (k, d) => { try{ const v = localStorage.getItem('wurf16a_'+k); return v ? JSON.parse(v) : d; }catch(e){ return d; } };
+const set = (k, v) => { try{ localStorage.setItem('wurf16a_'+k, JSON.stringify(v)); }catch(e){} };
+let unlocked = get('unlocked', false);
+const checks = get('checks', {});
+
+function renderSecure(){
+  document.querySelectorAll('details.sec').forEach(d => {
+    const box = d.querySelector('div');
+    if (unlocked){ box.innerHTML = `<div class="sol">${SOL[d.dataset.sol]}</div>`; return; }
+    box.innerHTML = `<div class="secrow"><input type="password" placeholder="Code" autocomplete="off" aria-label="Freischaltcode"><button class="btn" type="button">Freischalten</button></div><p class="msg" role="status" style="margin:6px 0 0;color:var(--muted)"></p>`;
+    const inp = box.querySelector('input'), btn = box.querySelector('button'), msg = box.querySelector('.msg');
+    const go = () => { if (inp.value.trim().toUpperCase() === 'PHYSIK'){ unlocked = true; set('unlocked', true); const open = d; renderSecure(); open.open = true; } else msg.textContent = 'Der Code stimmt nicht.'; };
+    btn.addEventListener('click', go); inp.addEventListener('keydown', e => { if (e.key === 'Enter') go(); });
+  });
+}
+
+const STEPS = [['start','0','Vorbereitung'],['s1','1','Vermutung'],['s2','2','Beobachten'],['s3','3','Serienbild'],['s4','4','Messwerte'],['s5','5','x-Richtung'],['s6','6','y-Richtung'],['s7','7','Bahnkurve'],['s8','+','Zusatz']];
+const nav = document.getElementById('stepnav');
+STEPS.forEach(([id, n, t]) => { const a = document.createElement('a'); a.href = '#'+id; a.dataset.id = id; a.innerHTML = `<span class="n">${n}</span>${t}`; nav.appendChild(a); });
+function updateNav(){
+  document.querySelectorAll('[data-check]').forEach(ul => {
+    const id = ul.dataset.check, boxes = [...ul.querySelectorAll('input')];
+    const a = nav.querySelector(`[data-id="${id}"]`);
+    if (a) a.classList.toggle('done', boxes.length > 0 && boxes.every(b => b.checked));
+  });
+}
+document.querySelectorAll('[data-check]').forEach(ul => {
+  const id = ul.dataset.check;
+  ul.querySelectorAll('input').forEach((b, i) => {
+    b.checked = !!(checks[id] && checks[id][i]);
+    b.addEventListener('change', () => { checks[id] = checks[id] || {}; checks[id][i] = b.checked; set('checks', checks); updateNav(); });
+  });
+});
+renderSecure(); updateNav();
+})();
+</script>
+
+</body>
+</html>
