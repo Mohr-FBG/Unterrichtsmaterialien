@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Klausurvorbereitung Stochastik · LK Mathematik Q2</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css">
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/contrib/auto-render.min.js"></script>
+<style>
+:root{--gold:#e8a800;--gold-dark:#b98400;--blue:#2c5f8a;--blue-dark:#1a3d5c;--green:#1a9e5c;--orange:#d4760a;--purple:#7b3fb5;--border:#dde1e7;--bg:#f4f5f7;--text:#1c1f26;--card:#fff;--muted:#5b6270}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;background:var(--bg);color:var(--text);line-height:1.55}
+.topbar{background:#fff;border-bottom:1px solid var(--border);font-size:.82rem;padding:.5rem 1rem}
+.topbar a{color:var(--blue);text-decoration:none}.topbar .sep{color:#aaa;margin:0 .35rem}
+header.page-head{background:linear-gradient(135deg,var(--gold) 0%,var(--gold-dark) 100%);color:#fff;padding:2.2rem 1.5rem 1.9rem;text-align:center}
+header .eyebrow{font-size:.82rem;letter-spacing:.06em;text-transform:uppercase;opacity:.9}
+header h1{margin:.3rem 0 .35rem;font-size:2rem}
+header p{margin:0 auto;max-width:720px;font-size:1.05rem;opacity:.96}
+.countdown{display:inline-block;margin-top:1rem;background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.45);border-radius:20px;padding:.3rem 1rem;font-weight:600;font-size:.92rem}
+nav.tabs{position:sticky;top:0;z-index:10;background:#fff;border-bottom:1px solid var(--border);display:flex;justify-content:center;flex-wrap:wrap;gap:.4rem;padding:.6rem}
+nav.tabs a{text-decoration:none;color:var(--blue-dark);font-weight:600;font-size:.9rem;padding:.4rem .9rem;border-radius:20px;background:var(--bg)}
+nav.tabs a:hover{background:#fbf3e0}
+main{max-width:940px;margin:0 auto;padding:1.4rem 1rem 3rem}
+section{scroll-margin-top:64px;margin-bottom:2.6rem}
+.sec-h{display:flex;align-items:baseline;justify-content:space-between;flex-wrap:wrap;gap:.6rem;border-bottom:2px solid var(--gold);padding-bottom:.4rem;margin-bottom:1rem}
+.sec-h h2{margin:0;font-size:1.45rem;color:var(--blue-dark)}
+.sec-h .meta{font-size:.86rem;color:var(--muted)}
+.box{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:1rem 1.2rem;margin-bottom:1rem}
+.box.gold{border-left:5px solid var(--gold)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+@media(max-width:720px){.grid2{grid-template-columns:1fr}}
+.part{border-radius:10px;padding:.9rem 1.1rem;color:#fff}
+.part.t1{background:var(--blue)}.part.t2{background:var(--blue-dark)}
+.part h3{margin:0 0 .3rem;font-size:1.05rem}.part p{margin:0;font-size:.92rem;opacity:.95}
+.progress{height:10px;background:#e8eaee;border-radius:6px;overflow:hidden;margin:.4rem 0 .2rem}
+.progress span{display:block;height:100%;background:var(--green);width:0;transition:width .3s}
+.lern{background:var(--card);border:1px solid var(--border);border-radius:10px;margin-bottom:.8rem;overflow:hidden}
+.lern-h{background:#fbf3e0;padding:.55rem 1rem;font-weight:700;color:var(--blue-dark)}
+.lern-h .kap{display:inline-block;background:var(--gold);color:#fff;border-radius:5px;padding:0 .45rem;margin-right:.35rem;font-size:.85rem}
+.lern-h a{float:right;font-weight:600;font-size:.85rem;color:var(--blue);text-decoration:none}
+.lern ul{list-style:none;margin:0;padding:.5rem 1rem .7rem}
+.lern li{padding:.18rem 0}
+.lern label{display:flex;gap:.55rem;align-items:flex-start;cursor:pointer}
+.lern input{margin-top:.3rem;accent-color:var(--green)}
+.lern input:checked+span{color:var(--green)}
+table.cmd{width:100%;border-collapse:collapse;background:#fff;font-size:.9rem;margin-bottom:.8rem}
+table.cmd th,table.cmd td{border:1px solid var(--border);padding:.4rem .55rem;text-align:left;vertical-align:top}
+table.cmd th{background:#fafbfc}
+section#tr h3{margin:1.2rem 0 .4rem;font-size:1.05rem;color:var(--blue)}
+code{font-family:"SFMono-Regular",Consolas,Menlo,monospace;font-size:.86em;background:#f1f3f6;padding:.05rem .3rem;border-radius:4px}
+kbd{font-family:inherit;font-size:.8em;border:1px solid #bbb;border-bottom-width:2px;border-radius:4px;padding:0 .3rem;background:#fff}
+.doc{display:grid;grid-template-columns:auto 1fr;gap:.25rem .8rem;font-size:.95rem}
+.doc b{color:var(--blue-dark)}
+article.task{background:var(--card);border:1px solid var(--border);border-radius:10px;margin-bottom:1.3rem;overflow:hidden;scroll-margin-top:64px}
+article.task.isdone{border-color:var(--green)}
+.task-head{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.4rem;background:#fbf3e0;padding:.65rem 1rem;border-bottom:1px solid var(--border)}
+article[data-part="2"] .task-head{background:#e9eff6}
+.task-num{display:inline-block;background:var(--gold);color:#fff;font-weight:700;border-radius:5px;padding:.05rem .5rem;margin-right:.5rem}
+article[data-part="2"] .task-num{background:var(--blue-dark)}
+.task-title{font-weight:700;font-size:1.05rem}
+.tags{display:flex;flex-wrap:wrap;gap:.3rem;align-items:center}
+.tag{font-size:.75rem;font-weight:600;background:#fff;border:1px solid var(--border);border-radius:12px;padding:.05rem .55rem;color:var(--muted)}
+.tag.lvl1{color:var(--green);border-color:var(--green)}.tag.lvl2{color:var(--orange);border-color:var(--orange)}.tag.lvl3{color:var(--purple);border-color:var(--purple)}
+.tag.big{background:var(--purple);color:#fff;border-color:var(--purple)}
+.done{font-size:.8rem;margin-left:.3rem;cursor:pointer;color:var(--muted)}
+.done input{accent-color:var(--green)}
+.task-body{padding:.9rem 1.1rem .4rem}
+ol.sub{list-style:none;counter-reset:s;padding-left:0}
+ol.sub>li{counter-increment:s;position:relative;padding-left:1.8rem;margin-bottom:.6rem}
+ol.sub>li::before{content:counter(s,lower-alpha) ")";position:absolute;left:0;font-weight:700}
+ol.subsub{list-style:none;counter-reset:t;padding-left:0;margin:.3rem 0}
+ol.subsub>li{counter-increment:t;position:relative;padding-left:2rem;margin-bottom:.25rem}
+ol.subsub>li::before{content:"(" counter(t) ")";position:absolute;left:0}
+.p{display:block;text-align:right;font-style:italic;font-size:.85rem;color:var(--muted)}
+.helps{padding:.2rem 1.1rem 1rem;display:flex;flex-direction:column;gap:.45rem}
+details{border:1px solid var(--border);border-radius:8px;background:#fff}
+details>summary{cursor:pointer;font-weight:600;padding:.45rem .8rem;list-style:none;font-size:.92rem}
+details>summary::-webkit-details-marker{display:none}
+details>summary::before{content:"▸ ";color:var(--muted)}
+details[open]>summary::before{content:"▾ "}
+details>div{padding:.2rem .9rem .7rem;font-size:.95rem}
+details.hint.h1>summary{color:var(--green)}details.hint.h2>summary{color:var(--orange)}details.hint.h3>summary{color:var(--purple)}
+details.sol{border-color:var(--green);background:#f3faf6}
+details.sol>summary{color:#146e43}
+details.sol p{margin:.4rem 0}
+table.vft,table.sim{border-collapse:collapse;margin:.5rem 0;font-size:.92rem;background:#fff}
+table.vft th,table.vft td,table.sim td{border:1px solid #cfd4db;padding:.3rem .65rem;text-align:center}
+table.vft th{background:#fafbfc}
+table.sim td:nth-child(odd){color:var(--muted);font-size:.8rem}
+.ti{display:block;width:fit-content;border:1px solid #9aa3ad;border-radius:6px;overflow:hidden;margin:.5rem 0;font-family:"SFMono-Regular",Consolas,Menlo,monospace;font-size:.85rem;max-width:100%}
+.ti-h{background:#e3e7ec;padding:.2rem .6rem;font-family:-apple-system,Segoe UI,Arial,sans-serif;font-size:.78rem}
+.ti table{border-collapse:collapse;background:#fff}
+.ti td,.ti th{padding:.2rem .7rem;border-bottom:1px solid #eef0f3;text-align:left}
+.ti td.out{text-align:right;min-width:7rem}
+.ti table.ls td,.ti table.ls th{border:1px solid #e3e6ea;text-align:right}
+.ti table.ls tr.f td{background:#f4f6f8;font-size:.78rem}
+svg.fig{width:100%;max-width:620px;display:block;margin:.6rem auto;background:#fff}
+svg .grid{stroke:#e3e6ea;stroke-width:1}svg .axis{stroke:#333;stroke-width:1.2}
+svg .bar{fill:#c9d6e3;stroke:#2c5f8a;stroke-width:1}svg .ax{font-size:12px;fill:#444;font-family:Arial,sans-serif}
+svg .step{stroke:#1a3d5c;stroke-width:2.5}svg .dot{fill:#1a3d5c}
+.plan li{margin-bottom:.3rem}
+footer{text-align:center;font-size:.82rem;color:var(--muted);padding:2rem 1rem}
+footer a{color:var(--blue)}
+</style>
+</head>
+<body>
+<nav class="topbar"><a href="../../../../index.html">Unterrichtsmaterialien</a><span class="sep">›</span><a href="../../../index.html">Mathematik</a><span class="sep">›</span><a href="../../index.html">Leistungskurs</a><span class="sep">›</span><a href="../index.html">Stochastik</a><span class="sep">›</span><span>Klausurvorbereitung</span></nav>
+
+<header class="page-head">
+  <div class="eyebrow">Mathematik · Leistungskurs · Q2 · Kapitel VIII und IX</div>
+  <h1>Klausurvorbereitung Stochastik</h1>
+  <p>Alles an einem Ort: was du können musst, wie du den TI-Nspire einsetzt und 14 Aufgaben – von kurzen Grundlagen bis zu Aufgaben im Umfang einer Klausuraufgabe.</p>
+  <div class="countdown" id="countdown">Klausur am 26.11.2026</div>
+</header>
+
+<nav class="tabs">
+  <a href="#start">Start</a><a href="#lern">Lerninhalte</a><a href="#tr">Taschenrechner</a><a href="#teil1">Teil 1 · ohne Hilfsmittel</a><a href="#teil2">Teil 2 · mit CAS</a>
+</nav>
+
+<main>
+<section id="start">
+  <div class="sec-h"><h2>So ist die Klausur aufgebaut</h2><span class="meta">225 Minuten · Inhalte VIII.1–IX.4</span></div>
+  <div class="grid2">
+    <div class="part t1"><h3>Teil 1 · 60 Minuten · ohne Hilfsmittel</h3><p>Zwei Pflichtaufgaben und zwei von vier Wahlaufgaben. Rechnen mit Brüchen, Termen, Vierfeldertafeln, Bäumen; Histogramme und Treppengraphen lesen.</p></div>
+    <div class="part t2"><h3>Teil 2 · 165 Minuten · TI-Nspire CAS und Formelsammlung</h3><p>Drei umfangreiche Anwendungsaufgaben. Mindestens eine Aufgabe enthält vorgegebene Rechnerausgaben, die du deuten und beurteilen musst.</p></div>
+  </div>
+  <div class="box gold" style="margin-top:1rem">
+    <b>So arbeitest du mit dieser Seite</b>
+    <ul style="margin:.4rem 0 0;padding-left:1.2rem">
+      <li>Erst selbst versuchen, dann die <b>Hilfen</b> der Reihe nach öffnen: Hilfe 1 gibt einen Denkanstoß, Hilfe 2 den Ansatz, Hilfe 3 fast den ganzen Weg.</li>
+      <li>Die <b>Musterlösungen</b> sind frei zugänglich. Vergleiche nicht nur das Ergebnis, sondern auch die <b>Dokumentation</b> – in der Klausur zählt der Weg.</li>
+      <li>Hake Aufgaben als „erledigt“ und Lerninhalte als „kann ich“ ab. Dein Fortschritt wird nur in diesem Browser gespeichert.</li>
+    </ul>
+  </div>
+  <div class="box">
+    <b>Vorschlag für eine Probeklausur (225 Minuten)</b>
+    <ol class="plan" style="margin:.4rem 0 0;padding-left:1.3rem">
+      <li>Teil 1 (60 Min.): T1 und T4 als Pflicht, dazu zwei aus T6, T7, T8, T10 – ohne Taschenrechner, mit Uhr.</li>
+      <li>Teil 2 (165 Min.): K1, K3 und K4 – mit TI-Nspire und Formelsammlung.</li>
+      <li>Danach mit den Musterlösungen selbst korrigieren und notieren, welche Lerninhalte noch unsicher sind.</li>
+    </ol>
+  </div>
+  <div class="box"><b>Dein Fortschritt</b>
+    <div style="font-size:.9rem;margin-top:.3rem">Lerninhalte: <span id="pl">0</span> · Aufgaben: <span id="pa">0</span></div>
+    <div class="progress"><span id="bar"></span></div>
+  </div>
+</section>
+
+<section id="lern">
+  <div class="sec-h"><h2>Lerninhalte – das musst du können</h2><span class="meta">zum Abhaken</span></div>
+  <div class="lern"><div class="lern-h"><span class="kap">VIII.1</span> Wahrscheinlichkeit <a href="../viii-1-wahrscheinlichkeit/">zur Seite →</a></div><ul><li><label><input type="checkbox" data-can="VIII.1-0"><span>Ergebnismenge und Ereignisse eines Zufallsexperiments angeben</span></label></li><li><label><input type="checkbox" data-can="VIII.1-1"><span>Laplace-Wahrscheinlichkeit berechnen: $P(E)=\dfrac{\text{günstige}}{\text{mögliche}}$</span></label></li><li><label><input type="checkbox" data-can="VIII.1-2"><span>mehrstufige Experimente im Baumdiagramm darstellen (mit und ohne Zurücklegen)</span></label></li><li><label><input type="checkbox" data-can="VIII.1-3"><span>Pfadregel (multiplizieren) und Summenregel (addieren) anwenden</span></label></li></ul></div><div class="lern"><div class="lern-h"><span class="kap">VIII.2</span> Verknüpfen von Ereignissen <a href="../viii-2-verknuepfen/">zur Seite →</a></div><ul><li><label><input type="checkbox" data-can="VIII.2-0"><span>Schnitt $A\cap B$, Vereinigung $A\cup B$, Gegenereignis $\overline A$ im Sachzusammenhang beschreiben</span></label></li><li><label><input type="checkbox" data-can="VIII.2-1"><span>Additionssatz: $P(A\cup B)=P(A)+P(B)-P(A\cap B)$</span></label></li><li><label><input type="checkbox" data-can="VIII.2-2"><span>Vierfeldertafeln (absolut und mit Wahrscheinlichkeiten) vervollständigen</span></label></li><li><label><input type="checkbox" data-can="VIII.2-3"><span>„mindestens ein Treffer“ über das Gegenereignis: $P=1-q^n$; kleinste Anzahl $n$ bestimmen</span></label></li></ul></div><div class="lern"><div class="lern-h"><span class="kap">VIII.3</span> Bedingte Wahrscheinlichkeit <a href="../viii-3-bedingte-wahrscheinlichkeit/">zur Seite →</a></div><ul><li><label><input type="checkbox" data-can="VIII.3-0"><span>$P_A(B)=\dfrac{P(A\cap B)}{P(A)}$ berechnen und die Bezugsgruppe benennen</span></label></li><li><label><input type="checkbox" data-can="VIII.3-1"><span>umgekehrten Baum aufstellen (Rückschluss, z. B. Testergebnisse)</span></label></li><li><label><input type="checkbox" data-can="VIII.3-2"><span>stochastische Unabhängigkeit prüfen: $P(A\cap B)=P(A)\cdot P(B)$ bzw. $P_A(B)=P(B)$</span></label></li><li><label><input type="checkbox" data-can="VIII.3-3"><span>$P_A(B)$ und $P_B(A)$ sicher unterscheiden</span></label></li></ul></div><div class="lern"><div class="lern-h"><span class="kap">VIII.4</span> Simulationen <a href="../viii-4-simulationen/">zur Seite →</a></div><ul><li><label><input type="checkbox" data-can="VIII.4-0"><span>Zufallsexperimente mit <code>rand</code>, <code>randint</code>, <code>when</code>, <code>countif</code>, <code>seq</code> simulieren</span></label></li><li><label><input type="checkbox" data-can="VIII.4-1"><span>relative Häufigkeit als Schätzwert deuten, Schwankungen erklären (Gesetz der großen Zahlen)</span></label></li><li><label><input type="checkbox" data-can="VIII.4-2"><span>eine vorgegebene Simulation beschreiben und mit dem exakten Wert vergleichen</span></label></li></ul></div><div class="lern"><div class="lern-h"><span class="kap">IX.1</span> Bernoulli-Ketten <a href="../simulationen/rate-quiz/">zur Seite →</a></div><ul><li><label><input type="checkbox" data-can="IX.1-0"><span>Bedingungen einer Bernoulli-Kette nennen und prüfen</span></label></li><li><label><input type="checkbox" data-can="IX.1-1"><span>Formel von Bernoulli: $P(X=k)=\binom nk\,p^k\,(1-p)^{n-k}$ – auch ohne Rechner</span></label></li><li><label><input type="checkbox" data-can="IX.1-2"><span>Terme deuten und zu Ereignissen Terme aufstellen (feste Reihenfolge vs. beliebige Reihenfolge)</span></label></li></ul></div><div class="lern"><div class="lern-h"><span class="kap">IX.2</span> Binomialkoeffizienten <a href="../simulationen/galton-brett/">zur Seite →</a></div><ul><li><label><input type="checkbox" data-can="IX.2-0"><span>$\binom nk$ als Anzahl der Pfade mit $k$ Treffern deuten, mit dem Pascal'schen Dreieck bestimmen</span></label></li><li><label><input type="checkbox" data-can="IX.2-1"><span>$\binom nk=\binom n{n-k}$ begründen; Galton-Brett (auch geneigt) auswerten</span></label></li></ul></div><div class="lern"><div class="lern-h"><span class="kap">IX.3</span> Erwartungswert und Histogramme <a href="../ix-3-erwartungswert/">zur Seite →</a></div><ul><li><label><input type="checkbox" data-can="IX.3-0"><span>$\mu=n\cdot p$ berechnen und deuten; $E(X)=\sum k\cdot P(X=k)$ aus einer Tabelle</span></label></li><li><label><input type="checkbox" data-can="IX.3-1"><span>Histogramme lesen: Säulenfläche = Wahrscheinlichkeit, höchste Säule bei/nahe μ</span></label></li><li><label><input type="checkbox" data-can="IX.3-2"><span>Form beschreiben: Symmetrie bei $p=0{,}5$, Spiegelbild bei $p\leftrightarrow1-p$, Einfluss von $n$</span></label></li><li><label><input type="checkbox" data-can="IX.3-3"><span>Histogramme Parametern zuordnen, Parameter aus Angaben bestimmen</span></label></li></ul></div><div class="lern"><div class="lern-h"><span class="kap">IX.4</span> Kumulierte Wahrscheinlichkeiten <a href="../ix-4-kumuliert/">zur Seite →</a></div><ul><li><label><input type="checkbox" data-can="IX.4-0"><span>„höchstens / weniger als / mindestens / mehr als / zwischen“ in Intervalle und Terme mit $F_{n;p}$ übersetzen</span></label></li><li><label><input type="checkbox" data-can="IX.4-1"><span><code>binomCdf(n,p,a,b)</code> sicher einsetzen und die Rechnung dokumentieren</span></label></li><li><label><input type="checkbox" data-can="IX.4-2"><span>Treppengraphen lesen; Tabellen mit cumulativesum auswerten</span></label></li><li><label><input type="checkbox" data-can="IX.4-3"><span>zusammengesetzte Situationen (z. B. „gute Tage“ einer Woche) mit zwei Binomialverteilungen lösen</span></label></li><li><label><input type="checkbox" data-can="IX.4-4"><span>Modellannahmen (gleiches p, Unabhängigkeit) im Sachzusammenhang beurteilen</span></label></li></ul></div>
+  <p style="font-size:.88rem;color:var(--muted)">Nicht Teil dieser Klausur: Standardabweichung und Sigma-Regeln (IX.5), Probleme mit gesuchtem n oder p bei binomCdf (IX.6), Prognose- und Konfidenzintervalle (Kapitel X).</p>
+</section>
+
+<section id="tr">
+  <div class="sec-h"><h2>TI-Nspire auf einen Blick</h2><span class="meta">ausführlich: <a href="../taschenrechner/">TI-Nspire-Anleitung</a></span></div>
+  <div class="box gold"><b>Ereignis → Intervall → Befehl</b> – der wichtigste Übersetzungsschritt in Teil 2:
+  <table class="cmd"><tr><th>Ereignis</th><th>Intervall</th><th>mit F</th><th>TI-Nspire</th></tr><tr><td>höchstens k</td><td>[0; k]</td><td>F(k)</td><td><code>binomCdf(n,p,0,k)</code></td></tr><tr><td>weniger als k</td><td>[0; k−1]</td><td>F(k−1)</td><td><code>binomCdf(n,p,0,k-1)</code></td></tr><tr><td>mindestens k</td><td>[k; n]</td><td>1 − F(k−1)</td><td><code>binomCdf(n,p,k,n)</code></td></tr><tr><td>mehr als k</td><td>[k+1; n]</td><td>1 − F(k)</td><td><code>binomCdf(n,p,k+1,n)</code></td></tr><tr><td>mindestens a, höchstens b</td><td>[a; b]</td><td>F(b) − F(a−1)</td><td><code>binomCdf(n,p,a,b)</code></td></tr><tr><td>genau k</td><td>[k; k]</td><td>F(k) − F(k−1)</td><td><code>binompdf(n,p,k)</code></td></tr></table>
+  <span style="font-size:.88rem">Merksatz: Die Grenzen in <code>binomCdf</code> sind die kleinste und die größte Trefferzahl, die zum Ereignis gehören. Bei $F$: „unten eins weniger“.</span></div>
+  <h3>Grundlagen</h3><table class="cmd"><tr><th>Wofür?</th><th>Befehl</th><th>Beispiel</th><th>Ergebnis / Hinweis</th></tr><tr><td>Dezimalzahl statt Bruch</td><td><kbd>ctrl</kbd> <kbd>enter</kbd> oder <code>*1.0</code></td><td><code>3/8 → 0.375</code></td><td></td></tr><tr><td>Dezimalpunkt</td><td><code>0.15</code> (nicht 0,15)</td><td><code>binompdf(40,<b>0.15</b>,6)</code></td><td>Komma trennt Argumente</td></tr><tr><td>Variable speichern</td><td><code>n:=40</code></td><td><code>binompdf(n,p,6)</code></td><td>alle Formeln passen sich an</td></tr></table><h3>Kombinatorik</h3><table class="cmd"><tr><th>Wofür?</th><th>Befehl</th><th>Beispiel</th><th>Ergebnis / Hinweis</th></tr><tr><td>Binomialkoeffizient</td><td><code>nCr(n,k)</code></td><td><code>nCr(10,3)</code></td><td>120</td></tr><tr><td>Fakultät</td><td><code>n!</code></td><td><code>6!/(2!*4!)</code></td><td>15</td></tr></table><h3>Binomialverteilung</h3><table class="cmd"><tr><th>Wofür?</th><th>Befehl</th><th>Beispiel</th><th>Ergebnis / Hinweis</th></tr><tr><td>genau k Treffer</td><td><code>binompdf(n,p,k)</code></td><td><code>binompdf(10,0.3,2)</code></td><td>0.233474</td></tr><tr><td>einzelne Werte addieren</td><td><code>sum(binompdf(n,p,{…}))</code></td><td><code>sum(binompdf(10,0.3,{2,3}))</code></td><td>0.500302</td></tr><tr><td>a bis b Treffer</td><td><code>binomCdf(n,p,a,b)</code></td><td><code>binomCdf(10,0.3,2,5)</code></td><td>0.803343</td></tr><tr><td>ganze Verteilung als Spalte</td><td><code>=binompdf(n,p)</code></td><td>Spalte wkt, daneben =seq(t,t,0,n)</td><td>Zeile r ↔ k = r−1</td></tr><tr><td>kumulierte Spalte</td><td><code>=cumulativesum(wkt)</code></td><td>Spalte kum</td><td>F(0), F(1), …</td></tr><tr><td>Erwartungswert aus Tabelle</td><td><code>=sum(treffer*wkt)</code></td><td>n = 12, p = 0,25</td><td>3</td></tr><tr><td>höchste Säule</td><td><code>=max(wkt)</code></td><td>zugehörige Zeile suchen</td><td></td></tr><tr><td>Histogramm / Treppengraph</td><td>menu ▸ Daten ▸ Ergebnisdiagramm</td><td>X-Liste treffer, Ergebnisliste wkt bzw. kum</td><td></td></tr></table><h3>Simulation</h3><table class="cmd"><tr><th>Wofür?</th><th>Befehl</th><th>Beispiel</th><th>Ergebnis / Hinweis</th></tr><tr><td>Zufallsgenerator starten</td><td><code>RandSeed 1704</code></td><td>einmal, eigene Zahl</td><td></td></tr><tr><td>Zufallszahl(en) 0…1</td><td><code>rand()</code>, <code>rand(k)</code></td><td><code>rand(50)</code></td><td>50 Zahlen</td></tr><tr><td>ganze Zufallszahlen</td><td><code>randint(a,b,k)</code></td><td><code>randint(1,6,300)</code></td><td>300 Würfe</td></tr><tr><td>Treffer mit Wkt. p</td><td><code>when(rand()&lt;p,1,0)</code></td><td><code>when(rand()&lt;0.7,1,0)</code></td><td>1 mit 70 %</td></tr><tr><td>Zählen mit Bedingung</td><td><code>countif(Liste,?&lt;0.2)</code></td><td><code>countif(a1:a500,?&gt;=8)/500.</code></td><td>rel. Häufigkeit</td></tr><tr><td>viele Serien auf einmal</td><td><code>seq(countif(rand(n),?&lt;p),k,1,m)</code></td><td><code>=seq(countif(rand(30),?&lt;0.2),k,1,500)</code></td><td>m Trefferzahlen</td></tr><tr><td>neu würfeln</td><td><kbd>ctrl</kbd> <kbd>R</kbd></td><td></td><td>Schwankung beobachten</td></tr></table><h3>Gleichungen (aus der Analysis)</h3><table class="cmd"><tr><th>Wofür?</th><th>Befehl</th><th>Beispiel</th><th>Ergebnis / Hinweis</th></tr><tr><td>„mindestens ein Treffer“</td><td><code>solve(1-(1-p)^n≥c,n)</code></td><td><code>solve(1-(5/6)^n≥0.9,n)</code></td><td>n ≥ 12.63 → 13</td></tr></table>
+  <div class="box"><b>So dokumentierst du eine Rechnung mit dem CAS</b>
+    <div class="doc" style="margin-top:.5rem">
+      <b>1. Zufallsgröße</b><span>$X$: Anzahl der defekten Fahrräder unter 40</span>
+      <b>2. Verteilung</b><span>$X$ ist binomialverteilt mit $n=40$ und $p=0{,}15$ (Begründung bei Bedarf)</span>
+      <b>3. Ereignis</b><span>„mindestens 9 defekt“ → $P(X\ge9)=1-F_{40;\,0{,}15}(8)$</span>
+      <b>4. Befehl</b><span><code>binomCdf(40,0.15,9,40)</code></span>
+      <b>5. Ergebnis</b><span>$\approx0{,}1354$ – mit Antwortsatz im Sachzusammenhang</span>
+    </div>
+  </div>
+</section>
+
+<section id="teil1">
+  <div class="sec-h"><h2>Teil 1 · Übungen ohne Hilfsmittel</h2><span class="meta">10 Aufgaben · je 8–10 Punkte · Taschenrechner weglegen!</span></div>
+  
+<article class="task" id="t1" data-part="1">
+ <div class="task-head">
+  <div><span class="task-num">T1</span><span class="task-title">Sport und Serien im Jahrgang</span></div>
+  <div class="tags"><span class="tag lvl1">Grundlagen</span><span class="tag">VIII.2, VIII.3</span><span class="tag">10 P.</span><span class="tag">≈ 12 Min.</span>
+  <label class="done"><input type="checkbox" data-done="t1"> erledigt</label></div>
+ </div>
+ <div class="task-body"><p>In einem Jahrgang mit $120$ Schülerinnen und Schülern treiben $75$ regelmäßig Sport ($S$), $48$ schauen täglich Serien ($V$) und $27$ tun beides. Eine Person wird zufällig ausgewählt.</p>
+<ol class="sub">
+<li>Stellen Sie die Situation in einer Vierfeldertafel mit absoluten Häufigkeiten dar. <span class="p">3 P.</span></li>
+<li>Berechnen Sie $P(S\cup V)$ und beschreiben Sie das Gegenereignis von $S\cup V$ im Sachzusammenhang. <span class="p">2 P.</span></li>
+<li>Berechnen Sie $P_V(S)$ und $P_S(V)$ und erläutern Sie den Unterschied. <span class="p">3 P.</span></li>
+<li>Untersuchen Sie, ob $S$ und $V$ stochastisch unabhängig sind. Geben Sie an, wie viele Personen beides tun müssten, damit bei gleichen Randsummen Unabhängigkeit vorliegt. <span class="p">2 P.</span></li>
+</ol></div>
+ <div class="helps"><details class="hint h1"><summary>Hilfe 1</summary><div>Trage zuerst die drei gegebenen Zahlen ein: $|S|=75$, $|V|=48$, $|S\cap V|=27$, Gesamtzahl $120$. Die übrigen Felder ergeben sich durch Differenzen.</div></details><details class="hint h2"><summary>Hilfe 2</summary><div>b) Additionssatz: $P(S\cup V)=P(S)+P(V)-P(S\cap V)$. Das Gegenereignis von „$S$ oder $V$“ ist „weder $S$ noch $V$“. c) Bei $P_V(S)$ ist $V$ die Bezugsgruppe: $\frac{|S\cap V|}{|V|}$.</div></details><details class="hint h3"><summary>Hilfe 3</summary><div>d) Unabhängigkeit heißt $P(S\cap V)=P(S)\cdot P(V)$. Vergleiche $\frac{27}{120}$ mit $\frac{75}{120}\cdot\frac{48}{120}$. Für die gesuchte Anzahl: $120\cdot P(S)\cdot P(V)$.</div></details>
+  <details class="sol"><summary>Musterlösung</summary><div><p><b>a)</b></p>
+<table class="vft"><tr><th></th><th>$V$</th><th>$\overline V$</th><th>$\Sigma$</th></tr>
+<tr><th>$S$</th><td>27</td><td>48</td><td>75</td></tr><tr><th>$\overline S$</th><td>21</td><td>24</td><td>45</td></tr>
+<tr><th>$\Sigma$</th><td>48</td><td>72</td><td>120</td></tr></table>
+<p><b>b)</b> $P(S\cup V)=\frac{75+48-27}{120}=\frac{96}{120}=0{,}8$. Gegenereignis: „Die Person treibt keinen regelmäßigen Sport und schaut nicht täglich Serien.“ $P=\frac{24}{120}=0{,}2$.</p>
+<p><b>c)</b> $P_V(S)=\frac{27}{48}=\frac{9}{16}=0{,}5625$: Von den Serienschauern treiben $56{,}25\,\%$ Sport.<br>
+$P_S(V)=\frac{27}{75}=\frac{9}{25}=0{,}36$: Von den Sportlern schauen $36\,\%$ täglich Serien. Die Bezugsgruppen sind verschieden.</p>
+<p><b>d)</b> $P(S)\cdot P(V)=\frac{75}{120}\cdot\frac{48}{120}=0{,}625\cdot0{,}4=0{,}25\neq\frac{27}{120}=0{,}225$ → abhängig. Unabhängig wäre es bei $0{,}25\cdot120=30$ Personen, die beides tun.</p></div></details>
+ </div>
+</article>
+<article class="task" id="t2" data-part="1">
+ <div class="task-head">
+  <div><span class="task-num">T2</span><span class="task-title">Der Spamfilter</span></div>
+  <div class="tags"><span class="tag lvl2">Training</span><span class="tag">VIII.3</span><span class="tag">10 P.</span><span class="tag">≈ 12 Min.</span>
+  <label class="done"><input type="checkbox" data-done="t2"> erledigt</label></div>
+ </div>
+ <div class="task-body"><p>$40\,\%$ aller E-Mails eines Postfachs sind Spam. Ein Filter markiert $95\,\%$ der Spam-Mails als Spam, aber auch $10\,\%$ der erwünschten Mails werden fälschlich markiert. Eine Mail wird zufällig ausgewählt.</p>
+<ol class="sub">
+<li>Stellen Sie die Situation in einem Baumdiagramm dar (1. Stufe: Spam / kein Spam). <span class="p">2 P.</span></li>
+<li>Zeigen Sie, dass eine Mail mit einer Wahrscheinlichkeit von $44\,\%$ markiert wird. <span class="p">2 P.</span></li>
+<li>Eine Mail ist markiert. Berechnen Sie die Wahrscheinlichkeit, dass sie tatsächlich Spam ist. Berechnen Sie außerdem die Wahrscheinlichkeit, dass eine nicht markierte Mail doch Spam ist. <span class="p">4 P.</span></li>
+<li>Zeichnen Sie den umgekehrten Baum (1. Stufe: markiert / nicht markiert) mit allen Wahrscheinlichkeiten. <span class="p">2 P.</span></li>
+</ol></div>
+ <div class="helps"><details class="hint h1"><summary>Hilfe 1</summary><div>Erste Stufe: Spam $0{,}4$, kein Spam $0{,}6$. Zweite Stufe: markiert / nicht markiert mit den bedingten Wahrscheinlichkeiten $0{,}95$ bzw. $0{,}1$.</div></details><details class="hint h2"><summary>Hilfe 2</summary><div>b) Summe der beiden Pfade, die bei „markiert“ enden. c) $P_M(\text{Spam})=\dfrac{P(\text{Spam}\cap M)}{P(M)}$. Für „nicht markiert“ brauchst du $P(\overline M)=1-0{,}44$.</div></details><details class="hint h3"><summary>Hilfe 3</summary><div>d) Im umgekehrten Baum stehen auf der ersten Stufe $P(M)$ und $P(\overline M)$, auf der zweiten Stufe die bedingten Wahrscheinlichkeiten aus c). Die Pfadwahrscheinlichkeiten (z. B. $0{,}38$) bleiben gleich.</div></details>
+  <details class="sol"><summary>Musterlösung</summary><div><p><b>a)</b> Spam $0{,}4$ → markiert $0{,}95$ / nicht $0{,}05$; kein Spam $0{,}6$ → markiert $0{,}1$ / nicht $0{,}9$. Pfade: $0{,}38$; $0{,}02$; $0{,}06$; $0{,}54$.</p>
+<p><b>b)</b> $P(M)=0{,}4\cdot0{,}95+0{,}6\cdot0{,}1=0{,}38+0{,}06=0{,}44$.</p>
+<p><b>c)</b> $P_M(\text{Spam})=\frac{0{,}38}{0{,}44}=\frac{19}{22}\approx0{,}864$. Etwa $86\,\%$ der markierten Mails sind wirklich Spam.<br>
+$P_{\overline M}(\text{Spam})=\frac{0{,}02}{0{,}56}=\frac1{28}\approx0{,}036$. Nur etwa $3{,}6\,\%$ der nicht markierten Mails sind Spam.</p>
+<p><b>d)</b> markiert $0{,}44$ → Spam $\frac{19}{22}$ / kein Spam $\frac{3}{22}$; nicht markiert $0{,}56$ → Spam $\frac1{28}$ / kein Spam $\frac{27}{28}$. Kontrolle: $0{,}44\cdot\frac{19}{22}=0{,}38$ ✓.</p></div></details>
+ </div>
+</article>
+<article class="task" id="t3" data-part="1">
+ <div class="task-head">
+  <div><span class="task-num">T3</span><span class="task-title">Pasch und hohe Augensumme</span></div>
+  <div class="tags"><span class="tag lvl2">Training</span><span class="tag">VIII.1, VIII.2</span><span class="tag">10 P.</span><span class="tag">≈ 12 Min.</span>
+  <label class="done"><input type="checkbox" data-done="t3"> erledigt</label></div>
+ </div>
+ <div class="task-body"><p>Zwei faire Würfel werden gleichzeitig geworfen. Betrachtet werden die Ereignisse $A$: „Pasch (beide Augenzahlen gleich)“ und $B$: „Die Augensumme ist mindestens 10“.</p>
+<ol class="sub">
+<li>Bestimmen Sie $P(A)$ und $P(B)$. <span class="p">2 P.</span></li>
+<li>Bestimmen Sie $P(A\cap B)$ und $P(A\cup B)$. <span class="p">3 P.</span></li>
+<li>Entscheiden Sie jeweils, ob $A$ und $B$ unvereinbar bzw. stochastisch unabhängig sind. <span class="p">2 P.</span></li>
+<li>Das Würfelpaar wird dreimal geworfen. Berechnen Sie die Wahrscheinlichkeit, mindestens einmal einen Pasch zu werfen, und erläutern Sie, warum $3\cdot\frac16$ falsch ist. <span class="p">3 P.</span></li>
+</ol></div>
+ <div class="helps"><details class="hint h1"><summary>Hilfe 1</summary><div>Es gibt $36$ gleich wahrscheinliche Ergebnisse $(a\,|\,b)$ (Laplace). Zähle die günstigen Ergebnisse.</div></details><details class="hint h2"><summary>Hilfe 2</summary><div>$B$: Summe 10: $(4|6),(5|5),(6|4)$; Summe 11: zwei Ergebnisse; Summe 12: eines. $A\cap B$: welche Päsche haben Summe $\ge10$? Für $A\cup B$ den Additionssatz nutzen.</div></details><details class="hint h3"><summary>Hilfe 3</summary><div>Unvereinbar heißt $A\cap B=\emptyset$. d) Gegenereignis „kein Pasch in drei Würfen“: $\left(\frac56\right)^3$. Bei $3\cdot\frac16$ werden Ergebnisse mit mehreren Päschen mehrfach gezählt.</div></details>
+  <details class="sol"><summary>Musterlösung</summary><div><p><b>a)</b> $A$: 6 Päsche → $P(A)=\frac6{36}=\frac16$. $B$: $3+2+1=6$ Ergebnisse → $P(B)=\frac16$.</p>
+<p><b>b)</b> $A\cap B=\{(5|5),(6|6)\}$ → $P(A\cap B)=\frac2{36}=\frac1{18}$. $P(A\cup B)=\frac16+\frac16-\frac1{18}=\frac5{18}$.</p>
+<p><b>c)</b> Nicht unvereinbar, da $A\cap B\neq\emptyset$. $P(A)\cdot P(B)=\frac1{36}\neq\frac1{18}$ → abhängig (ein Pasch macht hohe Summen wahrscheinlicher).</p>
+<p><b>d)</b> $P(\text{mind. ein Pasch})=1-\left(\frac56\right)^3=1-\frac{125}{216}=\frac{91}{216}\approx0{,}42$. Die Ereignisse „Pasch im $i$-ten Wurf“ schließen sich nicht aus; $3\cdot\frac16=\frac12$ zählt Wurffolgen mit zwei oder drei Päschen mehrfach.</p></div></details>
+ </div>
+</article>
+<article class="task" id="t4" data-part="1">
+ <div class="task-head">
+  <div><span class="task-num">T4</span><span class="task-title">Freiwürfe</span></div>
+  <div class="tags"><span class="tag lvl1">Grundlagen</span><span class="tag">IX.1</span><span class="tag">10 P.</span><span class="tag">≈ 12 Min.</span>
+  <label class="done"><input type="checkbox" data-done="t4"> erledigt</label></div>
+ </div>
+ <div class="task-body"><p>Eine Basketballerin trifft bei Freiwürfen erfahrungsgemäß mit einer Wahrscheinlichkeit von $80\,\%$. Sie wirft viermal. $X$ ist die Anzahl der Treffer.</p>
+<ol class="sub">
+<li>Nennen Sie die Bedingungen, unter denen $X$ binomialverteilt ist, und geben Sie den Erwartungswert an. <span class="p">2 P.</span></li>
+<li>Berechnen Sie $P(X=3)$ ohne Taschenrechner. <span class="p">3 P.</span></li>
+<li>Beschreiben Sie ein Ereignis mit der Wahrscheinlichkeit $0{,}8^4+4\cdot0{,}8^3\cdot0{,}2$. <span class="p">2 P.</span></li>
+<li>Geben Sie einen Term an für „Nur der letzte Wurf geht daneben“ und erklären Sie, warum sich das Ergebnis um den Faktor 4 von b) unterscheidet. <span class="p">3 P.</span></li>
+</ol></div>
+ <div class="helps"><details class="hint h1"><summary>Hilfe 1</summary><div>Bernoulli-Kette: nur zwei Ausgänge, gleiche Trefferwahrscheinlichkeit bei jedem Wurf, Würfe unabhängig. $\mu=n\cdot p$.</div></details><details class="hint h2"><summary>Hilfe 2</summary><div>b) $P(X=3)=\binom43\cdot0{,}8^3\cdot0{,}2$. Rechne $0{,}8^3=0{,}512$. c) Welche Werte von $X$ gehören zu $0{,}8^4$ und zu $4\cdot0{,}8^3\cdot0{,}2$?</div></details><details class="hint h3"><summary>Hilfe 3</summary><div>d) Bei „nur der letzte daneben“ ist die Reihenfolge festgelegt: TTTN. Bei $X=3$ kann der Fehlwurf an jeder der 4 Stellen sein.</div></details>
+  <details class="sol"><summary>Musterlösung</summary><div><p><b>a)</b> Jeder Wurf hat nur die Ausgänge Treffer/kein Treffer, die Trefferwahrscheinlichkeit ist immer $0{,}8$, die Würfe beeinflussen sich nicht. Dann $X\sim B(4;\,0{,}8)$, $\mu=4\cdot0{,}8=3{,}2$.</p>
+<p><b>b)</b> $P(X=3)=\binom43\cdot0{,}8^3\cdot0{,}2=4\cdot0{,}512\cdot0{,}2=0{,}4096$.</p>
+<p><b>c)</b> $0{,}8^4=P(X=4)$, $4\cdot0{,}8^3\cdot0{,}2=P(X=3)$ → „Sie trifft mindestens dreimal.“ ($\approx0{,}8192$)</p>
+<p><b>d)</b> $0{,}8^3\cdot0{,}2=0{,}1024$. Bei $X=3$ gibt es $\binom43=4$ gleich wahrscheinliche Reihenfolgen (NTTT, TNTT, TTNT, TTTN); hier ist nur eine davon gemeint.</p></div></details>
+ </div>
+</article>
+<article class="task" id="t5" data-part="1">
+ <div class="task-head">
+  <div><span class="task-num">T5</span><span class="task-title">Pascal'sches Dreieck und Galton-Brett</span></div>
+  <div class="tags"><span class="tag lvl2">Training</span><span class="tag">IX.2</span><span class="tag">10 P.</span><span class="tag">≈ 12 Min.</span>
+  <label class="done"><input type="checkbox" data-done="t5"> erledigt</label></div>
+ </div>
+ <div class="task-body"><p>Ein Galton-Brett hat fünf Nagelreihen; an jedem Nagel wird die Kugel nach links oder rechts abgelenkt. Die Fächer sind von $0$ bis $5$ nummeriert (Anzahl der Rechtsablenkungen).</p>
+<ol class="sub">
+<li>Geben Sie die 5. Zeile des Pascal'schen Dreiecks an und erklären Sie, was die Zahl $10$ für das Galton-Brett bedeutet. <span class="p">2 P.</span></li>
+<li>Bei $p=\frac12$: Berechnen Sie $P(\text{Fach }2)$ und geben Sie die wahrscheinlichsten Fächer an. <span class="p">3 P.</span></li>
+<li>Begründen Sie mithilfe des Galton-Bretts, dass $\binom nk=\binom n{n-k}$ gilt. <span class="p">2 P.</span></li>
+<li>Das Brett wird geneigt: $p=\frac34$ für „rechts“. Berechnen Sie $P(\text{Fach }5)$ und untersuchen Sie mit dem Quotienten $\frac{P(\text{Fach }4)}{P(\text{Fach }5)}$, welches der beiden Fächer wahrscheinlicher ist. <span class="p">3 P.</span></li>
+</ol></div>
+ <div class="helps"><details class="hint h1"><summary>Hilfe 1</summary><div>Zeilen des Pascal'schen Dreiecks: jede Zahl ist die Summe der beiden darüber. Zeile 5 beginnt mit $1\;5\;\ldots$</div></details><details class="hint h2"><summary>Hilfe 2</summary><div>Zur Wahrscheinlichkeit: Anzahl der Wege mal Wahrscheinlichkeit eines Weges, $\left(\frac12\right)^5=\frac1{32}$.</div></details><details class="hint h3"><summary>Hilfe 3</summary><div>c) Ein Weg mit $k$-mal rechts ist gespiegelt ein Weg mit $k$-mal links, also $(n-k)$-mal rechts. d) Im Quotienten kürzen sich Potenzen: $\frac{5\cdot(\frac34)^4\cdot\frac14}{(\frac34)^5}$.</div></details>
+  <details class="sol"><summary>Musterlösung</summary><div><p><b>a)</b> $1\;\;5\;\;10\;\;10\;\;5\;\;1$. $10=\binom52$ ist die Anzahl der Wege mit genau zwei Rechtsablenkungen (z. B. RRLLL, RLRLL, …), also in Fach 2.</p>
+<p><b>b)</b> $P(\text{Fach }2)=10\cdot\frac1{32}=\frac{5}{16}\approx0{,}31$. Am wahrscheinlichsten sind die Fächer 2 und 3 (je $\frac{10}{32}$).</p>
+<p><b>c)</b> Spiegelt man einen Weg an der Mittelachse, wird jedes „rechts“ zu „links“. Zu jedem Weg in Fach $k$ gibt es genau einen Weg in Fach $n-k$, also gleich viele Wege: $\binom nk=\binom n{n-k}$.</p>
+<p><b>d)</b> $P(\text{Fach }5)=\left(\frac34\right)^5=\frac{243}{1024}\approx0{,}237$.<br>
+$\dfrac{P(4)}{P(5)}=\dfrac{5\cdot(\frac34)^4\cdot\frac14}{(\frac34)^5}=\dfrac{5\cdot\frac14}{\frac34}=\dfrac53>1$ → Fach 4 ist wahrscheinlicher ($P(4)=\frac{405}{1024}\approx0{,}40$).</p></div></details>
+ </div>
+</article>
+<article class="task" id="t6" data-part="1">
+ <div class="task-head">
+  <div><span class="task-num">T6</span><span class="task-title">Ein Histogramm lesen</span></div>
+  <div class="tags"><span class="tag lvl2">Training</span><span class="tag">IX.3</span><span class="tag">10 P.</span><span class="tag">≈ 12 Min.</span>
+  <label class="done"><input type="checkbox" data-done="t6"> erledigt</label></div>
+ </div>
+ <div class="task-body"><p>Die Abbildung zeigt die Wahrscheinlichkeitsverteilung einer binomialverteilten Zufallsgröße $X$ mit $n=20$ und $p=0{,}3$ (Ausschnitt $0\le k\le12$).</p><svg viewBox="0 0 620 300" class="fig" role="img" aria-label="Histogramm B(20;0,3)"><line x1="52" y1="213.2" x2="600" y2="213.2" class="grid"/><text x="46" y="217.2" text-anchor="end" class="ax">0,05</text><line x1="52" y1="166.4" x2="600" y2="166.4" class="grid"/><text x="46" y="170.4" text-anchor="end" class="ax">0,10</text><line x1="52" y1="119.6" x2="600" y2="119.6" class="grid"/><text x="46" y="123.6" text-anchor="end" class="ax">0,15</text><line x1="52" y1="72.8" x2="600" y2="72.8" class="grid"/><text x="46" y="76.8" text-anchor="end" class="ax">0,20</text><line x1="52" y1="26.0" x2="600" y2="26.0" class="grid"/><text x="46" y="30.0" text-anchor="end" class="ax">0,25</text><rect x="53.0" y="259.3" width="40.2" height="0.7" class="bar"/><text x="73.1" y="276" text-anchor="middle" class="ax">0</text><rect x="95.2" y="253.6" width="40.2" height="6.4" class="bar"/><text x="115.2" y="276" text-anchor="middle" class="ax">1</text><rect x="137.3" y="233.9" width="40.2" height="26.1" class="bar"/><text x="157.4" y="276" text-anchor="middle" class="ax">2</text><rect x="179.5" y="193.0" width="40.2" height="67.0" class="bar"/><text x="199.5" y="276" text-anchor="middle" class="ax">3</text><rect x="221.6" y="137.9" width="40.2" height="122.1" class="bar"/><text x="241.7" y="276" text-anchor="middle" class="ax">4</text><rect x="263.8" y="92.6" width="40.2" height="167.4" class="bar"/><text x="283.8" y="276" text-anchor="middle" class="ax">5</text><rect x="305.9" y="80.6" width="40.2" height="179.4" class="bar"/><text x="326.0" y="276" text-anchor="middle" class="ax">6</text><rect x="348.1" y="106.3" width="40.2" height="153.7" class="bar"/><text x="368.2" y="276" text-anchor="middle" class="ax">7</text><rect x="390.2" y="152.9" width="40.2" height="107.1" class="bar"/><text x="410.3" y="276" text-anchor="middle" class="ax">8</text><rect x="432.4" y="198.8" width="40.2" height="61.2" class="bar"/><text x="452.5" y="276" text-anchor="middle" class="ax">9</text><rect x="474.5" y="231.2" width="40.2" height="28.8" class="bar"/><text x="494.6" y="276" text-anchor="middle" class="ax">10</text><rect x="516.7" y="248.8" width="40.2" height="11.2" class="bar"/><text x="536.8" y="276" text-anchor="middle" class="ax">11</text><rect x="558.8" y="256.4" width="40.2" height="3.6" class="bar"/><text x="578.9" y="276" text-anchor="middle" class="ax">12</text><line x1="52" y1="260.0" x2="600" y2="260.0" class="axis"/><line x1="52" y1="18" x2="52" y2="260.0" class="axis"/><text x="600" y="294" text-anchor="end" class="ax">k</text><text x="58" y="16" class="ax">P(X = k)</text></svg>
+<ol class="sub">
+<li>Berechnen Sie den Erwartungswert und prüfen Sie ihn am Histogramm. <span class="p">2 P.</span></li>
+<li>Ermitteln Sie näherungsweise $P(4\le X\le8)$ und beschreiben Sie diese Wahrscheinlichkeit im Histogramm. <span class="p">3 P.</span></li>
+<li>$Y$ ist binomialverteilt mit $n=20$ und $p=0{,}7$. Beschreiben Sie ohne Rechnung das Histogramm von $Y$ und begründen Sie $P(Y=14)=P(X=6)$. <span class="p">3 P.</span></li>
+<li>Beurteilen Sie: „Da $\mu=6$ ist, gilt $P(X\le6)=0{,}5$.“ <span class="p">2 P.</span></li>
+</ol></div>
+ <div class="helps"><details class="hint h1"><summary>Hilfe 1</summary><div>$\mu=n\cdot p$. Bei ganzzahligem Erwartungswert liegt dort die höchste Säule.</div></details><details class="hint h2"><summary>Hilfe 2</summary><div>b) Lies die Säulenhöhen bei $k=4,\dots,8$ ab und addiere. Jede Säule hat Breite 1, also ist ihre Fläche gleich der Wahrscheinlichkeit.</div></details><details class="hint h3"><summary>Hilfe 3</summary><div>c) $p=0{,}7=1-0{,}3$: Treffer und Nieten sind vertauscht, $Y=20-X$. d) Addiere die Säulen von $0$ bis $6$ – die Verteilung ist nicht symmetrisch, und die Säule bei 6 zählt ganz mit.</div></details>
+  <details class="sol"><summary>Musterlösung</summary><div><p><b>a)</b> $\mu=20\cdot0{,}3=6$; die höchste Säule liegt bei $k=6$ (ca. $0{,}19$). ✓</p>
+<p><b>b)</b> $P(4\le X\le8)\approx0{,}13+0{,}18+0{,}19+0{,}16+0{,}11=0{,}77$ (exakt $0{,}780$); Summe der Flächen der Säulen von $k=4$ bis $k=8$.</p>
+<p><b>c)</b> Das Histogramm von $Y$ ist das Spiegelbild an $k=10$: höchste Säule bei $k=14$, linksschief. $Y=14$ bedeutet 14 Treffer mit $p=0{,}7$, also 6 Nieten – das entspricht 6 Treffern mit $p=0{,}3$: $\binom{20}{14}0{,}7^{14}0{,}3^6=\binom{20}{6}0{,}3^6 0{,}7^{14}$.</p>
+<p><b>d)</b> Falsch: $P(X\le6)\approx0{,}00+0{,}01+0{,}03+0{,}07+0{,}13+0{,}18+0{,}19\approx0{,}61$ (exakt $0{,}608$). Die Säule bei $\mu=6$ zählt vollständig mit, und die Verteilung ist rechtsschief.</p></div></details>
+ </div>
+</article>
+<article class="task" id="t7" data-part="1">
+ <div class="task-head">
+  <div><span class="task-num">T7</span><span class="task-title">Der Treppengraph</span></div>
+  <div class="tags"><span class="tag lvl1">Grundlagen</span><span class="tag">IX.4</span><span class="tag">8 P.</span><span class="tag">≈ 9 Min.</span>
+  <label class="done"><input type="checkbox" data-done="t7"> erledigt</label></div>
+ </div>
+ <div class="task-body"><p>Die Abbildung zeigt den Graphen der kumulierten Verteilungsfunktion $F_{15;\,0{,}4}$.</p><svg viewBox="0 0 620 320" class="fig" role="img" aria-label="Treppengraph F(15;0,4)"><line x1="52" y1="254.6" x2="600" y2="254.6" class="grid"/><text x="46" y="258.6" text-anchor="end" class="ax">0,1</text><line x1="52" y1="229.2" x2="600" y2="229.2" class="grid"/><text x="46" y="233.2" text-anchor="end" class="ax">0,2</text><line x1="52" y1="203.8" x2="600" y2="203.8" class="grid"/><text x="46" y="207.8" text-anchor="end" class="ax">0,3</text><line x1="52" y1="178.4" x2="600" y2="178.4" class="grid"/><text x="46" y="182.4" text-anchor="end" class="ax">0,4</text><line x1="52" y1="153.0" x2="600" y2="153.0" class="grid"/><text x="46" y="157.0" text-anchor="end" class="ax">0,5</text><line x1="52" y1="127.6" x2="600" y2="127.6" class="grid"/><text x="46" y="131.6" text-anchor="end" class="ax">0,6</text><line x1="52" y1="102.2" x2="600" y2="102.2" class="grid"/><text x="46" y="106.2" text-anchor="end" class="ax">0,7</text><line x1="52" y1="76.8" x2="600" y2="76.8" class="grid"/><text x="46" y="80.8" text-anchor="end" class="ax">0,8</text><line x1="52" y1="51.4" x2="600" y2="51.4" class="grid"/><text x="46" y="55.4" text-anchor="end" class="ax">0,9</text><line x1="52" y1="26.0" x2="600" y2="26.0" class="grid"/><text x="46" y="30.0" text-anchor="end" class="ax">1,0</text><line x1="52.0" y1="280" x2="84.23529411764706" y2="280" class="step"/><line x1="84.2" y1="279.9" x2="116.5" y2="279.9" class="step"/><circle cx="84.2" cy="279.9" r="3.5" class="dot"/><text x="84.2" y="296" text-anchor="middle" class="ax">0</text><line x1="116.5" y1="278.7" x2="148.7" y2="278.7" class="step"/><circle cx="116.5" cy="278.7" r="3.5" class="dot"/><text x="116.5" y="296" text-anchor="middle" class="ax">1</text><line x1="148.7" y1="273.1" x2="180.9" y2="273.1" class="step"/><circle cx="148.7" cy="273.1" r="3.5" class="dot"/><text x="148.7" y="296" text-anchor="middle" class="ax">2</text><line x1="180.9" y1="257.0" x2="213.2" y2="257.0" class="step"/><circle cx="180.9" cy="257.0" r="3.5" class="dot"/><text x="180.9" y="296" text-anchor="middle" class="ax">3</text><line x1="213.2" y1="224.8" x2="245.4" y2="224.8" class="step"/><circle cx="213.2" cy="224.8" r="3.5" class="dot"/><text x="213.2" y="296" text-anchor="middle" class="ax">4</text><line x1="245.4" y1="177.6" x2="277.6" y2="177.6" class="step"/><circle cx="245.4" cy="177.6" r="3.5" class="dot"/><text x="245.4" y="296" text-anchor="middle" class="ax">5</text><line x1="277.6" y1="125.1" x2="309.9" y2="125.1" class="step"/><circle cx="277.6" cy="125.1" r="3.5" class="dot"/><text x="277.6" y="296" text-anchor="middle" class="ax">6</text><line x1="309.9" y1="80.1" x2="342.1" y2="80.1" class="step"/><circle cx="309.9" cy="80.1" r="3.5" class="dot"/><text x="309.9" y="296" text-anchor="middle" class="ax">7</text><line x1="342.1" y1="50.1" x2="374.4" y2="50.1" class="step"/><circle cx="342.1" cy="50.1" r="3.5" class="dot"/><text x="342.1" y="296" text-anchor="middle" class="ax">8</text><line x1="374.4" y1="34.6" x2="406.6" y2="34.6" class="step"/><circle cx="374.4" cy="34.6" r="3.5" class="dot"/><text x="374.4" y="296" text-anchor="middle" class="ax">9</text><line x1="406.6" y1="28.4" x2="438.8" y2="28.4" class="step"/><circle cx="406.6" cy="28.4" r="3.5" class="dot"/><text x="406.6" y="296" text-anchor="middle" class="ax">10</text><line x1="438.8" y1="26.5" x2="471.1" y2="26.5" class="step"/><circle cx="438.8" cy="26.5" r="3.5" class="dot"/><text x="438.8" y="296" text-anchor="middle" class="ax">11</text><line x1="471.1" y1="26.1" x2="503.3" y2="26.1" class="step"/><circle cx="471.1" cy="26.1" r="3.5" class="dot"/><text x="471.1" y="296" text-anchor="middle" class="ax">12</text><line x1="503.3" y1="26.0" x2="535.5" y2="26.0" class="step"/><circle cx="503.3" cy="26.0" r="3.5" class="dot"/><text x="503.3" y="296" text-anchor="middle" class="ax">13</text><line x1="535.5" y1="26.0" x2="567.8" y2="26.0" class="step"/><circle cx="535.5" cy="26.0" r="3.5" class="dot"/><text x="535.5" y="296" text-anchor="middle" class="ax">14</text><line x1="567.8" y1="26.0" x2="600.0" y2="26.0" class="step"/><circle cx="567.8" cy="26.0" r="3.5" class="dot"/><text x="567.8" y="296" text-anchor="middle" class="ax">15</text><line x1="52" y1="280" x2="600" y2="280" class="axis"/><line x1="52" y1="18" x2="52" y2="280" class="axis"/><text x="600" y="314" text-anchor="end" class="ax">x</text><text x="58" y="16" class="ax">F(x) = P(X ≤ x)</text></svg>
+<ol class="sub">
+<li>Ermitteln Sie näherungsweise $P(X\le5)$ und $P(X\le8)$. <span class="p">2 P.</span></li>
+<li>Ermitteln Sie $P(6\le X\le8)$ und $P(X\ge9)$. Geben Sie jeweils das Intervall und einen Term mit $F_{15;\,0{,}4}$ an. <span class="p">4 P.</span></li>
+<li>Bestimmen Sie den kleinsten Wert $k$, für den $P(X\le k)\ge0{,}5$ gilt. <span class="p">2 P.</span></li>
+</ol></div>
+ <div class="helps"><details class="hint h1"><summary>Hilfe 1</summary><div>Der Wert $F(k)$ ist die Höhe der Stufe, die bei $x=k$ beginnt (gefüllter Punkt).</div></details><details class="hint h2"><summary>Hilfe 2</summary><div>„Unten eins weniger“: $P(a\le X\le b)=F(b)-F(a-1)$. „Mindestens 9“ ist das Gegenereignis von „höchstens 8“.</div></details><details class="hint h3"><summary>Hilfe 3</summary><div>c) Suche die erste Stufe, die bei $0{,}5$ oder darüber liegt.</div></details>
+  <details class="sol"><summary>Musterlösung</summary><div><p><b>a)</b> $P(X\le5)=F(5)\approx0{,}40$; $P(X\le8)=F(8)\approx0{,}91$.</p>
+<p><b>b)</b> $[6;8]$: $F(8)-F(5)\approx0{,}91-0{,}40=0{,}51$ (exakt $0{,}502$). $[9;15]$: $1-F(8)\approx0{,}09$ (exakt $0{,}095$).</p>
+<p><b>c)</b> $F(5)\approx0{,}40<0{,}5$, $F(6)\approx0{,}61\ge0{,}5$ → $k=6$.</p></div></details>
+ </div>
+</article>
+<article class="task" id="t8" data-part="1">
+ <div class="task-head">
+  <div><span class="task-num">T8</span><span class="task-title">Fehlende Werte in der Verteilung</span></div>
+  <div class="tags"><span class="tag lvl3">Klausurniveau</span><span class="tag">IX.1, IX.3</span><span class="tag">8 P.</span><span class="tag">≈ 10 Min.</span>
+  <label class="done"><input type="checkbox" data-done="t8"> erledigt</label></div>
+ </div>
+ <div class="task-body"><p>$Y$ ist binomialverteilt mit $n=4$ und unbekanntem $p$. Bekannt sind nur zwei Werte der Verteilung:</p>
+<table class="vft"><tr><th>$k$</th><td>0</td><td>1</td><td>2</td><td>3</td><td>4</td></tr><tr><th>$P(Y=k)$</th><td>$0{,}0016$</td><td>?</td><td>?</td><td>?</td><td>$0{,}4096$</td></tr></table>
+<ol class="sub">
+<li>Bestimmen Sie $p$ und bestätigen Sie Ihr Ergebnis mit dem zweiten gegebenen Wert. <span class="p">3 P.</span></li>
+<li>Berechnen Sie die fehlenden Wahrscheinlichkeiten. <span class="p">3 P.</span></li>
+<li>Berechnen Sie den Erwartungswert mit $E(Y)=\sum k\cdot P(Y=k)$ und vergleichen Sie mit $n\cdot p$. <span class="p">2 P.</span></li>
+</ol></div>
+ <div class="helps"><details class="hint h1"><summary>Hilfe 1</summary><div>$P(Y=0)=(1-p)^4=0{,}0016$. Welche Zahl hoch 4 ergibt $0{,}0016$? Tipp: $2^4=16$.</div></details><details class="hint h2"><summary>Hilfe 2</summary><div>b) Bernoulli-Formel mit $\binom41=4$, $\binom42=6$, $\binom43=4$. Kontrolle: Die Summe aller Werte ist 1.</div></details><details class="hint h3"><summary>Hilfe 3</summary><div>c) $E(Y)=0\cdot P(0)+1\cdot P(1)+\dots+4\cdot P(4)$.</div></details>
+  <details class="sol"><summary>Musterlösung</summary><div><p><b>a)</b> $(1-p)^4=0{,}0016\Rightarrow1-p=0{,}2\Rightarrow p=0{,}8$. Kontrolle: $0{,}8^4=0{,}4096$ ✓.</p>
+<p><b>b)</b> $P(Y=1)=4\cdot0{,}8\cdot0{,}2^3=0{,}0256$; $P(Y=2)=6\cdot0{,}64\cdot0{,}04=0{,}1536$; $P(Y=3)=4\cdot0{,}512\cdot0{,}2=0{,}4096$. Summe: $0{,}0016+0{,}0256+0{,}1536+0{,}4096+0{,}4096=1$ ✓.</p>
+<p><b>c)</b> $E(Y)=0{,}0256+2\cdot0{,}1536+3\cdot0{,}4096+4\cdot0{,}4096=0{,}0256+0{,}3072+1{,}2288+1{,}6384=3{,}2=4\cdot0{,}8$ ✓.</p></div></details>
+ </div>
+</article>
+<article class="task" id="t9" data-part="1">
+ <div class="task-head">
+  <div><span class="task-num">T9</span><span class="task-title">Glückskekse simulieren</span></div>
+  <div class="tags"><span class="tag lvl2">Training</span><span class="tag">VIII.4, VIII.2</span><span class="tag">10 P.</span><span class="tag">≈ 12 Min.</span>
+  <label class="done"><input type="checkbox" data-done="t9"> erledigt</label></div>
+ </div>
+ <div class="task-body"><p>In jedem fünften Glückskeks steckt ein Gewinncode. Lea kauft vier Kekse und möchte wissen, wie wahrscheinlich mindestens ein Gewinn ist. Ben simuliert das mit <code>randint(1,5,4)</code>; die Zahl $1$ steht für „Gewinn“. Seine 20 Durchgänge:</p>
+<table class="sim">
+<tr><td>1</td><td>2 2 4 5</td><td>6</td><td>2 5 4 4</td><td>11</td><td>3 4 4 2</td><td>16</td><td>1 4 2 3</td></tr>
+<tr><td>2</td><td>5 1 2 4</td><td>7</td><td>3 2 5 1</td><td>12</td><td>1 3 2 5</td><td>17</td><td>5 1 5 3</td></tr>
+<tr><td>3</td><td>1 5 5 2</td><td>8</td><td>1 3 5 5</td><td>13</td><td>4 4 5 5</td><td>18</td><td>1 4 1 4</td></tr>
+<tr><td>4</td><td>4 2 4 2</td><td>9</td><td>1 5 1 1</td><td>14</td><td>2 1 1 1</td><td>19</td><td>4 5 1 1</td></tr>
+<tr><td>5</td><td>1 2 2 2</td><td>10</td><td>4 5 5 3</td><td>15</td><td>2 5 5 1</td><td>20</td><td>3 1 2 1</td></tr></table>
+<ol class="sub">
+<li>Erläutern Sie, warum die Simulation zum Sachverhalt passt. <span class="p">2 P.</span></li>
+<li>Bestimmen Sie den Schätzwert für $P(\text{mindestens ein Gewinn})$. <span class="p">2 P.</span></li>
+<li>Berechnen Sie die Wahrscheinlichkeit exakt (Ergebnis als Dezimalzahl). <span class="p">3 P.</span></li>
+<li>Vergleichen Sie und geben Sie eine Lists-&amp;-Spreadsheet-Formel an, mit der man 500 Durchgänge auf einmal simulieren kann. <span class="p">3 P.</span></li>
+</ol></div>
+ <div class="helps"><details class="hint h1"><summary>Hilfe 1</summary><div><code>randint(1,5,4)</code> erzeugt vier ganze Zahlen von 1 bis 5, jede mit Wahrscheinlichkeit $\frac15$.</div></details><details class="hint h2"><summary>Hilfe 2</summary><div>b) Zähle die Zeilen, in denen mindestens eine 1 vorkommt. c) Gegenereignis „kein Gewinn“: $0{,}8^4$. Nebenrechnung: $0{,}8^2=0{,}64$, $0{,}64^2=0{,}4096$.</div></details><details class="hint h3"><summary>Hilfe 3</summary><div>d) Muster aus dem Unterricht: <code>=seq(countif(rand(4),?&lt;0.2),k,1,500)</code> zählt in jeder Zeile die Gewinne; danach <code>countif(…,?&gt;=1)/500.</code></div></details>
+  <details class="sol"><summary>Musterlösung</summary><div><p><b>a)</b> Jede Zahl steht für einen Keks; die 1 tritt mit Wahrscheinlichkeit $\frac15$ auf, genau wie ein Gewinncode. Die Kekse sind unabhängig, die Zufallszahlen auch.</p>
+<p><b>b)</b> Ohne 1: Nr. 1, 4, 6, 10, 11, 13 → 14 von 20 mit Gewinn. Schätzwert $0{,}70$.</p>
+<p><b>c)</b> $P=1-0{,}8^4=1-0{,}4096=0{,}5904$.</p>
+<p><b>d)</b> Der Schätzwert liegt deutlich über dem exakten Wert; bei nur 20 Durchgängen schwankt die relative Häufigkeit stark. Mit <code>=seq(countif(rand(4),?&lt;0.2),k,1,500)</code> in Spalte A und <code>=countif(a1:a500,?&gt;=1)/500.</code> erhält man einen viel zuverlässigeren Schätzwert.</p></div></details>
+ </div>
+</article>
+<article class="task" id="t10" data-part="1">
+ <div class="task-head">
+  <div><span class="task-num">T10</span><span class="task-title">Lose ziehen</span></div>
+  <div class="tags"><span class="tag lvl2">Training</span><span class="tag">VIII.1, VIII.3, IX.1</span><span class="tag">8 P.</span><span class="tag">≈ 10 Min.</span>
+  <label class="done"><input type="checkbox" data-done="t10"> erledigt</label></div>
+ </div>
+ <div class="task-body"><p>In einem Lostopf liegen 10 Lose, davon 4 Gewinne. Tim zieht nacheinander zwei Lose (ohne Zurücklegen).</p>
+<ol class="sub">
+<li>Berechnen Sie die Wahrscheinlichkeiten für „zwei Gewinne“ und „mindestens ein Gewinn“. <span class="p">4 P.</span></li>
+<li>Tim hat mindestens einen Gewinn. Bestimmen Sie die Wahrscheinlichkeit, dass er zwei Gewinne hat. <span class="p">2 P.</span></li>
+<li>Vergleichen Sie mit dem Ziehen mit Zurücklegen und erläutern Sie, wann man das Ziehen ohne Zurücklegen näherungsweise mit der Binomialverteilung beschreiben kann. <span class="p">2 P.</span></li>
+</ol></div>
+ <div class="helps"><details class="hint h1"><summary>Hilfe 1</summary><div>Zeichne einen zweistufigen Baum. Nach einem Gewinn sind noch 3 von 9 Losen Gewinne.</div></details><details class="hint h2"><summary>Hilfe 2</summary><div>„Mindestens ein Gewinn“ über das Gegenereignis „zwei Nieten“: $1-\frac6{10}\cdot\frac59$. b) $P_{\text{mind. 1}}(\text{2 G})=\frac{P(\text{2 G})}{P(\text{mind. 1})}$, denn „2 G“ ist in „mind. 1“ enthalten.</div></details><details class="hint h3"><summary>Hilfe 3</summary><div>c) Mit Zurücklegen: $X\sim B(2;\,0{,}4)$. Überlege, was sich ändert, wenn im Topf 1000 Lose mit 400 Gewinnen liegen.</div></details>
+  <details class="sol"><summary>Musterlösung</summary><div><p><b>a)</b> $P(GG)=\frac4{10}\cdot\frac39=\frac2{15}\approx0{,}133$. $P(\text{mind. 1})=1-\frac6{10}\cdot\frac59=1-\frac13=\frac23$.</p>
+<p><b>b)</b> $\dfrac{2/15}{2/3}=\dfrac15=0{,}2$.</p>
+<p><b>c)</b> Mit Zurücklegen: $P(GG)=0{,}4^2=0{,}16$, etwas größer, weil der Gewinnanteil nach einem Gewinn nicht sinkt. Ist die Zahl der Lose sehr groß im Vergleich zu den Ziehungen (z. B. 1000 Lose), ändert sich der Anteil kaum – dann ist die Binomialverteilung eine gute Näherung.</p></div></details>
+ </div>
+</article>
+</section>
+
+<section id="teil2">
+  <div class="sec-h"><h2>Teil 2 · Übungen mit TI-Nspire CAS</h2><span class="meta">4 Aufgaben im Klausurumfang · 25–30 Punkte</span></div>
+  
+<article class="task" id="k1" data-part="2">
+ <div class="task-head">
+  <div><span class="task-num">K1</span><span class="task-title">Paketzustellung</span></div>
+  <div class="tags"><span class="tag lvl3">Klausurniveau</span><span class="tag big">Klausurumfang</span><span class="tag">VIII.3, IX.1–IX.4</span><span class="tag">30 P.</span><span class="tag">≈ 55 Min.</span>
+  <label class="done"><input type="checkbox" data-done="k1"> erledigt</label></div>
+ </div>
+ <div class="task-body"><p>Ein Paketdienst stellt $70\,\%$ seiner Pakete mit eigenen Fahrerinnen und Fahrern zu, die übrigen über Subunternehmen. Pakete der eigenen Flotte kommen zu $95\,\%$ pünktlich an, Pakete der Subunternehmen zu $85\,\%$.</p>
+<ol class="sub">
+<li><ol class="subsub">
+<li>Stellen Sie den Sachverhalt in einem Baumdiagramm dar.</li>
+<li>Zeigen Sie, dass ein zufällig ausgewähltes Paket mit einer Wahrscheinlichkeit von $92\,\%$ pünktlich ankommt.</li>
+<li>Ein Paket kommt verspätet an. Berechnen Sie die Wahrscheinlichkeit, dass es von einem Subunternehmen zugestellt wurde.</li>
+<li>Beurteilen Sie die Aussage: „Mehr als die Hälfte der verspäteten Pakete kommt von Subunternehmen, obwohl diese nur ein knappes Drittel aller Pakete zustellen.“</li></ol>
+<span class="p">3+2+3+3 P.</span></li>
+<li>Eine Fahrerin hat an einem Tag $120$ Pakete im Wagen. Vereinfachend gilt: Jedes Paket kommt unabhängig mit $92\,\%$ pünktlich an. $X$ ist die Anzahl der pünktlichen Pakete.
+<ol class="subsub">
+<li>Berechnen Sie den Erwartungswert und interpretieren Sie ihn.</li>
+<li>Berechnen Sie $P(X=110)$.</li>
+<li>Berechnen Sie die Wahrscheinlichkeit, dass mindestens $115$ Pakete pünktlich sind, sowie die Wahrscheinlichkeit für mindestens $105$ und höchstens $112$ pünktliche Pakete.</li>
+<li>Berechnen Sie die Wahrscheinlichkeit, dass mehr als $10$ Pakete verspätet sind.</li></ol>
+<span class="p">2+2+4+3 P.</span></li>
+<li>Ein Tag gilt als „guter Tag“, wenn mindestens $110$ der $120$ Pakete pünktlich sind. Berechnen Sie die Wahrscheinlichkeit, dass in einer Woche mit fünf Arbeitstagen alle Tage gute Tage sind, sowie die Wahrscheinlichkeit für mindestens vier gute Tage. <span class="p">5 P.</span></li>
+<li>Beurteilen Sie, ob die Annahmen aus b) realistisch sind. Gehen Sie auf zwei Aspekte ein. <span class="p">3 P.</span></li>
+</ol></div>
+ <div class="helps"><details class="hint h1"><summary>Hilfe 1</summary><div>a) Erste Stufe: eigene Flotte $0{,}7$ / Subunternehmen $0{,}3$; zweite Stufe pünktlich/verspätet. Für (3) brauchst du $P(\text{verspätet})=1-0{,}92$. (4): Vergleiche $P_{\text{verspätet}}(\text{Sub})$ mit $0{,}3$.</div></details><details class="hint h2"><summary>Hilfe 2</summary><div>b) $X\sim B(120;\,0{,}92)$. Übersetze jedes Ereignis in ein Intervall: „mindestens 115“ → $[115;120]$. „Mehr als 10 verspätet“ heißt „weniger als 110 pünktlich“ → $[0;109]$.</div></details><details class="hint h3"><summary>Hilfe 3</summary><div>c) Erst $q=P(X\ge110)$ berechnen. Die Anzahl $G$ der guten Tage ist dann $B(5;\,q)$-verteilt: $P(G=5)=q^5$, $P(G\ge4)$ mit binomCdf. d) Denk an Bedingungen der Bernoulli-Kette: gleiche Wahrscheinlichkeit und Unabhängigkeit – z. B. Stau, Wetter, Route.</div></details>
+  <details class="sol"><summary>Musterlösung</summary><div><p><b>a)</b> (1) Eigene $0{,}7$: pünktlich $0{,}95$ / verspätet $0{,}05$; Sub $0{,}3$: pünktlich $0{,}85$ / verspätet $0{,}15$.<br>
+(2) $P(\text{p})=0{,}7\cdot0{,}95+0{,}3\cdot0{,}85=0{,}665+0{,}255=0{,}92$.<br>
+(3) $P_{\text{v}}(\text{Sub})=\dfrac{0{,}3\cdot0{,}15}{0{,}08}=\dfrac{0{,}045}{0{,}08}=0{,}5625$.<br>
+(4) Richtig: $56{,}25\,\%$ der verspäteten Pakete stammen von Subunternehmen, obwohl ihr Anteil an allen Paketen nur $30\,\%$ beträgt. Grund: Ihre Verspätungsquote ($15\,\%$) ist dreimal so hoch wie die der eigenen Flotte ($5\,\%$).</p>
+<p><b>b)</b> $X\sim B(120;\,0{,}92)$.<br>
+(1) $E(X)=120\cdot0{,}92=110{,}4$: An vielen solchen Tagen kommen im Mittel etwa 110 Pakete pünktlich an.<br>
+(2) $P(X=110)=\texttt{binompdf(120,0.92,110)}\approx0{,}1295$.<br>
+(3) $P(X\ge115)=1-F(114)=\texttt{binomCdf(120,0.92,115,120)}\approx0{,}0753$;<br>
+$P(105\le X\le112)=F(112)-F(104)=\texttt{binomCdf(120,0.92,105,112)}\approx0{,}7224$.<br>
+(4) Mehr als 10 verspätet ⇔ höchstens 109 pünktlich: $P(X\le109)=F(109)=\texttt{binomCdf(120,0.92,0,109)}\approx0{,}3649$.</p>
+<p><b>c)</b> $q=P(X\ge110)=1-F(109)\approx0{,}6351$. $G\sim B(5;\,q)$:<br>
+$P(G=5)=q^5\approx0{,}1034$; $P(G\ge4)=\texttt{binomCdf(5,0.6351,4,5)}\approx0{,}4002$.</p>
+<p><b>d)</b> Unabhängigkeit ist fraglich: Ein Stau oder eine Panne verspätet viele Pakete gleichzeitig. Die Wahrscheinlichkeit $0{,}92$ gilt nicht für jedes Paket gleich (Route, Tageszeit, Wetter). Das Modell ist daher nur eine grobe Näherung.</p></div></details>
+ </div>
+</article>
+<article class="task" id="k2" data-part="2">
+ <div class="task-head">
+  <div><span class="task-num">K2</span><span class="task-title">Zufriedenheit mit der Mensa</span></div>
+  <div class="tags"><span class="tag lvl3">Klausurniveau</span><span class="tag big">Klausurumfang</span><span class="tag">VIII.3, VIII.4, IX.3, IX.4</span><span class="tag">25 P.</span><span class="tag">≈ 45 Min.</span>
+  <label class="done"><input type="checkbox" data-done="k2"> erledigt</label></div>
+ </div>
+ <div class="task-body"><p>Die Schulleitung geht davon aus, dass $65\,\%$ der Schülerinnen und Schüler mit dem Mensa-Essen zufrieden sind. Für eine Umfrage werden $50$ Personen zufällig ausgewählt. $X$ ist die Anzahl der Zufriedenen; $X$ wird als binomialverteilt angenommen.</p>
+<ol class="sub">
+<li><ol class="subsub">
+<li>Berechnen Sie den Erwartungswert sowie $P(X=33)$.</li>
+<li>Berechnen Sie die Wahrscheinlichkeiten für höchstens $30$ sowie für mindestens $30$ und höchstens $35$ Zufriedene.</li>
+<li>Beurteilen Sie: „Mit mehr als $50\,\%$ Wahrscheinlichkeit sind mindestens zwei Drittel der Befragten zufrieden.“</li></ol>
+<span class="p">4+4+3 P.</span></li>
+<li>Vor der Umfrage hat ein Schüler die Befragung simuliert. In der Formelzeile der Spalte A steht <code>=seq(countif(rand(50),?&lt;0.65),k,1,400)</code>, in einer freien Zelle <code>=countif(a1:a400,?&lt;=30)/400.</code> mit dem Ergebnis <code>0.29</code>.<br>
+Erläutern Sie die Simulation, interpretieren Sie das Ergebnis und vergleichen Sie es mit dem passenden exakten Wert. <span class="p">6 P.</span></li>
+<li>Unter allen Schülerinnen und Schülern sind $60\,\%$ in der Sekundarstufe I. Von diesen sind $75\,\%$ mit der Mensa zufrieden. Insgesamt sind es weiterhin $65\,\%$.
+<ol class="subsub">
+<li>Stellen Sie die Situation in einer Vierfeldertafel dar und bestimmen Sie den Anteil der Zufriedenen in der Sekundarstufe II.</li>
+<li>Untersuchen Sie, ob „Sekundarstufe I“ und „zufrieden“ unabhängig sind.</li>
+<li>Eine zufriedene Person wird ausgewählt. Bestimmen Sie die Wahrscheinlichkeit, dass sie zur Sekundarstufe I gehört.</li></ol>
+<span class="p">4+2+2 P.</span></li>
+</ol></div>
+ <div class="helps"><details class="hint h1"><summary>Hilfe 1</summary><div>a) $X\sim B(50;\,0{,}65)$. „Zwei Drittel von 50“ sind $33{,}\overline3$, also mindestens 34.</div></details><details class="hint h2"><summary>Hilfe 2</summary><div>b) <code>rand(50)</code>: 50 Befragte; <code>?&lt;0.65</code>: zufrieden; <code>countif</code> zählt die Zufriedenen; <code>seq(…,k,1,400)</code> wiederholt 400-mal. Exakter Vergleichswert: $P(X\le30)$.</div></details><details class="hint h3"><summary>Hilfe 3</summary><div>c) Trage $P(\text{I})=0{,}6$, $P(\text{zufr.})=0{,}65$ und $P(\text{I}\cap\text{zufr.})=0{,}6\cdot0{,}75$ ein; der Rest folgt über Differenzen. Unabhängig, falls $P_{\text{I}}(\text{zufr.})=P(\text{zufr.})$.</div></details>
+  <details class="sol"><summary>Musterlösung</summary><div><p><b>a)</b> (1) $E(X)=50\cdot0{,}65=32{,}5$; $P(X=33)=\texttt{binompdf(50,0.65,33)}\approx0{,}1171$.<br>
+(2) $P(X\le30)=F(30)\approx0{,}2736$; $P(30\le X\le35)=F(35)-F(29)\approx0{,}6262$.<br>
+(3) Mindestens zwei Drittel heißt $X\ge34$: $P(X\ge34)=1-F(33)\approx0{,}3889<0{,}5$ → Aussage falsch.</p>
+<p><b>b)</b> <code>rand(50)</code> erzeugt 50 Zufallszahlen = 50 Befragte; Zahlen unter $0{,}65$ stehen für „zufrieden“ (Wahrscheinlichkeit $65\,\%$); <code>countif</code> zählt die Zufriedenen einer Umfrage; <code>seq(…,k,1,400)</code> liefert 400 simulierte Umfragen. <code>countif(a1:a400,?&lt;=30)/400.</code> ist die relative Häufigkeit der Umfragen mit höchstens 30 Zufriedenen: In $29\,\%$ der simulierten Umfragen waren höchstens 30 zufrieden. Exakt: $P(X\le30)\approx0{,}274$. Die Abweichung ist eine zufällige Schwankung bei 400 Wiederholungen.</p>
+<p><b>c)</b> (1)</p>
+<table class="vft"><tr><th></th><th>zufrieden</th><th>nicht zufr.</th><th>$\Sigma$</th></tr>
+<tr><th>Sek I</th><td>0,45</td><td>0,15</td><td>0,60</td></tr><tr><th>Sek II</th><td>0,20</td><td>0,20</td><td>0,40</td></tr>
+<tr><th>$\Sigma$</th><td>0,65</td><td>0,35</td><td>1</td></tr></table>
+<p>Anteil in Sek II: $\frac{0{,}20}{0{,}40}=50\,\%$.<br>
+(2) $P(\text{I})\cdot P(\text{z})=0{,}6\cdot0{,}65=0{,}39\neq0{,}45$ → abhängig (Sek I ist zufriedener).<br>
+(3) $P_{\text{z}}(\text{I})=\frac{0{,}45}{0{,}65}=\frac9{13}\approx0{,}692$.</p></div></details>
+ </div>
+</article>
+<article class="task" id="k3" data-part="2">
+ <div class="task-head">
+  <div><span class="task-num">K3</span><span class="task-title">Fahrradkontrolle – Rechnerausgaben deuten</span></div>
+  <div class="tags"><span class="tag lvl3">Klausurniveau</span><span class="tag big">Klausurumfang</span><span class="tag">IX.1–IX.4, VIII.2</span><span class="tag">25 P.</span><span class="tag">≈ 45 Min.</span>
+  <label class="done"><input type="checkbox" data-done="k3"> erledigt</label></div>
+ </div>
+ <div class="task-body"><p>Bei Schülerfahrrädern ist erfahrungsgemäß an $15\,\%$ die Beleuchtung defekt. Die Polizei kontrolliert vor einer Schule $40$ zufällig ausgewählte Fahrräder. $X$ ist die Anzahl der Fahrräder mit defekter Beleuchtung; $X$ wird als binomialverteilt angenommen. Ein Mitarbeiter hat Folgendes berechnet:</p><div class="ti"><div class="ti-h">1.1 Calculator</div><table><tr><td>(I)&nbsp; binompdf(40,0.15,6)</td><td class="out">0.174156</td></tr><tr><td>(II)&nbsp; binomCdf(40,0.15,0,3)</td><td class="out">0.130169</td></tr><tr><td>(III)&nbsp; binomCdf(40,0.15,9,40)</td><td class="out">0.135402</td></tr><tr><td>(IV)&nbsp; 1-binomCdf(40,0.15,0,10)</td><td class="out">0.029921</td></tr></table></div>
+<ol class="sub">
+<li>Formulieren Sie zu jeder Rechnung eine passende Frage im Sachzusammenhang und geben Sie jeweils das Intervall und einen Term mit $F_{40;\,0{,}15}$ an. <span class="p">8 P.</span></li>
+<li>Eine Kollegin hat die folgende Tabelle erstellt und notiert: „$P(\text{mehr als 4 und weniger als 9 defekt})=\texttt{kum}(9)-\texttt{kum}(4)\approx0{,}932780-0{,}263320=0{,}66946$“.<div class="ti"><div class="ti-h">1.2 Lists &amp; Spreadsheet (Ausschnitt)</div><table class="ls"><tr><th></th><th>A treffer</th><th>B wkt</th><th>C kum</th></tr><tr class="f"><td>◆</td><td>=seq(t,t,0,40)</td><td>=binompdf(40,0.15)</td><td>=cumulativesum(wkt)</td></tr><tr><td>1</td><td>0</td><td>0.001502</td><td>0.001502</td></tr><tr><td>2</td><td>1</td><td>0.010604</td><td>0.012107</td></tr><tr><td>3</td><td>2</td><td>0.036492</td><td>0.048599</td></tr><tr><td>4</td><td>3</td><td>0.081570</td><td>0.130169</td></tr><tr><td>5</td><td>4</td><td>0.133151</td><td>0.263320</td></tr><tr><td>6</td><td>5</td><td>0.169180</td><td>0.432500</td></tr><tr><td>7</td><td>6</td><td>0.174156</td><td>0.606657</td></tr><tr><td>8</td><td>7</td><td>0.149277</td><td>0.755933</td></tr><tr><td>9</td><td>8</td><td>0.108665</td><td>0.864598</td></tr><tr><td>10</td><td>9</td><td>0.068182</td><td>0.932780</td></tr><tr><td>11</td><td>10</td><td>0.037299</td><td>0.970079</td></tr><tr><td>12</td><td>11</td><td>0.017952</td><td>0.988031</td></tr><tr><td>13</td><td>12</td><td>0.007656</td><td>0.995687</td></tr><tr><td>⋮</td><td>⋮</td><td>⋮</td><td>⋮</td></tr></table></div>
+Erläutern Sie den Fehler und berechnen Sie den richtigen Wert mithilfe der Tabelle. <span class="p">5 P.</span></li>
+<li>Der Mitarbeiter hat außerdem gerechnet:<div class="ti"><div class="ti-h">1.3 Calculator</div><table><tr><td>solve(1-0.85^n≥0.99,n)</td><td class="out">n≥28.3362</td></tr></table></div>Formulieren Sie eine passende Aufgabenstellung, erläutern Sie den Ansatz und interpretieren Sie das Ergebnis. <span class="p">4 P.</span></li>
+<li>Beurteilen Sie die Aussage: „Der Erwartungswert ist 6. Bei einer Kontrolle findet man also fast immer etwa 6 defekte Fahrräder.“ Nutzen Sie dazu geeignete Werte. <span class="p">5 P.</span></li>
+<li>Beurteilen Sie, ob die Annahme einer Binomialverteilung angemessen ist, wenn die Polizei die Fahrräder einer einzigen Klasse kontrolliert. <span class="p">3 P.</span></li>
+</ol></div>
+ <div class="helps"><details class="hint h1"><summary>Hilfe 1</summary><div>a) Übersetze jeden Befehl zurück: Die Grenzen in binomCdf sind die kleinste und die größte Trefferzahl des Ereignisses. „1 − …“ bedeutet Gegenereignis.</div></details><details class="hint h2"><summary>Hilfe 2</summary><div>b) Welche Trefferzahlen gehören zu „mehr als 4 und weniger als 9“? Die Tabelle beginnt bei $k=0$, Zeile $r$ gehört zu $k=r-1$. „Unten eins weniger“: $P(a\le X\le b)=F(b)-F(a-1)$.</div></details><details class="hint h3"><summary>Hilfe 3</summary><div>c) $1-0{,}85^n$ ist die Wahrscheinlichkeit für mindestens ein defektes Fahrrad unter $n$. d) Vergleiche $P(X=6)$ und z. B. $P(5\le X\le7)$ mit „fast immer“.</div></details>
+  <details class="sol"><summary>Musterlösung</summary><div><p><b>a)</b> (I) „Mit welcher Wahrscheinlichkeit sind genau 6 Fahrräder defekt?“ $[6;6]$, $F(6)-F(5)$, $\approx0{,}174$.<br>
+(II) „… höchstens 3?“ $[0;3]$, $F(3)$, $\approx0{,}130$.<br>
+(III) „… mindestens 9?“ $[9;40]$, $1-F(8)$, $\approx0{,}135$.<br>
+(IV) „… mehr als 10?“ $[11;40]$, $1-F(10)$, $\approx0{,}030$.</p>
+<p><b>b)</b> „Mehr als 4 und weniger als 9“ ist $[5;8]$, also $F(8)-F(4)$. Die Kollegin hat mit $F(9)$ gerechnet und damit $X=9$ mitgezählt, obwohl „weniger als 9“ die 9 ausschließt. Die untere Grenze ist richtig: Für $[5;\ldots]$ zieht man $F(4)$ ab. Richtig ist $F(8)=0{,}864598$ (Zeile 9 der Tabelle, denn Zeile $r$ gehört zu $k=r-1$).<br>
+$P(5\le X\le8)=0{,}864598-0{,}263320=0{,}601278\approx0{,}60$.</p>
+<p><b>c)</b> „Wie viele Fahrräder muss die Polizei mindestens kontrollieren, um mit mindestens $99\,\%$ Wahrscheinlichkeit mindestens ein Fahrrad mit defekter Beleuchtung zu finden?“ Ansatz: $P(\text{mind. eins})=1-P(\text{keins})=1-0{,}85^n\ge0{,}99$. Ergebnis $n\ge28{,}34$ → mindestens 29 Fahrräder.</p>
+<p><b>d)</b> $P(X=6)\approx0{,}174$, $P(5\le X\le7)=F(7)-F(4)\approx0{,}756-0{,}263=0{,}493$. Genau 6 findet man nur in etwa jeder sechsten Kontrolle, 5 bis 7 in etwa der Hälfte. Der Erwartungswert ist ein Mittelwert über viele Kontrollen – die Aussage „fast immer“ ist falsch.</p>
+<p><b>e)</b> In einer Klasse sind die Fahrräder nicht unabhängig: Schüler einer Klasse haben ähnliche Wege, Gewohnheiten oder wurden gemeinsam informiert; die Defektquote kann von $15\,\%$ abweichen. Die Binomialverteilung ist dann nur eine grobe Näherung.</p></div></details>
+ </div>
+</article>
+<article class="task" id="k4" data-part="2">
+ <div class="task-head">
+  <div><span class="task-num">K4</span><span class="task-title">Die Fähre zur Insel</span></div>
+  <div class="tags"><span class="tag lvl3">Klausurniveau</span><span class="tag big">Klausurumfang</span><span class="tag">VIII.3, IX.1–IX.4</span><span class="tag">25 P.</span><span class="tag">≈ 45 Min.</span>
+  <label class="done"><input type="checkbox" data-done="k4"> erledigt</label></div>
+ </div>
+ <div class="task-body"><p>Eine Fähre fährt täglich zu einer Nordseeinsel. An $20\,\%$ der Tage im Sommer herrscht Sturm. An Sturmtagen fällt die Fähre mit einer Wahrscheinlichkeit von $60\,\%$ aus, an den übrigen Tagen mit $5\,\%$.</p>
+<ol class="sub">
+<li>Zeigen Sie mithilfe eines Baumdiagramms, dass die Fähre an einem zufälligen Tag mit $16\,\%$ Wahrscheinlichkeit ausfällt. Die Fähre ist ausgefallen. Bestimmen Sie die Wahrscheinlichkeit, dass Sturm herrschte. <span class="p">3+3 P.</span></li>
+<li>Für den Juli (31 Tage) wird angenommen, dass die Anzahl $X$ der Ausfalltage binomialverteilt ist mit $p=0{,}16$.
+<ol class="subsub">
+<li>Berechnen Sie den Erwartungswert und die Wahrscheinlichkeit für höchstens 3 Ausfalltage.</li>
+<li>Berechnen Sie die Wahrscheinlichkeit für mehr als 8 Ausfalltage.</li>
+<li>Ermitteln Sie mit einer Tabelle die wahrscheinlichste Anzahl an Ausfalltagen. Beschreiben Sie Ihr Vorgehen am TI-Nspire.</li>
+<li>Beschreiben Sie, wie man mit dem TI-Nspire das Histogramm der Verteilung von $X$ erzeugt.</li></ol>
+<span class="p">3+2+3+2 P.</span></li>
+<li>Familie Jansen macht eine Woche (7 Tage) Urlaub auf der Insel. Berechnen Sie die Wahrscheinlichkeit, dass die Fähre an den ersten beiden Tagen ausfällt und an den übrigen fünf Tagen höchstens einmal. <span class="p">4 P.</span></li>
+<li>Beurteilen Sie die Annahme, dass die Ausfalltage im Juli binomialverteilt sind. <span class="p">3 P.</span></li>
+<li>Untersuchen Sie, ob „Sturm“ und „Ausfall“ stochastisch unabhängig sind. <span class="p">2 P.</span></li>
+</ol></div>
+ <div class="helps"><details class="hint h1"><summary>Hilfe 1</summary><div>a) Pfade „Sturm–Ausfall“ $0{,}2\cdot0{,}6$ und „kein Sturm–Ausfall“ $0{,}8\cdot0{,}05$. Danach $P_{\text{Ausfall}}(\text{Sturm})$.</div></details><details class="hint h2"><summary>Hilfe 2</summary><div>b) $X\sim B(31;\,0{,}16)$. Für die wahrscheinlichste Anzahl: Spalten <code>=seq(t,t,0,31)</code> und <code>=binompdf(31,0.16)</code>, dann <code>max(wkt)</code> oder die Werte um $\mu$ vergleichen. Histogramm: Ergebnisdiagramm in Lists &amp; Spreadsheet.</div></details><details class="hint h3"><summary>Hilfe 3</summary><div>c) Erste zwei Tage: $0{,}16^2$. Übrige 5 Tage: $Y\sim B(5;\,0{,}16)$, $P(Y\le1)$. Multiplizieren (Unabhängigkeit). d) Stürme dauern oft mehrere Tage. e) Vergleiche $P_{\text{Sturm}}(\text{Ausfall})$ mit $P(\text{Ausfall})$.</div></details>
+  <details class="sol"><summary>Musterlösung</summary><div><p><b>a)</b> Sturm $0{,}2$: Ausfall $0{,}6$ / fährt $0{,}4$; kein Sturm $0{,}8$: Ausfall $0{,}05$ / fährt $0{,}95$.<br>
+$P(A)=0{,}2\cdot0{,}6+0{,}8\cdot0{,}05=0{,}12+0{,}04=0{,}16$. $P_A(\text{Sturm})=\frac{0{,}12}{0{,}16}=0{,}75$.</p>
+<p><b>b)</b> $X\sim B(31;\,0{,}16)$.<br>
+(1) $E(X)=31\cdot0{,}16=4{,}96$; $P(X\le3)=F(3)\approx0{,}2465$.<br>
+(2) $P(X>8)=P(X\ge9)=1-F(8)=\texttt{binomCdf(31,0.16,9,31)}\approx0{,}0490$.<br>
+(3) Tabelle: $P(X=4)\approx0{,}1861$, $P(X=5)\approx0{,}1915$, $P(X=6)\approx0{,}1580$ → wahrscheinlichste Anzahl: 5 Ausfalltage. Vorgehen: In Lists &amp; Spreadsheet Spalte <code>treffer</code> mit <code>=seq(t,t,0,31)</code>, Spalte <code>wkt</code> mit <code>=binompdf(31,0.16)</code>, dann <code>=max(wkt)</code> und die zugehörige Zeile suchen (Zeile 6 ↔ $k=5$).<br>
+(4) menu ▸ Daten ▸ Ergebnisdiagramm, X-Liste <code>treffer</code>, Ergebnisliste <code>wkt</code>.</p>
+<p><b>c)</b> $0{,}16^2\cdot P(Y\le1)$ mit $Y\sim B(5;\,0{,}16)$: $P(Y\le1)\approx0{,}8165$. Ergebnis: $0{,}0256\cdot0{,}8165\approx0{,}0209$.</p>
+<p><b>d)</b> Unabhängigkeit der Tage ist fraglich: Stürme dauern oft mehrere Tage, Ausfalltage treten daher gehäuft auf. Auch $p$ ist nicht jeden Tag gleich (Wetterlage, Monatsanfang/-ende). Das Modell ist nur eine Näherung.</p>
+<p><b>e)</b> $P_{\text{Sturm}}(A)=0{,}6\neq P(A)=0{,}16$ → abhängig (bei Sturm fällt die Fähre deutlich häufiger aus).</p></div></details>
+ </div>
+</article>
+</section>
+</main>
+<footer><a href="../index.html">← Zurück zur Stochastik-Übersicht</a><br>Unterrichtsmaterialien · Friedrich-Bährens-Gymnasium Schwerte</footer>
+
+<script>
+(function(){
+  const KEY='kv-stochastik-q2';
+  let st={};
+  try{st=JSON.parse(localStorage.getItem(KEY)||'{}');}catch(e){st={};}
+  const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(st));}catch(e){}};
+  const boxes=[...document.querySelectorAll('input[data-can],input[data-done]')];
+  function update(){
+    const can=boxes.filter(b=>b.dataset.can), done=boxes.filter(b=>b.dataset.done);
+    const c=can.filter(b=>b.checked).length, d=done.filter(b=>b.checked).length;
+    document.getElementById('pl').textContent=c+' von '+can.length;
+    document.getElementById('pa').textContent=d+' von '+done.length;
+    document.getElementById('bar').style.width=((c+d)/(can.length+done.length)*100)+'%';
+    done.forEach(b=>{const a=document.getElementById(b.dataset.done);if(a)a.classList.toggle('isdone',b.checked);});
+  }
+  boxes.forEach(b=>{const k=b.dataset.can||('d-'+b.dataset.done);b.checked=!!st[k];b.addEventListener('change',()=>{st[k]=b.checked;save();update();});});
+  update();
+  const d=Math.ceil((new Date('2026-11-26T08:00:00')-new Date())/86400000);
+  const el=document.getElementById('countdown');
+  if(d>1)el.textContent='Klausur am 26.11.2026 · noch '+d+' Tage';
+  else if(d===1)el.textContent='Klausur morgen – viel Erfolg!';
+  else el.textContent='Klausur am 26.11.2026';
+})();
+document.addEventListener('DOMContentLoaded',function(){
+  renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}],throwOnError:false});
+});
+</script>
+</body>
+</html>
