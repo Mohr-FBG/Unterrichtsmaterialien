@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Klausurvorbereitung · Bewegungen beschreiben</title>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css">
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/contrib/auto-render.min.js"></script>
+
+<style>
+:root{
+  --teal:#0f6e56; --teal-dark:#085041;
+  --blue:#2c5f8a; --blue-dark:#1a3d5c;
+  --green:#1a9e5c; --orange:#d4760a; --purple:#7b3fb5;
+  --border:#dde1e7; --bg:#f4f5f7; --text:#1c1f26;
+  --muted:#5c6472;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0; background:var(--bg); color:var(--text);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  line-height:1.55; font-size:16px;
+}
+.wrap{max-width:960px; margin:0 auto; padding:0 16px 64px}
+
+/* ---------- Kopf ---------- */
+header.top{background:var(--teal); border-bottom:4px solid var(--teal-dark); color:#fff}
+header.top .inner{max-width:960px; margin:0 auto; padding:22px 16px 24px}
+header.top .kap{font-size:.78rem; font-weight:700; letter-spacing:.06em; text-transform:uppercase; opacity:.92}
+header.top h1{margin:6px 0 4px; font-size:1.7rem; line-height:1.2}
+header.top .sub{font-size:.92rem; opacity:.95}
+
+/* ---------- Steuerleiste ---------- */
+.controls{
+  background:#fff; border:1px solid var(--border); border-radius:10px;
+  padding:14px 16px; margin:18px 0 22px;
+  display:flex; flex-wrap:wrap; gap:16px; align-items:center; justify-content:space-between;
+}
+.unlock{display:flex; align-items:center; gap:8px; flex-wrap:wrap}
+.unlock label{font-size:.9rem; color:var(--muted)}
+.unlock input{
+  border:1px solid var(--border); border-radius:6px; padding:6px 10px;
+  font-size:.95rem; width:130px; font-family:inherit;
+}
+.unlock button{
+  background:var(--blue); color:#fff; border:0; border-radius:6px;
+  padding:7px 14px; font-size:.9rem; font-weight:600; cursor:pointer; font-family:inherit;
+}
+.unlock button:hover{background:var(--blue-dark)}
+.unlock .msg{font-size:.85rem; font-weight:600}
+.unlock .msg.ok{color:var(--green)}
+.unlock .msg.bad{color:#c0392b}
+
+.filters{display:flex; gap:6px; flex-wrap:wrap}
+.filters button{
+  background:#fff; border:1px solid var(--border); border-radius:20px;
+  padding:6px 14px; font-size:.85rem; cursor:pointer; color:var(--muted);
+  font-family:inherit; font-weight:600;
+}
+.filters button:hover{border-color:var(--muted)}
+.filters button.on{background:var(--text); border-color:var(--text); color:#fff}
+
+/* ---------- Stufenabschnitte ---------- */
+.stufe-head{
+  display:flex; align-items:baseline; gap:12px; flex-wrap:wrap;
+  margin:30px 0 12px; padding-bottom:8px; border-bottom:2px solid var(--border);
+}
+.stufe-badge{
+  color:#fff; border-radius:6px; padding:4px 12px;
+  font-weight:700; font-size:.9rem; letter-spacing:.02em;
+}
+.s1 .stufe-badge{background:var(--green)}
+.s2 .stufe-badge{background:var(--orange)}
+.s3 .stufe-badge{background:var(--purple)}
+.stufe-head .desc{color:var(--muted); font-size:.9rem}
+
+/* ---------- Aufgabenkarte ---------- */
+.card{
+  background:#fff; border:1px solid var(--border); border-radius:10px;
+  margin-bottom:14px; overflow:hidden;
+}
+.card.s1{border-top:4px solid var(--green)}
+.card.s2{border-top:4px solid var(--orange)}
+.card.s3{border-top:4px solid var(--purple)}
+.card-head{
+  display:flex; align-items:center; justify-content:space-between; gap:12px;
+  padding:13px 18px; cursor:pointer; user-select:none;
+}
+.card-head:hover{background:#fafbfc}
+.card-head h3{margin:0; font-size:1.03rem; font-weight:700}
+.chev{color:var(--muted); font-size:1.1rem; transition:transform .18s}
+.card.open .chev{transform:rotate(180deg)}
+.card-body{display:none; padding:0 18px 18px}
+.card.open .card-body{display:block}
+
+.task{
+  background:#fbfcfd; border:1px solid var(--border); border-left:3px solid var(--blue);
+  border-radius:6px; padding:12px 15px; margin-bottom:14px;
+}
+.task p{margin:.5em 0}
+.task p:first-child{margin-top:0}
+.task p:last-child{margin-bottom:0}
+.task svg{display:block; margin:10px auto; max-width:100%; height:auto}
+.task table{border-collapse:collapse; margin:10px auto}
+.task td,.task th{border:1px solid var(--border); padding:5px 10px; font-size:.92rem; text-align:center}
+
+/* ---------- Selbsteinschätzung ---------- */
+.assess{display:flex; align-items:center; gap:7px; flex-wrap:wrap; margin-bottom:14px}
+.assess .lab{font-size:.83rem; color:var(--muted); margin-right:2px}
+.assess button{
+  border:1px solid var(--border); background:#fff; border-radius:16px;
+  padding:4px 12px; font-size:.8rem; cursor:pointer; color:var(--muted); font-family:inherit;
+}
+.assess button.on[data-v="ok"]{background:var(--green); border-color:var(--green); color:#fff}
+.assess button.on[data-v="mid"]{background:var(--orange); border-color:var(--orange); color:#fff}
+.assess button.on[data-v="ask"]{background:var(--blue); border-color:var(--blue); color:#fff}
+
+/* ---------- Hilfen ---------- */
+.hints{border:1px solid var(--border); border-radius:8px; overflow:hidden; margin-bottom:14px}
+.hints .htitle{
+  background:#f7f8fa; padding:7px 14px; font-size:.8rem; font-weight:700;
+  color:var(--muted); text-transform:uppercase; letter-spacing:.05em;
+  border-bottom:1px solid var(--border);
+}
+.htabs{display:flex; flex-wrap:wrap; gap:6px; padding:10px 14px; background:#fdfdfe}
+.htabs button{
+  border:1px solid var(--border); background:#fff; border-radius:6px;
+  padding:5px 11px; font-size:.82rem; cursor:pointer; color:var(--text); font-family:inherit;
+}
+.htabs button:hover{border-color:var(--teal)}
+.htabs button.on{background:var(--teal); border-color:var(--teal); color:#fff; font-weight:600}
+.hpanel{display:none; padding:12px 15px; border-top:1px solid var(--border); font-size:.95rem}
+.hpanel.on{display:block}
+.hpanel h4{margin:0 0 8px; font-size:.92rem; color:var(--teal-dark)}
+.hpanel p{margin:.5em 0}
+
+/* ---------- Musterlösung ---------- */
+.sol-lock{
+  background:#f7f8fa; border:1px dashed var(--border); border-radius:8px;
+  padding:12px 15px; font-size:.9rem; color:var(--muted); text-align:center;
+}
+.sol{
+  display:none; border:1px solid var(--green); border-radius:8px; overflow:hidden;
+}
+.sol .sh{
+  background:var(--green); color:#fff; padding:7px 15px;
+  font-weight:700; font-size:.88rem;
+}
+.sol .sb{padding:13px 15px; font-size:.95rem}
+.sol .sb p{margin:.55em 0}
+.sol .sb p:first-child{margin-top:0}
+body.unlocked .sol{display:block}
+body.unlocked .sol-lock{display:none}
+
+.note{
+  background:#eaf4f0; border-left:3px solid var(--teal); border-radius:6px;
+  padding:10px 14px; font-size:.9rem; margin:12px 0;
+}
+.katex{font-size:1.04em}
+.katex-display{margin:.6em 0; overflow-x:auto; overflow-y:hidden}
+.backnav{margin:18px 0 4px}
+.backnav a{
+  display:inline-flex; align-items:center; gap:6px;
+  font-size:.86rem; font-weight:600; color:var(--muted);
+  text-decoration:none; border:1px solid var(--border); border-radius:20px;
+  padding:5px 13px; background:#fff;
+}
+.backnav a:hover{border-color:var(--muted); color:var(--text)}
+
+footer.bot{
+  text-align:center; color:var(--muted); font-size:.82rem;
+  padding:26px 16px; border-top:1px solid var(--border); margin-top:34px;
+}
+footer.bot a{color:var(--blue)}
+@media(max-width:600px){
+  header.top h1{font-size:1.32rem}
+  .controls{flex-direction:column; align-items:stretch}
+  .card-head h3{font-size:.95rem}
+}
+
+/* ---------- Formelübersicht ---------- */
+.toc{display:flex; flex-wrap:wrap; gap:8px; margin:18px 0 6px}
+.toc a{background:#fff; border:1px solid var(--border); border-radius:20px; padding:6px 14px; font-size:.86rem; font-weight:600; color:var(--teal-dark); text-decoration:none}
+.toc a:hover{border-color:var(--teal)}
+h2.sec{font-size:1.25rem; margin:34px 0 10px; padding-bottom:6px; border-bottom:2px solid var(--teal); color:var(--teal-dark)}
+.fgrid{display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:14px}
+.fbox{background:#fff; border:1px solid var(--border); border-top:4px solid var(--teal); border-radius:10px; padding:12px 16px}
+.fbox h3{margin:0 0 6px; font-size:1.02rem; color:var(--teal-dark)}
+.fbox p{margin:.45em 0}
+.fbox ul{margin:.3em 0; padding-left:1.2em}
+.fbox li{margin:.2em 0}
+.fbox .k{font-weight:700}
+.ftab{width:100%; border-collapse:collapse; background:#fff; border:1px solid var(--border); border-radius:10px; overflow:hidden; font-size:.92rem}
+.ftab th,.ftab td{border:1px solid var(--border); padding:7px 10px; text-align:left; vertical-align:top}
+.ftab th{background:#eaf4f0; color:var(--teal-dark)}
+.ftab svg{display:block; margin:0 auto}
+.check{background:#fff; border:1px solid var(--border); border-radius:10px; padding:10px 16px}
+.check label{display:flex; gap:10px; align-items:flex-start; padding:5px 0; border-bottom:1px dashed var(--border); cursor:pointer; font-size:.95rem}
+.check label:last-child{border-bottom:0}
+.check input{margin-top:5px; accent-color:var(--teal)}
+.tag{display:inline-block; font-size:.72rem; font-weight:700; padding:2px 8px; border-radius:10px; background:#eaf4f0; color:var(--teal-dark); margin-left:8px; vertical-align:middle; white-space:nowrap}
+.card-head h3 .tag{font-weight:600}
+.solbtn{display:block; width:100%; background:#fff; border:1px dashed var(--green); color:#146e43; border-radius:8px; padding:10px; font:inherit; font-size:.92rem; font-weight:600; cursor:pointer}
+.solbtn:hover{background:#f1f8f4}
+.card.showsol .sol{display:block; margin-top:10px}
+@media(max-width:700px){.fgrid{grid-template-columns:minmax(0,1fr)}}
+
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="inner">
+    <div class="kap">Klausurvorbereitung · Kapitel 1.1–1.4 · Physik EP</div>
+    <h1>Wiederholung: Bewegungen beschreiben</h1>
+    <div class="sub">Formeln im Überblick · Übungsaufgaben in drei Stufen · Hilfen schrittweise · Musterlösungen zum Aufklappen</div>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <div class="backnav"><a href="../">← Zurück zu EP Materialien</a></div>
+
+  <div class="toc">
+    <a href="#formeln">Formeln</a><a href="#diagramme">Diagramme</a><a href="#operatoren">Gute Antworten</a><a href="#checkliste">Checkliste</a><a href="#aufgaben">Übungsaufgaben</a>
+  </div>
+
+<h2 class="sec" id="formeln">1 · Themen und Formeln im Überblick</h2>
+<div class="fgrid">
+  <div class="fbox"><h3>Grundbegriffe</h3><ul>
+    <li><span class="k">Bezugssystem:</span> Ursprung, positive Richtung und Zeitnullpunkt festlegen. Ob sich ein Körper bewegt, hängt vom Bezugssystem ab.</li>
+    <li><span class="k">Ort</span> $s$ (mit Vorzeichen), <span class="k">Zeit</span> $t$</li>
+    <li><span class="k">Durchschnittsgeschwindigkeit:</span> $\bar v=\dfrac{\Delta s}{\Delta t}=\dfrac{s_\text{ges}}{t_\text{ges}}$ – <em>nie</em> einfach Geschwindigkeiten mitteln!</li>
+    <li><span class="k">Momentangeschwindigkeit:</span> Geschwindigkeit zu einem Zeitpunkt = Steigung (der Tangente) im $t$-$s$-Diagramm</li>
+    <li><span class="k">Umrechnung:</span> $1\,\tfrac{\text{m}}{\text{s}}=3{,}6\,\tfrac{\text{km}}{\text{h}}$</li></ul></div>
+  <div class="fbox"><h3>Gleichförmige Bewegung</h3>
+    <p>Gleiche Strecken in gleichen Zeiten, $v$ konstant, $a=0$.</p>
+    <p>$$v=\frac{\Delta s}{\Delta t}\qquad s(t)=v\cdot t+s_0$$</p>
+    <p>Späterer Start bei $t_0$: $s(t)=v\cdot(t-t_0)+s_0$</p>
+    <p><span class="k">Einholen / Begegnen:</span> Zeit-Ort-Gesetze gleichsetzen: $s_1(t)=s_2(t)$.</p></div>
+  <div class="fbox"><h3>Gleichmäßig beschleunigte Bewegung</h3>
+    <p>$v$ ändert sich in gleichen Zeiten um den gleichen Betrag, $a$ konstant.</p>
+    <p>$$a=\frac{\Delta v}{\Delta t}\qquad v(t)=a\cdot t+v_0\qquad s(t)=\tfrac12 a\,t^2+v_0\,t+s_0$$</p>
+    <p>Bremsen: $a<0$ (Geschwindigkeit nimmt ab). Bremsdauer aus $v(t_B)=0$.</p>
+    <p><span class="k">Anhalteweg</span> = Reaktionsweg ($v_0\cdot t_R$) + Bremsweg.</p></div>
+  <div class="fbox"><h3>Freier Fall</h3>
+    <p>Bewegung aus der Ruhe nur unter Einfluss der Schwerkraft (ohne Luftwiderstand): gleichmäßig beschleunigt mit $g=9{,}81\,\tfrac{\text{m}}{\text{s}^2}$.</p>
+    <p>$$v(t)=g\cdot t\qquad s(t)=\tfrac12 g\,t^2\qquad t=\sqrt{\frac{2h}{g}}$$</p>
+    <p><span class="k">Messung:</span> Videoanalyse (Viana), Auswertung mit quadratischer Regression: $s=a_2t^2+\ldots\Rightarrow g=2a_2$.</p></div>
+</div>
+
+<h2 class="sec" id="diagramme">2 · Diagramme lesen und übersetzen</h2>
+<table class="ftab">
+<tr><th>Bewegung</th><th>$t$-$s$-Diagramm</th><th>$t$-$v$-Diagramm</th><th>$t$-$a$-Diagramm</th></tr>
+<tr><td><b>Ruhe</b></td><td>waagerechte Linie</td><td>auf der $t$-Achse ($v=0$)</td><td>$a=0$</td></tr>
+<tr><td><b>gleichförmig</b></td><td>Gerade; Steigung = $v$</td><td>waagerechte Linie</td><td>$a=0$</td></tr>
+<tr><td><b>gleichmäßig beschleunigt</b></td><td>Parabelast, wird steiler</td><td>steigende Gerade; Steigung = $a$</td><td>waagerechte Linie über der $t$-Achse</td></tr>
+<tr><td><b>gleichmäßig verzögert</b></td><td>Parabelast, wird flacher</td><td>fallende Gerade</td><td>waagerechte Linie unter der $t$-Achse</td></tr>
+</table>
+<div class="note"><strong>Merke:</strong> Steigung im $t$-$s$-Diagramm = Geschwindigkeit · Steigung im $t$-$v$-Diagramm = Beschleunigung · <b>Fläche</b> unter dem $t$-$v$-Graphen = zurückgelegte Strecke (Dreieck: $\tfrac12\cdot$ Grundseite $\cdot$ Höhe). Der Schnittpunkt zweier $t$-$v$-Graphen bedeutet <em>gleiche Geschwindigkeit</em>, nicht gleichen Ort!</div>
+
+<h2 class="sec" id="operatoren">3 · So schreibst du gute Antworten</h2>
+<div class="fgrid">
+  <div class="fbox"><h3>Wichtige Operatoren</h3><ul>
+    <li><span class="k">beschreiben:</span> Verlauf/Sachverhalt mit Fachbegriffen in ganzen Sätzen wiedergeben</li>
+    <li><span class="k">erklären:</span> einen Begriff oder Sachverhalt auf physikalische Gesetze zurückführen</li>
+    <li><span class="k">begründen:</span> eine Aussage durch Argumente (Rechnung, Gesetz, Diagramm) stützen</li>
+    <li><span class="k">beurteilen:</span> zu einer Aussage ein begründetes Urteil fällen (richtig/falsch – warum?)</li>
+    <li><span class="k">berechnen:</span> Ansatz, Rechnung mit Einheiten, Ergebnis mit Antwortsatz</li>
+    <li><span class="k">ermitteln:</span> ein Ergebnis rechnerisch oder grafisch (z.&nbsp;B. aus einem Diagramm) gewinnen</li>
+    <li><span class="k">aufstellen:</span> eine Gleichung (z.&nbsp;B. ein Zeit-Ort-Gesetz) entwickeln</li>
+    <li><span class="k">skizzieren:</span> qualitativ, aber mit beschrifteten Achsen und markanten Werten · <span class="k">zeichnen:</span> maßstabsgetreu</li></ul></div>
+  <div class="fbox"><h3>Typische Fehler vermeiden</h3><ul>
+    <li>Einheiten umrechnen (km/h → m/s) <em>bevor</em> du rechnest</li>
+    <li>Durchschnittsgeschwindigkeit nie als Mittelwert von Geschwindigkeiten</li>
+    <li>Vorzeichen beachten: Bremsen $\Rightarrow a<0$; Bewegung in Gegenrichtung $\Rightarrow v<0$</li>
+    <li>$s=v\cdot t$ gilt <em>nur</em> bei konstanter Geschwindigkeit</li>
+    <li>Späterer Start: $(t-t_0)$ im Zeit-Ort-Gesetz</li>
+    <li>Diagrammachsen genau lesen: $s$, $v$ oder $a$?</li></ul></div>
+</div>
+
+<h2 class="sec" id="checkliste">4 · Checkliste: Das kann ich</h2>
+<div class="check">
+  <label><input type="checkbox"><span>Ich kann Bewegungen aus $t$-$s$- und $t$-$v$-Diagrammen in Worten mit Fachbegriffen beschreiben.</span></label>
+  <label><input type="checkbox"><span>Ich kann Geschwindigkeiten und Beschleunigungen als Steigung aus Diagrammen bestimmen.</span></label>
+  <label><input type="checkbox"><span>Ich kann Zeit-Ort-Gesetze aufstellen (auch mit späterem Start) und Treffpunkte berechnen.</span></label>
+  <label><input type="checkbox"><span>Ich kann die Durchschnittsgeschwindigkeit richtig berechnen und falsche Rechnungen erkennen.</span></label>
+  <label><input type="checkbox"><span>Ich kann die Strecke als Fläche unter dem $t$-$v$-Graphen bestimmen.</span></label>
+  <label><input type="checkbox"><span>Ich kann aus einem $t$-$v$-Diagramm das $t$-$a$- und das $t$-$s$-Diagramm skizzieren.</span></label>
+  <label><input type="checkbox"><span>Ich kann Reaktions-, Brems- und Anhaltewege berechnen.</span></label>
+  <label><input type="checkbox"><span>Ich kann den freien Fall erklären und Fallzeiten und Geschwindigkeiten berechnen.</span></label>
+  <label><input type="checkbox"><span>Ich kann Messwerte mit einer Regression auswerten.</span></label>
+  <label><input type="checkbox"><span>Ich kann Aussagen zu Bewegungen begründet beurteilen.</span></label>
+</div>
+
+  <h2 class="sec" id="aufgaben">5 · Übungsaufgaben</h2>
+  <div class="controls">
+    <div class="filters">
+      <button class="on" data-f="all" type="button">Alle Stufen</button>
+      <button data-f="1" type="button">Stufe 1</button>
+      <button data-f="2" type="button">Stufe 2</button>
+      <button data-f="3" type="button">Stufe 3</button>
+    </div>
+  </div>
+  <div class="note"><strong>Tipp:</strong> Versuche jede Aufgabe zuerst selbst, nutze dann die Hilfen und öffne die Musterlösung erst zur Kontrolle. Nutze für die Rechnungen deinen TI-Nspire CAS, schreibe aber Ansatz, Rechenweg und Ergebnis mit Einheit auf – wie in der Klausur. Bei <em>beschreiben</em>, <em>erklären</em> und <em>beurteilen</em> antwortest du in ganzen Sätzen.</div>
+
+  <section class="s1" data-stufe="1">
+    <div class="stufe-head"><span class="stufe-badge">Stufe 1</span><span class="desc">Grundlagen · Diagramme beschreiben, Durchschnittsgeschwindigkeit, freier Fall</span></div>
+    
+    <article class="card s1" data-stufe="1">
+      <div class="card-head"><h3>Aufgabe 1 · Diagramme in Worten beschreiben<span class="tag">Diagramme</span></h3><span class="chev">▾</span></div>
+      <div class="card-body">
+        <div class="task"><p>Die Diagramme I bis IV gehören zu Bewegungen auf gerader Strecke.</p>
+<div style="display:flex;flex-wrap:wrap;gap:6px;justify-content:center"><svg viewBox="0 0 170 130" xmlns="http://www.w3.org/2000/svg" style="max-width:170px">
+<line x1="25" y1="110" x2="160" y2="110" stroke="#1c1f26" stroke-width="1.3"/><polygon points="160,110 153,106 153,114" fill="#1c1f26"/>
+<line x1="25" y1="110" x2="25" y2="10" stroke="#1c1f26" stroke-width="1.3"/><polygon points="25,10 21,17 29,17" fill="#1c1f26"/>
+<text x="150" y="125" font-size="12" font-style="italic" fill="#1c1f26">t</text><text x="8" y="20" font-size="12" font-style="italic" fill="#1c1f26">s</text>
+<text x="85" y="14" font-size="13" font-weight="700" fill="#1c1f26" text-anchor="middle">I</text>
+<path d="M30,30 L150,95" fill="none" stroke="#0f6e56" stroke-width="2.6"/></svg><svg viewBox="0 0 170 130" xmlns="http://www.w3.org/2000/svg" style="max-width:170px">
+<line x1="25" y1="110" x2="160" y2="110" stroke="#1c1f26" stroke-width="1.3"/><polygon points="160,110 153,106 153,114" fill="#1c1f26"/>
+<line x1="25" y1="110" x2="25" y2="10" stroke="#1c1f26" stroke-width="1.3"/><polygon points="25,10 21,17 29,17" fill="#1c1f26"/>
+<text x="150" y="125" font-size="12" font-style="italic" fill="#1c1f26">t</text><text x="8" y="20" font-size="12" font-style="italic" fill="#1c1f26">v</text>
+<text x="85" y="14" font-size="13" font-weight="700" fill="#1c1f26" text-anchor="middle">II</text>
+<path d="M25,85 L150,25" fill="none" stroke="#0f6e56" stroke-width="2.6"/></svg><svg viewBox="0 0 170 130" xmlns="http://www.w3.org/2000/svg" style="max-width:170px">
+<line x1="25" y1="110" x2="160" y2="110" stroke="#1c1f26" stroke-width="1.3"/><polygon points="160,110 153,106 153,114" fill="#1c1f26"/>
+<line x1="25" y1="110" x2="25" y2="10" stroke="#1c1f26" stroke-width="1.3"/><polygon points="25,10 21,17 29,17" fill="#1c1f26"/>
+<text x="150" y="125" font-size="12" font-style="italic" fill="#1c1f26">t</text><text x="8" y="20" font-size="12" font-style="italic" fill="#1c1f26">s</text>
+<text x="85" y="14" font-size="13" font-weight="700" fill="#1c1f26" text-anchor="middle">III</text>
+<path d="M25,110 Q85,30 150,30" fill="none" stroke="#0f6e56" stroke-width="2.6"/></svg><svg viewBox="0 0 170 130" xmlns="http://www.w3.org/2000/svg" style="max-width:170px">
+<line x1="25" y1="110" x2="160" y2="110" stroke="#1c1f26" stroke-width="1.3"/><polygon points="160,110 153,106 153,114" fill="#1c1f26"/>
+<line x1="25" y1="110" x2="25" y2="10" stroke="#1c1f26" stroke-width="1.3"/><polygon points="25,10 21,17 29,17" fill="#1c1f26"/>
+<text x="150" y="125" font-size="12" font-style="italic" fill="#1c1f26">t</text><text x="8" y="20" font-size="12" font-style="italic" fill="#1c1f26">a</text>
+<text x="85" y="14" font-size="13" font-weight="700" fill="#1c1f26" text-anchor="middle">IV</text>
+<path d="M25,45 L95,45 M95,110 L150,110" fill="none" stroke="#0f6e56" stroke-width="2.6"/></svg></div>
+<p><strong>a)</strong> Beschreiben Sie zu jedem Diagramm die Bewegung in ein bis zwei Sätzen. Verwenden Sie die Fachbegriffe <em>gleichförmig</em>, <em>gleichmäßig beschleunigt</em>, <em>gleichmäßig verzögert</em> und <em>Ruhe</em>.</p>
+<p><strong>b)</strong> Skizzieren Sie zu Diagramm II das zugehörige $t$-$s$-Diagramm (Start bei $s=0$).</p>
+<p><strong>c)</strong> Erklären Sie, woran man in einem $t$-$s$-Diagramm erkennt, ob ein Körper schneller wird, gleich schnell bleibt oder langsamer wird.</p></div>
+        <div class="assess">
+          <span class="lab">Einschätzung:</span>
+          <button data-v="ok" type="button">✓ Fertig &amp; verstanden</button>
+          <button data-v="mid" type="button">~ Noch unsicher</button>
+          <button data-v="ask" type="button">? Frage an Lehrer</button>
+        </div>
+        <div class="hints"><div class="htitle">Hilfen</div><div class="htabs"><button type="button">Hilfe 1 · Was zeigt die Achse?</button><button type="button">Hilfe 2 · Steigung deuten</button><button type="button">Hilfe 3 · Zu b)</button></div><div class="hpanel"><h4>Hilfe 1 · Was zeigt die Achse?</h4><p>Lies zuerst die Hochachse: Steht dort $s$, $v$ oder $a$? Ein fallender Graph im $t$-$s$-Diagramm bedeutet etwas anderes als ein fallender Graph im $t$-$v$-Diagramm.</p></div><div class="hpanel"><h4>Hilfe 2 · Steigung deuten</h4><p>Im $t$-$s$-Diagramm ist die Steigung die Geschwindigkeit, im $t$-$v$-Diagramm ist die Steigung die Beschleunigung. Eine negative Steigung im $t$-$s$-Diagramm heißt: Der Körper bewegt sich in die negative Richtung (zurück).</p></div><div class="hpanel"><h4>Hilfe 3 · Zu b)</h4><p>In Diagramm II startet der Körper nicht aus der Ruhe, sondern hat schon eine Anfangsgeschwindigkeit. Das $t$-$s$-Diagramm beginnt also schon mit einer Steigung größer als null und wird immer steiler.</p></div></div>
+        <button class="solbtn" type="button">Musterlösung anzeigen</button>
+        <div class="sol"><div class="sh">✓ Musterlösung · Aufgabe 1</div><div class="sb"><p><strong>a)</strong> <b>I:</b> gleichförmige Bewegung in negativer Richtung: Der Körper startet bei einem Ort $s_0>0$ und bewegt sich mit konstanter Geschwindigkeit auf den Ursprung zu ($v<0$).<br>
+<b>II:</b> gleichmäßig beschleunigte Bewegung mit Anfangsgeschwindigkeit $v_0>0$: Die Geschwindigkeit nimmt gleichmäßig zu.<br>
+<b>III:</b> gleichmäßig verzögerte Bewegung (Bremsen) bis zur Ruhe: Der Graph wird immer flacher und endet waagerecht, die Geschwindigkeit nimmt bis auf null ab.<br>
+<b>IV:</b> zunächst konstante positive Beschleunigung (gleichmäßig beschleunigt), danach $a=0$, also gleichförmige Bewegung mit der erreichten Geschwindigkeit.</p>
+<p><strong>b)</strong> Nach oben gekrümmter Parabelast, der im Ursprung schon mit positiver Steigung ($v_0$) beginnt (gestrichelt: Tangente im Ursprung):</p><svg viewBox="0 0 360 210" xmlns="http://www.w3.org/2000/svg" style="max-width:400px"><line x1="48.0" y1="180.0" x2="350.0" y2="180.0" stroke="#1c1f26" stroke-width="1.3"/><polygon points="354.0,180.0 347.0,176.0 347.0,184.0" fill="#1c1f26"/><line x1="48.0" y1="180.0" x2="48.0" y2="14.0" stroke="#1c1f26" stroke-width="1.3"/><polygon points="48.0,10.0 44.0,17.0 52.0,17.0" fill="#1c1f26"/><g font-size="10" fill="#5c6472"><text x="346.0" y="204.0" text-anchor="end" font-style="italic">t</text><text x="54.0" y="14" font-style="italic">s</text></g><polyline points="48.0,180.0 55.4,178.6 62.7,177.1 70.0,175.5 77.4,173.7 84.8,171.8 92.1,169.7 99.4,167.6 106.8,165.3 114.2,162.8 121.5,160.2 128.9,157.6 136.2,154.7 143.6,151.8 150.9,148.7 158.2,145.4 165.6,142.1 172.9,138.6 180.3,135.0 187.7,131.2 195.0,127.3 202.3,123.3 209.7,119.2 217.0,114.9 224.4,110.5 231.8,105.9 239.1,101.3 246.5,96.5 253.8,91.5 261.1,86.5 268.5,81.2 275.9,75.9 283.2,70.5 290.5,64.9 297.9,59.1 305.2,53.3 312.6,47.3 319.9,41.2 327.3,34.9 334.6,28.5 342.0,22.0" fill="none" stroke="#0f6e56" stroke-width="2.6"/><polyline points="48.0,180.0 283.2,137.9" fill="none" stroke="#5c6472" stroke-width="2.6" stroke-dasharray="6 4"/></svg>
+<p><strong>c)</strong> Die Steigung des $t$-$s$-Graphen ist die Geschwindigkeit. Wird der Graph steiler (Linkskrümmung), wird der Körper schneller; ist er eine Gerade, bleibt er gleich schnell; wird er flacher (Rechtskrümmung), wird er langsamer.</p></div></div>
+      </div>
+    </article>
+    <article class="card s1" data-stufe="1">
+      <div class="card-head"><h3>Aufgabe 2 · Radtour zur Eisdiele<span class="tag">Gleichförmig</span></h3><span class="chev">▾</span></div>
+      <div class="card-body">
+        <div class="task"><p>Lea fährt mit dem Fahrrad zur $12\,\text{km}$ entfernten Eisdiele. Der Hinweg führt bergauf, sie fährt im Mittel mit $12\,\tfrac{\text{km}}{\text{h}}$. An der Eisdiele macht sie $30$ Minuten Pause. Auf dem Rückweg (gleiche Strecke, bergab) fährt sie im Mittel mit $24\,\tfrac{\text{km}}{\text{h}}$.</p>
+<p><strong>a)</strong> Berechnen Sie die Fahrzeiten für Hin- und Rückweg.</p>
+<p><strong>b)</strong> Berechnen Sie Leas Durchschnittsgeschwindigkeit für die gesamte Tour (mit Pause) und für die reine Fahrzeit. Geben Sie beide Werte auch in $\tfrac{\text{m}}{\text{s}}$ an.</p>
+<p><strong>c)</strong> Leas Bruder sagt: „Im Durchschnitt bist du $\frac{12+24}{2}\,\tfrac{\text{km}}{\text{h}}=18\,\tfrac{\text{km}}{\text{h}}$ gefahren.“ Beurteilen Sie diese Aussage.</p></div>
+        <div class="assess">
+          <span class="lab">Einschätzung:</span>
+          <button data-v="ok" type="button">✓ Fertig &amp; verstanden</button>
+          <button data-v="mid" type="button">~ Noch unsicher</button>
+          <button data-v="ask" type="button">? Frage an Lehrer</button>
+        </div>
+        <div class="hints"><div class="htitle">Hilfen</div><div class="htabs"><button type="button">Hilfe 1 · Zeit berechnen</button><button type="button">Hilfe 2 · Durchschnittsgeschwindigkeit</button><button type="button">Hilfe 3 · Zu c)</button></div><div class="hpanel"><h4>Hilfe 1 · Zeit berechnen</h4><p>Bei konstanter Geschwindigkeit gilt $v=\frac{\Delta s}{\Delta t}$, also $\Delta t=\frac{\Delta s}{v}$. Rechne in Stunden, wenn die Geschwindigkeit in km/h gegeben ist.</p></div><div class="hpanel"><h4>Hilfe 2 · Durchschnittsgeschwindigkeit</h4><p>Die Durchschnittsgeschwindigkeit ist immer <em>Gesamtstrecke durch Gesamtzeit</em>: $\bar v=\frac{s_\text{ges}}{t_\text{ges}}$. Überlege, ob die Pause zur Gesamtzeit gehört.</p></div><div class="hpanel"><h4>Hilfe 3 · Zu c)</h4><p>Vergleiche, wie lange Lea mit $12\,\tfrac{\text{km}}{\text{h}}$ und wie lange mit $24\,\tfrac{\text{km}}{\text{h}}$ unterwegs war. Zählen beide Geschwindigkeiten gleich viel?</p></div></div>
+        <button class="solbtn" type="button">Musterlösung anzeigen</button>
+        <div class="sol"><div class="sh">✓ Musterlösung · Aufgabe 2</div><div class="sb"><p><strong>a)</strong> Hinweg: $t_1=\frac{12\,\text{km}}{12\,\tfrac{\text{km}}{\text{h}}}={\color{#1a9e5c}\boldsymbol{1{,}0\,\text{h}}}$, Rückweg: $t_2=\frac{12\,\text{km}}{24\,\tfrac{\text{km}}{\text{h}}}={\color{#1a9e5c}\boldsymbol{0{,}5\,\text{h}}}$</p>
+<p><strong>b)</strong> Mit Pause: $\bar v=\frac{24\,\text{km}}{2{,}0\,\text{h}}={\color{#1a9e5c}\boldsymbol{12\,\tfrac{\text{km}}{\text{h}}}}\approx 3{,}3\,\tfrac{\text{m}}{\text{s}}$<br>
+Reine Fahrzeit: $\bar v=\frac{24\,\text{km}}{1{,}5\,\text{h}}={\color{#1a9e5c}\boldsymbol{16\,\tfrac{\text{km}}{\text{h}}}}\approx 4{,}4\,\tfrac{\text{m}}{\text{s}}$</p>
+<p><strong>c)</strong> Die Aussage ist <b>falsch</b>. Der einfache Mittelwert wäre nur richtig, wenn Lea mit beiden Geschwindigkeiten gleich <em>lange</em> gefahren wäre. Sie war aber doppelt so lange mit $12\,\tfrac{\text{km}}{\text{h}}$ unterwegs wie mit $24\,\tfrac{\text{km}}{\text{h}}$. Die langsame Fahrt zählt deshalb stärker; richtig ist $16\,\tfrac{\text{km}}{\text{h}}$ (reine Fahrzeit).</p></div></div>
+      </div>
+    </article>
+    <article class="card s1" data-stufe="1">
+      <div class="card-head"><h3>Aufgabe 3 · Ein Blumentopf fällt vom Balkon<span class="tag">Freier Fall</span></h3><span class="chev">▾</span></div>
+      <div class="card-body">
+        <div class="task"><p>Von einem Balkon in $7{,}5\,\text{m}$ Höhe fällt ein Blumentopf aus der Ruhe senkrecht nach unten. Der Luftwiderstand wird vernachlässigt; $g=9{,}81\,\tfrac{\text{m}}{\text{s}^2}$.</p>
+<p><strong>a)</strong> Erklären Sie den Fachbegriff <em>freier Fall</em>.</p>
+<p><strong>b)</strong> Berechnen Sie die Fallzeit und die Aufprallgeschwindigkeit in $\tfrac{\text{m}}{\text{s}}$ und $\tfrac{\text{km}}{\text{h}}$.</p>
+<p><strong>c)</strong> Der Topf fällt an einem Fenster vorbei, dessen Unterkante $2{,}5\,\text{m}$ über dem Boden liegt. Berechnen Sie, nach welcher Zeit und mit welcher Geschwindigkeit er die Unterkante passiert.</p>
+<p><strong>d)</strong> Begründen Sie mithilfe der Ergebnisse, warum der Topf für die oberen $5\,\text{m}$ deutlich länger braucht als für die unteren $2{,}5\,\text{m}$.</p></div>
+        <div class="assess">
+          <span class="lab">Einschätzung:</span>
+          <button data-v="ok" type="button">✓ Fertig &amp; verstanden</button>
+          <button data-v="mid" type="button">~ Noch unsicher</button>
+          <button data-v="ask" type="button">? Frage an Lehrer</button>
+        </div>
+        <div class="hints"><div class="htitle">Hilfen</div><div class="htabs"><button type="button">Hilfe 1 · Fallgesetze</button><button type="button">Hilfe 2 · Fallstrecke in c)</button><button type="button">Hilfe 3 · Zu d)</button></div><div class="hpanel"><h4>Hilfe 1 · Fallgesetze</h4><p>Für den freien Fall aus der Ruhe gilt $s(t)=\tfrac12 g\,t^2$ und $v(t)=g\cdot t$. Die Fallstrecke wird nach unten positiv gezählt.</p></div><div class="hpanel"><h4>Hilfe 2 · Fallstrecke in c)</h4><p>Bis zur Unterkante des Fensters fällt der Topf nicht $2{,}5\,\text{m}$, sondern $7{,}5\,\text{m}-2{,}5\,\text{m}=5{,}0\,\text{m}$.</p></div><div class="hpanel"><h4>Hilfe 3 · Zu d)</h4><p>Vergleiche die Zeiten: Wie lange braucht der Topf für die ersten $5\,\text{m}$, wie lange für den Rest? Wie schnell ist er jeweils?</p></div></div>
+        <button class="solbtn" type="button">Musterlösung anzeigen</button>
+        <div class="sol"><div class="sh">✓ Musterlösung · Aufgabe 3</div><div class="sb"><p><strong>a)</strong> Ein Körper fällt aus der Ruhe allein unter dem Einfluss der Schwerkraft (ohne Antrieb, Luftwiderstand vernachlässigt). Es handelt sich um eine gleichmäßig beschleunigte Bewegung mit $a=g\approx9{,}81\,\tfrac{\text{m}}{\text{s}^2}$.</p>
+<p><strong>b)</strong> $$t=\sqrt{\frac{2s}{g}}=\sqrt{\frac{2\cdot7{,}5\,\text{m}}{9{,}81\,\tfrac{\text{m}}{\text{s}^2}}}\approx{\color{#1a9e5c}\boldsymbol{1{,}24\,\text{s}}},\qquad v=g\cdot t\approx{\color{#1a9e5c}\boldsymbol{12{,}1\,\tfrac{\text{m}}{\text{s}}}}\approx 44\,\tfrac{\text{km}}{\text{h}}$$</p>
+<p><strong>c)</strong> $$t=\sqrt{\frac{2\cdot5{,}0\,\text{m}}{9{,}81\,\tfrac{\text{m}}{\text{s}^2}}}\approx{\color{#1a9e5c}\boldsymbol{1{,}01\,\text{s}}},\qquad v=g\cdot t\approx{\color{#1a9e5c}\boldsymbol{9{,}9\,\tfrac{\text{m}}{\text{s}}}}$$</p>
+<p><strong>d)</strong> Für die oberen $5\,\text{m}$ braucht der Topf $1{,}01\,\text{s}$, für die unteren $2{,}5\,\text{m}$ nur noch $0{,}23\,\text{s}$. Oben startet er aus der Ruhe und ist zunächst langsam; unten ist er schon fast $10\,\tfrac{\text{m}}{\text{s}}$ schnell. Weil die Geschwindigkeit ständig zunimmt, legt er in gleichen Zeiten immer größere Strecken zurück.</p></div></div>
+      </div>
+    </article>
+  </section>
+  <section class="s2" data-stufe="2">
+    <div class="stufe-head"><span class="stufe-badge">Stufe 2</span><span class="desc">Anwenden · Zeit-Ort-Gesetze, $t$-$v$-Diagramme, Anhalteweg</span></div>
+    
+    <article class="card s2" data-stufe="2">
+      <div class="card-head"><h3>Aufgabe 4 · Lieferwagen und Fahrradkurier<span class="tag">Gleichförmig</span></h3><span class="chev">▾</span></div>
+      <div class="card-body">
+        <div class="task"><p>Eine gerade Straße verbindet eine Bäckerei (A) und ein Lager (B), die $6{,}0\,\text{km}$ voneinander entfernt sind. Um 8:00 Uhr fährt ein Lieferwagen in B mit konstant $36\,\tfrac{\text{km}}{\text{h}}$ in Richtung A los. Um 8:02 Uhr startet ein Fahrradkurier in A mit konstant $18\,\tfrac{\text{km}}{\text{h}}$ in Richtung B. Anfahr- und Bremsvorgänge werden vernachlässigt.</p>
+<p>Bezugssystem: Ursprung in A, positive Richtung von A nach B, $t=0$ um 8:00 Uhr.</p>
+<p><strong>a)</strong> Stellen Sie die Zeit-Ort-Gesetze beider Fahrzeuge auf. Erläutern Sie das Vorzeichen der Geschwindigkeit des Lieferwagens.</p>
+<p><strong>b)</strong> Berechnen Sie, um welche Uhrzeit und an welcher Stelle sich die beiden begegnen.</p>
+<p><strong>c)</strong> Zeichnen Sie das $t$-$s$-Diagramm beider Bewegungen für die ersten $10$ Minuten und kennzeichnen Sie die Begegnung.</p>
+<p><strong>d)</strong> Ermitteln Sie den Zeitpunkt, zu dem die beiden vor der Begegnung noch genau $1{,}0\,\text{km}$ voneinander entfernt sind.</p></div>
+        <div class="assess">
+          <span class="lab">Einschätzung:</span>
+          <button data-v="ok" type="button">✓ Fertig &amp; verstanden</button>
+          <button data-v="mid" type="button">~ Noch unsicher</button>
+          <button data-v="ask" type="button">? Frage an Lehrer</button>
+        </div>
+        <div class="hints"><div class="htitle">Hilfen</div><div class="htabs"><button type="button">Hilfe 1 · Einheiten</button><button type="button">Hilfe 2 · Zeit-Ort-Gesetze</button><button type="button">Hilfe 3 · Zu d)</button></div><div class="hpanel"><h4>Hilfe 1 · Einheiten</h4><p>Rechne zuerst in m/s um: $36\,\tfrac{\text{km}}{\text{h}}=10\,\tfrac{\text{m}}{\text{s}}$ und $18\,\tfrac{\text{km}}{\text{h}}=5{,}0\,\tfrac{\text{m}}{\text{s}}$. Die Zeit zählst du in Sekunden ab 8:00 Uhr.</p></div><div class="hpanel"><h4>Hilfe 2 · Zeit-Ort-Gesetze</h4><p>Lieferwagen: startet bei $s_0=6000\,\text{m}$ und fährt zum Ursprung, also $v<0$: $s_L(t)=-10\,\tfrac{\text{m}}{\text{s}}\cdot t+6000\,\text{m}$.<br>Kurier: startet erst bei $t=120\,\text{s}$: $s_K(t)=5{,}0\,\tfrac{\text{m}}{\text{s}}\cdot(t-120\,\text{s})$.</p></div><div class="hpanel"><h4>Hilfe 3 · Zu d)</h4><p>Der Abstand ist die Differenz der Orte: $s_L(t)-s_K(t)=1000\,\text{m}$. Löse nach $t$ auf (gern mit dem Taschenrechner).</p></div></div>
+        <button class="solbtn" type="button">Musterlösung anzeigen</button>
+        <div class="sol"><div class="sh">✓ Musterlösung · Aufgabe 4</div><div class="sb"><p><strong>a)</strong> $s_L(t)=-10\,\tfrac{\text{m}}{\text{s}}\cdot t+6000\,\text{m}$ und $s_K(t)=5{,}0\,\tfrac{\text{m}}{\text{s}}\cdot(t-120\,\text{s})$ für $t\ge120\,\text{s}$. Der Lieferwagen fährt entgegen der festgelegten positiven Richtung (von B nach A), deshalb ist seine Geschwindigkeit negativ.</p>
+<p><strong>b)</strong> $$-10t+6000=5t-600\;\Rightarrow\;15t=6600\;\Rightarrow\;t={\color{#1a9e5c}\boldsymbol{440\,\text{s}}}=7\,\text{min}\;20\,\text{s}$$ Begegnung um <b>8:07:20 Uhr</b> bei $s_K(440\,\text{s})=5\cdot320\,\text{m}={\color{#1a9e5c}\boldsymbol{1600\,\text{m}}}$ von A.</p>
+<p><strong>c)</strong> Lieferwagen (durchgezogen) und Kurier (gestrichelt); die Begegnung liegt bei $t\approx7{,}3\,\text{min}$, $s=1600\,\text{m}$:</p><svg viewBox="0 0 400 230" xmlns="http://www.w3.org/2000/svg" style="max-width:440px"><line x1="48.0" y1="200.0" x2="48.0" y2="22.0" stroke="#dde1e7"/><line x1="114.8" y1="200.0" x2="114.8" y2="22.0" stroke="#dde1e7"/><line x1="181.6" y1="200.0" x2="181.6" y2="22.0" stroke="#dde1e7"/><line x1="248.4" y1="200.0" x2="248.4" y2="22.0" stroke="#dde1e7"/><line x1="315.2" y1="200.0" x2="315.2" y2="22.0" stroke="#dde1e7"/><line x1="382.0" y1="200.0" x2="382.0" y2="22.0" stroke="#dde1e7"/><line x1="48.0" y1="200.0" x2="382.0" y2="200.0" stroke="#dde1e7"/><line x1="48.0" y1="172.6" x2="382.0" y2="172.6" stroke="#dde1e7"/><line x1="48.0" y1="145.2" x2="382.0" y2="145.2" stroke="#dde1e7"/><line x1="48.0" y1="117.8" x2="382.0" y2="117.8" stroke="#dde1e7"/><line x1="48.0" y1="90.5" x2="382.0" y2="90.5" stroke="#dde1e7"/><line x1="48.0" y1="63.1" x2="382.0" y2="63.1" stroke="#dde1e7"/><line x1="48.0" y1="35.7" x2="382.0" y2="35.7" stroke="#dde1e7"/><line x1="48.0" y1="200.0" x2="390.0" y2="200.0" stroke="#1c1f26" stroke-width="1.3"/><polygon points="394.0,200.0 387.0,196.0 387.0,204.0" fill="#1c1f26"/><line x1="48.0" y1="200.0" x2="48.0" y2="14.0" stroke="#1c1f26" stroke-width="1.3"/><polygon points="48.0,10.0 44.0,17.0 52.0,17.0" fill="#1c1f26"/><g font-size="10" fill="#5c6472"><text x="48.0" y="213.0" text-anchor="middle">0</text><text x="114.8" y="213.0" text-anchor="middle">2</text><text x="181.6" y="213.0" text-anchor="middle">4</text><text x="248.4" y="213.0" text-anchor="middle">6</text><text x="315.2" y="213.0" text-anchor="middle">8</text><text x="382.0" y="213.0" text-anchor="middle">10</text><text x="43.0" y="203.5" text-anchor="end">0</text><text x="43.0" y="176.1" text-anchor="end">1000</text><text x="43.0" y="148.7" text-anchor="end">2000</text><text x="43.0" y="121.3" text-anchor="end">3000</text><text x="43.0" y="94.0" text-anchor="end">4000</text><text x="43.0" y="66.6" text-anchor="end">5000</text><text x="43.0" y="39.2" text-anchor="end">6000</text><text x="386.0" y="224.0" text-anchor="end" font-style="italic">t in min</text><text x="54.0" y="14" font-style="italic">s in m</text></g><polyline points="48.0,35.7 382.0,200.0" fill="none" stroke="#0f6e56" stroke-width="2.6"/><polyline points="114.8,200.0 382.0,134.3" fill="none" stroke="#d4760a" stroke-width="2.6" stroke-dasharray="6 4"/><circle cx="292.9" cy="156.2" r="3.2" fill="#1c1f26"/><text x="286.9" y="150.2" font-size="10.5" fill="#1c1f26" text-anchor="end">Begegnung</text></svg>
+<p><strong>d)</strong> $$(-10t+6000)-(5t-600)=1000\;\Rightarrow\;15t=5600\;\Rightarrow\;t\approx{\color{#1a9e5c}\boldsymbol{373\,\text{s}}}$$ also etwa um 8:06:13 Uhr.</p></div></div>
+      </div>
+    </article>
+    <article class="card s2" data-stufe="2">
+      <div class="card-head"><h3>Aufgabe 5 · Mit dem Aufzug nach oben<span class="tag">Beschleunigt</span></h3><span class="chev">▾</span></div>
+      <div class="card-body">
+        <div class="task"><p>Ein Aufzug fährt in einem Hochhaus vom Erdgeschoss nach oben. Das $t$-$v$-Diagramm zeigt seine Fahrt (idealisiert).</p>
+<svg viewBox="0 0 440 235" xmlns="http://www.w3.org/2000/svg" style="max-width:520px">
+<line x1="50" y1="200" x2="50" y2="40" stroke="#c7ccd3" stroke-width="1"/><line x1="75" y1="200" x2="75" y2="40" stroke="#c7ccd3" stroke-width="1"/><line x1="100" y1="200" x2="100" y2="40" stroke="#c7ccd3" stroke-width="1"/><line x1="125" y1="200" x2="125" y2="40" stroke="#c7ccd3" stroke-width="1"/><line x1="150" y1="200" x2="150" y2="40" stroke="#c7ccd3" stroke-width="1"/><line x1="175" y1="200" x2="175" y2="40" stroke="#c7ccd3" stroke-width="1"/><line x1="200" y1="200" x2="200" y2="40" stroke="#c7ccd3" stroke-width="1"/><line x1="225" y1="200" x2="225" y2="40" stroke="#c7ccd3" stroke-width="1"/><line x1="250" y1="200" x2="250" y2="40" stroke="#c7ccd3" stroke-width="1"/><line x1="275" y1="200" x2="275" y2="40" stroke="#c7ccd3" stroke-width="1"/><line x1="300" y1="200" x2="300" y2="40" stroke="#c7ccd3" stroke-width="1"/><line x1="325" y1="200" x2="325" y2="40" stroke="#c7ccd3" stroke-width="1"/><line x1="350" y1="200" x2="350" y2="40" stroke="#c7ccd3" stroke-width="1"/><line x1="375" y1="200" x2="375" y2="40" stroke="#c7ccd3" stroke-width="1"/><line x1="400" y1="200" x2="400" y2="40" stroke="#c7ccd3" stroke-width="1"/><line x1="50" y1="200.0" x2="400" y2="200.0" stroke="#c7ccd3" stroke-width="1"/><line x1="50" y1="180.0" x2="400" y2="180.0" stroke="#c7ccd3" stroke-width="1"/><line x1="50" y1="160.0" x2="400" y2="160.0" stroke="#c7ccd3" stroke-width="1"/><line x1="50" y1="140.0" x2="400" y2="140.0" stroke="#c7ccd3" stroke-width="1"/><line x1="50" y1="120.0" x2="400" y2="120.0" stroke="#c7ccd3" stroke-width="1"/><line x1="50" y1="100.0" x2="400" y2="100.0" stroke="#c7ccd3" stroke-width="1"/><line x1="50" y1="80.0" x2="400" y2="80.0" stroke="#c7ccd3" stroke-width="1"/><line x1="50" y1="60.0" x2="400" y2="60.0" stroke="#c7ccd3" stroke-width="1"/><line x1="50" y1="40.0" x2="400" y2="40.0" stroke="#c7ccd3" stroke-width="1"/>
+<line x1="50" y1="200" x2="412" y2="200" stroke="#1c1f26" stroke-width="1.3"/><line x1="50" y1="200" x2="50" y2="28" stroke="#1c1f26" stroke-width="1.3"/>
+<g font-size="11" fill="#5c6472"><text x="50" y="216" text-anchor="middle">0</text><text x="100" y="216" text-anchor="middle">2</text><text x="150" y="216" text-anchor="middle">4</text><text x="200" y="216" text-anchor="middle">6</text><text x="250" y="216" text-anchor="middle">8</text><text x="300" y="216" text-anchor="middle">10</text><text x="350" y="216" text-anchor="middle">12</text><text x="400" y="216" text-anchor="middle">14</text><text x="42" y="204" text-anchor="end">0</text><text x="42" y="164" text-anchor="end">1</text><text x="42" y="124" text-anchor="end">2</text><text x="42" y="84" text-anchor="end">3</text><text x="42" y="44" text-anchor="end">4</text><text x="414" y="204">t in s</text><text x="56" y="26">v in m/s</text></g>
+<polyline points="50,200 100,80 300,80 375,200" fill="none" stroke="#0f6e56" stroke-width="3"/>
+<g font-size="13" font-weight="700" fill="#1c1f26"><text x="85.0" y="176.0">I</text><text x="200" y="68.0">II</text><text x="315.0" y="176.0">III</text></g>
+</svg>
+<p><strong>a)</strong> Beschreiben Sie die Bewegung des Aufzugs in den Abschnitten I bis III mit Fachbegriffen.</p>
+<p><strong>b)</strong> Berechnen Sie die Beschleunigungen in den Abschnitten I und III.</p>
+<p><strong>c)</strong> Ein Stockwerk ist $3{,}5\,\text{m}$ hoch. Ermitteln Sie, in welchem Stockwerk der Aufzug anhält.</p>
+<p><strong>d)</strong> Skizzieren Sie das zugehörige $t$-$a$-Diagramm und das $t$-$s$-Diagramm.</p>
+<p><strong>e)</strong> Ein Mitfahrer meint: „Der Aufzug bremst sanfter, als er anfährt. Deshalb braucht er zum Bremsen auch mehr Strecke.“ Beurteilen Sie diese Aussage.</p></div>
+        <div class="assess">
+          <span class="lab">Einschätzung:</span>
+          <button data-v="ok" type="button">✓ Fertig &amp; verstanden</button>
+          <button data-v="mid" type="button">~ Noch unsicher</button>
+          <button data-v="ask" type="button">? Frage an Lehrer</button>
+        </div>
+        <div class="hints"><div class="htitle">Hilfen</div><div class="htabs"><button type="button">Hilfe 1 · Steigung und Fläche</button><button type="button">Hilfe 2 · Flächen zerlegen</button><button type="button">Hilfe 3 · Zu d)</button></div><div class="hpanel"><h4>Hilfe 1 · Steigung und Fläche</h4><p>Die Steigung im $t$-$v$-Diagramm ist die Beschleunigung $a=\frac{\Delta v}{\Delta t}$. Die Fläche unter dem Graphen ist die zurückgelegte Strecke.</p></div><div class="hpanel"><h4>Hilfe 2 · Flächen zerlegen</h4><p>Zerlege die Fläche in ein Dreieck (I), ein Rechteck (II) und ein Dreieck (III). Dreieck: $\tfrac12\cdot\text{Grundseite}\cdot\text{Höhe}$.</p></div><div class="hpanel"><h4>Hilfe 3 · Zu d)</h4><p>$t$-$a$: In jedem Abschnitt ist $a$ konstant, also waagerechte Strecken. $t$-$s$: Parabelast (immer steiler) – Gerade – Parabelast (immer flacher, endet waagerecht).</p></div></div>
+        <button class="solbtn" type="button">Musterlösung anzeigen</button>
+        <div class="sol"><div class="sh">✓ Musterlösung · Aufgabe 5</div><div class="sb"><p><strong>a)</strong> I ($0$–$2\,\text{s}$): gleichmäßig beschleunigt aus der Ruhe auf $3{,}0\,\tfrac{\text{m}}{\text{s}}$. II ($2$–$10\,\text{s}$): gleichförmig mit $3{,}0\,\tfrac{\text{m}}{\text{s}}$. III ($10$–$13\,\text{s}$): gleichmäßig verzögert bis zum Stillstand.</p>
+<p><strong>b)</strong> $a_\text{I}=\frac{3{,}0\,\tfrac{\text{m}}{\text{s}}}{2\,\text{s}}={\color{#1a9e5c}\boldsymbol{1{,}5\,\tfrac{\text{m}}{\text{s}^2}}}$, $a_\text{III}=\frac{0-3{,}0\,\tfrac{\text{m}}{\text{s}}}{3\,\text{s}}={\color{#1a9e5c}\boldsymbol{-1{,}0\,\tfrac{\text{m}}{\text{s}^2}}}$</p>
+<p><strong>c)</strong> $s=\tfrac12\cdot2\,\text{s}\cdot3\,\tfrac{\text{m}}{\text{s}}+8\,\text{s}\cdot3\,\tfrac{\text{m}}{\text{s}}+\tfrac12\cdot3\,\text{s}\cdot3\,\tfrac{\text{m}}{\text{s}}=3\,\text{m}+24\,\text{m}+4{,}5\,\text{m}={\color{#1a9e5c}\boldsymbol{31{,}5\,\text{m}}}$<br>$31{,}5\,\text{m}:3{,}5\,\text{m}=9$ $\Rightarrow$ der Aufzug hält im <b>9. Stock</b>.</p>
+<p><strong>d)</strong> $t$-$a$-Diagramm (links) und $t$-$s$-Diagramm (rechts):</p><div style="display:flex;flex-wrap:wrap;gap:10px;justify-content:center"><svg viewBox="0 0 330 210" xmlns="http://www.w3.org/2000/svg" style="max-width:370px"><line x1="48.0" y1="180.0" x2="48.0" y2="22.0" stroke="#dde1e7"/><line x1="85.7" y1="180.0" x2="85.7" y2="22.0" stroke="#dde1e7"/><line x1="123.4" y1="180.0" x2="123.4" y2="22.0" stroke="#dde1e7"/><line x1="161.1" y1="180.0" x2="161.1" y2="22.0" stroke="#dde1e7"/><line x1="198.9" y1="180.0" x2="198.9" y2="22.0" stroke="#dde1e7"/><line x1="236.6" y1="180.0" x2="236.6" y2="22.0" stroke="#dde1e7"/><line x1="274.3" y1="180.0" x2="274.3" y2="22.0" stroke="#dde1e7"/><line x1="312.0" y1="180.0" x2="312.0" y2="22.0" stroke="#dde1e7"/><line x1="48.0" y1="160.2" x2="312.0" y2="160.2" stroke="#dde1e7"/><line x1="48.0" y1="140.5" x2="312.0" y2="140.5" stroke="#dde1e7"/><line x1="48.0" y1="120.8" x2="312.0" y2="120.8" stroke="#dde1e7"/><line x1="48.0" y1="101.0" x2="312.0" y2="101.0" stroke="#dde1e7"/><line x1="48.0" y1="81.2" x2="312.0" y2="81.2" stroke="#dde1e7"/><line x1="48.0" y1="61.5" x2="312.0" y2="61.5" stroke="#dde1e7"/><line x1="48.0" y1="41.8" x2="312.0" y2="41.8" stroke="#dde1e7"/><line x1="48.0" y1="101.0" x2="320.0" y2="101.0" stroke="#1c1f26" stroke-width="1.3"/><polygon points="324.0,101.0 317.0,97.0 317.0,105.0" fill="#1c1f26"/><line x1="48.0" y1="180.0" x2="48.0" y2="14.0" stroke="#1c1f26" stroke-width="1.3"/><polygon points="48.0,10.0 44.0,17.0 52.0,17.0" fill="#1c1f26"/><g font-size="10" fill="#5c6472"><text x="48.0" y="114.0" text-anchor="middle">0</text><text x="85.7" y="114.0" text-anchor="middle">2</text><text x="123.4" y="114.0" text-anchor="middle">4</text><text x="161.1" y="114.0" text-anchor="middle">6</text><text x="198.9" y="114.0" text-anchor="middle">8</text><text x="236.6" y="114.0" text-anchor="middle">10</text><text x="274.3" y="114.0" text-anchor="middle">12</text><text x="312.0" y="114.0" text-anchor="middle">14</text><text x="43.0" y="163.8" text-anchor="end">-1,5</text><text x="43.0" y="144.0" text-anchor="end">-1</text><text x="43.0" y="124.2" text-anchor="end">-0,5</text><text x="43.0" y="104.5" text-anchor="end">0</text><text x="43.0" y="84.8" text-anchor="end">0,5</text><text x="43.0" y="65.0" text-anchor="end">1</text><text x="43.0" y="45.2" text-anchor="end">1,5</text><text x="316.0" y="125.0" text-anchor="end" font-style="italic">t in s</text><text x="54.0" y="14" font-style="italic">a in m/s²</text></g><polyline points="48.0,41.8 85.7,41.8" fill="none" stroke="#0f6e56" stroke-width="2.6"/><polyline points="85.7,101.0 236.6,101.0" fill="none" stroke="#0f6e56" stroke-width="2.6"/><polyline points="236.6,140.5 293.1,140.5" fill="none" stroke="#0f6e56" stroke-width="2.6"/><polyline points="85.7,41.8 85.7,101.0" fill="none" stroke="#5c6472" stroke-width="2.6" stroke-dasharray="6 4"/><polyline points="236.6,101.0 236.6,140.5" fill="none" stroke="#5c6472" stroke-width="2.6" stroke-dasharray="6 4"/></svg><svg viewBox="0 0 330 210" xmlns="http://www.w3.org/2000/svg" style="max-width:370px"><line x1="48.0" y1="180.0" x2="48.0" y2="22.0" stroke="#dde1e7"/><line x1="85.7" y1="180.0" x2="85.7" y2="22.0" stroke="#dde1e7"/><line x1="123.4" y1="180.0" x2="123.4" y2="22.0" stroke="#dde1e7"/><line x1="161.1" y1="180.0" x2="161.1" y2="22.0" stroke="#dde1e7"/><line x1="198.9" y1="180.0" x2="198.9" y2="22.0" stroke="#dde1e7"/><line x1="236.6" y1="180.0" x2="236.6" y2="22.0" stroke="#dde1e7"/><line x1="274.3" y1="180.0" x2="274.3" y2="22.0" stroke="#dde1e7"/><line x1="312.0" y1="180.0" x2="312.0" y2="22.0" stroke="#dde1e7"/><line x1="48.0" y1="180.0" x2="312.0" y2="180.0" stroke="#dde1e7"/><line x1="48.0" y1="157.4" x2="312.0" y2="157.4" stroke="#dde1e7"/><line x1="48.0" y1="134.9" x2="312.0" y2="134.9" stroke="#dde1e7"/><line x1="48.0" y1="112.3" x2="312.0" y2="112.3" stroke="#dde1e7"/><line x1="48.0" y1="89.7" x2="312.0" y2="89.7" stroke="#dde1e7"/><line x1="48.0" y1="67.1" x2="312.0" y2="67.1" stroke="#dde1e7"/><line x1="48.0" y1="44.6" x2="312.0" y2="44.6" stroke="#dde1e7"/><line x1="48.0" y1="22.0" x2="312.0" y2="22.0" stroke="#dde1e7"/><line x1="48.0" y1="180.0" x2="320.0" y2="180.0" stroke="#1c1f26" stroke-width="1.3"/><polygon points="324.0,180.0 317.0,176.0 317.0,184.0" fill="#1c1f26"/><line x1="48.0" y1="180.0" x2="48.0" y2="14.0" stroke="#1c1f26" stroke-width="1.3"/><polygon points="48.0,10.0 44.0,17.0 52.0,17.0" fill="#1c1f26"/><g font-size="10" fill="#5c6472"><text x="48.0" y="193.0" text-anchor="middle">0</text><text x="85.7" y="193.0" text-anchor="middle">2</text><text x="123.4" y="193.0" text-anchor="middle">4</text><text x="161.1" y="193.0" text-anchor="middle">6</text><text x="198.9" y="193.0" text-anchor="middle">8</text><text x="236.6" y="193.0" text-anchor="middle">10</text><text x="274.3" y="193.0" text-anchor="middle">12</text><text x="312.0" y="193.0" text-anchor="middle">14</text><text x="43.0" y="183.5" text-anchor="end">0</text><text x="43.0" y="160.9" text-anchor="end">5</text><text x="43.0" y="138.4" text-anchor="end">10</text><text x="43.0" y="115.8" text-anchor="end">15</text><text x="43.0" y="93.2" text-anchor="end">20</text><text x="43.0" y="70.6" text-anchor="end">25</text><text x="43.0" y="48.1" text-anchor="end">30</text><text x="43.0" y="25.5" text-anchor="end">35</text><text x="316.0" y="204.0" text-anchor="end" font-style="italic">t in s</text><text x="54.0" y="14" font-style="italic">s in m</text></g><polyline points="48.0,180.0 49.9,180.0 51.8,179.9 53.7,179.7 55.5,179.5 57.4,179.2 59.3,178.8 61.2,178.3 63.1,177.8 65.0,177.3 66.9,176.6 68.7,175.9 70.6,175.1 72.5,174.3 74.4,173.4 76.3,172.4 78.2,171.3 80.1,170.2 81.9,169.0 83.8,167.8 85.7,166.5 85.7,166.5 104.6,152.9 123.4,139.4 142.3,125.8 161.1,112.3 180.0,98.7 198.9,85.2 217.7,71.7 236.6,58.1 236.6,58.1 239.4,56.1 242.2,54.3 245.1,52.5 247.9,50.8 250.7,49.2 253.5,47.8 256.4,46.4 259.2,45.1 262.0,43.9 264.9,42.9 267.7,41.9 270.5,41.1 273.3,40.3 276.2,39.6 279.0,39.1 281.8,38.6 284.7,38.3 287.5,38.0 290.3,37.9 293.1,37.8" fill="none" stroke="#0f6e56" stroke-width="2.6"/><circle cx="85.7" cy="166.5" r="3.2" fill="#1c1f26"/><text x="91.7" y="160.5" font-size="10.5" fill="#1c1f26" text-anchor="start">(2|3)</text><circle cx="236.6" cy="58.1" r="3.2" fill="#1c1f26"/><text x="230.6" y="52.1" font-size="10.5" fill="#1c1f26" text-anchor="end">(10|27)</text><circle cx="293.1" cy="37.8" r="3.2" fill="#1c1f26"/><text x="287.1" y="31.8" font-size="10.5" fill="#1c1f26" text-anchor="end">(13|31,5)</text></svg></div>
+<p><strong>e)</strong> Die Aussage ist <b>richtig</b>. Der Betrag der Bremsbeschleunigung ($1{,}0\,\tfrac{\text{m}}{\text{s}^2}$) ist kleiner als beim Anfahren ($1{,}5\,\tfrac{\text{m}}{\text{s}^2}$). Um von derselben Geschwindigkeit $3{,}0\,\tfrac{\text{m}}{\text{s}}$ auf null zu kommen, braucht der Aufzug länger ($3\,\text{s}$ statt $2\,\text{s}$) und legt dabei mehr Strecke zurück ($4{,}5\,\text{m}$ statt $3{,}0\,\text{m}$). Im Diagramm ist das Dreieck III größer als Dreieck I.</p></div></div>
+      </div>
+    </article>
+    <article class="card s2" data-stufe="2">
+      <div class="card-head"><h3>Aufgabe 6 · Tempo 30 vor der Schule<span class="tag">Beschleunigt</span></h3><span class="chev">▾</span></div>
+      <div class="card-body">
+        <div class="task"><p>Vor einer Schule gilt Tempo $30$. Ein Auto fährt dort mit $30\,\tfrac{\text{km}}{\text{h}}$, ein anderes zu schnell mit $50\,\tfrac{\text{km}}{\text{h}}$. Beide Fahrer haben eine Reaktionszeit von $1{,}0\,\text{s}$ und bremsen dann gleichmäßig mit dem Betrag $8{,}0\,\tfrac{\text{m}}{\text{s}^2}$.</p>
+<p><strong>a)</strong> Berechnen Sie für beide Autos den Reaktionsweg, die Bremsdauer und den Bremsweg.</p>
+<p><strong>b)</strong> Berechnen Sie jeweils den Anhalteweg. Beurteilen Sie die Aussage: „Bei $50\,\tfrac{\text{km}}{\text{h}}$ ist der Anhalteweg $\frac{50}{30}$-mal so lang wie bei $30\,\tfrac{\text{km}}{\text{h}}$.“</p>
+<p><strong>c)</strong> <em>(Profi)</em> $15\,\text{m}$ vor dem Auto läuft ein Kind auf die Straße. Begründen Sie rechnerisch, dass das Auto mit $30\,\tfrac{\text{km}}{\text{h}}$ rechtzeitig hält, und berechnen Sie, mit welcher Geschwindigkeit das zu schnelle Auto die Stelle erreicht.</p></div>
+        <div class="assess">
+          <span class="lab">Einschätzung:</span>
+          <button data-v="ok" type="button">✓ Fertig &amp; verstanden</button>
+          <button data-v="mid" type="button">~ Noch unsicher</button>
+          <button data-v="ask" type="button">? Frage an Lehrer</button>
+        </div>
+        <div class="hints"><div class="htitle">Hilfen</div><div class="htabs"><button type="button">Hilfe 1 · Reaktionsweg</button><button type="button">Hilfe 2 · Bremsweg</button><button type="button">Hilfe 3 · Zu c)</button></div><div class="hpanel"><h4>Hilfe 1 · Reaktionsweg</h4><p>Während der Reaktionszeit fährt das Auto gleichförmig weiter: $s_R=v_0\cdot t_R$. Rechne die Geschwindigkeit vorher in m/s um.</p></div><div class="hpanel"><h4>Hilfe 2 · Bremsweg</h4><p>Bremsdauer aus $v(t)=-a\,t+v_0=0$. Den Bremsweg erhältst du mit $s(t)=-\tfrac12 a\,t^2+v_0\,t$ oder als Dreiecksfläche im $t$-$v$-Diagramm: $s_B=\tfrac12\,v_0\,t_B$.</p></div><div class="hpanel"><h4>Hilfe 3 · Zu c)</h4><p>Beim schnellen Auto bleibt nach dem Reaktionsweg nur noch ein kurzes Stück zum Bremsen. Bestimme mit dem Taschenrechner (solve) die Zeit $t$, nach der $s(t)=-\tfrac12 a\,t^2+v_0\,t$ diesen Rest erreicht, und berechne dann $v(t)$.</p></div></div>
+        <button class="solbtn" type="button">Musterlösung anzeigen</button>
+        <div class="sol"><div class="sh">✓ Musterlösung · Aufgabe 6</div><div class="sb"><p><strong>a)</strong> $30\,\tfrac{\text{km}}{\text{h}}=8{,}33\,\tfrac{\text{m}}{\text{s}}$: $s_R=8{,}3\,\text{m}$, $t_B=\frac{8{,}33}{8{,}0}\,\text{s}\approx1{,}04\,\text{s}$, $s_B=\tfrac12\cdot8{,}33\,\tfrac{\text{m}}{\text{s}}\cdot1{,}04\,\text{s}\approx{\color{#1a9e5c}\boldsymbol{4{,}3\,\text{m}}}$<br>
+$50\,\tfrac{\text{km}}{\text{h}}=13{,}9\,\tfrac{\text{m}}{\text{s}}$: $s_R=13{,}9\,\text{m}$, $t_B\approx1{,}74\,\text{s}$, $s_B\approx{\color{#1a9e5c}\boldsymbol{12{,}1\,\text{m}}}$</p>
+<p><strong>b)</strong> Anhalteweg: $30\,\tfrac{\text{km}}{\text{h}}$: ${\color{#1a9e5c}\boldsymbol{12{,}7\,\text{m}}}$; $50\,\tfrac{\text{km}}{\text{h}}$: ${\color{#1a9e5c}\boldsymbol{25{,}9\,\text{m}}}$. Das ist etwa das <b>2,0-fache</b>, nicht das $\frac{50}{30}\approx1{,}7$-fache. Die Aussage ist falsch: Der Reaktionsweg wächst zwar proportional zu $v_0$, der Bremsweg aber mit $v_0^2$ (doppelte Geschwindigkeit $\Rightarrow$ doppelte Bremsdauer <em>und</em> doppelte mittlere Geschwindigkeit $\Rightarrow$ vierfacher Bremsweg).</p>
+<p><strong>c)</strong> $30\,\tfrac{\text{km}}{\text{h}}$: $12{,}7\,\text{m}<15\,\text{m}$, das Auto hält rechtzeitig.<br>$50\,\tfrac{\text{km}}{\text{h}}$: Nach $13{,}9\,\text{m}$ Reaktionsweg bleiben $1{,}1\,\text{m}$. Aus $-4\,t^2+13{,}9\,t=1{,}1$ folgt $t\approx0{,}08\,\text{s}$, also $v\approx13{,}9-8\cdot0{,}08\approx{\color{#1a9e5c}\boldsymbol{13{,}2\,\tfrac{\text{m}}{\text{s}}}}\approx48\,\tfrac{\text{km}}{\text{h}}$. Das zu schnelle Auto ist an der Stelle kaum langsamer geworden.</p></div></div>
+      </div>
+    </article>
+  </section>
+  <section class="s3" data-stufe="3">
+    <div class="stufe-head"><span class="stufe-badge">Stufe 3</span><span class="desc">Vertiefen · Kombinierte Bewegungen, Messwerte, Fehler finden und beurteilen</span></div>
+    
+    <article class="card s3" data-stufe="3">
+      <div class="card-head"><h3>Aufgabe 7 · Sprung ins Luftkissen<span class="tag">Freier Fall + Bremsen</span></h3><span class="chev">▾</span></div>
+      <div class="card-body">
+        <div class="task"><p>Ein Stuntman lässt sich aus der Ruhe fallen und landet nach $8{,}0\,\text{m}$ freiem Fall auf einem Luftkissen. Das Kissen bremst ihn auf einer Strecke von $1{,}6\,\text{m}$ gleichmäßig bis zum Stillstand ab. Der Luftwiderstand wird vernachlässigt; $g=9{,}81\,\tfrac{\text{m}}{\text{s}^2}$.</p>
+<p><strong>a)</strong> Skizzieren Sie qualitativ das $t$-$v$-Diagramm vom Loslassen bis zum Stillstand. Beschreiben Sie die beiden Phasen mit Fachbegriffen.</p>
+<p><strong>b)</strong> Berechnen Sie die Geschwindigkeit, mit der der Stuntman auf das Kissen trifft. (Kontrollergebnis: $v\approx12{,}5\,\tfrac{\text{m}}{\text{s}}$)</p>
+<p><strong>c)</strong> Berechnen Sie die Bremsdauer und die Bremsbeschleunigung. Geben Sie die Bremsbeschleunigung auch als Vielfaches von $g$ an.</p>
+<p><strong>d)</strong> Beurteilen Sie: „Ein doppelt so dickes Kissen halbiert die Bremsbeschleunigung.“</p></div>
+        <div class="assess">
+          <span class="lab">Einschätzung:</span>
+          <button data-v="ok" type="button">✓ Fertig &amp; verstanden</button>
+          <button data-v="mid" type="button">~ Noch unsicher</button>
+          <button data-v="ask" type="button">? Frage an Lehrer</button>
+        </div>
+        <div class="hints"><div class="htitle">Hilfen</div><div class="htabs"><button type="button">Hilfe 1 · Zu a)</button><button type="button">Hilfe 2 · Bremsdauer über die Fläche</button><button type="button">Hilfe 3 · Zu d)</button></div><div class="hpanel"><h4>Hilfe 1 · Zu a)</h4><p>Phase 1: freier Fall, die Geschwindigkeit steigt linear (Ursprungsgerade). Phase 2: gleichmäßiges Abbremsen, die Geschwindigkeit fällt linear auf null.</p></div><div class="hpanel"><h4>Hilfe 2 · Bremsdauer über die Fläche</h4><p>Die Bremsstrecke ist die Dreiecksfläche unter dem fallenden Teil des $t$-$v$-Graphen: $s_B=\tfrac12\cdot v_1\cdot t_B$. Stelle nach $t_B$ um. Danach gilt $a=\frac{\Delta v}{\Delta t}$.</p></div><div class="hpanel"><h4>Hilfe 3 · Zu d)</h4><p>Rechne c) noch einmal mit $s_B=3{,}2\,\text{m}$. Was passiert mit der Bremsdauer, was mit der Beschleunigung?</p></div></div>
+        <button class="solbtn" type="button">Musterlösung anzeigen</button>
+        <div class="sol"><div class="sh">✓ Musterlösung · Aufgabe 7</div><div class="sb"><p><strong>a)</strong> Phase 1: freier Fall, gleichmäßig beschleunigt mit $g$ (Ursprungsgerade). Phase 2: gleichmäßig verzögert bis $v=0$ (steil fallende Gerade):</p><svg viewBox="0 0 380 210" xmlns="http://www.w3.org/2000/svg" style="max-width:420px"><line x1="48.0" y1="180.0" x2="48.0" y2="22.0" stroke="#dde1e7"/><line x1="91.6" y1="180.0" x2="91.6" y2="22.0" stroke="#dde1e7"/><line x1="135.2" y1="180.0" x2="135.2" y2="22.0" stroke="#dde1e7"/><line x1="178.8" y1="180.0" x2="178.8" y2="22.0" stroke="#dde1e7"/><line x1="222.4" y1="180.0" x2="222.4" y2="22.0" stroke="#dde1e7"/><line x1="266.1" y1="180.0" x2="266.1" y2="22.0" stroke="#dde1e7"/><line x1="309.7" y1="180.0" x2="309.7" y2="22.0" stroke="#dde1e7"/><line x1="353.3" y1="180.0" x2="353.3" y2="22.0" stroke="#dde1e7"/><line x1="48.0" y1="180.0" x2="362.0" y2="180.0" stroke="#dde1e7"/><line x1="48.0" y1="153.7" x2="362.0" y2="153.7" stroke="#dde1e7"/><line x1="48.0" y1="127.3" x2="362.0" y2="127.3" stroke="#dde1e7"/><line x1="48.0" y1="101.0" x2="362.0" y2="101.0" stroke="#dde1e7"/><line x1="48.0" y1="74.7" x2="362.0" y2="74.7" stroke="#dde1e7"/><line x1="48.0" y1="48.3" x2="362.0" y2="48.3" stroke="#dde1e7"/><line x1="48.0" y1="22.0" x2="362.0" y2="22.0" stroke="#dde1e7"/><line x1="48.0" y1="180.0" x2="370.0" y2="180.0" stroke="#1c1f26" stroke-width="1.3"/><polygon points="374.0,180.0 367.0,176.0 367.0,184.0" fill="#1c1f26"/><line x1="48.0" y1="180.0" x2="48.0" y2="14.0" stroke="#1c1f26" stroke-width="1.3"/><polygon points="48.0,10.0 44.0,17.0 52.0,17.0" fill="#1c1f26"/><g font-size="10" fill="#5c6472"><text x="48.0" y="193.0" text-anchor="middle">0</text><text x="91.6" y="193.0" text-anchor="middle">0,25</text><text x="135.2" y="193.0" text-anchor="middle">0,5</text><text x="178.8" y="193.0" text-anchor="middle">0,75</text><text x="222.4" y="193.0" text-anchor="middle">1</text><text x="266.1" y="193.0" text-anchor="middle">1,25</text><text x="309.7" y="193.0" text-anchor="middle">1,5</text><text x="353.3" y="193.0" text-anchor="middle">1,75</text><text x="43.0" y="183.5" text-anchor="end">0</text><text x="43.0" y="157.2" text-anchor="end">2,5</text><text x="43.0" y="130.8" text-anchor="end">5</text><text x="43.0" y="104.5" text-anchor="end">7,5</text><text x="43.0" y="78.2" text-anchor="end">10</text><text x="43.0" y="51.8" text-anchor="end">12,5</text><text x="43.0" y="25.5" text-anchor="end">15</text><text x="366.0" y="204.0" text-anchor="end" font-style="italic">t in s</text><text x="54.0" y="14" font-style="italic">v in m/s</text></g><polyline points="48.0,180.0 270.8,48.0 315.4,180.0" fill="none" stroke="#0f6e56" stroke-width="2.6"/><circle cx="270.8" cy="48.0" r="3.2" fill="#1c1f26"/><text x="264.8" y="42.0" font-size="10.5" fill="#1c1f26" text-anchor="end">(1,28 | 12,5)</text></svg>
+<p><strong>b)</strong> $$t_1=\sqrt{\frac{2\cdot8{,}0\,\text{m}}{9{,}81\,\tfrac{\text{m}}{\text{s}^2}}}\approx1{,}28\,\text{s},\qquad v_1=g\cdot t_1\approx{\color{#1a9e5c}\boldsymbol{12{,}5\,\tfrac{\text{m}}{\text{s}}}}$$</p>
+<p><strong>c)</strong> $$t_B=\frac{2\,s_B}{v_1}=\frac{2\cdot1{,}6\,\text{m}}{12{,}5\,\tfrac{\text{m}}{\text{s}}}\approx{\color{#1a9e5c}\boldsymbol{0{,}26\,\text{s}}},\qquad a=\frac{0-12{,}5\,\tfrac{\text{m}}{\text{s}}}{0{,}26\,\text{s}}\approx{\color{#1a9e5c}\boldsymbol{-49\,\tfrac{\text{m}}{\text{s}^2}}}\approx-5\,g$$</p>
+<p><strong>d)</strong> Die Aussage ist <b>richtig</b>. Mit $s_B=3{,}2\,\text{m}$ verdoppelt sich die Bremsdauer auf etwa $0{,}51\,\text{s}$. Bei gleicher Geschwindigkeitsänderung halbiert sich damit $a=\frac{\Delta v}{\Delta t}$ auf etwa $25\,\tfrac{\text{m}}{\text{s}^2}$ ($2{,}5\,g$). Deshalb sind dicke Kissen für Stunts sicherer.</p></div></div>
+      </div>
+    </article>
+    <article class="card s3" data-stufe="3">
+      <div class="card-head"><h3>Aufgabe 8 · Videoanalyse: Ein E-Scooter fährt an<span class="tag">Messwerte</span></h3><span class="chev">▾</span></div>
+      <div class="card-body">
+        <div class="task"><p>Ein E-Scooter fährt aus dem Stand los. Mit Viana wurden folgende Orte gemessen:</p>
+<table><tr><th>$t$ in s</th><td>0</td><td>0,5</td><td>1,0</td><td>1,5</td><td>2,0</td><td>2,5</td><td>3,0</td></tr>
+<tr><th>$s$ in m</th><td>0</td><td>0,16</td><td>0,79</td><td>1,81</td><td>3,23</td><td>5,00</td><td>7,18</td></tr></table>
+<p><strong>a)</strong> Begründen Sie mithilfe der Messwerte, dass es sich nicht um eine gleichförmige Bewegung handelt.</p>
+<p><strong>b)</strong> Ermitteln Sie mit einer geeigneten Regression des Taschenrechners die Beschleunigung.</p>
+<p><strong>c)</strong> Berechnen Sie die Geschwindigkeit nach $3{,}0\,\text{s}$ und die Zeit, nach der der Scooter seine Höchstgeschwindigkeit von $20\,\tfrac{\text{km}}{\text{h}}$ erreicht.</p>
+<p><strong>d)</strong> Nennen Sie zwei mögliche Ursachen für Messfehler bei der Videoanalyse.</p></div>
+        <div class="assess">
+          <span class="lab">Einschätzung:</span>
+          <button data-v="ok" type="button">✓ Fertig &amp; verstanden</button>
+          <button data-v="mid" type="button">~ Noch unsicher</button>
+          <button data-v="ask" type="button">? Frage an Lehrer</button>
+        </div>
+        <div class="hints"><div class="htitle">Hilfen</div><div class="htabs"><button type="button">Hilfe 1 · Zu a)</button><button type="button">Hilfe 2 · Regression</button><button type="button">Hilfe 3 · Zu c)</button></div><div class="hpanel"><h4>Hilfe 1 · Zu a)</h4><p>Berechne die Strecken in den einzelnen Zeitabschnitten von $0{,}5\,\text{s}$. Wären sie gleich groß, wäre die Bewegung gleichförmig.</p></div><div class="hpanel"><h4>Hilfe 2 · Regression</h4><p>Gib die Werte in Lists &amp; Spreadsheet ein und wähle eine <em>quadratische</em> Regression (QuadReg). Vergleiche das Ergebnis $s=a_2t^2+\ldots$ mit $s=\tfrac12 a\,t^2$: Es gilt $a=2\cdot a_2$.</p></div><div class="hpanel"><h4>Hilfe 3 · Zu c)</h4><p>$v=a\cdot t$. Für die Höchstgeschwindigkeit: $20\,\tfrac{\text{km}}{\text{h}}$ in m/s umrechnen und $t=\frac{v}{a}$ berechnen.</p></div></div>
+        <button class="solbtn" type="button">Musterlösung anzeigen</button>
+        <div class="sol"><div class="sh">✓ Musterlösung · Aufgabe 8</div><div class="sb"><p><strong>a)</strong> Die Strecken pro $0{,}5\,\text{s}$ betragen $0{,}16$; $0{,}63$; $1{,}02$; $1{,}42$; $1{,}77$; $2{,}18\,\text{m}$. Sie werden immer größer, der Scooter wird also schneller.</p>
+<p><strong>b)</strong> QuadReg: $s(t)\approx0{,}790\,\tfrac{\text{m}}{\text{s}^2}\cdot t^2+0{,}03\,\tfrac{\text{m}}{\text{s}}\cdot t-0{,}02\,\text{m}$. Vergleich mit $s=\tfrac12at^2$: $a=2\cdot0{,}790\,\tfrac{\text{m}}{\text{s}^2}\approx{\color{#1a9e5c}\boldsymbol{1{,}6\,\tfrac{\text{m}}{\text{s}^2}}}$</p>
+<p><strong>c)</strong> $v(3\,\text{s})=1{,}58\,\tfrac{\text{m}}{\text{s}^2}\cdot3{,}0\,\text{s}\approx{\color{#1a9e5c}\boldsymbol{4{,}7\,\tfrac{\text{m}}{\text{s}}}}$; $20\,\tfrac{\text{km}}{\text{h}}=5{,}56\,\tfrac{\text{m}}{\text{s}}$ $\Rightarrow$ $t=\frac{5{,}56}{1{,}58}\,\text{s}\approx{\color{#1a9e5c}\boldsymbol{3{,}5\,\text{s}}}$</p>
+<p><strong>d)</strong> z.&nbsp;B. ungenaues Setzen der Markierungen in Viana; Maßstab nicht in der Bewegungsebene oder falsch kalibriert; Kamera nicht senkrecht zur Bewegung (Perspektive); Bewegungsunschärfe bei schneller Bewegung.</p></div></div>
+      </div>
+    </article>
+    <article class="card s3" data-stufe="3">
+      <div class="card-head"><h3>Aufgabe 9 · Fehler finden: Drei Schülerlösungen<span class="tag">Beurteilen</span></h3><span class="chev">▾</span></div>
+      <div class="card-body">
+        <div class="task"><p>Beurteilen Sie die drei Schülerlösungen. Erläutern Sie jeweils den Fehler und berechnen Sie das richtige Ergebnis.</p>
+<p><strong>a)</strong> Ein Auto fährt $100\,\text{km}$ mit $100\,\tfrac{\text{km}}{\text{h}}$ und gerät dann für $50\,\text{km}$ in einen Stau, in dem es im Mittel $25\,\tfrac{\text{km}}{\text{h}}$ fährt.<br>
+<em>Schülerlösung:</em> $\bar v=\frac{100\,\tfrac{\text{km}}{\text{h}}+25\,\tfrac{\text{km}}{\text{h}}}{2}=62{,}5\,\tfrac{\text{km}}{\text{h}}$</p>
+<p><strong>b)</strong> Eine Radfahrerin wird gleichmäßig in $3{,}0\,\text{s}$ von $6{,}0\,\tfrac{\text{m}}{\text{s}}$ bis zum Stillstand abgebremst.<br>
+<em>Schülerlösung:</em> $a=\frac{6{,}0\,\tfrac{\text{m}}{\text{s}}}{3{,}0\,\text{s}}=2{,}0\,\tfrac{\text{m}}{\text{s}^2}$, „die Radfahrerin wird also beschleunigt“.</p>
+<p><strong>c)</strong> Ein Auto beschleunigt gleichmäßig in $10\,\text{s}$ aus dem Stand auf $20\,\tfrac{\text{m}}{\text{s}}$.<br>
+<em>Schülerlösung:</em> $s=v\cdot t=20\,\tfrac{\text{m}}{\text{s}}\cdot10\,\text{s}=200\,\text{m}$</p></div>
+        <div class="assess">
+          <span class="lab">Einschätzung:</span>
+          <button data-v="ok" type="button">✓ Fertig &amp; verstanden</button>
+          <button data-v="mid" type="button">~ Noch unsicher</button>
+          <button data-v="ask" type="button">? Frage an Lehrer</button>
+        </div>
+        <div class="hints"><div class="htitle">Hilfen</div><div class="htabs"><button type="button">Hilfe 1 · Zu a)</button><button type="button">Hilfe 2 · Zu b)</button><button type="button">Hilfe 3 · Zu c)</button></div><div class="hpanel"><h4>Hilfe 1 · Zu a)</h4><p>Wie lange dauert jeder Abschnitt? Die Durchschnittsgeschwindigkeit ist $\frac{s_\text{ges}}{t_\text{ges}}$.</p></div><div class="hpanel"><h4>Hilfe 2 · Zu b)</h4><p>Berechne $\Delta v=v_\text{Ende}-v_\text{Anfang}$. Welches Vorzeichen hat $a$, und was bedeutet das?</p></div><div class="hpanel"><h4>Hilfe 3 · Zu c)</h4><p>Die Formel $s=v\cdot t$ gilt nur für gleichförmige Bewegungen. Skizziere das $t$-$v$-Diagramm und bestimme die Fläche.</p></div></div>
+        <button class="solbtn" type="button">Musterlösung anzeigen</button>
+        <div class="sol"><div class="sh">✓ Musterlösung · Aufgabe 9</div><div class="sb"><p><strong>a)</strong> Falsch: Die beiden Abschnitte dauern unterschiedlich lange ($1\,\text{h}$ und $2\,\text{h}$), der einfache Mittelwert ist deshalb nicht zulässig. Richtig: $\bar v=\frac{150\,\text{km}}{3\,\text{h}}={\color{#1a9e5c}\boldsymbol{50\,\tfrac{\text{km}}{\text{h}}}}$.</p>
+<p><strong>b)</strong> Teilweise falsch: $\Delta v=0-6{,}0\,\tfrac{\text{m}}{\text{s}}=-6{,}0\,\tfrac{\text{m}}{\text{s}}$, also $a={\color{#1a9e5c}\boldsymbol{-2{,}0\,\tfrac{\text{m}}{\text{s}^2}}}$. Das negative Vorzeichen zeigt, dass die Geschwindigkeit abnimmt: Die Radfahrerin wird abgebremst (gleichmäßig verzögerte Bewegung). Physikalisch ist zwar auch Bremsen eine Beschleunigung, aber die Aussage „wird beschleunigt“ im Sinne von „wird schneller“ ist falsch.</p>
+<p><strong>c)</strong> Falsch: $s=v\cdot t$ gilt nur bei konstanter Geschwindigkeit. Hier ist $20\,\tfrac{\text{m}}{\text{s}}$ nur die Endgeschwindigkeit. Richtig: $s=\tfrac12\cdot20\,\tfrac{\text{m}}{\text{s}}\cdot10\,\text{s}={\color{#1a9e5c}\boldsymbol{100\,\text{m}}}$ (Dreiecksfläche) bzw. $s=\tfrac12at^2$ mit $a=2{,}0\,\tfrac{\text{m}}{\text{s}^2}$.</p></div></div>
+      </div>
+    </article>
+  </section>
+
+</div>
+
+<footer class="bot">
+  Physik Einführungsphase · Klausurvorbereitung · Bewegungen beschreiben (Kapitel 1.1–1.4)<br>
+  <a href="../">← Zurück zu EP Materialien</a>
+</footer>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+
+  /* ---------- KaTeX ---------- */
+  function render(){
+    if (window.renderMathInElement) {
+      renderMathInElement(document.body, {
+        delimiters: [
+          {left:'$$', right:'$$', display:true},
+          {left:'$',  right:'$',  display:false}
+        ],
+        throwOnError:false
+      });
+    }
+  }
+  if (window.renderMathInElement) render();
+  else window.addEventListener('load', render);
+
+  /* ---------- Karten auf/zu ---------- */
+  document.querySelectorAll('.card-head').forEach(function(h){
+    h.addEventListener('click', function(){
+      h.parentElement.classList.toggle('open');
+    });
+  });
+
+  /* ---------- Hilfe-Reiter ---------- */
+  document.querySelectorAll('.hints').forEach(function(box){
+    var tabs   = box.querySelectorAll('.htabs button');
+    var panels = box.querySelectorAll('.hpanel');
+    tabs.forEach(function(tab, i){
+      tab.addEventListener('click', function(){
+        var wasOn = tab.classList.contains('on');
+        tabs.forEach(function(t){ t.classList.remove('on'); });
+        panels.forEach(function(p){ p.classList.remove('on'); });
+        if (!wasOn) {
+          tab.classList.add('on');
+          if (panels[i]) panels[i].classList.add('on');
+        }
+      });
+    });
+  });
+
+  /* ---------- Selbsteinschätzung ---------- */
+  document.querySelectorAll('.assess').forEach(function(box){
+    var btns = box.querySelectorAll('button');
+    btns.forEach(function(b){
+      b.addEventListener('click', function(){
+        var wasOn = b.classList.contains('on');
+        btns.forEach(function(x){ x.classList.remove('on'); });
+        if (!wasOn) b.classList.add('on');
+      });
+    });
+  });
+
+  /* ---------- Filter ---------- */
+  document.querySelectorAll('.filters button').forEach(function(b){
+    b.addEventListener('click', function(){
+      document.querySelectorAll('.filters button').forEach(function(x){ x.classList.remove('on'); });
+      b.classList.add('on');
+      var f = b.dataset.f;
+      document.querySelectorAll('section[data-stufe]').forEach(function(sec){
+        sec.style.display = (f === 'all' || sec.dataset.stufe === f) ? '' : 'none';
+      });
+    });
+  });
+
+  /* ---------- Musterlösung ein-/ausblenden ---------- */
+  document.querySelectorAll('.solbtn').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      var c = btn.closest('.card');
+      var on = c.classList.toggle('showsol');
+      btn.textContent = on ? 'Musterlösung ausblenden' : 'Musterlösung anzeigen';
+    });
+  });
+
+  /* Erste Aufgabe jeder Stufe geöffnet starten */
+  document.querySelectorAll('section[data-stufe]').forEach(function(sec){
+    var first = sec.querySelector('.card');
+    if (first) first.classList.add('open');
+  });
+});
+</script>
+
+</body>
+</html>
