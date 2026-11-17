@@ -62,9 +62,44 @@
   footer{text-align:center;color:var(--ink-soft);font-size:.82rem;padding:20px}
   @media (max-width:520px){ .katex{font-size:.95em} body{font-size:16px} .wrap{padding:10px} .card{padding:12px} }
   .fig svg{max-width:100%;height:auto}
+  /* ---------- OneNote-Export ---------- */
+  .card h3 .tools{display:flex;align-items:center;gap:8px;margin-left:auto;font-weight:400}
+  .on-pick{display:flex;align-items:center;gap:4px;font-size:.78rem;color:var(--ink-soft);font-weight:600;cursor:pointer;white-space:nowrap}
+  .on-pick input{width:16px;height:16px;accent-color:var(--c);cursor:pointer}
+  .on-copy{border:1px solid var(--line);background:#fff;border-radius:6px;padding:3px 8px;font-size:.78rem;font-weight:700;cursor:pointer;color:var(--c);font-family:inherit;white-space:nowrap}
+  .on-copy:hover{border-color:var(--c);background:#faf6fd}
+  .card.picked{box-shadow:0 0 0 2px var(--c)}
+  .onbar{position:fixed;left:50%;bottom:16px;transform:translateX(-50%);background:var(--ink);color:#fff;border-radius:12px;padding:10px 14px;display:none;align-items:center;gap:12px;flex-wrap:wrap;z-index:50;box-shadow:0 6px 24px rgba(0,0,0,.25);max-width:calc(100% - 24px);font-size:.9rem}
+  .onbar.show{display:flex}
+  .onbar button{border:0;border-radius:6px;padding:7px 12px;font-weight:700;cursor:pointer;font-family:inherit;font-size:.86rem}
+  .onbar .go{background:var(--c);color:#fff}
+  .onbar .clr{background:#3a3f4a;color:#fff}
+  .onbar label{display:flex;align-items:center;gap:5px;cursor:pointer}
+  .ontoast{position:fixed;left:50%;top:18px;transform:translateX(-50%);background:var(--a);color:#fff;border-radius:8px;padding:10px 16px;font-weight:700;z-index:60;display:none;max-width:calc(100% - 24px);font-size:.9rem}
+  .ontoast.bad{background:#c62828}
+  .onmodal{position:fixed;inset:0;background:rgba(0,0,0,.55);display:none;align-items:center;justify-content:center;z-index:70;padding:16px}
+  .onmodal.show{display:flex}
+  .onmodal .box{background:#fff;border-radius:10px;max-width:900px;width:100%;max-height:90vh;overflow:auto;padding:14px}
+  .onmodal img{max-width:100%;border:1px solid var(--line)}
+  .lk-note{font-size:.88rem;color:var(--ink-soft);margin:0 0 14px}
+  .lk-note b{color:var(--c)}
+  .kbd{display:inline-block;border:1px solid #c9ced4;border-bottom-width:2px;border-radius:4px;padding:0 5px;font-size:.8em;background:#fff}
+  #on-stage{position:fixed;left:-12000px;top:0;width:860px;background:#fff;padding:22px 26px;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;color:#1f2933;line-height:1.55;font-size:16px}
+  #on-stage .katex{white-space:nowrap}
+  #on-stage .ex-item{margin-bottom:22px}
+  #on-stage .ex-item:last-child{margin-bottom:0}
+  #on-stage .ex-title{font-weight:700;font-size:1.08rem;margin:0 0 8px;padding-bottom:4px;border-bottom:3px solid var(--navy)}
+  #on-stage .ex-title.A{border-color:var(--a)} #on-stage .ex-title.B{border-color:var(--b)} #on-stage .ex-title.C{border-color:var(--c)}
+  #on-stage .ex-sol{margin-top:10px;padding:8px 12px;border-left:4px solid var(--a);background:#f3faf5}
+  #on-stage .ex-sol-h{font-weight:700;color:var(--a);margin-bottom:4px}
+  #on-stage .ex-src{font-size:.75rem;color:var(--ink-soft);text-align:right;margin-top:12px}
+  #on-stage .steps .st{display:block}
+  #on-stage .stepbar,#on-stage details,#on-stage .tools{display:none}
+  #on-stage .fig svg{max-width:100%;height:auto}
+  @media (max-width:560px){ .on-pick span{display:none} }
 </style>
 </head>
-<body>
+<body data-on-src="GK · VI.3 Koordinatenform und Normalenvektor">
 <header>
   <div class="eyebrow">Kapitel VI.3 · Koordinatenform und Normalenvektor · Übung</div>
   <h1>Übung: Normalenvektor und Koordinatengleichung</h1>
@@ -81,6 +116,8 @@
     <a href="#stufeC"><span class="dot" style="background:var(--c)"></span>Stufe C</a>
     <a href="#check">Das kann ich</a>
   </div>
+
+  <p class="lk-note"><b>📋 Für die Lehrkraft:</b> Mit „📋 OneNote“ wird eine Aufgabe als Bild kopiert. Mehrere Aufgaben über „auswählen“ markieren und gemeinsam kopieren – wahlweise mit Lösung – und in OneNote mit <span class="kbd">Strg</span> <span class="kbd">V</span> einfügen.</p>
 
   <!-- ================= GRUNDWISSEN ================= -->
   <h2 class="sec" id="wissen">Grundwissen</h2>
@@ -317,5 +354,101 @@ window.addEventListener('load',()=>{
   });
 });
 </script>
+<!-- OneNote-Export -->
+<div class="onbar" id="onbar">
+  <span id="on-count">0 ausgewählt</span>
+  <label title="Lösung mit ins Bild übernehmen"><input type="checkbox" id="on-sol"> mit Lösung</label>
+  <button class="go" id="on-go" type="button">📋 Als Bild für OneNote kopieren</button>
+  <button class="clr" id="on-clr" type="button">Auswahl aufheben</button>
+</div>
+<div class="ontoast" id="ontoast"></div>
+<div class="onmodal" id="onmodal"><div class="box">
+  <p style="margin:0 0 8px"><b>Kopieren direkt in die Zwischenablage ist in diesem Browser nicht möglich.</b> Bild mit Rechtsklick (bzw. lange tippen) kopieren oder speichern und in OneNote einfügen.</p>
+  <img id="on-img" alt="Aufgaben als Bild">
+  <p style="margin:10px 0 0;display:flex;gap:8px;flex-wrap:wrap"><a id="on-dl" download="aufgaben.png" class="on-copy" style="text-decoration:none">⬇ Bild speichern</a><button class="on-copy" id="on-close" type="button">Schließen</button></p>
+</div></div>
+<div id="on-stage" aria-hidden="true"></div>
+<script src="https://cdn.jsdelivr.net/npm/html-to-image@1.11.11/dist/html-to-image.js"></script>
+<script>
+/* ---------- OneNote-Export: Aufgaben als Bild kopieren (wie LK-Materialien) ---------- */
+(function(){
+  var SRC=document.body.getAttribute('data-on-src')||document.title;
+  var cards=[].slice.call(document.querySelectorAll('.wrap .card.M, .wrap .card.A, .wrap .card.B, .wrap .card.C'));
+  var bar=document.getElementById('onbar'), cnt=document.getElementById('on-count');
+  function picked(){ return cards.filter(function(c){ return c.classList.contains('picked'); }); }
+  function updBar(){ var n=picked().length; cnt.textContent=n+(n===1?' Aufgabe':' Aufgaben')+' ausgewählt'; bar.classList.toggle('show',n>0); }
+  cards.forEach(function(card){
+    var head=card.querySelector('h3'); if(!head) return;
+    var tools=document.createElement('span'); tools.className='tools';
+    tools.innerHTML='<label class="on-pick" title="Für den gemeinsamen Export auswählen"><input type="checkbox"><span>auswählen</span></label><button class="on-copy" type="button" title="Diese Aufgabe als Bild für OneNote kopieren">📋 OneNote</button>';
+    head.appendChild(tools);
+    var cb=tools.querySelector('input');
+    cb.addEventListener('change',function(){ card.classList.toggle('picked',cb.checked); updBar(); });
+    tools.querySelector('.on-copy').addEventListener('click',function(){ exportCards([card], document.getElementById('on-sol').checked); });
+  });
+  document.getElementById('on-clr').addEventListener('click',function(){ cards.forEach(function(c){ c.classList.remove('picked'); var i=c.querySelector('.on-pick input'); if(i) i.checked=false; }); updBar(); });
+  document.getElementById('on-go').addEventListener('click',function(){ exportCards(picked(), document.getElementById('on-sol').checked); });
+  document.getElementById('on-close').addEventListener('click',function(){ document.getElementById('onmodal').classList.remove('show'); });
+  function toast(t,bad){ var el=document.getElementById('ontoast'); el.textContent=t; el.classList.toggle('bad',!!bad); el.style.display='block'; clearTimeout(el._t); el._t=setTimeout(function(){ el.style.display='none'; },3200); }
+
+  function buildStage(list, withSol){
+    var stage=document.getElementById('on-stage'); stage.innerHTML='';
+    list.forEach(function(card){
+      var item=document.createElement('div'); item.className='ex-item';
+      var lvl=['A','B','C'].filter(function(c){ return card.classList.contains(c); })[0]||'';
+      var h=card.querySelector('h3').cloneNode(true); var t=h.querySelector('.tools'); if(t) t.remove();
+      var title=document.createElement('div'); title.className='ex-title '+lvl; title.textContent=h.textContent.replace(/\s+/g,' ').trim(); item.appendChild(title);
+      [].slice.call(card.children).forEach(function(el){
+        if(el.tagName==='H3'||el.tagName==='DETAILS'||el.classList.contains('stepbar')) return;
+        if(el.classList.contains('steps')){ if(withSol){ var bx=document.createElement('div'); bx.className='ex-sol'; bx.innerHTML='<div class="ex-sol-h">Lösung</div>'; bx.appendChild(el.cloneNode(true)); item.appendChild(bx); } return; }
+        item.appendChild(el.cloneNode(true));
+      });
+      if(withSol){ var sol=card.querySelector('details.sol'); if(sol){ var box=document.createElement('div'); box.className='ex-sol'; box.innerHTML='<div class="ex-sol-h">Lösung</div>'; [].slice.call(sol.childNodes).forEach(function(n){ if(n.nodeName!=='SUMMARY') box.appendChild(n.cloneNode(true)); }); item.appendChild(box); } }
+      stage.appendChild(item);
+    });
+    var src=document.createElement('div'); src.className='ex-src'; src.textContent=SRC+' · FBG Schwerte'; stage.appendChild(src);
+    return stage;
+  }
+  /* KaTeX-Schriften einmalig als data-URLs einbetten, damit Formeln im Bild exakt wie auf der Seite aussehen */
+  var fontCSS=null;
+  function toDataURL(blob){ return new Promise(function(res,rej){ var fr=new FileReader(); fr.onload=function(){ res(fr.result); }; fr.onerror=rej; fr.readAsDataURL(blob); }); }
+  function katexFontCSS(){
+    if(fontCSS!==null) return Promise.resolve(fontCSS);
+    var link=document.querySelector('link[href*="katex"]'); if(!link){ fontCSS=''; return Promise.resolve(''); }
+    var href=link.href;
+    return fetch(href).then(function(r){ return r.text(); }).then(function(css){
+      var faces=css.match(/@font-face\{[^}]*\}/g)||[];
+      return Promise.all(faces.map(function(face){
+        var m=face.match(/url\(([^)]+?\.woff2)\)/); if(!m) return '';
+        var url=new URL(m[1].replace(/["']/g,''),href).href;
+        return fetch(url).then(function(r){ return r.blob(); }).then(toDataURL).then(function(d){
+          return face.replace(/src:[^;}]*/,'src:url('+d+') format("woff2")');
+        }).catch(function(){ return ''; });
+      }));
+    }).then(function(list){ fontCSS=list.join('\n'); return fontCSS; }).catch(function(){ fontCSS=''; return ''; });
+  }
+  if(window.fetch) setTimeout(katexFontCSS,1500);
+
+  function exportCards(list, withSol){
+    if(!list.length) return;
+    if(!window.htmlToImage){ toast('Export-Bibliothek nicht geladen (Internetverbindung?)',true); return; }
+    var stage=buildStage(list, withSol);
+    var opts={pixelRatio:2, backgroundColor:'#ffffff', cacheBust:false, width:stage.offsetWidth, height:stage.offsetHeight, style:{position:'static',left:'0',top:'0'}};
+    var blobPromise=katexFontCSS().then(function(css){ if(css) opts.fontEmbedCSS=css; return htmlToImage.toBlob(stage,opts); });
+    var done=function(){ toast('✓ Kopiert – in OneNote mit Strg+V einfügen'); };
+    var fallback=function(){
+      blobPromise.then(function(b){ var url=URL.createObjectURL(b); document.getElementById('on-img').src=url; document.getElementById('on-dl').href=url; document.getElementById('onmodal').classList.add('show'); })
+        .catch(function(){ toast('Bild konnte nicht erzeugt werden',true); });
+    };
+    try{
+      if(navigator.clipboard && window.ClipboardItem){
+        navigator.clipboard.write([new ClipboardItem({'image/png':blobPromise})]).then(done,fallback);
+      } else fallback();
+    }catch(e){ fallback(); }
+  }
+  window.__onExport={buildStage:buildStage, exportCards:exportCards};
+})();
+</script>
+
 </body>
 </html>
