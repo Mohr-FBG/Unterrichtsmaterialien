@@ -146,6 +146,19 @@
     <div class="warn">Steht der Rechner im Bogenmaß, kommen Werte wie <code>0.785…</code> heraus. Dann den Winkelmodus prüfen.</div>
   </section>
 
+  <section class="help" id="schnittwinkel" data-k="vi">
+    <h2>Schnittwinkel mit Ebenen <span class="tag t6">KAPITEL VI.4</span></h2>
+    <p class="why">Ebene – Ebene: \(\cos(\alpha)=\dfrac{|\vec n_1\circ\vec n_2|}{|\vec n_1|\cdot|\vec n_2|}\). Gerade – Ebene: \(\sin(\alpha)=\dfrac{|\vec u\circ\vec n|}{|\vec u|\cdot|\vec n|}\) – hier also <strong>sin⁻¹</strong>!</p>
+    <ol class="steps">
+      <li>Winkelmodus auf <strong>Grad</strong> prüfen (siehe <a href="#winkel">Winkel</a>).</li>
+      <li>Vektoren speichern, z. B. <code>u:=</code> und <code>n:=</code> (Normalenvektor aus der Koordinatenform ablesen).</li>
+      <li>Ebene – Ebene: <code>cos⁻¹(abs(dotP(n1,n2))/(norm(n1)·norm(n2)))</code></li>
+      <li>Gerade – Ebene: <code>sin⁻¹(abs(dotP(u,n))/(norm(u)·norm(n)))</code></li>
+    </ol>
+    <div class="screen"><div class="in">\(\sin^{-1}\!\left(\dfrac{|\text{dotP}(u,n)|}{\text{norm}(u)\cdot\text{norm}(n)}\right)\)</div><div class="out">26.3878</div></div>
+    <div class="note">Beispiel (Muster 1): \(\vec u=\begin{pmatrix}1\\2\\2\end{pmatrix},\ \vec n=\begin{pmatrix}2\\-1\\2\end{pmatrix}\) ergibt \(\alpha\approx26{,}4^\circ\). <code>abs</code> findet man auch über die Vorlagen-Taste (Betragsstriche).</div>
+  </section>
+
   <section class="help" id="lgs-linsolve" data-k="vi">
     <h2>LGS lösen mit linSolve <span class="tag t6">KAPITEL VI.1</span></h2>
     <p class="why">Ein lineares Gleichungssystem direkt aus den Gleichungen lösen – zur Kontrolle der Rechnung von Hand.</p>
@@ -200,7 +213,19 @@
       <li>Den Wert für <code>t</code> in die Geradengleichung einsetzen. Am Rechner: Geradengleichung eingeben und <code>|t=2</code> anhängen (<code>ctrl</code> + <code>=</code> öffnet die Auswahl mit <code>|</code>).</li>
     </ol>
     <div class="screen"><div class="in">\(\begin{bmatrix}3\\3\\5\end{bmatrix}+t\cdot\begin{bmatrix}1\\-1\\-2\end{bmatrix}\,|\,t=2\)</div><div class="out">\(\begin{bmatrix}5\\1\\1\end{bmatrix}\)</div></div>
-    <div class="note">Der Strahl trifft das Dach in \(S(5\,|\,1\,|\,1)\). Ist die Ebene in Koordinatenform gegeben, folgt eine weitere Hilfe mit Kapitel VI.4.</div>
+    <div class="note">Der Strahl trifft das Dach in \(S(5\,|\,1\,|\,1)\). Ist die Ebene in Koordinatenform gegeben, geht es noch schneller: siehe <a href="#schnitt-koordinatenform">Schnittpunkt mit Koordinatenform</a>.</div>
+  </section>
+
+  <section class="help" id="schnitt-koordinatenform" data-k="vi">
+    <h2>Schnittpunkt Gerade – Ebene (Koordinatenform) <span class="tag t6">KAPITEL VI.4</span></h2>
+    <p class="why">Die Koordinaten des allgemeinen Geradenpunkts in die Koordinatengleichung einsetzen – es bleibt eine Gleichung mit der Unbekannten \(t\).</p>
+    <ol class="steps">
+      <li>Eingesetzte Gleichung eintippen und nach <code>t</code> lösen: <code>solve((2+t)+2·(−1+t)+2·t=10,t)</code></li>
+      <li>Mit dem Ergebnis wie oben den Punkt berechnen: Geradengleichung eingeben und <code>|t=2</code> anhängen.</li>
+    </ol>
+    <div class="screen"><div class="in">solve((2+t)+2·(−1+t)+2·t=10,t)</div><div class="out">t=2</div></div>
+    <div class="note">Meldet der Rechner <code>false</code>, gibt es keine Lösung: \(g\) ist parallel zu \(E\). Meldet er <code>true</code>, liegt \(g\) in \(E\).</div>
+    <div class="note">Für Profis: Mit gespeicherten Vektoren <code>p:=</code>, <code>u:=</code>, <code>n:=</code> geht es auch ohne Abtippen: <code>solve(dotP(p+t·u,n)=10,t)</code>.</div>
   </section>
 
   <section class="help" id="normalenvektor" data-k="vi">

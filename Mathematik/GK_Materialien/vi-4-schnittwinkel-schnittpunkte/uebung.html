@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>VI.4 Übung: Schnittwinkel und Schnittpunkte</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+<style>
+  :root{
+    --gold:#e8a800; --gold-deep:#b98600; --gold-soft:#fff6dc;
+    --ink:#1f2933; --ink-soft:#5b6770; --line:#e3e6ea; --bg:#f7f7f4; --card:#fff; --navy:#1a3a6b;
+    --a:#2e9e4f; --a-bg:#eaf7ef; --b:#e67e22; --b-bg:#fdf0e4; --c:#8e44ad; --c-bg:#f4ecf8; --blue:#2c6fbb;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;background:var(--bg);color:var(--ink);line-height:1.55;font-size:17px}
+  header{background:var(--gold);color:#fff;padding:18px 20px 16px}
+  header .eyebrow{font-size:.82rem;letter-spacing:.06em;text-transform:uppercase;opacity:.92}
+  header h1{margin:4px 0 0;font-size:1.6rem;line-height:1.2}
+  header nav{margin-top:8px;font-size:.9rem}
+  header nav a{color:#fff;text-decoration:underline;margin-right:14px}
+  .wrap{max-width:980px;margin:0 auto;padding:16px}
+  .toc{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 14px}
+  .toc a{border:1px solid var(--line);background:#fff;border-radius:999px;padding:5px 14px;text-decoration:none;color:var(--ink);font-size:.9rem}
+  .toc a .dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:6px;vertical-align:middle}
+  h2.sec{font-size:1.3rem;margin:26px 0 10px;color:var(--navy);border-bottom:2px solid var(--line);padding-bottom:6px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 18px;margin-bottom:14px}
+  .card h3{margin:0 0 8px;font-size:1.1rem;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+  .merk{background:#eef4fb;border:1px solid #bcd3ec;border-radius:12px;padding:12px 16px;margin:10px 0}
+  .merk h3{color:#1d4f8c;margin:0 0 6px;font-size:1.05rem}
+  .book{background:var(--gold-soft);border:1px solid #f1dc9c;border-radius:12px;padding:12px 16px;margin:10px 0}
+  .badge{font-size:.75rem;font-weight:800;letter-spacing:.05em;padding:2px 10px;border-radius:999px}
+  .bA{background:var(--a-bg);color:var(--a)} .bB{background:var(--b-bg);color:var(--b)} .bC{background:var(--c-bg);color:var(--c)} .bM{background:#eef2f8;color:var(--navy)}
+  .card.A{border-left:5px solid var(--a)} .card.B{border-left:5px solid var(--b)} .card.C{border-left:5px solid var(--c)} .card.M{border-left:5px solid var(--navy)}
+  .steps .st{display:none;border-left:3px solid #d8dde5;padding:4px 0 4px 12px;margin:8px 0}
+  .steps .st.show{display:block}
+  .steps .st b.lab{color:var(--navy)}
+  .stepbar{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+  .btn{border:1px solid var(--line);background:#fff;border-radius:8px;padding:6px 12px;font-size:.92rem;cursor:pointer;color:var(--ink)}
+  .btn:hover{border-color:var(--gold)}
+  .btn.primary{background:var(--gold);border-color:var(--gold);color:#fff;font-weight:600}
+  .btn:disabled{opacity:.45;cursor:default}
+  details{margin:8px 0;border:1px solid var(--line);border-radius:8px;padding:6px 12px;background:#fcfcfc}
+  details summary{cursor:pointer;font-weight:700}
+  details.tip summary{color:var(--gold-deep)}
+  details.sol summary{color:var(--a)}
+  details[open]{background:#fff}
+  .sub{margin:6px 0}
+  .ti{background:#f3f6f3;border:1px solid #cfdccf;border-radius:8px;padding:8px 12px;font-size:.93rem;margin:8px 0}
+  code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:.88em;background:#f1f3f8;border:1px solid var(--line);border-radius:4px;padding:1px 5px}
+  .fig{display:flex;gap:18px;align-items:flex-start;flex-wrap:wrap}
+  .fig svg{flex-shrink:0;max-width:100%;height:auto}
+  .katex-display{margin:.4em 0;overflow-x:auto;overflow-y:hidden;padding:2px 0}
+  .checklist{list-style:none;padding:0;margin:0}
+  .checklist li{display:flex;gap:10px;align-items:flex-start;padding:7px 0;border-bottom:1px solid var(--line)}
+  .checklist li:last-child{border-bottom:none}
+  .checklist input{width:18px;height:18px;margin-top:3px;accent-color:var(--gold-deep);flex-shrink:0}
+  .ztag{margin-left:auto;font-size:.75rem;font-weight:700;padding:1px 8px;border-radius:999px;white-space:nowrap}
+  .ok{color:var(--a);font-weight:700}
+  .no{color:#c62828;font-weight:700}
+  footer{text-align:center;color:var(--ink-soft);font-size:.82rem;padding:20px}
+  @media (max-width:520px){ .katex{font-size:.95em} body{font-size:16px} .wrap{padding:10px} .card{padding:12px} }
+  .fig svg{max-width:100%;height:auto}
+  /* ---------- OneNote-Export ---------- */
+  .card h3 .tools{display:flex;align-items:center;gap:8px;margin-left:auto;font-weight:400}
+  .on-pick{display:flex;align-items:center;gap:4px;font-size:.78rem;color:var(--ink-soft);font-weight:600;cursor:pointer;white-space:nowrap}
+  .on-pick input{width:16px;height:16px;accent-color:var(--c);cursor:pointer}
+  .on-copy{border:1px solid var(--line);background:#fff;border-radius:6px;padding:3px 8px;font-size:.78rem;font-weight:700;cursor:pointer;color:var(--c);font-family:inherit;white-space:nowrap}
+  .on-copy:hover{border-color:var(--c);background:#faf6fd}
+  .card.picked{box-shadow:0 0 0 2px var(--c)}
+  .onbar{position:fixed;left:50%;bottom:16px;transform:translateX(-50%);background:var(--ink);color:#fff;border-radius:12px;padding:10px 14px;display:none;align-items:center;gap:12px;flex-wrap:wrap;z-index:50;box-shadow:0 6px 24px rgba(0,0,0,.25);max-width:calc(100% - 24px);font-size:.9rem}
+  .onbar.show{display:flex}
+  .onbar button{border:0;border-radius:6px;padding:7px 12px;font-weight:700;cursor:pointer;font-family:inherit;font-size:.86rem}
+  .onbar .go{background:var(--c);color:#fff}
+  .onbar .clr{background:#3a3f4a;color:#fff}
+  .onbar label{display:flex;align-items:center;gap:5px;cursor:pointer}
+  .ontoast{position:fixed;left:50%;top:18px;transform:translateX(-50%);background:var(--a);color:#fff;border-radius:8px;padding:10px 16px;font-weight:700;z-index:60;display:none;max-width:calc(100% - 24px);font-size:.9rem}
+  .ontoast.bad{background:#c62828}
+  .onmodal{position:fixed;inset:0;background:rgba(0,0,0,.55);display:none;align-items:center;justify-content:center;z-index:70;padding:16px}
+  .onmodal.show{display:flex}
+  .onmodal .box{background:#fff;border-radius:10px;max-width:900px;width:100%;max-height:90vh;overflow:auto;padding:14px}
+  .onmodal img{max-width:100%;border:1px solid var(--line)}
+  .lk-note{font-size:.88rem;color:var(--ink-soft);margin:0 0 14px}
+  .lk-note b{color:var(--c)}
+  .kbd{display:inline-block;border:1px solid #c9ced4;border-bottom-width:2px;border-radius:4px;padding:0 5px;font-size:.8em;background:#fff}
+  #on-stage{position:fixed;left:-12000px;top:0;width:860px;background:#fff;padding:22px 26px;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;color:#1f2933;line-height:1.55;font-size:16px}
+  #on-stage .katex{white-space:nowrap}
+  #on-stage .ex-item{margin-bottom:22px}
+  #on-stage .ex-item:last-child{margin-bottom:0}
+  #on-stage .ex-title{font-weight:700;font-size:1.08rem;margin:0 0 8px;padding-bottom:4px;border-bottom:3px solid var(--navy)}
+  #on-stage .ex-title.A{border-color:var(--a)} #on-stage .ex-title.B{border-color:var(--b)} #on-stage .ex-title.C{border-color:var(--c)}
+  #on-stage .ex-sol{margin-top:10px;padding:8px 12px;border-left:4px solid var(--a);background:#f3faf5}
+  #on-stage .ex-sol-h{font-weight:700;color:var(--a);margin-bottom:4px}
+  #on-stage .ex-src{font-size:.75rem;color:var(--ink-soft);text-align:right;margin-top:12px}
+  #on-stage .steps .st{display:block}
+  #on-stage .stepbar,#on-stage details,#on-stage .tools{display:none}
+  #on-stage .fig svg{max-width:100%;height:auto}
+  @media (max-width:560px){ .on-pick span{display:none} }
+  .ftab{border-collapse:collapse;margin:8px 0;width:100%}
+  .ftab td,.ftab th{padding:6px 10px;border-bottom:1px solid #d6e2f0;vertical-align:middle;text-align:left}
+  .ftab td:first-child{font-weight:700;white-space:nowrap}
+  .ftab .kn{color:var(--ink-soft);font-size:.88rem}
+  .ftab.cmp th{background:#f1f4f9;font-size:.92rem}
+  .ftab.cmp td:first-child{color:var(--ink-soft)}
+  .rule-box{background:#fff8e6;border:1px solid #f0d890;border-radius:10px;padding:8px 14px;margin-top:10px}
+  .tipbox{background:#eaf7ef;border:1px solid #b9e2c5;border-radius:10px;padding:8px 14px;margin:10px 0}
+  .three{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:6px 0}
+  @media (max-width:700px){.three{grid-template-columns:1fr}}
+  .lage{border:1px solid var(--line);border-radius:10px;padding:8px;text-align:center;background:#fcfcfa}
+  .lage b{display:block;margin-top:4px}
+  .lage span{display:block;color:var(--ink-soft);font-size:.88rem}
+  .calc{background:#f4f8fc;border:1px solid #cfe0f1;border-radius:12px;padding:12px 14px;margin-top:10px}
+  .pre{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}
+  .gin{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:6px 0}
+  .vin{display:inline-flex;flex-direction:column;gap:3px;border-left:2px solid #333;border-right:2px solid #333;border-radius:8px;padding:3px 6px}
+  .vin input{width:50px;padding:3px;font-size:1rem;text-align:center;border:1px solid #c9ced4;border-radius:6px}
+  .calc-out .cs{border-left:3px solid #d8dde5;padding:4px 0 4px 12px;margin:6px 0}
+  .calc-out .res{font-weight:700;padding:6px 10px;border-radius:8px;margin-top:6px}
+  .calc-out .res.one{background:#e8f6ec;color:#1e6b35}
+  .calc-out .res.par{background:#fdeeee;color:#8a1f1f}
+  .calc-out .res.in{background:#fff3df;color:#7a4b00}
+  .btn-link,.next{display:inline-block;background:var(--gold);color:#fff!important;text-decoration:none;font-weight:700;padding:8px 14px;border-radius:10px}
+  .muted{color:var(--ink-soft);font-size:.9rem}
+  #on-stage .noexport{display:none}
+  .katex svg{height:inherit!important;max-width:none!important}
+  code{background:#f1f3f6;border-radius:5px;padding:1px 5px;font-size:.88em}
+</style>
+</head>
+<body data-on-src="GK · VI.4 Schnittwinkel und Schnittpunkte · Übung">
+<header>
+  <div class="eyebrow">Kapitel VI.4 · Schnittwinkel und Schnittpunkte · Übung</div>
+  <h1>Beispiele und Übungen: Schnittwinkel und Schnittpunkte</h1>
+  <nav><a href="index.html">← Übersicht VI.4</a><a href="einstieg.html">Einstieg</a><a href="../taschenrechner/index.html#schnittwinkel">TI-Nspire-Hilfen</a></nav>
+</header>
+
+<div class="wrap">
+
+  <div class="toc">
+    <a href="#wissen">Grundwissen</a>
+    <a href="#muster"><span class="dot" style="background:var(--navy)"></span>Musteraufgaben</a>
+    <a href="#stufeA"><span class="dot" style="background:var(--a)"></span>Stufe A</a>
+    <a href="#stufeB"><span class="dot" style="background:var(--b)"></span>Stufe B</a>
+    <a href="#stufeC"><span class="dot" style="background:var(--c)"></span>Stufe C</a>
+    <a href="#check">Das kann ich</a>
+  </div>
+  <p class="lk-note"><b>📋 Für die Lehrkraft:</b> Jede Aufgabe lässt sich mit „📋 OneNote“ als Bild kopieren – mehrere über „auswählen“, auf Wunsch „mit Lösung“ – und in OneNote mit <span class="kbd">Strg</span> <span class="kbd">V</span> einfügen.</p>
+
+  <!-- ================= GRUNDWISSEN ================= -->
+  <h2 class="sec" id="wissen">Grundwissen</h2>
+  <div class="merk">
+    <h3>Schnittwinkel</h3>
+    <table class="ftab">
+      <tr><td>Gerade – Gerade</td><td>\(\cos(\alpha)=\dfrac{|\vec u_1\circ\vec u_2|}{|\vec u_1|\cdot|\vec u_2|}\)</td></tr>
+      <tr><td>Ebene – Ebene</td><td>\(\cos(\alpha)=\dfrac{|\vec n_1\circ\vec n_2|}{|\vec n_1|\cdot|\vec n_2|}\)</td></tr>
+      <tr><td>Gerade – Ebene</td><td>\(\sin(\alpha)=\dfrac{|\vec u\circ\vec n|}{|\vec u|\cdot|\vec n|}\)</td></tr>
+    </table>
+    Faustregel: gleiche Objekte → Kosinus, verschiedene Objekte → <strong>Sinus</strong>. Es gilt immer \(0^\circ<\alpha\le90^\circ\).
+  </div>
+  <div class="merk" style="background:#fff8e6;border-color:#f0d890">
+    <h3 style="color:#8a6200">Schnittpunkt Gerade \(g:\ \vec x=\vec p+t\cdot\vec u\) und Ebene \(E\)</h3>
+    <strong>E in Koordinatenform:</strong> allgemeinen Geradenpunkt \(X_t\) in die Koordinatengleichung <strong>einsetzen</strong> → eine Gleichung für \(t\).<br>
+    <strong>E in Parameterform:</strong> Gerade und Ebene <strong>gleichsetzen</strong> → LGS für \(t,r,s\) (oder zuerst in Koordinatenform umformen).<br>
+    <strong>Ergebnis:</strong> genau eine Lösung → Schnittpunkt \(S\) · Widerspruch (z. B. \(4=10\)) → \(g\parallel E\) · immer wahr (z. B. \(10=10\)) → \(g\) liegt in \(E\).
+  </div>
+
+  <!-- ================= MUSTERAUFGABEN ================= -->
+  <h2 class="sec" id="muster">Musteraufgaben – vorgerechnet</h2>
+  <p style="color:var(--ink-soft);margin-top:0">Decke die Lösung Schritt für Schritt auf. Überlege vor jedem Klick, was als Nächstes kommt.</p>
+
+  <div class="card M" id="m1">
+    <h3><span class="badge bM">MUSTER 1</span> Schnittwinkel zwischen Gerade und Ebene <span style="color:var(--ink-soft);font-size:.85rem;font-weight:400">wie Buch Beispiel 1</span></h3>
+    <p>Bestimmen Sie den Schnittwinkel der Geraden \(g:\ \vec x=\begin{pmatrix}1\\0\\2\end{pmatrix}+t\cdot\begin{pmatrix}1\\2\\2\end{pmatrix}\) mit der Ebene \(E:\ 2x_1-x_2+2x_3=5\).</p>
+    <div class="steps">
+      <div class="st"><b class="lab">Schritt 1 – Vektoren heraussuchen:</b> Richtungsvektor der Geraden \(\vec u=\begin{pmatrix}1\\2\\2\end{pmatrix}\), Normalenvektor der Ebene (ablesen) \(\vec n=\begin{pmatrix}2\\-1\\2\end{pmatrix}\).</div>
+      <div class="st"><b class="lab">Schritt 2 – Formel wählen:</b> Gerade und Ebene sind verschiedene Objekte → <strong>Sinus</strong>:
+        \[\sin(\alpha)=\frac{|\vec u\circ\vec n|}{|\vec u|\cdot|\vec n|}\]</div>
+      <div class="st"><b class="lab">Schritt 3 – Rechnen:</b> \(\vec u\circ\vec n=1\cdot2+2\cdot(-1)+2\cdot2=4\), \(|\vec u|=\sqrt{1+4+4}=3\), \(|\vec n|=\sqrt{4+1+4}=3\).
+        \[\sin(\alpha)=\frac{|4|}{3\cdot3}=\frac49\]</div>
+      <div class="st"><b class="lab">Schritt 4 – Winkel:</b> \(\alpha=\sin^{-1}\!\left(\tfrac49\right)\approx26{,}4^\circ\).<br>
+        <span class="muted">TI-Nspire (Grad-Modus): <code>sin⁻¹(abs(dotP(u,n))/(norm(u)·norm(n)))</code>.</span></div>
+    </div>
+    <div class="stepbar"><button class="btn primary" data-next>Nächster Schritt</button><button class="btn" data-all>Alles zeigen</button></div>
+  </div>
+
+  <div class="card M" id="m2">
+    <h3><span class="badge bM">MUSTER 2</span> Schnittwinkel zwischen zwei Ebenen – warum der Betrag?</h3>
+    <p>Bestimmen Sie den Schnittwinkel der Ebenen \(E_1:\ x_1+2x_2+2x_3=6\) und \(E_2:\ x_1-x_3=2\).</p>
+    <div class="steps">
+      <div class="st"><b class="lab">Schritt 1 – Normalenvektoren ablesen:</b> \(\vec n_1=\begin{pmatrix}1\\2\\2\end{pmatrix}\), \(\vec n_2=\begin{pmatrix}1\\0\\-1\end{pmatrix}\) <span class="muted">(bei \(E_2\) fehlt \(x_2\) → Koeffizient 0)</span>.</div>
+      <div class="st"><b class="lab">Schritt 2 – Rechnen:</b> \(\vec n_1\circ\vec n_2=1+0-2=-1\), \(|\vec n_1|=3\), \(|\vec n_2|=\sqrt2\).
+        \[\cos(\alpha)=\frac{|-1|}{3\cdot\sqrt2}=\frac{1}{3\sqrt2}\approx0{,}236\quad\Rightarrow\quad\alpha\approx76{,}4^\circ\]</div>
+      <div class="st"><b class="lab">Warum der Betrag?</b> Ohne Betragsstriche erhielte man \(\cos(\beta)\approx-0{,}236\), also \(\beta\approx103{,}6^\circ\). Das ist der stumpfe Nebenwinkel: \(180^\circ-103{,}6^\circ=76{,}4^\circ\). Als Schnittwinkel gibt man immer den Winkel \(\le90^\circ\) an.</div>
+    </div>
+    <div class="stepbar"><button class="btn primary" data-next>Nächster Schritt</button><button class="btn" data-all>Alles zeigen</button></div>
+  </div>
+
+  <div class="card M" id="m3">
+    <h3><span class="badge bM">MUSTER 3</span> Schnittpunkt – Ebene in Koordinatenform <span style="color:var(--ink-soft);font-size:.85rem;font-weight:400">wie Buch Beispiel 2</span></h3>
+    <p>Gegeben sind die Gerade \(g:\ \vec x=\begin{pmatrix}2\\-1\\0\end{pmatrix}+t\cdot\begin{pmatrix}1\\1\\2\end{pmatrix}\) und die Ebene \(E:\ x_1+2x_2+x_3=10\).<br>
+    Untersuchen Sie, ob \(g\) die Ebene \(E\) schneidet, und bestimmen Sie gegebenenfalls den Schnittpunkt \(S\).</p>
+    <div class="steps">
+      <div class="st"><b class="lab">Schritt 0 – Vorab-Test (optional):</b> \(\vec u\circ\vec n=\begin{pmatrix}1\\1\\2\end{pmatrix}\circ\begin{pmatrix}1\\2\\1\end{pmatrix}=1+2+2=5\neq0\) → \(g\) ist nicht parallel zu \(E\), es gibt genau einen Schnittpunkt.</div>
+      <div class="st"><b class="lab">Schritt 1 – Allgemeiner Geradenpunkt:</b> Jeder Punkt von \(g\) hat die Koordinaten
+        \[X_t(2+t\ |\ -1+t\ |\ 2t).\]</div>
+      <div class="st"><b class="lab">Schritt 2 – In die Koordinatengleichung einsetzen:</b> \(x_1\) wird durch \(2+t\), \(x_2\) durch \(-1+t\) und \(x_3\) durch \(2t\) ersetzt:
+        \[(2+t)+2\cdot(-1+t)+2t=10\]</div>
+      <div class="st"><b class="lab">Schritt 3 – Nach \(t\) auflösen:</b>
+        \[\begin{aligned}2+t-2+2t+2t&=10\\5t&=10\\t&=2\end{aligned}\]</div>
+      <div class="st"><b class="lab">Schritt 4 – Schnittpunkt berechnen:</b> \(t=2\) in die Geradengleichung einsetzen:
+        \[\vec s=\begin{pmatrix}2\\-1\\0\end{pmatrix}+2\cdot\begin{pmatrix}1\\1\\2\end{pmatrix}=\begin{pmatrix}4\\1\\4\end{pmatrix}\quad\Rightarrow\quad S(4\,|\,1\,|\,4)\]</div>
+      <div class="st"><b class="lab">Schritt 5 – Probe:</b> \(S\) in \(E\) einsetzen: \(4+2\cdot1+4=10\) ✓.<br>
+        <strong>Antwort:</strong> Die Gerade \(g\) schneidet die Ebene \(E\) im Punkt \(S(4\,|\,1\,|\,4)\).<br>
+        <span class="muted">TI-Nspire: <code>solve((2+t)+2·(−1+t)+2t=10,t)</code> → <code>t=2</code>.</span></div>
+    </div>
+    <div class="stepbar"><button class="btn primary" data-next>Nächster Schritt</button><button class="btn" data-all>Alles zeigen</button></div>
+  </div>
+
+  <div class="card M" id="m4">
+    <h3><span class="badge bM">MUSTER 4</span> Schnittpunkt – Ebene in Parameterform <span style="color:var(--ink-soft);font-size:.85rem;font-weight:400">wie Buch Beispiel 2, 1. Fall</span></h3>
+    <p>Gegeben sind die Ebene \(E:\ \vec x=\begin{pmatrix}1\\0\\1\end{pmatrix}+r\cdot\begin{pmatrix}2\\1\\0\end{pmatrix}+s\cdot\begin{pmatrix}0\\1\\1\end{pmatrix}\) und die Gerade \(g:\ \vec x=\begin{pmatrix}4\\4\\5\end{pmatrix}+t\cdot\begin{pmatrix}1\\1\\2\end{pmatrix}\).<br>
+    Bestimmen Sie den Schnittpunkt \(S\) von \(g\) und \(E\).</p>
+    <div class="steps">
+      <div class="st"><b class="lab">Schritt 1 – Gleichsetzen:</b> Ein gemeinsamer Punkt muss auf \(g\) <em>und</em> in \(E\) liegen:
+        \[\begin{pmatrix}4\\4\\5\end{pmatrix}+t\cdot\begin{pmatrix}1\\1\\2\end{pmatrix}=\begin{pmatrix}1\\0\\1\end{pmatrix}+r\cdot\begin{pmatrix}2\\1\\0\end{pmatrix}+s\cdot\begin{pmatrix}0\\1\\1\end{pmatrix}\]</div>
+      <div class="st"><b class="lab">Schritt 2 – Koordinatenweise aufschreiben:</b>
+        \[\begin{array}{lrcl}x_1: & 4+t & = & 1+2r\\ x_2: & 4+t & = & r+s\\ x_3: & 5+2t & = & 1+s\end{array}\]</div>
+      <div class="st"><b class="lab">Schritt 3 – Ordnen</b> (Variablen links, Zahlen rechts):
+        \[\begin{array}{lrcrcrcr}\text{I}: & t & - & 2r & & & = & -3\\ \text{II}: & t & - & r & - & s & = & -4\\ \text{III}: & 2t & & & - & s & = & -4\end{array}\]</div>
+      <div class="st"><b class="lab">Schritt 4 – Gauß: \(t\) eliminieren</b>
+        \[\begin{array}{lrcl}\text{IIa} = \text{II}-\text{I}: & r-s & = & -1\\ \text{IIIa} = \text{III}-2\cdot\text{I}: & 4r-s & = & 2\end{array}\]</div>
+      <div class="st"><b class="lab">Schritt 5 – Gauß: \(r\) eliminieren</b>
+        \[\text{IIIb} = \text{IIIa}-4\cdot\text{IIa}:\quad -s+4s=2+4\ \Rightarrow\ 3s=6\ \Rightarrow\ s=2\]</div>
+      <div class="st"><b class="lab">Schritt 6 – Rückwärts einsetzen:</b> In IIa: \(r-2=-1\Rightarrow r=1\). In I: \(t-2\cdot1=-3\Rightarrow t=-1\).<br>
+        <span class="muted">Das LGS hat genau eine Lösung → es gibt genau einen Schnittpunkt.</span></div>
+      <div class="st"><b class="lab">Schritt 7 – Schnittpunkt:</b> \(t=-1\) in \(g\) einsetzen:
+        \[\vec s=\begin{pmatrix}4\\4\\5\end{pmatrix}-1\cdot\begin{pmatrix}1\\1\\2\end{pmatrix}=\begin{pmatrix}3\\3\\3\end{pmatrix}\quad\Rightarrow\quad S(3\,|\,3\,|\,3)\]
+        <strong>Probe</strong> mit \(r=1,\ s=2\) in \(E\): \(\begin{pmatrix}1+2\\0+1+2\\1+2\end{pmatrix}=\begin{pmatrix}3\\3\\3\end{pmatrix}\) ✓</div>
+      <div class="st"><b class="lab">TI-Nspire:</b> <code>solve([4;4;5]+t·[1;1;2]=[1;0;1]+r·[2;1;0]+s·[0;1;1],t,r,s)</code> → <code>t=−1 and r=1 and s=2</code>. <span class="muted">(Vektoren mit <span class="kbd">[ ]</span> und <span class="kbd">↵</span> eingeben.)</span></div>
+      <div class="st"><b class="lab">Alternativer Weg – erst Koordinatenform:</b> Normalenvektor wie in VI.3 aus \(2n_1+n_2=0\) und \(n_2+n_3=0\): \(\vec n=\begin{pmatrix}1\\-2\\2\end{pmatrix}\); Stützpunkt einsetzen: \(d=1-0+2=3\).
+        \[E:\ x_1-2x_2+2x_3=3\]
+        Einsetzen von \(X_t(4+t\,|\,4+t\,|\,5+2t)\): \((4+t)-2(4+t)+2(5+2t)=3\ \Rightarrow\ 6+3t=3\ \Rightarrow\ t=-1\) – derselbe Punkt \(S(3\,|\,3\,|\,3)\).</div>
+    </div>
+    <div class="stepbar"><button class="btn primary" data-next>Nächster Schritt</button><button class="btn" data-all>Alles zeigen</button></div>
+  </div>
+
+  <div class="card M" id="m5">
+    <h3><span class="badge bM">MUSTER 5</span> Sonderfälle: parallel oder in der Ebene</h3>
+    <p>Gegeben ist die Ebene \(E:\ x_1+2x_2+x_3=10\). Untersuchen Sie die gegenseitige Lage von \(E\) und<br>
+      a) \(g_2:\ \vec x=\begin{pmatrix}1\\1\\1\end{pmatrix}+t\cdot\begin{pmatrix}2\\-1\\0\end{pmatrix}\),  &emsp;  b) \(g_3:\ \vec x=\begin{pmatrix}2\\3\\2\end{pmatrix}+t\cdot\begin{pmatrix}2\\-1\\0\end{pmatrix}\).</p>
+    <div class="steps">
+      <div class="st"><b class="lab">Vorab-Test:</b> \(\vec u\circ\vec n=2-2+0=0\) → beide Geraden sind parallel zu \(E\) <em>oder</em> liegen in \(E\). Einsetzen entscheidet.</div>
+      <div class="st"><b class="lab">a) Einsetzen:</b> \(X_t(1+2t\,|\,1-t\,|\,1)\): \((1+2t)+2(1-t)+1=10\ \Rightarrow\ 4=10\).<br>
+        Das \(t\) fällt weg und es bleibt eine <strong>falsche Aussage</strong> → keine Lösung → \(g_2\) ist <span class="no">parallel zu \(E\)</span>.</div>
+      <div class="st"><b class="lab">b) Einsetzen:</b> \(X_t(2+2t\,|\,3-t\,|\,2)\): \((2+2t)+2(3-t)+2=10\ \Rightarrow\ 10=10\).<br>
+        Das \(t\) fällt weg und es bleibt eine <strong>wahre Aussage</strong> → jeder Punkt erfüllt die Gleichung → \(g_3\) <span class="ok">liegt in \(E\)</span>.</div>
+    </div>
+    <div class="stepbar"><button class="btn primary" data-next>Nächster Schritt</button><button class="btn" data-all>Alles zeigen</button></div>
+  </div>
+
+  <!-- ================= STUFE A ================= -->
+  <h2 class="sec" id="stufeA">Stufe A · Grundlagen</h2>
+
+  <div class="card A">
+    <h3><span class="badge bA">A1</span> Schnittwinkel zweier Ebenen <span style="color:var(--ink-soft);font-size:.85rem;font-weight:400">→ wie Muster 2</span></h3>
+    <p>Berechnen Sie den Schnittwinkel der Ebenen \(E_1\) und \(E_2\).</p>
+    <div class="sub">a) \(E_1:\ 2x_1+x_2+2x_3=4,\quad E_2:\ x_1+x_3=1\)<br>
+      b) \(E_1:\ x_1-2x_2+2x_3=0,\quad E_2:\ 2x_1+2x_2+x_3=5\)<br>
+      c) \(E_1:\ x_3=2,\quad E_2:\ x_1+x_3=4\)</div>
+    <details class="tip"><summary>Tipp</summary>Normalenvektoren ablesen – fehlt eine Variable, ist ihr Koeffizient 0 (z. B. \(x_3=2\Rightarrow\vec n=\begin{pmatrix}0\\0\\1\end{pmatrix}\)). Dann \(\cos(\alpha)=\dfrac{|\vec n_1\circ\vec n_2|}{|\vec n_1|\cdot|\vec n_2|}\).</details>
+    <details class="sol"><summary>Lösung</summary>
+      a) \(\vec n_1\circ\vec n_2=2+0+2=4\), \(|\vec n_1|=3,\ |\vec n_2|=\sqrt2\): \(\cos(\alpha)=\frac{4}{3\sqrt2}\approx0{,}943\Rightarrow\alpha\approx19{,}5^\circ\).<br>
+      b) \(\vec n_1\circ\vec n_2=2-4+2=0\Rightarrow\cos(\alpha)=0\Rightarrow\alpha=90^\circ\) – die Ebenen sind orthogonal.<br>
+      c) \(\vec n_1\circ\vec n_2=0+0+1=1\), \(|\vec n_1|=1,\ |\vec n_2|=\sqrt2\): \(\cos(\alpha)=\frac{1}{\sqrt2}\Rightarrow\alpha=45^\circ\).
+    </details>
+  </div>
+
+  <div class="card A">
+    <h3><span class="badge bA">A2</span> Schnittwinkel Gerade – Ebene <span style="color:var(--ink-soft);font-size:.85rem;font-weight:400">→ wie Muster 1</span></h3>
+    <p>Gegeben ist die Gerade \(g:\ \vec x=\begin{pmatrix}1\\2\\0\end{pmatrix}+t\cdot\begin{pmatrix}2\\1\\2\end{pmatrix}\). Berechnen Sie den Schnittwinkel von \(g\) mit der Ebene</p>
+    <div class="sub">a) \(E:\ x_1+2x_2+2x_3=3\)  &emsp;  b) \(E:\ 2x_1-x_2-2x_3=1\)  &emsp;  c) \(E:\ x_3=0\) (die \(x_1x_2\)-Ebene)</div>
+    <details class="tip"><summary>Tipp</summary>Gerade und Ebene → <strong>Sinus</strong>! \(\sin(\alpha)=\dfrac{|\vec u\circ\vec n|}{|\vec u|\cdot|\vec n|}\) mit \(|\vec u|=3\).</details>
+    <details class="sol"><summary>Lösung</summary>
+      a) \(\vec u\circ\vec n=2+2+4=8\), \(|\vec n|=3\): \(\sin(\alpha)=\frac89\Rightarrow\alpha\approx62{,}7^\circ\).<br>
+      b) \(\vec u\circ\vec n=4-1-4=-1\), \(|\vec n|=3\): \(\sin(\alpha)=\frac{|-1|}{9}=\frac19\Rightarrow\alpha\approx6{,}4^\circ\) – die Gerade verläuft fast parallel zur Ebene.<br>
+      c) \(\vec n=\begin{pmatrix}0\\0\\1\end{pmatrix}\), \(\vec u\circ\vec n=2\): \(\sin(\alpha)=\frac{2}{3}\Rightarrow\alpha\approx41{,}8^\circ\).
+    </details>
+  </div>
+
+  <div class="card A">
+    <h3><span class="badge bA">A3</span> Schnittpunkt mit Ebenen in Koordinatenform <span style="color:var(--ink-soft);font-size:.85rem;font-weight:400">→ wie Muster 3</span></h3>
+    <p>Bestimmen Sie den Schnittpunkt der Geraden \(g:\ \vec x=\begin{pmatrix}1\\0\\2\end{pmatrix}+t\cdot\begin{pmatrix}1\\2\\-1\end{pmatrix}\) mit der Ebene \(E\).</p>
+    <div class="sub">a) \(E:\ x_1+x_2+x_3=7\)  &emsp;  b) \(E:\ x_1-x_3=5\)  &emsp;  c) \(E:\ x_2=-2\)</div>
+    <details class="tip"><summary>Tipp</summary>Allgemeiner Geradenpunkt: \(X_t(1+t\,|\,2t\,|\,2-t)\). Diese drei Terme für \(x_1,x_2,x_3\) in die Ebenengleichung einsetzen, nach \(t\) auflösen, \(t\) in \(g\) einsetzen. Probe nicht vergessen!</details>
+    <details class="sol"><summary>Lösung</summary>
+      a) \((1+t)+2t+(2-t)=7\Rightarrow3+2t=7\Rightarrow t=2\Rightarrow S(3\,|\,4\,|\,0)\). Probe: \(3+4+0=7\) ✓<br>
+      b) \((1+t)-(2-t)=5\Rightarrow-1+2t=5\Rightarrow t=3\Rightarrow S(4\,|\,6\,|\,-1)\). Probe: \(4-(-1)=5\) ✓<br>
+      c) \(2t=-2\Rightarrow t=-1\Rightarrow S(0\,|\,-2\,|\,3)\). Probe: \(x_2=-2\) ✓
+    </details>
+  </div>
+
+  <div class="card A">
+    <h3><span class="badge bA">A4</span> Schnittpunkt mit einer Ebene in Parameterform <span style="color:var(--ink-soft);font-size:.85rem;font-weight:400">→ wie Muster 4</span></h3>
+    <p>Bestimmen Sie den Schnittpunkt der Geraden \(g:\ \vec x=\begin{pmatrix}0\\0\\3\end{pmatrix}+t\cdot\begin{pmatrix}1\\1\\1\end{pmatrix}\) mit der Ebene \(E:\ \vec x=\begin{pmatrix}0\\0\\2\end{pmatrix}+r\cdot\begin{pmatrix}1\\0\\1\end{pmatrix}+s\cdot\begin{pmatrix}0\\1\\1\end{pmatrix}\).</p>
+    <details class="tip"><summary>Tipp 1</summary>Gleichsetzen und koordinatenweise aufschreiben: \(x_1:\ t=r\), \(x_2:\ t=s\), \(x_3:\ 3+t=2+r+s\).</details>
+    <details class="tip"><summary>Tipp 2</summary>Die ersten beiden Gleichungen kann man direkt in die dritte einsetzen: \(r\) und \(s\) durch \(t\) ersetzen.</details>
+    <details class="sol"><summary>Lösung</summary>
+      Aus \(x_1\) und \(x_2\): \(r=t\), \(s=t\). In \(x_3\): \(3+t=2+t+t\Rightarrow t=1\), also \(r=s=1\).<br>
+      \(t=1\) in \(g\): \(S(1\,|\,1\,|\,4)\). Probe mit \(r=s=1\) in \(E\): \((0+1\,|\,0+1\,|\,2+1+1)=(1\,|\,1\,|\,4)\) ✓<br>
+      <span class="muted">Alternativ: \(E:\ x_1+x_2-x_3=-2\); einsetzen: \(t+t-(3+t)=-2\Rightarrow t=1\).</span>
+    </details>
+  </div>
+
+  <!-- ================= STUFE B ================= -->
+  <h2 class="sec" id="stufeB">Stufe B · Anwendung</h2>
+
+  <div class="card B">
+    <h3><span class="badge bB">B1</span> Gegenseitige Lage von Gerade und Ebene <span style="color:var(--ink-soft);font-size:.85rem;font-weight:400">→ wie Muster 5</span></h3>
+    <p>Gegeben ist die Ebene \(E:\ 2x_1-x_2+x_3=4\). Untersuchen Sie die gegenseitige Lage von \(E\) und der Geraden. Bestimmen Sie gegebenenfalls den Schnittpunkt.</p>
+    <div class="sub">a) \(g_1:\ \vec x=\begin{pmatrix}1\\0\\2\end{pmatrix}+t\cdot\begin{pmatrix}1\\2\\0\end{pmatrix}\)  &emsp; 
+      b) \(g_2:\ \vec x=t\cdot\begin{pmatrix}1\\1\\-1\end{pmatrix}\)  &emsp; 
+      c) \(g_3:\ \vec x=\begin{pmatrix}1\\2\\0\end{pmatrix}+t\cdot\begin{pmatrix}1\\0\\2\end{pmatrix}\)</div>
+    <details class="tip"><summary>Tipp</summary>Erst \(\vec u\circ\vec n\) berechnen: Ist es 0, entscheidet das Einsetzen nur noch zwischen „parallel“ (falsche Aussage) und „liegt in \(E\)“ (wahre Aussage).</details>
+    <details class="sol"><summary>Lösung</summary>
+      a) \(\vec u\circ\vec n=2-2+0=0\). Einsetzen: \(2(1+t)-2t+2=4\Rightarrow4=4\) wahr → <span class="ok">\(g_1\) liegt in \(E\)</span>.<br>
+      b) \(\vec u\circ\vec n=2-1-1=0\). Einsetzen: \(2t-t-t=4\Rightarrow0=4\) falsch → <span class="no">\(g_2\parallel E\)</span>, kein Schnittpunkt.<br>
+      c) \(\vec u\circ\vec n=2+0+2=4\neq0\). Einsetzen: \(2(1+t)-2+2t=4\Rightarrow4t=4\Rightarrow t=1\) → \(S(2\,|\,2\,|\,2)\). Probe: \(4-2+2=4\) ✓
+    </details>
+  </div>
+
+  <div class="card B">
+    <h3><span class="badge bB">B2</span> Winkel an einer Pyramide</h3>
+    <p>Eine quadratische Pyramide hat die Grundfläche \(A(0\,|\,0\,|\,0)\), \(B(4\,|\,0\,|\,0)\), \(C(4\,|\,4\,|\,0)\), \(D(0\,|\,4\,|\,0)\) und die Spitze \(S(2\,|\,2\,|\,4)\).</p>
+    <div class="sub">a) Berechnen Sie den Winkel, den die Kante \(\overline{AS}\) mit der Grundfläche einschließt.<br>
+      b) Berechnen Sie den Winkel zwischen der Seitenfläche \(ABS\) und der Grundfläche.</div>
+    <details class="tip"><summary>Tipp 1</summary>Die Grundfläche liegt in der \(x_1x_2\)-Ebene mit \(\vec n=\begin{pmatrix}0\\0\\1\end{pmatrix}\). In a) ist \(\vec{AS}\) der Richtungsvektor (Gerade – Ebene → Sinus).</details>
+    <details class="tip"><summary>Tipp 2</summary>b) Einen Normalenvektor der Ebene durch \(A,B,S\) bestimmen: \(\vec n\circ\vec{AB}=0\) und \(\vec n\circ\vec{AS}=0\) (wie in VI.3). Dann Ebene – Ebene → Kosinus.</details>
+    <details class="sol"><summary>Lösung</summary>
+      a) \(\vec{AS}=\begin{pmatrix}2\\2\\4\end{pmatrix}\), \(\vec{AS}\circ\vec n=4\), \(|\vec{AS}|=\sqrt{24}\): \(\sin(\alpha)=\frac{4}{\sqrt{24}}\approx0{,}816\Rightarrow\alpha\approx54{,}7^\circ\).<br>
+      b) \(\vec{AB}=\begin{pmatrix}4\\0\\0\end{pmatrix}\Rightarrow n_1=0\); \(2n_2+4n_3=0\), wähle \(n_3=1\Rightarrow n_2=-2\): \(\vec n_{ABS}=\begin{pmatrix}0\\-2\\1\end{pmatrix}\).<br>
+      \(\cos(\alpha)=\frac{|1|}{\sqrt5\cdot1}\approx0{,}447\Rightarrow\alpha\approx63{,}4^\circ\).
+    </details>
+  </div>
+
+  <div class="card B">
+    <h3><span class="badge bB">B3</span> Lichtstrahl trifft Dach <span style="color:var(--ink-soft);font-size:.85rem;font-weight:400">Szene 0 des Ebenen-Explorers</span></h3>
+    <p>Die Dachfläche eines Hauses liegt in der Ebene \(E:\ 2x_1-x_2+5x_3=14\). Ein Lichtstrahl verläuft entlang \(g:\ \vec x=\begin{pmatrix}3\\3\\5\end{pmatrix}+t\cdot\begin{pmatrix}1\\-1\\-2\end{pmatrix}\).</p>
+    <div class="sub">a) Bestimmen Sie den Punkt, in dem der Lichtstrahl auf das Dach trifft.<br>
+      b) Berechnen Sie, unter welchem Winkel der Lichtstrahl auf die Dachfläche fällt.</div>
+    <details class="tip"><summary>Tipp</summary>a) \(X_t(3+t\,|\,3-t\,|\,5-2t)\) in \(E\) einsetzen. b) Sinus-Formel mit \(\vec u=\begin{pmatrix}1\\-1\\-2\end{pmatrix}\) und \(\vec n=\begin{pmatrix}2\\-1\\5\end{pmatrix}\).</details>
+    <details class="sol"><summary>Lösung</summary>
+      a) \(2(3+t)-(3-t)+5(5-2t)=14\Rightarrow28-7t=14\Rightarrow t=2\Rightarrow S(5\,|\,1\,|\,1)\) – derselbe Punkt wie in der Simulation. Probe: \(10-1+5=14\) ✓<br>
+      b) \(\vec u\circ\vec n=2+1-10=-7\), \(|\vec u|=\sqrt6\), \(|\vec n|=\sqrt{30}\): \(\sin(\alpha)=\frac{7}{\sqrt{180}}\approx0{,}522\Rightarrow\alpha\approx31{,}5^\circ\).
+    </details>
+  </div>
+
+  <!-- ================= STUFE C ================= -->
+  <h2 class="sec" id="stufeC">Stufe C · Vertiefung</h2>
+
+  <div class="card C">
+    <h3><span class="badge bC">C1</span> Durchstoßpunkt ohne Koordinatenform</h3>
+    <p>Ein Stab verläuft entlang \(g:\ \vec x=\begin{pmatrix}1\\0\\2\end{pmatrix}+t\cdot\begin{pmatrix}1\\1\\0\end{pmatrix}\) und durchstößt eine Glasscheibe in der Ebene \(E:\ \vec x=\begin{pmatrix}2\\1\\0\end{pmatrix}+r\cdot\begin{pmatrix}1\\0\\1\end{pmatrix}+s\cdot\begin{pmatrix}0\\1\\1\end{pmatrix}\).<br>
+    Bestimmen Sie den Durchstoßpunkt \(D\) durch Gleichsetzen – ohne den Rechner und ohne die Koordinatenform.</p>
+    <details class="tip"><summary>Tipp 1</summary>\(x_1:\ 1+t=2+r\), \(x_2:\ t=1+s\), \(x_3:\ 2=r+s\).</details>
+    <details class="tip"><summary>Tipp 2</summary>Aus den ersten beiden Gleichungen \(r\) und \(s\) durch \(t\) ausdrücken und in die dritte einsetzen.</details>
+    <details class="sol"><summary>Lösung</summary>
+      \(r=t-1\), \(s=t-1\). In \(x_3\): \(2=(t-1)+(t-1)=2t-2\Rightarrow t=2\), \(r=s=1\).<br>
+      \(D(3\,|\,2\,|\,2)\). Probe in \(E\): \((2+1\,|\,1+1\,|\,0+1+1)=(3\,|\,2\,|\,2)\) ✓
+    </details>
+  </div>
+
+  <div class="card C">
+    <h3><span class="badge bC">C2</span> Winkel vorgeben</h3>
+    <p>Gegeben ist die Gerade \(g:\ \vec x=t\cdot\begin{pmatrix}3\\4\\c\end{pmatrix}\) mit \(c\in\mathbb R\).<br>
+    Bestimmen Sie \(c\) so, dass \(g\) mit der \(x_1x_2\)-Ebene einen Winkel von \(45^\circ\) einschließt.</p>
+    <details class="tip"><summary>Tipp 1</summary>\(\vec n=\begin{pmatrix}0\\0\\1\end{pmatrix}\). Setzen Sie \(\sin(45^\circ)=\frac{\sqrt2}{2}\) gleich \(\dfrac{|c|}{\sqrt{25+c^2}}\).</details>
+    <details class="tip"><summary>Tipp 2</summary>Beide Seiten quadrieren: \(\frac12=\frac{c^2}{25+c^2}\).</details>
+    <details class="sol"><summary>Lösung</summary>
+      \(\frac{|c|}{\sqrt{25+c^2}}=\frac{\sqrt2}{2}\ \Rightarrow\ \frac{c^2}{25+c^2}=\frac12\ \Rightarrow\ 2c^2=25+c^2\ \Rightarrow\ c^2=25\ \Rightarrow\ c=5\) oder \(c=-5\).<br>
+      <span class="muted">Anschaulich: Die Höhe \(|c|\) muss so groß sein wie die waagerechte Länge \(\sqrt{3^2+4^2}=5\).</span>
+    </details>
+  </div>
+
+  <div class="card C">
+    <h3><span class="badge bC">C3</span> Geradenschar und Ebene</h3>
+    <p>Gegeben sind die Ebene \(E:\ x_1+x_2-x_3=5\) und die Geraden \(g_a:\ \vec x=\begin{pmatrix}1\\2\\0\end{pmatrix}+t\cdot\begin{pmatrix}a\\1\\2\end{pmatrix}\) mit \(a\in\mathbb R\).</p>
+    <div class="sub">a) Bestimmen Sie \(a\) so, dass \(g_a\) parallel zu \(E\) ist. Liegt \(g_a\) dann sogar in \(E\)?<br>
+      b) Bestimmen Sie für \(a=3\) den Schnittpunkt von \(g_3\) und \(E\).</div>
+    <details class="tip"><summary>Tipp</summary>a) Parallel bedeutet \(\vec u\circ\vec n=0\). Ob \(g_a\) in \(E\) liegt, zeigt die Punktprobe mit dem Stützpunkt.</details>
+    <details class="sol"><summary>Lösung</summary>
+      a) \(\begin{pmatrix}a\\1\\2\end{pmatrix}\circ\begin{pmatrix}1\\1\\-1\end{pmatrix}=a+1-2=0\Rightarrow a=1\). Stützpunkt: \(1+2-0=3\neq5\) → \(g_1\) ist <span class="no">echt parallel</span>, liegt nicht in \(E\).<br>
+      b) \(X_t(1+3t\,|\,2+t\,|\,2t)\): \((1+3t)+(2+t)-2t=5\Rightarrow3+2t=5\Rightarrow t=1\Rightarrow S(4\,|\,3\,|\,2)\). Probe: \(4+3-2=5\) ✓
+    </details>
+  </div>
+
+  <!-- ================= CHECKLISTE ================= -->
+  <h2 class="sec" id="check">Das kann ich</h2>
+  <div class="card">
+    <ul class="checklist">
+      <li><input type="checkbox"><span>Ich weiß, wann ich für den Schnittwinkel den Kosinus und wann den Sinus verwende.</span><span class="ztag bM">Grundwissen</span></li>
+      <li><input type="checkbox"><span>Ich kann den Schnittwinkel zweier Ebenen berechnen.</span><span class="ztag bA">A1 · B2</span></li>
+      <li><input type="checkbox"><span>Ich kann den Schnittwinkel zwischen Gerade und Ebene berechnen.</span><span class="ztag bA">A2 · B2 · B3</span></li>
+      <li><input type="checkbox"><span>Ich kann den Schnittpunkt von Gerade und Ebene in Koordinatenform durch Einsetzen bestimmen.</span><span class="ztag bA">A3 · B3</span></li>
+      <li><input type="checkbox"><span>Ich kann den Schnittpunkt von Gerade und Ebene in Parameterform durch Gleichsetzen bestimmen.</span><span class="ztag bA">A4 · C1</span></li>
+      <li><input type="checkbox"><span>Ich erkenne, ob eine Gerade parallel zur Ebene ist oder in ihr liegt.</span><span class="ztag bB">B1 · C3</span></li>
+      <li><input type="checkbox"><span>Ich kann einen Parameter so bestimmen, dass ein vorgegebener Winkel oder eine Lage entsteht.</span><span class="ztag bC">C2 · C3</span></li>
+    </ul>
+  </div>
+</div>
+<footer>FBG Schwerte · Mathematik GK · Kapitel VI.4 · Aufgaben orientiert an Buch S. 195–198</footer>
+
+<script>
+window.addEventListener('load',()=>{
+  renderMathInElement(document.body,{delimiters:[{left:'\\[',right:'\\]',display:true},{left:'\\(',right:'\\)',display:false}],throwOnError:false});
+  document.querySelectorAll('.card.M').forEach(card=>{
+    const steps=[...card.querySelectorAll('.st')]; let k=0;
+    const nb=card.querySelector('[data-next]'), ab=card.querySelector('[data-all]'); if(!nb) return;
+    const upd=()=>{ steps.forEach((s,i)=>s.classList.toggle('show',i<k)); nb.disabled=k>=steps.length; nb.textContent=k>=steps.length?'Alle Schritte gezeigt':`Nächster Schritt (${k+1}/${steps.length})`; };
+    nb.onclick=()=>{ k=Math.min(steps.length,k+1); upd(); };
+    ab.onclick=()=>{ k=steps.length; upd(); };
+    upd();
+  });
+});
+</script>
+
+<!-- OneNote-Export -->
+<div class="onbar" id="onbar">
+  <span id="on-count">0 ausgewählt</span>
+  <label title="Lösung mit ins Bild übernehmen"><input type="checkbox" id="on-sol"> mit Lösung</label>
+  <button class="go" id="on-go" type="button">📋 Als Bild für OneNote kopieren</button>
+  <button class="clr" id="on-clr" type="button">Auswahl aufheben</button>
+</div>
+<div class="ontoast" id="ontoast"></div>
+<div class="onmodal" id="onmodal"><div class="box">
+  <p style="margin:0 0 8px"><b>Kopieren direkt in die Zwischenablage ist in diesem Browser nicht möglich.</b> Bild mit Rechtsklick (bzw. lange tippen) kopieren oder speichern und in OneNote einfügen.</p>
+  <img id="on-img" alt="Aufgaben als Bild">
+  <p style="margin:10px 0 0;display:flex;gap:8px;flex-wrap:wrap"><a id="on-dl" download="aufgaben.png" class="on-copy" style="text-decoration:none">⬇ Bild speichern</a><button class="on-copy" id="on-close" type="button">Schließen</button></p>
+</div></div>
+<div id="on-stage" aria-hidden="true"></div>
+<script src="https://cdn.jsdelivr.net/npm/html-to-image@1.11.11/dist/html-to-image.js"></script>
+<script>
+/* ---------- OneNote-Export: Aufgaben als Bild kopieren (wie LK-Materialien) ---------- */
+(function(){
+  var SRC=document.body.getAttribute('data-on-src')||document.title;
+  var cards=[].slice.call(document.querySelectorAll('.wrap .card.M, .wrap .card.A, .wrap .card.B, .wrap .card.C'));
+  var bar=document.getElementById('onbar'), cnt=document.getElementById('on-count');
+  function picked(){ return cards.filter(function(c){ return c.classList.contains('picked'); }); }
+  function updBar(){ var n=picked().length; cnt.textContent=n+(n===1?' Aufgabe':' Aufgaben')+' ausgewählt'; bar.classList.toggle('show',n>0); }
+  cards.forEach(function(card){
+    var head=card.querySelector('h3'); if(!head) return;
+    var tools=document.createElement('span'); tools.className='tools';
+    tools.innerHTML='<label class="on-pick" title="Für den gemeinsamen Export auswählen"><input type="checkbox"><span>auswählen</span></label><button class="on-copy" type="button" title="Diese Aufgabe als Bild für OneNote kopieren">📋 OneNote</button>';
+    head.appendChild(tools);
+    var cb=tools.querySelector('input');
+    cb.addEventListener('change',function(){ card.classList.toggle('picked',cb.checked); updBar(); });
+    tools.querySelector('.on-copy').addEventListener('click',function(){ exportCards([card], document.getElementById('on-sol').checked); });
+  });
+  document.getElementById('on-clr').addEventListener('click',function(){ cards.forEach(function(c){ c.classList.remove('picked'); var i=c.querySelector('.on-pick input'); if(i) i.checked=false; }); updBar(); });
+  document.getElementById('on-go').addEventListener('click',function(){ exportCards(picked(), document.getElementById('on-sol').checked); });
+  document.getElementById('on-close').addEventListener('click',function(){ document.getElementById('onmodal').classList.remove('show'); });
+  function toast(t,bad){ var el=document.getElementById('ontoast'); el.textContent=t; el.classList.toggle('bad',!!bad); el.style.display='block'; clearTimeout(el._t); el._t=setTimeout(function(){ el.style.display='none'; },3200); }
+
+  function buildStage(list, withSol){
+    var stage=document.getElementById('on-stage'); stage.innerHTML='';
+    list.forEach(function(card){
+      var item=document.createElement('div'); item.className='ex-item';
+      var lvl=['A','B','C'].filter(function(c){ return card.classList.contains(c); })[0]||'';
+      var h=card.querySelector('h3').cloneNode(true); var t=h.querySelector('.tools'); if(t) t.remove();
+      var title=document.createElement('div'); title.className='ex-title '+lvl; title.textContent=h.textContent.replace(/\s+/g,' ').trim(); item.appendChild(title);
+      [].slice.call(card.children).forEach(function(el){
+        if(el.tagName==='H3'||el.tagName==='DETAILS'||el.classList.contains('stepbar')) return;
+        if(el.classList.contains('steps')){ if(withSol){ var bx=document.createElement('div'); bx.className='ex-sol'; bx.innerHTML='<div class="ex-sol-h">Lösung</div>'; bx.appendChild(el.cloneNode(true)); item.appendChild(bx); } return; }
+        item.appendChild(el.cloneNode(true));
+      });
+      if(withSol){ var sol=card.querySelector('details.sol'); if(sol){ var box=document.createElement('div'); box.className='ex-sol'; box.innerHTML='<div class="ex-sol-h">Lösung</div>'; [].slice.call(sol.childNodes).forEach(function(n){ if(n.nodeName!=='SUMMARY') box.appendChild(n.cloneNode(true)); }); item.appendChild(box); } }
+      stage.appendChild(item);
+    });
+    var src=document.createElement('div'); src.className='ex-src'; src.textContent=SRC+' · FBG Schwerte'; stage.appendChild(src);
+    stage.querySelectorAll('.katex .rlap').forEach(function(r){ var o=r.closest('.mrel'); o=o&&o.parentElement; if(o&&o.classList.contains('mrel')&&o.textContent==='\uE020='){ o.innerHTML='<span class="mrel" style="font-family:KaTeX_Main,Cambria Math,serif">\u2260</span>'; } });
+    return stage;
+  }
+  /* KaTeX-Schriften einmalig als data-URLs einbetten, damit Formeln im Bild exakt wie auf der Seite aussehen */
+  var fontCSS=null;
+  function toDataURL(blob){ return new Promise(function(res,rej){ var fr=new FileReader(); fr.onload=function(){ res(fr.result); }; fr.onerror=rej; fr.readAsDataURL(blob); }); }
+  function katexFontCSS(){
+    if(fontCSS!==null) return Promise.resolve(fontCSS);
+    var link=document.querySelector('link[href*="katex"]'); if(!link){ fontCSS=''; return Promise.resolve(''); }
+    var href=link.href;
+    return fetch(href).then(function(r){ return r.text(); }).then(function(css){
+      var faces=css.match(/@font-face\{[^}]*\}/g)||[];
+      return Promise.all(faces.map(function(face){
+        var m=face.match(/url\(([^)]+?\.woff2)\)/); if(!m) return '';
+        var url=new URL(m[1].replace(/["']/g,''),href).href;
+        return fetch(url).then(function(r){ return r.blob(); }).then(toDataURL).then(function(d){
+          return face.replace(/src:[^;}]*/,'src:url('+d+') format("woff2")');
+        }).catch(function(){ return ''; });
+      }));
+    }).then(function(list){ fontCSS=list.join('\n'); return fontCSS; }).catch(function(){ fontCSS=''; return ''; });
+  }
+  if(window.fetch) setTimeout(katexFontCSS,1500);
+
+  function exportCards(list, withSol){
+    if(!list.length) return;
+    if(!window.htmlToImage){ toast('Export-Bibliothek nicht geladen (Internetverbindung?)',true); return; }
+    var stage=buildStage(list, withSol);
+    var opts={pixelRatio:2, backgroundColor:'#ffffff', cacheBust:false, width:stage.offsetWidth, height:stage.offsetHeight, style:{position:'static',left:'0',top:'0'}};
+    var blobPromise=katexFontCSS().then(function(css){ if(css) opts.fontEmbedCSS=css; return htmlToImage.toBlob(stage,opts); });
+    var done=function(){ toast('✓ Kopiert – in OneNote mit Strg+V einfügen'); };
+    var fallback=function(){
+      blobPromise.then(function(b){ var url=URL.createObjectURL(b); document.getElementById('on-img').src=url; document.getElementById('on-dl').href=url; document.getElementById('onmodal').classList.add('show'); })
+        .catch(function(){ toast('Bild konnte nicht erzeugt werden',true); });
+    };
+    try{
+      if(navigator.clipboard && window.ClipboardItem){
+        navigator.clipboard.write([new ClipboardItem({'image/png':blobPromise})]).then(done,fallback);
+      } else fallback();
+    }catch(e){ fallback(); }
+  }
+  window.__onExport={buildStage:buildStage, exportCards:exportCards};
+})();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>VI.4 Einstieg: Schnittwinkel und Schnittpunkte</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+<style>
+  :root{
+    --gold:#e8a800; --gold-deep:#b98600; --gold-soft:#fff6dc;
+    --ink:#1f2933; --ink-soft:#5b6770; --line:#e3e6ea; --bg:#f7f7f4; --card:#fff; --navy:#1a3a6b;
+    --a:#2e9e4f; --a-bg:#eaf7ef; --b:#e67e22; --b-bg:#fdf0e4; --c:#8e44ad; --c-bg:#f4ecf8; --blue:#2c6fbb;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;background:var(--bg);color:var(--ink);line-height:1.55;font-size:17px}
+  header{background:var(--gold);color:#fff;padding:18px 20px 16px}
+  header .eyebrow{font-size:.82rem;letter-spacing:.06em;text-transform:uppercase;opacity:.92}
+  header h1{margin:4px 0 0;font-size:1.6rem;line-height:1.2}
+  header nav{margin-top:8px;font-size:.9rem}
+  header nav a{color:#fff;text-decoration:underline;margin-right:14px}
+  .wrap{max-width:980px;margin:0 auto;padding:16px}
+  .toc{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 14px}
+  .toc a{border:1px solid var(--line);background:#fff;border-radius:999px;padding:5px 14px;text-decoration:none;color:var(--ink);font-size:.9rem}
+  .toc a .dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:6px;vertical-align:middle}
+  h2.sec{font-size:1.3rem;margin:26px 0 10px;color:var(--navy);border-bottom:2px solid var(--line);padding-bottom:6px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 18px;margin-bottom:14px}
+  .card h3{margin:0 0 8px;font-size:1.1rem;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+  .merk{background:#eef4fb;border:1px solid #bcd3ec;border-radius:12px;padding:12px 16px;margin:10px 0}
+  .merk h3{color:#1d4f8c;margin:0 0 6px;font-size:1.05rem}
+  .book{background:var(--gold-soft);border:1px solid #f1dc9c;border-radius:12px;padding:12px 16px;margin:10px 0}
+  .badge{font-size:.75rem;font-weight:800;letter-spacing:.05em;padding:2px 10px;border-radius:999px}
+  .bA{background:var(--a-bg);color:var(--a)} .bB{background:var(--b-bg);color:var(--b)} .bC{background:var(--c-bg);color:var(--c)} .bM{background:#eef2f8;color:var(--navy)}
+  .card.A{border-left:5px solid var(--a)} .card.B{border-left:5px solid var(--b)} .card.C{border-left:5px solid var(--c)} .card.M{border-left:5px solid var(--navy)}
+  .steps .st{display:none;border-left:3px solid #d8dde5;padding:4px 0 4px 12px;margin:8px 0}
+  .steps .st.show{display:block}
+  .steps .st b.lab{color:var(--navy)}
+  .stepbar{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+  .btn{border:1px solid var(--line);background:#fff;border-radius:8px;padding:6px 12px;font-size:.92rem;cursor:pointer;color:var(--ink)}
+  .btn:hover{border-color:var(--gold)}
+  .btn.primary{background:var(--gold);border-color:var(--gold);color:#fff;font-weight:600}
+  .btn:disabled{opacity:.45;cursor:default}
+  details{margin:8px 0;border:1px solid var(--line);border-radius:8px;padding:6px 12px;background:#fcfcfc}
+  details summary{cursor:pointer;font-weight:700}
+  details.tip summary{color:var(--gold-deep)}
+  details.sol summary{color:var(--a)}
+  details[open]{background:#fff}
+  .sub{margin:6px 0}
+  .ti{background:#f3f6f3;border:1px solid #cfdccf;border-radius:8px;padding:8px 12px;font-size:.93rem;margin:8px 0}
+  code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:.88em;background:#f1f3f8;border:1px solid var(--line);border-radius:4px;padding:1px 5px}
+  .fig{display:flex;gap:18px;align-items:flex-start;flex-wrap:wrap}
+  .fig svg{flex-shrink:0;max-width:100%;height:auto}
+  .katex-display{margin:.4em 0;overflow-x:auto;overflow-y:hidden;padding:2px 0}
+  .checklist{list-style:none;padding:0;margin:0}
+  .checklist li{display:flex;gap:10px;align-items:flex-start;padding:7px 0;border-bottom:1px solid var(--line)}
+  .checklist li:last-child{border-bottom:none}
+  .checklist input{width:18px;height:18px;margin-top:3px;accent-color:var(--gold-deep);flex-shrink:0}
+  .ztag{margin-left:auto;font-size:.75rem;font-weight:700;padding:1px 8px;border-radius:999px;white-space:nowrap}
+  .ok{color:var(--a);font-weight:700}
+  .no{color:#c62828;font-weight:700}
+  footer{text-align:center;color:var(--ink-soft);font-size:.82rem;padding:20px}
+  @media (max-width:520px){ .katex{font-size:.95em} body{font-size:16px} .wrap{padding:10px} .card{padding:12px} }
+  .fig svg{max-width:100%;height:auto}
+  /* ---------- OneNote-Export ---------- */
+  .card h3 .tools{display:flex;align-items:center;gap:8px;margin-left:auto;font-weight:400}
+  .on-pick{display:flex;align-items:center;gap:4px;font-size:.78rem;color:var(--ink-soft);font-weight:600;cursor:pointer;white-space:nowrap}
+  .on-pick input{width:16px;height:16px;accent-color:var(--c);cursor:pointer}
+  .on-copy{border:1px solid var(--line);background:#fff;border-radius:6px;padding:3px 8px;font-size:.78rem;font-weight:700;cursor:pointer;color:var(--c);font-family:inherit;white-space:nowrap}
+  .on-copy:hover{border-color:var(--c);background:#faf6fd}
+  .card.picked{box-shadow:0 0 0 2px var(--c)}
+  .onbar{position:fixed;left:50%;bottom:16px;transform:translateX(-50%);background:var(--ink);color:#fff;border-radius:12px;padding:10px 14px;display:none;align-items:center;gap:12px;flex-wrap:wrap;z-index:50;box-shadow:0 6px 24px rgba(0,0,0,.25);max-width:calc(100% - 24px);font-size:.9rem}
+  .onbar.show{display:flex}
+  .onbar button{border:0;border-radius:6px;padding:7px 12px;font-weight:700;cursor:pointer;font-family:inherit;font-size:.86rem}
+  .onbar .go{background:var(--c);color:#fff}
+  .onbar .clr{background:#3a3f4a;color:#fff}
+  .onbar label{display:flex;align-items:center;gap:5px;cursor:pointer}
+  .ontoast{position:fixed;left:50%;top:18px;transform:translateX(-50%);background:var(--a);color:#fff;border-radius:8px;padding:10px 16px;font-weight:700;z-index:60;display:none;max-width:calc(100% - 24px);font-size:.9rem}
+  .ontoast.bad{background:#c62828}
+  .onmodal{position:fixed;inset:0;background:rgba(0,0,0,.55);display:none;align-items:center;justify-content:center;z-index:70;padding:16px}
+  .onmodal.show{display:flex}
+  .onmodal .box{background:#fff;border-radius:10px;max-width:900px;width:100%;max-height:90vh;overflow:auto;padding:14px}
+  .onmodal img{max-width:100%;border:1px solid var(--line)}
+  .lk-note{font-size:.88rem;color:var(--ink-soft);margin:0 0 14px}
+  .lk-note b{color:var(--c)}
+  .kbd{display:inline-block;border:1px solid #c9ced4;border-bottom-width:2px;border-radius:4px;padding:0 5px;font-size:.8em;background:#fff}
+  #on-stage{position:fixed;left:-12000px;top:0;width:860px;background:#fff;padding:22px 26px;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;color:#1f2933;line-height:1.55;font-size:16px}
+  #on-stage .katex{white-space:nowrap}
+  #on-stage .ex-item{margin-bottom:22px}
+  #on-stage .ex-item:last-child{margin-bottom:0}
+  #on-stage .ex-title{font-weight:700;font-size:1.08rem;margin:0 0 8px;padding-bottom:4px;border-bottom:3px solid var(--navy)}
+  #on-stage .ex-title.A{border-color:var(--a)} #on-stage .ex-title.B{border-color:var(--b)} #on-stage .ex-title.C{border-color:var(--c)}
+  #on-stage .ex-sol{margin-top:10px;padding:8px 12px;border-left:4px solid var(--a);background:#f3faf5}
+  #on-stage .ex-sol-h{font-weight:700;color:var(--a);margin-bottom:4px}
+  #on-stage .ex-src{font-size:.75rem;color:var(--ink-soft);text-align:right;margin-top:12px}
+  #on-stage .steps .st{display:block}
+  #on-stage .stepbar,#on-stage details,#on-stage .tools{display:none}
+  #on-stage .fig svg{max-width:100%;height:auto}
+  @media (max-width:560px){ .on-pick span{display:none} }
+  .ftab{border-collapse:collapse;margin:8px 0;width:100%}
+  .ftab td,.ftab th{padding:6px 10px;border-bottom:1px solid #d6e2f0;vertical-align:middle;text-align:left}
+  .ftab td:first-child{font-weight:700;white-space:nowrap}
+  .ftab .kn{color:var(--ink-soft);font-size:.88rem}
+  .ftab.cmp th{background:#f1f4f9;font-size:.92rem}
+  .ftab.cmp td:first-child{color:var(--ink-soft)}
+  .rule-box{background:#fff8e6;border:1px solid #f0d890;border-radius:10px;padding:8px 14px;margin-top:10px}
+  .tipbox{background:#eaf7ef;border:1px solid #b9e2c5;border-radius:10px;padding:8px 14px;margin:10px 0}
+  .three{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:6px 0}
+  @media (max-width:700px){.three{grid-template-columns:1fr}}
+  .lage{border:1px solid var(--line);border-radius:10px;padding:8px;text-align:center;background:#fcfcfa}
+  .lage>b{display:block;margin-top:4px}
+  .lage>span{display:block;color:var(--ink-soft);font-size:.88rem}
+  .calc{background:#f4f8fc;border:1px solid #cfe0f1;border-radius:12px;padding:12px 14px;margin-top:10px}
+  .pre{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}
+  .gin{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:6px 0}
+  .vin{display:inline-flex;flex-direction:column;gap:3px;border-left:2px solid #333;border-right:2px solid #333;border-radius:8px;padding:3px 6px}
+  .vin input{width:50px;padding:3px;font-size:1rem;text-align:center;border:1px solid #c9ced4;border-radius:6px}
+  .calc-out .cs{border-left:3px solid #d8dde5;padding:4px 0 4px 12px;margin:6px 0}
+  .calc-out .res{font-weight:700;padding:6px 10px;border-radius:8px;margin-top:6px}
+  .calc-out .res.one{background:#e8f6ec;color:#1e6b35}
+  .calc-out .res.par{background:#fdeeee;color:#8a1f1f}
+  .calc-out .res.in{background:#fff3df;color:#7a4b00}
+  .btn-link,.next{display:inline-block;background:var(--gold);color:#fff!important;text-decoration:none;font-weight:700;padding:8px 14px;border-radius:10px}
+  .muted{color:var(--ink-soft);font-size:.9rem}
+  #on-stage .noexport{display:none}
+  .katex svg{height:inherit!important;max-width:none!important}
+</style>
+</head>
+<body data-on-src="GK · VI.4 Schnittwinkel und Schnittpunkte · Einstieg">
+<header>
+  <div class="eyebrow">Kapitel VI.4 · Schnittwinkel und Schnittpunkte · Einstieg</div>
+  <h1>Schnittwinkel und Schnittpunkte – das Wichtigste auf einen Blick</h1>
+  <nav><a href="index.html">← Übersicht VI.4</a><a href="uebung.html">Zu den Beispielen und Übungen →</a><a href="../taschenrechner/index.html#schnittwinkel">TI-Nspire-Hilfen</a></nav>
+</header>
+
+<div class="wrap">
+  <div class="toc">
+    <a href="#winkel"><span class="dot" style="background:var(--navy)"></span>Teil A · Schnittwinkel</a>
+    <a href="#schnittpunkt"><span class="dot" style="background:var(--b)"></span>Teil B · Schnittpunkt Gerade – Ebene</a>
+  </div>
+  <p class="lk-note"><b>📋 Für die Lehrkraft:</b> Jeder Kasten lässt sich mit „📋 OneNote“ als Bild kopieren – mehrere über „auswählen“ – und in OneNote mit <span class="kbd">Strg</span> <span class="kbd">V</span> einfügen.</p>
+
+  <!-- ================= TEIL A ================= -->
+  <h2 class="sec" id="winkel">Teil A · Schnittwinkel – kurz und knapp</h2>
+
+  <div class="card M">
+    <h3><span class="badge bM">EINSTIEG</span> Suzans Behauptung <span style="color:var(--ink-soft);font-size:.85rem;font-weight:400">Buch S. 195</span></h3>
+    <p>Suzan behauptet: „Den Winkel zwischen zwei Ebenen kann man ganz leicht bestimmen – man braucht nur ihre Normalenvektoren.“<br>
+      Gegeben sind \(E_1:\ x_1+3x_2+2x_3=14\) und \(E_2:\ x_2+6x_3=4\).</p>
+    <div class="fig" style="align-items:center">
+      <svg viewBox="0 0 340 220" width="320" height="207" font-family="Georgia,serif" font-size="14" role="img" aria-label="Zwei Ebenen von der Seite gesehen"><defs><marker id="ar_d62828" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L7,3 z" fill="#d62828"/></marker><marker id="ar_2c6fbb" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L7,3 z" fill="#2c6fbb"/></marker></defs><line x1="20" y1="120" x2="320" y2="120" stroke="#2c6fbb" stroke-width="3"/><text x="300" y="140" fill="#2c6fbb" font-weight="bold">E₁</text><line x1="106.9" y1="210.1" x2="250.3" y2="5.3" stroke="#e67e22" stroke-width="3"/><text x="222.3" y="15.3" fill="#e67e22" font-weight="bold">E₂</text><path d="M204.0,120.0 A34,34 0 0,0 189.5,92.1" fill="none" stroke="#8e44ad" stroke-width="2"/><text x="208" y="110" fill="#8e44ad" font-weight="bold">α</text><line x1="170" y1="120" x2="170.0" y2="35.0" stroke="#d62828" stroke-width="2.5" marker-end="url(#ar_d62828)"/><text x="176.0" y="41.0" fill="#d62828" font-style="italic">n₁</text><line x1="170" y1="120" x2="100.4" y2="71.2" stroke="#d62828" stroke-width="2.5" marker-end="url(#ar_d62828)"/><text x="78.4" y="71.2" fill="#d62828" font-style="italic">n₂</text><path d="M170.0,70.0 A50,50 0 0,0 129.0,91.3" fill="none" stroke="#8e44ad" stroke-width="2"/><text x="137.4" y="65.0" fill="#8e44ad" font-weight="bold">α</text><circle cx="170" cy="120" r="3.5" fill="#333"/><text x="160" y="142" fill="#555" font-size="12">s</text></svg>
+      <div style="flex:1;min-width:240px">
+        <p style="margin-top:0"><strong>Idee:</strong> Schaut man genau entlang der Schnittgeraden auf die beiden Ebenen, sieht man sie als zwei Linien. Die Normalenvektoren stehen senkrecht auf diesen Linien – deshalb schließen sie <strong>denselben Winkel</strong> ein wie die Ebenen.</p>
+        <details class="sol"><summary>Lösung zu Suzans Ebenen</summary>
+          \(\vec n_1=\begin{pmatrix}1\\3\\2\end{pmatrix},\ \vec n_2=\begin{pmatrix}0\\1\\6\end{pmatrix}\):  &emsp; 
+          \(\cos(\alpha)=\dfrac{|0+3+12|}{\sqrt{14}\cdot\sqrt{37}}=\dfrac{15}{\sqrt{518}}\approx0{,}659\Rightarrow\alpha\approx48{,}8^\circ\).</details>
+      </div>
+    </div>
+  </div>
+
+  <div class="card M">
+    <h3><span class="badge bM">MERKE</span> Die drei Schnittwinkel-Formeln</h3>
+    <div class="merk" style="margin:0">
+      Haben die Geraden \(g_1,g_2\) die Richtungsvektoren \(\vec u_1,\vec u_2\) und die Ebenen \(E_1,E_2\) die Normalenvektoren \(\vec n_1,\vec n_2\), so gilt für den <strong>Schnittwinkel</strong> \(\alpha\) mit \(0^\circ<\alpha\le90^\circ\):
+      <table class="ftab">
+        <tr><td>Gerade – Gerade</td><td>\(\cos(\alpha)=\dfrac{|\vec u_1\circ\vec u_2|}{|\vec u_1|\cdot|\vec u_2|}\)</td><td class="kn">bekannt aus V.3</td></tr>
+        <tr><td>Ebene – Ebene</td><td>\(\cos(\alpha)=\dfrac{|\vec n_1\circ\vec n_2|}{|\vec n_1|\cdot|\vec n_2|}\)</td><td class="kn">Normalenvektoren</td></tr>
+        <tr><td>Gerade – Ebene</td><td>\(\sin(\alpha)=\dfrac{|\vec u\circ\vec n|}{|\vec u|\cdot|\vec n|}\)</td><td class="kn"><strong>Sinus!</strong></td></tr>
+      </table>
+    </div>
+    <div class="rule-box"><strong>Faustregel:</strong> gleiche Objekte (Gerade – Gerade, Ebene – Ebene) → <strong>Kosinus</strong>; verschiedene Objekte (Gerade – Ebene) → <strong>Sinus</strong>. Die <strong>Betragsstriche</strong> im Zähler sorgen dafür, dass \(\alpha\le90^\circ\) herauskommt.</div>
+  </div>
+
+  <div class="card M">
+    <h3><span class="badge bM">WARUM SINUS?</span> Gerade und Ebene</h3>
+    <div class="fig" style="align-items:center">
+      <svg viewBox="0 0 330 220" width="310" height="207" font-family="Georgia,serif" font-size="14" role="img" aria-label="Gerade und Ebene von der Seite gesehen"><defs><marker id="ar_d62828" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L7,3 z" fill="#d62828"/></marker><marker id="ar_2c6fbb" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L7,3 z" fill="#2c6fbb"/></marker></defs><line x1="15" y1="140" x2="315" y2="140" stroke="#2e9e4f" stroke-width="3"/><text x="292" y="160" fill="#2e9e4f" font-weight="bold">E</text><line x1="51.7" y1="208.8" x2="293.4" y2="39.6" stroke="#2c6fbb" stroke-width="3"/><text x="277.4" y="59.6" fill="#2c6fbb" font-weight="bold">g</text><line x1="150" y1="140" x2="215.5" y2="94.1" stroke="#2c6fbb" stroke-width="2.5" marker-end="url(#ar_2c6fbb)"/><text x="217.5" y="114.1" fill="#2c6fbb" font-style="italic">u</text><line x1="150" y1="140" x2="150.0" y2="40.0" stroke="#d62828" stroke-width="2.5" marker-end="url(#ar_d62828)"/><text x="156.0" y="48.0" fill="#d62828" font-style="italic">n</text><path d="M198.0,140.0 A48,48 0 0,0 189.3,112.5" fill="none" stroke="#8e44ad" stroke-width="2"/><text x="204" y="132" fill="#8e44ad" font-weight="bold">α</text><path d="M174.6,122.8 A30,30 0 0,0 150.0,110.0" fill="none" stroke="#e67e22" stroke-width="2"/><text x="166.5" y="108.5" fill="#e67e22" font-weight="bold">β</text><text x="18" y="22" fill="#555" font-size="13">β = 90° − α</text></svg>
+      <div style="flex:1;min-width:240px">
+        <p style="margin-top:0">Gesucht ist der Winkel \(\alpha\) zwischen der Geraden \(g\) und der Ebene \(E\). Mit dem Skalarprodukt kann man aber nur den Winkel \(\beta\) zwischen \(\vec u\) und dem Normalenvektor \(\vec n\) berechnen. Weil \(\vec n\) senkrecht auf \(E\) steht, gilt
+        \[\beta=90^\circ-\alpha\quad\text{und}\quad\cos(90^\circ-\alpha)=\sin(\alpha).\]
+        Deshalb steht in der Formel für Gerade – Ebene der <strong>Sinus</strong>.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="card M">
+    <h3><span class="badge bM">REZEPT</span> Schnittwinkel in drei Schritten</h3>
+    <p>① Passende Vektoren heraussuchen: Richtungsvektoren der Geraden, Normalenvektoren der Ebenen (aus der Koordinatenform ablesen, sonst wie in VI.3 berechnen).<br>
+       ② Skalarprodukt und Beträge berechnen, in die richtige Formel einsetzen (Faustregel!).<br>
+       ③ Mit \(\cos^{-1}\) bzw. \(\sin^{-1}\) den Winkel bestimmen – Rechner im <strong>Grad</strong>-Modus.</p>
+    <p class="muted" style="margin:0">Vorgerechnete Beispiele: <a href="uebung.html#muster">Muster 1 und 2 auf der Übungsseite</a>.</p>
+  </div>
+
+  <!-- ================= TEIL B ================= -->
+  <h2 class="sec" id="schnittpunkt">Teil B · Schnittpunkt einer Geraden mit einer Ebene</h2>
+
+  <div class="card M">
+    <h3><span class="badge bM">ERINNERUNG</span> Das kennt ihr schon: Strahl und Dach</h3>
+    <p>In Szene 0 des Ebenen-Explorers hat ein Lichtstrahl \(g\) das Dach \(E\) im Punkt \(S(5\,|\,1\,|\,1)\) getroffen. Diesen gemeinsamen Punkt nennt man den <strong>Schnittpunkt</strong> (oder <strong>Durchstoßpunkt</strong>) von \(g\) und \(E\).</p>
+    <p style="margin-bottom:0"><a class="btn-link" href="../simulationen/ebenen-explorer/index.html">→ Szene 0 noch einmal ansehen</a></p>
+  </div>
+
+  <div class="card M">
+    <h3><span class="badge bM">LAGE</span> Drei Möglichkeiten für Gerade und Ebene</h3>
+    <div class="three">
+      <div class="lage"><svg viewBox="0 0 160 110" width="150" height="103" role="img"><polygon points="15,85 110,85 145,45 50,45" fill="rgba(232,168,0,0.25)" stroke="#b98600" stroke-width="1.5"/><line x1="55" y1="105" x2="105" y2="10" stroke="#2c6fbb" stroke-width="3"/><circle cx="84" cy="50" r="4.5" fill="#d62828"/><text x="90" y="62" font-size="13" fill="#d62828" font-family="Georgia">S</text></svg><b>\(g\) schneidet \(E\)</b><span>genau ein gemeinsamer Punkt \(S\)</span></div>
+      <div class="lage"><svg viewBox="0 0 160 110" width="150" height="103" role="img"><polygon points="15,85 110,85 145,45 50,45" fill="rgba(232,168,0,0.25)" stroke="#b98600" stroke-width="1.5"/><line x1="10" y1="30" x2="150" y2="22" stroke="#2c6fbb" stroke-width="3"/></svg><b>\(g\) ist parallel zu \(E\)</b><span>kein gemeinsamer Punkt</span></div>
+      <div class="lage"><svg viewBox="0 0 160 110" width="150" height="103" role="img"><polygon points="15,85 110,85 145,45 50,45" fill="rgba(232,168,0,0.25)" stroke="#b98600" stroke-width="1.5"/><line x1="25" y1="78" x2="140" y2="52" stroke="#2c6fbb" stroke-width="3"/></svg><b>\(g\) liegt in \(E\)</b><span>unendlich viele gemeinsame Punkte</span></div>
+    </div>
+    <div class="rule-box"><strong>Schneller Vorab-Test:</strong> Ist \(\vec u\circ\vec n=0\), dann steht der Richtungsvektor senkrecht auf dem Normalenvektor – \(g\) ist <strong>parallel zu \(E\)</strong> oder <strong>liegt in \(E\)</strong>. Ist \(\vec u\circ\vec n\neq0\), gibt es genau einen Schnittpunkt.</div>
+  </div>
+
+  <div class="card M">
+    <h3><span class="badge bM">FALL 1</span> Ebene in Koordinatenform – Einsetzen <span style="color:var(--ink-soft);font-size:.85rem;font-weight:400">Buch S. 196, 2. Fall</span></h3>
+    <p>Die allgemeinen Koordinaten der Geraden werden in die Koordinatengleichung eingesetzt. Es entsteht <strong>eine Gleichung mit einer Unbekannten \(t\)</strong>.</p>
+    <div class="merk" style="margin:6px 0">
+      ① Allgemeinen Geradenpunkt notieren: \(X_t(p_1+t\,u_1\,|\,p_2+t\,u_2\,|\,p_3+t\,u_3)\).<br>
+      ② In \(ax_1+bx_2+cx_3=d\) einsetzen, nach \(t\) auflösen.<br>
+      ③ \(t\) in die Geradengleichung einsetzen → Schnittpunkt \(S\). ④ Probe: \(S\) in die Ebenengleichung einsetzen.
+    </div>
+    <div class="calc noexport">
+      <div class="calc-head"><strong>Probier es aus:</strong> Ebene \(E:\ x_1+2x_2+x_3=10\). Wähle eine Gerade:</div>
+      <div class="pre" id="gPresets"></div>
+      <div class="gin">\(g:\ \vec x=\) <span class="vin" id="pin"></span> \(+\,t\cdot\) <span class="vin" id="uin"></span> <button class="btn" id="goCalc">Einsetzen</button></div>
+      <div id="calcOut" class="calc-out"></div>
+    </div>
+  </div>
+
+  <div class="card M">
+    <h3><span class="badge bM">FALL 2</span> Ebene in Parameterform – Gleichsetzen <span style="color:var(--ink-soft);font-size:.85rem;font-weight:400">Buch S. 196, 1. Fall</span></h3>
+    <p>Gerade und Ebene werden gleichgesetzt: \(\ \vec p+t\cdot\vec u=\vec q+r\cdot\vec v+s\cdot\vec w\).<br>
+      Koordinatenweise entsteht ein <strong>LGS mit drei Gleichungen und drei Unbekannten \(t,r,s\)</strong> – genau wie beim Dach-LGS aus der Gauß-Werkstatt. Mit \(t\) erhält man den Schnittpunkt aus der Geradengleichung.</p>
+    <div class="tipbox"><strong>Tipp für die Praxis:</strong> Oft ist es schneller, die Ebene zuerst in die <strong>Koordinatenform umzuformen</strong> (VI.3) und dann wie in Fall 1 einzusetzen. Beide Wege führen zum selben Punkt – <a href="uebung.html#m4">Muster 4</a> zeigt beide nebeneinander.</div>
+    <table class="ftab cmp">
+      <tr><th></th><th>Koordinatenform (Fall 1)</th><th>Parameterform (Fall 2)</th></tr>
+      <tr><td>Ansatz</td><td>einsetzen</td><td>gleichsetzen</td></tr>
+      <tr><td>Rechnung</td><td>1 Gleichung, 1 Unbekannte</td><td>LGS, 3 Gleichungen, 3 Unbekannte</td></tr>
+      <tr><td>keine Lösung</td><td>\(0=c\), \(c\neq0\) → parallel</td><td>Widerspruch im LGS → parallel</td></tr>
+      <tr><td>unendlich viele</td><td>\(0=0\) → \(g\) liegt in \(E\)</td><td>\(0=0\) im LGS → \(g\) liegt in \(E\)</td></tr>
+    </table>
+  </div>
+
+  <p style="text-align:center;margin:22px 0"><a class="next" href="uebung.html">Weiter zu den Beispielen mit Musterlösungen und den Übungen →</a></p>
+</div>
+<footer>FBG Schwerte · Mathematik GK · Kapitel VI.4 Schnittwinkel und Schnittpunkte · orientiert an Buch S. 195–198</footer>
+
+<script>
+window.addEventListener('load',()=>{
+  renderMathInElement(document.body,{delimiters:[{left:'\\[',right:'\\]',display:true},{left:'\\(',right:'\\)',display:false}],throwOnError:false});
+  document.querySelectorAll('.card.M').forEach(card=>{
+    const steps=[...card.querySelectorAll('.st')]; let k=0;
+    const nb=card.querySelector('[data-next]'), ab=card.querySelector('[data-all]'); if(!nb) return;
+    const upd=()=>{ steps.forEach((s,i)=>s.classList.toggle('show',i<k)); nb.disabled=k>=steps.length; nb.textContent=k>=steps.length?'Alle Schritte gezeigt':`Nächster Schritt (${k+1}/${steps.length})`; };
+    nb.onclick=()=>{ k=Math.min(steps.length,k+1); upd(); };
+    ab.onclick=()=>{ k=steps.length; upd(); };
+    upd();
+  });
+});
+</script>
+<script>
+(function(){
+  const N=[1,2,1], D=10;
+  const PRE=[
+    {lab:'g₁: schneidet', p:[2,-1,0], u:[1,1,2]},
+    {lab:'g₂', p:[1,1,1], u:[2,-1,0]},
+    {lab:'g₃', p:[2,3,2], u:[2,-1,0]},
+    {lab:'g₄', p:[3,3,5], u:[1,-1,-2]},
+  ];
+  const vin=(id,vals)=>{ const c=document.getElementById(id); c.innerHTML=''; vals.forEach(v=>{ const i=document.createElement('input'); i.inputMode='numeric'; i.value=v; c.append(i); }); };
+  const read=id=>[...document.getElementById(id).querySelectorAll('input')].map(i=>Number(String(i.value).replace(',','.').replace('−','-')));
+  const pc=document.getElementById('gPresets');
+  PRE.forEach((g,k)=>{ const b=document.createElement('button'); b.className='btn small'; b.textContent=g.lab; b.onclick=()=>{ vin('pin',g.p); vin('uin',g.u); calc(); }; pc.append(b); });
+  vin('pin',PRE[0].p); vin('uin',PRE[0].u);
+  const fr=(n)=>{ // Zahl schön darstellen (Brüche mit Nenner bis 12)
+    if(Number.isInteger(n)) return String(n);
+    for(let d=2; d<=12; d++){ const z=n*d; if(Math.abs(z-Math.round(z))<1e-9) return `${Math.round(z)<0?'-':''}\\tfrac{${Math.abs(Math.round(z))}}{${d}}`; }
+    return n.toFixed(3).replace('.','{,}');
+  };
+  const term=(p,u)=>{ if(u===0) return `${p}`; const us=u===1?'':u===-1?'-':u; if(p===0) return `${us}t`; return `${p}${u<0?'-':'+'}${Math.abs(u)===1?'':Math.abs(u)}t`; };
+  const lin=(c0,c1)=>{ if(c1===0) return `${c0}`; const t=`${Math.abs(c1)===1?'':Math.abs(c1)}t`; if(c0===0) return (c1<0?'-':'')+t; return `${c0}${c1<0?'-':'+'}${t}`; };
+  function calc(){
+    const p=read('pin'), u=read('uin'); if([...p,...u].some(isNaN)) return;
+    const c0=N[0]*p[0]+N[1]*p[1]+N[2]*p[2], c1=N[0]*u[0]+N[1]*u[1]+N[2]*u[2];
+    const coef=(k,s)=>k===1?`(${s})`:`${k}\\cdot(${s})`;
+    const steps=[];
+    steps.push(`① \\(X_t(${term(p[0],u[0])}\\,|\\,${term(p[1],u[1])}\\,|\\,${term(p[2],u[2])})\\)`);
+    steps.push(`② \\(${coef(N[0],term(p[0],u[0]))}+${coef(N[1],term(p[1],u[1]))}+${coef(N[2],term(p[2],u[2]))}=${D}\\)<br>\\(\\phantom{②}\\ \\Rightarrow\\ ${lin(c0,c1)}=${D}\\)`);
+    let res='';
+    if(c1!==0){ const t=(D-c0)/c1; const S=p.map((v,i)=>v+t*u[i]);
+      steps[steps.length-1]+=`<br>\\(\\phantom{②}\\ \\Rightarrow\\ t=${fr(t)}\\)`;
+      steps.push(`③ \\(t=${fr(t)}\\) einsetzen: \\(S(${S.map(fr).join('\\,|\\,')})\\)`);
+      const chk=N[0]*S[0]+N[1]*S[1]+N[2]*S[2];
+      steps.push(`④ Probe: \\(${fr(S[0])}+2\\cdot${S[1]<0?'('+fr(S[1])+')':fr(S[1])}+${S[2]<0?'('+fr(S[2])+')':fr(S[2])}=${fr(chk)}\\) ✓`);
+      res=`<div class="res one">Genau eine Lösung: g schneidet E im Punkt S(${S.map(v=>fr(v).replace(/\\tfrac\{(\d+)\}\{(\d+)\}/,'$1/$2')).join(' | ')}).</div>`;
+    } else if(c0!==D){ steps.push(`Das \\(t\\) fällt weg: \\(${c0}=${D}\\) ist <strong>falsch</strong> – für kein \\(t\\) erfüllt.`); res='<div class="res par">Keine Lösung: g ist parallel zu E (kein Schnittpunkt).</div>'; }
+    else { steps.push(`Das \\(t\\) fällt weg: \\(${c0}=${D}\\) ist <strong>immer wahr</strong> – für jedes \\(t\\) erfüllt.`); res='<div class="res in">Unendlich viele Lösungen: g liegt in E.</div>'; }
+    const out=document.getElementById('calcOut');
+    out.innerHTML=steps.map(s=>`<div class="cs">${s}</div>`).join('')+res+`<div class="muted">Vorab-Test: \\(\\vec u\\circ\\vec n=${c1}\\)${c1===0?' – parallel oder in E':' – es gibt genau einen Schnittpunkt'}.</div>`;
+    if(window.renderMathInElement) renderMathInElement(out,{delimiters:[{left:'\\(',right:'\\)',display:false}],throwOnError:false});
+  }
+  document.getElementById('goCalc').onclick=calc;
+  window.addEventListener('load',calc);
+})();
+</script>
+
+<!-- OneNote-Export -->
+<div class="onbar" id="onbar">
+  <span id="on-count">0 ausgewählt</span>
+  <label title="Lösung mit ins Bild übernehmen"><input type="checkbox" id="on-sol"> mit Lösung</label>
+  <button class="go" id="on-go" type="button">📋 Als Bild für OneNote kopieren</button>
+  <button class="clr" id="on-clr" type="button">Auswahl aufheben</button>
+</div>
+<div class="ontoast" id="ontoast"></div>
+<div class="onmodal" id="onmodal"><div class="box">
+  <p style="margin:0 0 8px"><b>Kopieren direkt in die Zwischenablage ist in diesem Browser nicht möglich.</b> Bild mit Rechtsklick (bzw. lange tippen) kopieren oder speichern und in OneNote einfügen.</p>
+  <img id="on-img" alt="Aufgaben als Bild">
+  <p style="margin:10px 0 0;display:flex;gap:8px;flex-wrap:wrap"><a id="on-dl" download="aufgaben.png" class="on-copy" style="text-decoration:none">⬇ Bild speichern</a><button class="on-copy" id="on-close" type="button">Schließen</button></p>
+</div></div>
+<div id="on-stage" aria-hidden="true"></div>
+<script src="https://cdn.jsdelivr.net/npm/html-to-image@1.11.11/dist/html-to-image.js"></script>
+<script>
+/* ---------- OneNote-Export: Aufgaben als Bild kopieren (wie LK-Materialien) ---------- */
+(function(){
+  var SRC=document.body.getAttribute('data-on-src')||document.title;
+  var cards=[].slice.call(document.querySelectorAll('.wrap .card.M, .wrap .card.A, .wrap .card.B, .wrap .card.C'));
+  var bar=document.getElementById('onbar'), cnt=document.getElementById('on-count');
+  function picked(){ return cards.filter(function(c){ return c.classList.contains('picked'); }); }
+  function updBar(){ var n=picked().length; cnt.textContent=n+(n===1?' Aufgabe':' Aufgaben')+' ausgewählt'; bar.classList.toggle('show',n>0); }
+  cards.forEach(function(card){
+    var head=card.querySelector('h3'); if(!head) return;
+    var tools=document.createElement('span'); tools.className='tools';
+    tools.innerHTML='<label class="on-pick" title="Für den gemeinsamen Export auswählen"><input type="checkbox"><span>auswählen</span></label><button class="on-copy" type="button" title="Diese Aufgabe als Bild für OneNote kopieren">📋 OneNote</button>';
+    head.appendChild(tools);
+    var cb=tools.querySelector('input');
+    cb.addEventListener('change',function(){ card.classList.toggle('picked',cb.checked); updBar(); });
+    tools.querySelector('.on-copy').addEventListener('click',function(){ exportCards([card], document.getElementById('on-sol').checked); });
+  });
+  document.getElementById('on-clr').addEventListener('click',function(){ cards.forEach(function(c){ c.classList.remove('picked'); var i=c.querySelector('.on-pick input'); if(i) i.checked=false; }); updBar(); });
+  document.getElementById('on-go').addEventListener('click',function(){ exportCards(picked(), document.getElementById('on-sol').checked); });
+  document.getElementById('on-close').addEventListener('click',function(){ document.getElementById('onmodal').classList.remove('show'); });
+  function toast(t,bad){ var el=document.getElementById('ontoast'); el.textContent=t; el.classList.toggle('bad',!!bad); el.style.display='block'; clearTimeout(el._t); el._t=setTimeout(function(){ el.style.display='none'; },3200); }
+
+  function buildStage(list, withSol){
+    var stage=document.getElementById('on-stage'); stage.innerHTML='';
+    list.forEach(function(card){
+      var item=document.createElement('div'); item.className='ex-item';
+      var lvl=['A','B','C'].filter(function(c){ return card.classList.contains(c); })[0]||'';
+      var h=card.querySelector('h3').cloneNode(true); var t=h.querySelector('.tools'); if(t) t.remove();
+      var title=document.createElement('div'); title.className='ex-title '+lvl; title.textContent=h.textContent.replace(/\s+/g,' ').trim(); item.appendChild(title);
+      [].slice.call(card.children).forEach(function(el){
+        if(el.tagName==='H3'||el.tagName==='DETAILS'||el.classList.contains('stepbar')) return;
+        if(el.classList.contains('steps')){ if(withSol){ var bx=document.createElement('div'); bx.className='ex-sol'; bx.innerHTML='<div class="ex-sol-h">Lösung</div>'; bx.appendChild(el.cloneNode(true)); item.appendChild(bx); } return; }
+        item.appendChild(el.cloneNode(true));
+      });
+      if(withSol){ var sol=card.querySelector('details.sol'); if(sol){ var box=document.createElement('div'); box.className='ex-sol'; box.innerHTML='<div class="ex-sol-h">Lösung</div>'; [].slice.call(sol.childNodes).forEach(function(n){ if(n.nodeName!=='SUMMARY') box.appendChild(n.cloneNode(true)); }); item.appendChild(box); } }
+      stage.appendChild(item);
+    });
+    var src=document.createElement('div'); src.className='ex-src'; src.textContent=SRC+' · FBG Schwerte'; stage.appendChild(src);
+    stage.querySelectorAll('.katex .rlap').forEach(function(r){ var o=r.closest('.mrel'); o=o&&o.parentElement; if(o&&o.classList.contains('mrel')&&o.textContent==='\uE020='){ o.innerHTML='<span class="mrel" style="font-family:KaTeX_Main,Cambria Math,serif">\u2260</span>'; } });
+    return stage;
+  }
+  /* KaTeX-Schriften einmalig als data-URLs einbetten, damit Formeln im Bild exakt wie auf der Seite aussehen */
+  var fontCSS=null;
+  function toDataURL(blob){ return new Promise(function(res,rej){ var fr=new FileReader(); fr.onload=function(){ res(fr.result); }; fr.onerror=rej; fr.readAsDataURL(blob); }); }
+  function katexFontCSS(){
+    if(fontCSS!==null) return Promise.resolve(fontCSS);
+    var link=document.querySelector('link[href*="katex"]'); if(!link){ fontCSS=''; return Promise.resolve(''); }
+    var href=link.href;
+    return fetch(href).then(function(r){ return r.text(); }).then(function(css){
+      var faces=css.match(/@font-face\{[^}]*\}/g)||[];
+      return Promise.all(faces.map(function(face){
+        var m=face.match(/url\(([^)]+?\.woff2)\)/); if(!m) return '';
+        var url=new URL(m[1].replace(/["']/g,''),href).href;
+        return fetch(url).then(function(r){ return r.blob(); }).then(toDataURL).then(function(d){
+          return face.replace(/src:[^;}]*/,'src:url('+d+') format("woff2")');
+        }).catch(function(){ return ''; });
+      }));
+    }).then(function(list){ fontCSS=list.join('\n'); return fontCSS; }).catch(function(){ fontCSS=''; return ''; });
+  }
+  if(window.fetch) setTimeout(katexFontCSS,1500);
+
+  function exportCards(list, withSol){
+    if(!list.length) return;
+    if(!window.htmlToImage){ toast('Export-Bibliothek nicht geladen (Internetverbindung?)',true); return; }
+    var stage=buildStage(list, withSol);
+    var opts={pixelRatio:2, backgroundColor:'#ffffff', cacheBust:false, width:stage.offsetWidth, height:stage.offsetHeight, style:{position:'static',left:'0',top:'0'}};
+    var blobPromise=katexFontCSS().then(function(css){ if(css) opts.fontEmbedCSS=css; return htmlToImage.toBlob(stage,opts); });
+    var done=function(){ toast('✓ Kopiert – in OneNote mit Strg+V einfügen'); };
+    var fallback=function(){
+      blobPromise.then(function(b){ var url=URL.createObjectURL(b); document.getElementById('on-img').src=url; document.getElementById('on-dl').href=url; document.getElementById('onmodal').classList.add('show'); })
+        .catch(function(){ toast('Bild konnte nicht erzeugt werden',true); });
+    };
+    try{
+      if(navigator.clipboard && window.ClipboardItem){
+        navigator.clipboard.write([new ClipboardItem({'image/png':blobPromise})]).then(done,fallback);
+      } else fallback();
+    }catch(e){ fallback(); }
+  }
+  window.__onExport={buildStage:buildStage, exportCards:exportCards};
+})();
+</script>
+
+</body>
+</html>

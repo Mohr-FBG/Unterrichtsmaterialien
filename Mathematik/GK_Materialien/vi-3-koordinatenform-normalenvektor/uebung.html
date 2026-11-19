@@ -407,6 +407,7 @@ window.addEventListener('load',()=>{
       stage.appendChild(item);
     });
     var src=document.createElement('div'); src.className='ex-src'; src.textContent=SRC+' · FBG Schwerte'; stage.appendChild(src);
+    stage.querySelectorAll('.katex .rlap').forEach(function(r){ var o=r.closest('.mrel'); o=o&&o.parentElement; if(o&&o.classList.contains('mrel')&&o.textContent==='\uE020='){ o.innerHTML='<span class="mrel" style="font-family:KaTeX_Main,Cambria Math,serif">\u2260</span>'; } });
     return stage;
   }
   /* KaTeX-Schriften einmalig als data-URLs einbetten, damit Formeln im Bild exakt wie auf der Seite aussehen */
